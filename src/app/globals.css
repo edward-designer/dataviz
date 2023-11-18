@@ -2,26 +2,158 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.3rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9;
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+input[type="range"] {
+  -webkit-appearance: none;
+  margin: 0;
+  width: 100%;
+  background: transparent;
+}
+input[type="range"]:focus {
+  outline: none;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 2em;
+  cursor: pointer;
+  animation: 0.2s;
+  background: #000000aa;
+  border-radius: 25px;
+}
+input[type="range"]::-webkit-slider-thumb {
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 4px 0 #000000aa;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: 10px;
+}
+input[type="range"]:focus::-webkit-slider-runnable-track {
+  background: #000000aa;
+}
+.range-wrap {
+  width: 100%;
+  position: absolute;
+  margin: auto;
+  padding: 0 2em;
+}
+.range-wrap label {
+  display: flex;
+}
+.range-value {
+  position: absolute;
+  bottom: -15%;
+}
+.range-value span {
+  height: 24px;
+  line-height: 18px;
+  text-align: center;
+  background: #e003f4;
+  color: #fff;
+  font-size: 12px;
+  display: block;
+  position: absolute;
+  left: 50%;
+  transform: translate(50%, 0);
+  border-radius: 6px;
+  padding: 3px;
+}
+.range-value span:before {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-bottom: 10px solid #e003f4;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -5px;
+  margin-top: -1px;
+}
+.leaflet-container {
+  z-index: 1;
+}
+.leaflet-container .leaflet-tile-pane img {
+  filter: saturate(40%);
+}
+.marker-cluster {
+  background-color: rgba(122, 151, 64, 0.188) !important;
+}
+.marker-cluster div {
+  background-color: #5ab36b60 !important;
+}
+
+.leaflet-div-icon {
+  background: none !important;
+  border: none !important;
+}
+
+.cluster-marker.leaflet-marker-icon {
+  color: rgb(16, 0, 48);
+  font-weight: bold;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.6) 60%,
+    rgba(14, 208, 226, 0.8) 60.1%
+  );
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 2px 1px 1px rgba(16, 0, 48, 0.5);
+}
+
+@media screen and (max-width: 500px) {
+  .leaflet-control-attribution {
+    width: 100dvw;
+  }
 }
