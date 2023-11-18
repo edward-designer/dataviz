@@ -495,7 +495,7 @@ const PricePane = ({
     <div
       className="relative flex-1 flex items-center justify-center flex-col min-h-[300px] rounded-xl bg-theme-950 border border-accentPink-900/50 shadow-inner bg-gradient-to-br from-transparent via-theme-800/20 to-purple-600/30 bg-cover"
       style={{
-        backgroundImage: `linear-gradient(rgba(0,4,51,0.99) 30% , rgba(0,4,51,0.6) 100% ),url(${
+        backgroundImage: `linear-gradient(145deg, rgba(0,4,51,0.99) 30% , rgba(0,4,51,0.6) 100% ),url(${
           type === "E" ? backgroundE.src : backgroundG.src
         })`,
       }}
