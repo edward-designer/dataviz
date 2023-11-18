@@ -595,7 +595,7 @@ const PricePane = ({
 
 type TVariant = "default" | "badge";
 
-export const Remark = ({
+const Remark = ({
   children,
   variant = "default",
 }: {
