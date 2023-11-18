@@ -417,7 +417,7 @@ const BrushChart = ({ tariff, type }: { tariff: string; type: TariffType }) => {
     const lineChart2 = drawLine(chart, [data[1].results], "gas", lineGenerator);
     const chartBrush = drawBrush(chart, [lineChart, lineChart2], xExtent);
     mouseInteraction(chart);
-  }, [data]);
+  }, [data, padding.bottom, padding.left, padding.right, padding.top]);
 
   if (isLoading || !data || !data[0].results)
     return (
@@ -495,7 +495,7 @@ const PricePane = ({
     <div
       className="relative flex-1 flex items-center justify-center flex-col min-h-[300px] rounded-xl bg-theme-950 border border-accentPink-900/50 shadow-inner bg-gradient-to-br from-transparent via-theme-800/20 to-purple-600/30 bg-cover"
       style={{
-        backgroundImage: `linear-gradient(145deg, rgba(0,4,51,0.99) 30% , rgba(0,4,51,0.6) 100% ),url(${
+        backgroundImage: `linear-gradient(140deg, rgba(0,3,35,0.99) 30% , rgba(0,4,51,0.6) 100% ),url(${
           type === "E" ? backgroundE.src : backgroundG.src
         })`,
       }}
@@ -594,28 +594,31 @@ const PricePane = ({
 };
 
 type TVariant = "default" | "badge";
+
 export const Remark = ({
   children,
   variant = "default",
 }: {
   children: ReactNode;
   variant?: TVariant;
-}) => (
-  <Popover>
-    <PopoverTrigger>
-      <IoIosInformationCircleOutline
-        className={`${
-          variant === "badge" ? "w-3 h-3 ml-1" : "w-6 h-6 ml-2"
-        } text-accentBlue-500/90`}
-        aria-hidden={true}
-      />
-      <span className="sr-only">Remarks:</span>
-    </PopoverTrigger>
-    <PopoverContent className={`border-0 bg-popover/90 text-xs`}>
-      {children}
-    </PopoverContent>
-  </Popover>
-);
+}) => {
+  return (
+    <Popover>
+      <PopoverTrigger>
+        <IoIosInformationCircleOutline
+          className={`${
+            variant === "badge" ? "w-3 h-3 ml-1" : "w-6 h-6 ml-2"
+          } text-accentBlue-500/90`}
+          aria-hidden={true}
+        />
+        <span className="sr-only">Remarks:</span>
+      </PopoverTrigger>
+      <PopoverContent className={`border-0 bg-popover/90 text-xs`}>
+        {children}
+      </PopoverContent>
+    </Popover>
+  );
+};
 
 const useTariffQuery = ({
   tariff,
