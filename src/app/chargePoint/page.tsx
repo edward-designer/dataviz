@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 
-import { MapContainer, TileLayer } from "react-leaflet";
+//import { MapContainer, TileLayer } from "react-leaflet";
 import { Map } from "leaflet";
 import { csv } from "d3";
 import { BBox } from "geojson";
@@ -23,6 +23,34 @@ import {
 
 import "leaflet/dist/leaflet.css";
 import useLocationMarker from "@/components/leafletMap/useLocationMarker";
+
+import dynamic from "next/dynamic";
+
+// Dynamic import of react-leaflet components
+const MapContainer = dynamic(
+  () => import("react-leaflet").then((module) => module.MapContainer),
+  {
+    ssr: false, // Disable server-side rendering for this component
+  }
+);
+const TileLayer = dynamic(
+  () => import("react-leaflet").then((module) => module.TileLayer),
+  {
+    ssr: false,
+  }
+);
+const Marker = dynamic(
+  () => import("react-leaflet").then((module) => module.Marker),
+  {
+    ssr: false,
+  }
+);
+const Popup = dynamic(
+  () => import("react-leaflet").then((module) => module.Popup),
+  {
+    ssr: false,
+  }
+);
 
 const ChargePointMap = () => {
   const [chargePointData, setChargePointData] = useState<TPoints>([]);
