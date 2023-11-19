@@ -34,7 +34,7 @@ const Comparison = ({
         {change > 0 ? "+" : ""}
         {change}%
       </span>
-      <span className="text-slate-300 text-[10px] flex">
+      <span className="font-thin text-slate-300 text-[10px] flex">
         vs {compare} {children}
       </span>
     </div>

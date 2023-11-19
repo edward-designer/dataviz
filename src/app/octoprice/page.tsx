@@ -484,7 +484,7 @@ const PricePane = ({
   const priceTomorrowDisplay = priceTomorrow ? (
     <>
       {priceTomorrow}
-      <span className="text-sm font-sans pl-1">p</span>
+      <span className="text-sm font-thin font-sans pl-1">p</span>
     </>
   ) : (
     <>
@@ -513,7 +513,7 @@ const PricePane = ({
               variant="secondary"
             />
             <div className="font-digit text-center text-5xl md:text-6xl text-white flex justify-center items-end">
-              {priceToday} <span className="text-sm font-sans pl-1">p</span>
+              {priceToday} <span className="text-sm font-sans font-thin pl-1">p</span>
               <Comparison
                 change={
                   priceToday !== 0
@@ -572,7 +572,7 @@ const PricePane = ({
           <div className="flex justify-between items-start">
             <div className="flex justify-center items-start flex-col">
               <Badge label="YESTERDAY" variant="secondary" />
-              <div className="font-digit font-thin text-center text-3xl text-white flex justify-center items-center">
+              <div className="font-digit font-thin text-center text-3xl text-white flex justify-center items-end">
                 {priceYesterday}
                 <span className="text-sm font-sans pl-1">p</span>
               </div>
@@ -580,7 +580,7 @@ const PricePane = ({
 
             <div className="flex justify-center items-start flex-col">
               <Badge label="TOMORROW" variant="secondary" />
-              <div className="font-digit text-center text-3xl text-white flex justify-center items-center">
+              <div className="font-digit text-center text-3xl text-white flex justify-center items-end">
                 {priceTomorrowDisplay}
                 {typeof priceTomorrow === "number" && (
                   <Comparison
