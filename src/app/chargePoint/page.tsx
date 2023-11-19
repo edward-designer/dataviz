@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+/*import { useEffect, useRef, useState } from "react";
 
 //import { MapContainer, TileLayer } from "react-leaflet";
 import { Map } from "leaflet";
@@ -153,3 +153,10 @@ const ChargePointMap = () => {
 };
 
 export default ChargePointMap;
+*/
+
+const page = () => {
+  return <div></div>;
+};
+
+export default page;
