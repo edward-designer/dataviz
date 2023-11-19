@@ -16,17 +16,25 @@ const Comparison = ({
   const ChangeIcon =
     change === 0 ? CgMathEqual : change > 0 ? IoMdTrendingUp : IoMdTrendingDown;
   return (
-    <div className="font-display text-xs flex flex-col justify-center mx-2">
+    <div className="font-display text-xs flex flex-col items-start ml-2 border-l border-theme-800 pl-2">
       <span
-        className={`font-display font-bold text-xs inline-block text-white px-[4px] rounded-md items-center ${
-          change > 0 ? "bg-red-700/70" : "bg-green-700/70"
+        className={`font-display text-xs inline-block  pr-[4px] rounded-md ${
+          change > 15
+            ? "text-red-500"
+            : change < -15
+            ? "text-green-500"
+            : "text-white"
         }`}
       >
-        <ChangeIcon className="text-white w-3 h-3 inline-block mr-1" />
+        <ChangeIcon
+          className={`w-3 h-3 inline-block mr-1 ${
+            change > 0 ? "text-red-500" : "text-green-500"
+          }`}
+        />
         {change > 0 ? "+" : ""}
         {change}%
       </span>
-      <span className="text-slate-300 text-[10px] flex items-center">
+      <span className="text-slate-300 text-[10px] flex">
         vs {compare} {children}
       </span>
     </div>

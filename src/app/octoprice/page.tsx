@@ -176,11 +176,14 @@ const BrushChart = ({ tariff, type }: { tariff: string; type: TariffType }) => {
     type,
   });
 
-  const widgetWidth = 1000;
-  const widgetHeight = 450;
+  let widgetWidth = 1000;
+  let widgetHeight = 450;
   const padding = { top: 40, bottom: 40, left: 60, right: 20 };
   const axisColor = "#63acb8";
-
+  if (typeof window !== "undefined") {
+    widgetWidth = window.innerWidth;
+  }
+  
   useEffect(() => {
     if (!data || !svgRef) return;
 
@@ -421,7 +424,7 @@ const BrushChart = ({ tariff, type }: { tariff: string; type: TariffType }) => {
 
   if (isLoading || !data || !data[0].results)
     return (
-      <div className="flex-1 flex items-center justify-center flex-col h-[450px] rounded-xl bg-theme-950 border border-accentPink-900/50 shadow-inner">
+      <div className="relative flex-1 flex items-center justify-center flex-col h-[450px] rounded-xl bg-theme-950 border border-accentPink-900/50 shadow-inner">
         <Loading />
       </div>
     );
@@ -477,7 +480,148 @@ const PricePane = ({
   const priceYesterday = priceAccessor(results, priceTodayIndex + 1) ?? 0;
   const priceToday = priceAccessor(results, priceTodayIndex) ?? 0;
   const priceTomorrow =
-    priceTodayIndex > 0 ? priceAccessor(results, priceTodayIndex - 1) : 0;
+    priceTodayIndex > 0 ? priceAccessor(results, priceTodayIndex - 1) : "--";
+  const priceTomorrowDisplay = priceTomorrow ? (
+    <>
+      {priceTomorrow}
+      <span className="text-sm font-sans pl-1">p</span>
+    </>
+  ) : (
+    <>
+      --
+      <Remark>
+        Tomorrow’s rates is usually available between 11.00am and 6.00pm
+      </Remark>
+    </>
+  );
+  return (
+    <div
+      className="relative flex-1 flex flex-col gap-8 min-h-[200px] md:min-h-[300px] rounded-xl p-4 bg-theme-950 border border-accentPink-900/50 shadow-inner bg-gradient-to-br from-transparent via-theme-800/20 to-purple-600/30 bg-cover"
+      style={{
+        backgroundImage: `linear-gradient(0deg, rgba(0,3,35,0.7) 30% , rgba(0,3,35,0.9) 70%, rgba(0,4,51,1) 100% ),url(${
+          type === "E" ? backgroundE.src : backgroundG.src
+        })`,
+      }}
+    >
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <>
+          <div className="flex flex-1 self-start flex-col">
+            <Badge
+              label={`TODAY - ${new Date().toLocaleDateString()}`}
+              variant="secondary"
+            />
+            <div className="font-digit text-center text-5xl md:text-6xl text-white flex justify-center items-end">
+              {priceToday} <span className="text-sm font-sans pl-1">p</span>
+              <Comparison
+                change={
+                  priceToday !== 0
+                    ? parseInt(
+                        (
+                          ((priceToday - priceYesterday) / priceYesterday) *
+                          100
+                        ).toFixed(0)
+                      )
+                    : null
+                }
+                compare="yesterday"
+              />
+              <Comparison
+                change={
+                  priceToday !== 0
+                    ? parseInt(
+                        (
+                          ((priceToday - priceCap[type]) / priceCap[type]) *
+                          100
+                        ).toFixed(0)
+                      )
+                    : null
+                }
+                compare="price cap"
+              >
+                <Remark variant="badge">
+                  The{" "}
+                  <a
+                    href="https://www.ofgem.gov.uk/energy-price-cap"
+                    target="_blank"
+                  >
+                    Ofgem Price Cap
+                  </a>{" "}
+                  is currently{" "}
+                  <strong className="text-bold">
+                    {type === "E" ? "27" : "7"}p
+                  </strong>{" "}
+                  (from 1 October to 31 December 2023).
+                </Remark>
+              </Comparison>
+            </div>
+          </div>
+          <div className="absolute top-4 right-0 flex flex-col items-end">
+            <Lottie
+              animationData={type === "G" ? gasIcon : electricityIcon}
+              loop={2}
+              aria-hidden={true}
+              className="w-16 h-16"
+              initialSegment={[0, 25]}
+            />
+            <span className="text-accentBlue-600 -mt-2 sr-only">
+              {ENERGY_TYPE[type]}
+            </span>
+          </div>
+          <div className="flex justify-between items-start">
+            <div className="flex justify-center items-start flex-col">
+              <Badge label="YESTERDAY" variant="secondary" />
+              <div className="font-digit font-thin text-center text-3xl text-white flex justify-center items-center">
+                {priceYesterday}
+                <span className="text-sm font-sans pl-1">p</span>
+              </div>
+            </div>
+
+            <div className="flex justify-center items-start flex-col">
+              <Badge label="TOMORROW" variant="secondary" />
+              <div className="font-digit text-center text-3xl text-white flex justify-center items-center">
+                {priceTomorrowDisplay}
+                {typeof priceTomorrow === "number" && (
+                  <Comparison
+                    change={parseInt(
+                      (
+                        ((priceTomorrow - priceToday) / priceToday) *
+                        100
+                      ).toFixed(0)
+                    )}
+                    compare="today"
+                  />
+                )}
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
+const PricePane2 = ({
+  tariff,
+  type,
+}: {
+  tariff: string;
+  type: Exclude<TariffType, "EG">;
+}) => {
+  const { isLoading, isError, isSuccess, data, error } = useTariffQuery({
+    tariff,
+    type,
+  });
+  const results = data?.[0]?.results ?? [];
+  const priceTodayIndex = results.findIndex((data) =>
+    isToday(new Date(data.valid_from))
+  );
+
+  const priceYesterday = priceAccessor(results, priceTodayIndex + 1) ?? 0;
+  const priceToday = priceAccessor(results, priceTodayIndex) ?? 0;
+  const priceTomorrow =
+    priceTodayIndex > 0 ? priceAccessor(results, priceTodayIndex - 1) : "--";
   const priceTomorrowDisplay = priceTomorrow ? (
     <>
       {priceTomorrow}
@@ -518,7 +662,7 @@ const PricePane = ({
           </div>
           <div className="scale-75 opacity-60 flex justify-center items-center flex-col mt-2">
             <Badge label="YESTERDAY" variant="secondary" />
-            <div className="font-digit text-center text-6xl text-white flex justify-center items-center">
+            <div className="font-digit font-thin text-center text-6xl text-white flex justify-center items-center">
               {priceYesterday}
               <span className="text-sm font-sans pl-1">p</span>
             </div>
@@ -592,7 +736,6 @@ const PricePane = ({
     </div>
   );
 };
-
 type TVariant = "default" | "badge";
 
 const Remark = ({
@@ -613,7 +756,7 @@ const Remark = ({
         />
         <span className="sr-only">Remarks:</span>
       </PopoverTrigger>
-      <PopoverContent className={`border-0 bg-popover/90 text-xs`}>
+      <PopoverContent className={`border-0 bg-theme-900/80 text-xs`}>
         {children}
       </PopoverContent>
     </Popover>

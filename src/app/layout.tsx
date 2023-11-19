@@ -7,13 +7,13 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import Header from "@/components/Header";
 
-import { Advent_Pro, Jost } from "next/font/google";
+import { Advent_Pro, Roboto } from "next/font/google";
 
 import "./globals.css";
 
 const font = Advent_Pro({ subsets: ["latin"], variable: "--display-font" });
-const font2 = Jost({
-  weight: "400",
+const font2 = Roboto({
+  weight: "100",
   subsets: ["latin"],
   variable: "--digits-font",
 });
@@ -41,7 +41,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           className={`dark ${font.variable} ${font2.variable} ${font3.variable} bg-theme-950`}
         >
           <ReactQueryDevtools initialIsOpen={false} />
-          <div className="lg:grid lg:grid-cols-[[fullwidth_start]_minmax(0,5%)_[breakout_start]_minmax(0,5%)_[content_start]_minmax(1000px,_1fr)_[content_end]_minmax(0,5%)_[breakout_end]_minmax(0,5%)_[fullwidth_end]]">
+          <div className="p-2 lg:p-0 lg:grid lg:grid-cols-[[fullwidth_start]_minmax(0,5%)_[breakout_start]_minmax(0,5%)_[content_start]_minmax(1000px,_1fr)_[content_end]_minmax(0,5%)_[breakout_end]_minmax(0,5%)_[fullwidth_end]]">
             <Header className="lg:col-[content]" />
             {children}
           </div>
