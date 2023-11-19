@@ -183,7 +183,7 @@ const BrushChart = ({ tariff, type }: { tariff: string; type: TariffType }) => {
   if (typeof window !== "undefined") {
     widgetWidth = window.innerWidth;
   }
-  
+
   useEffect(() => {
     if (!data || !svgRef) return;
 
@@ -496,7 +496,7 @@ const PricePane = ({
   );
   return (
     <div
-      className="relative flex-1 flex flex-col gap-8 min-h-[200px] md:min-h-[300px] rounded-xl p-4 bg-theme-950 border border-accentPink-900/50 shadow-inner bg-gradient-to-br from-transparent via-theme-800/20 to-purple-600/30 bg-cover"
+      className="relative flex-1 flex flex-col gap-8 min-h-[300px] rounded-xl p-4 bg-theme-950 border border-accentPink-900/50 shadow-inner bg-gradient-to-br from-transparent via-theme-800/20 to-purple-600/30 bg-cover"
       style={{
         backgroundImage: `linear-gradient(0deg, rgba(0,3,35,0.7) 30% , rgba(0,3,35,0.9) 70%, rgba(0,4,51,1) 100% ),url(${
           type === "E" ? backgroundE.src : backgroundG.src
