@@ -126,7 +126,8 @@ const Header = ({
 
           {value.postcode === "" && (
             <Remark variant="badge">
-              Enter your postcode to get the accurate energy price.
+              Unit rates are set slightly different depending on locations.
+              Please enter your postcode to get the accurate figures.
             </Remark>
           )}
         </div>

@@ -20,7 +20,7 @@ const Remark = ({
       <PopoverTrigger>
         <IoIosInformationCircleOutline
           className={`${
-            variant === "badge" ? "w-3 h-3 ml-1" : "w-6 h-6 ml-2"
+            variant === "badge" ? "w-4 h-4 ml-1 -mt-[2px]" : "w-6 h-6 ml-2"
           } text-accentBlue-500/90`}
           aria-hidden={true}
         />

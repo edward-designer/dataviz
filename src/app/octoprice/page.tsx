@@ -153,6 +153,13 @@ const Octoprice = () => {
               </SelectGroup>
             </SelectContent>
           </Select>
+          <Remark variant="badge">
+            Octopus has been offereing different Tracker plans over the years.
+            The currently available plan is marked with the &quot;current&quot;
+            label. These plans differ mainly in the maximum chargable rates.
+            Please scroll down to see the comparision between different Tracker
+            plans. All unit rates inclusive of VAT.
+          </Remark>
         </div>
       </section>
       <section className="flex flex-col sm:flex-row items-stretch sm:justify-center sm:items-center gap-4 my-4">
@@ -456,9 +463,9 @@ const BrushChart = ({
       >
         <defs>
           <linearGradient id="electricity" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#cc33ff" />
-            <stop offset="50%" stopColor="#3399ff" />
-            <stop offset="100%" stopColor="#66ffcc" />
+            <stop offset="0%" stopColor="#aa33cc" />
+            <stop offset="50%" stopColor="#3377bb" />
+            <stop offset="100%" stopColor="#aaffdd" />
           </linearGradient>
           <linearGradient id="gas" x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stopColor="red" />
@@ -510,13 +517,14 @@ const PricePane = ({
       <>
         --
         <Remark>
-          Tomorrow’s rates is usually available between 11.00am and 6.00pm
+          The rate of tomorrow is usually available between 11.00am and 6.00pm.
+          Please revisit this page to get the updates.
         </Remark>
       </>
     );
   return (
     <div
-      className="relative flex-1 flex flex-col gap-8 min-h-[300px] rounded-xl p-4 bg-theme-950 border border-accentPink-900/50 shadow-inner bg-gradient-to-br from-transparent via-theme-800/20 to-purple-600/30 bg-cover"
+      className="relative flex-1 flex flex-col gap-8 min-h-[300px] rounded-xl p-4 bg-theme-950 border border-accentPink-800/60 shadow-inner bg-gradient-to-br from-transparent via-theme-800/20 to-purple-600/30 bg-cover"
       style={{
         backgroundImage: `linear-gradient(0deg, rgba(0,3,35,0.7) 30% , rgba(0,3,35,0.9) 70%, rgba(0,4,51,1) 100% ),url(${
           type === "E" ? backgroundE.src : backgroundG.src
@@ -576,7 +584,7 @@ const PricePane = ({
                     is currently{" "}
                     <strong className="text-bold">
                       {`${priceCap[type]}p`}
-                    </strong>
+                    </strong>{" "}
                     (from 1 October to 31 December 2023).
                   </Remark>
                 </Comparison>
