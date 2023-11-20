@@ -53,7 +53,7 @@ Phase 3
 */
 import {
   ComponentPropsWithoutRef,
-  ReactNode,
+  useContext,
   useEffect,
   useRef,
   useState,
@@ -91,7 +91,7 @@ import {
   fetchApi,
   isToday,
   priceAccessor,
-} from "../utils/helpers";
+} from "../../utils/helpers";
 import {
   TRACKER,
   ENERGY_TYPE,
@@ -102,6 +102,7 @@ import {
   priceCap,
 } from "@/data/source";
 
+import { UserContext } from "@/context/user";
 import {
   Select,
   SelectContent,
@@ -111,23 +112,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import Badge from "@/components/octopus/Badge";
 import Loading from "@/components/Loading";
 
-import { IoIosInformationCircleOutline } from "react-icons/io";
 import Comparison from "@/components/octopus/Comparison";
 
 import backgroundE from "../../../public/images/E.jpg";
 import backgroundG from "../../../public/images/G.jpg";
 import { PopoverProps } from "@radix-ui/react-popover";
+import Remark from "../../components/octopus/Remark";
 
 const Octoprice = () => {
   const [tariff, setTariff] = useState(TRACKER[0].code);
+  const {
+    value: { gsp },
+  } = useContext(UserContext);
 
   return (
     <div className="lg:col-[content] my-4">
@@ -157,11 +156,11 @@ const Octoprice = () => {
         </div>
       </section>
       <section className="flex flex-col sm:flex-row items-stretch sm:justify-center sm:items-center gap-4 my-4">
-        <PricePane tariff={tariff} type="E" />
-        <PricePane tariff={tariff} type="G" />
+        <PricePane tariff={tariff} type="E" gsp={gsp} />
+        <PricePane tariff={tariff} type="G" gsp={gsp} />
       </section>
       <section className="flex justify-center items-center gap-4 my-4">
-        <BrushChart tariff={tariff} type="EG" />
+        <BrushChart tariff={tariff} type="EG" gsp={gsp} />
       </section>
     </div>
   );
@@ -169,11 +168,20 @@ const Octoprice = () => {
 
 export default Octoprice;
 
-const BrushChart = ({ tariff, type }: { tariff: string; type: TariffType }) => {
+const BrushChart = ({
+  tariff,
+  type,
+  gsp,
+}: {
+  tariff: string;
+  type: TariffType;
+  gsp: string;
+}) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const { isLoading, isError, isSuccess, data, error } = useTariffQuery({
     tariff,
     type,
+    gsp,
   });
 
   let widgetWidth = 1000;
@@ -420,7 +428,15 @@ const BrushChart = ({ tariff, type }: { tariff: string; type: TariffType }) => {
     const lineChart2 = drawLine(chart, [data[1].results], "gas", lineGenerator);
     const chartBrush = drawBrush(chart, [lineChart, lineChart2], xExtent);
     mouseInteraction(chart);
-  }, [data, padding.bottom, padding.left, padding.right, padding.top]);
+  }, [
+    data,
+    padding.bottom,
+    padding.left,
+    padding.right,
+    padding.top,
+    widgetHeight,
+    widgetWidth,
+  ]);
 
   if (isLoading || !data || !data[0].results)
     return (
@@ -464,13 +480,16 @@ const BrushChart = ({ tariff, type }: { tariff: string; type: TariffType }) => {
 const PricePane = ({
   tariff,
   type,
+  gsp,
 }: {
   tariff: string;
   type: Exclude<TariffType, "EG">;
+  gsp: string;
 }) => {
   const { isLoading, isError, isSuccess, data, error } = useTariffQuery({
     tariff,
     type,
+    gsp,
   });
   const results = data?.[0]?.results ?? [];
   const priceTodayIndex = results.findIndex((data) =>
@@ -612,13 +631,16 @@ const PricePane = ({
 const PricePane2 = ({
   tariff,
   type,
+  gsp,
 }: {
   tariff: string;
   type: Exclude<TariffType, "EG">;
+  gsp: string;
 }) => {
   const { isLoading, isError, isSuccess, data, error } = useTariffQuery({
     tariff,
     type,
+    gsp,
   });
   const results = data?.[0]?.results ?? [];
   const priceTodayIndex = results.findIndex((data) =>
@@ -644,7 +666,7 @@ const PricePane2 = ({
   );
   return (
     <div
-      className="relative flex-1 flex items-center justify-center flex-col min-h-[300px] rounded-xl bg-theme-950 border border-accentPink-900/50 shadow-inner bg-gradient-to-br from-transparent via-theme-800/20 to-purple-600/30 bg-cover"
+      className="relative flex-1 flex items-center justify-center flex-col min-h-[250px] md:min-h-[300px] rounded-xl bg-theme-950 border border-accentPink-900/50 shadow-inner bg-gradient-to-br from-transparent via-theme-800/20 to-purple-600/30 bg-cover"
       style={{
         backgroundImage: `linear-gradient(140deg, rgba(0,3,35,0.99) 30% , rgba(0,4,51,0.6) 100% ),url(${
           type === "E" ? backgroundE.src : backgroundG.src
@@ -743,50 +765,27 @@ const PricePane2 = ({
     </div>
   );
 };
-type TVariant = "default" | "badge";
-
-const Remark = ({
-  children,
-  variant = "default",
-}: {
-  children: ReactNode;
-  variant?: TVariant;
-}) => {
-  return (
-    <Popover>
-      <PopoverTrigger>
-        <IoIosInformationCircleOutline
-          className={`${
-            variant === "badge" ? "w-3 h-3 ml-1" : "w-6 h-6 ml-2"
-          } text-accentBlue-500/90`}
-          aria-hidden={true}
-        />
-        <span className="sr-only">Remarks:</span>
-      </PopoverTrigger>
-      <PopoverContent className={`border-0 bg-theme-900/80 text-xs`}>
-        {children}
-      </PopoverContent>
-    </Popover>
-  );
-};
+export type TVariant = "default" | "badge";
 
 const useTariffQuery = ({
   tariff,
   type,
+  gsp,
 }: {
   tariff: string;
   type: TariffType;
+  gsp: string;
 }) => {
   const queryClient = useQueryClient();
   const typeArr = type
     .split("")
     .filter((type) => type === "E" || type === "G") as ApiTariffType[];
   const query = useQuery<queryTariffResult[]>({
-    queryKey: ["getTariff", tariff, type],
+    queryKey: ["getTariff", tariff, type, gsp],
     queryFn: fetchApi(
       typeArr.map((type) => ({
         tariffType: type,
-        url: `https://api.octopus.energy/v1/products/${tariff}/${ENERGY_TYPE[type]}-tariffs/${type}-1R-${tariff}-A/standard-unit-rates/?page_size=1500`,
+        url: `https://api.octopus.energy/v1/products/${tariff}/${ENERGY_TYPE[type]}-tariffs/${type}-1R-${tariff}-${gsp}/standard-unit-rates/?page_size=1500`,
       }))
     ),
   });

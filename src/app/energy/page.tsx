@@ -13,7 +13,7 @@ import {
 } from "d3";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useUkMapData } from "@/hooks/useUkMapData2019";
-import { height, width } from "../utils/constants";
+import { height, width } from "../../utils/constants";
 
 const EnergyMap = () => {
   const [displayYear, setDisplayYear] = useState<number>(2020);

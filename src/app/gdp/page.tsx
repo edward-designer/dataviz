@@ -13,7 +13,7 @@ import {
 } from "d3";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useUkMapData } from "@/hooks/useUkMapData";
-import { height, width } from "../utils/constants";
+import { height, width } from "../../utils/constants";
 import useGDPDataBy from "@/hooks/useGDPData";
 
 const EnergyMap = () => {

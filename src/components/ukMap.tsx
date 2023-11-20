@@ -20,7 +20,7 @@ import {
   easeCubicOut,
   easeCubicInOut,
 } from "d3";
-import { width, height } from "@/app/utils/constants";
+import { width, height } from "@/utils/constants";
 
 interface TUkMap {
   mapData: IUkMapData;
