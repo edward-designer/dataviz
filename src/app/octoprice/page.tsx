@@ -481,19 +481,20 @@ const PricePane = ({
   const priceToday = priceAccessor(results, priceTodayIndex) ?? 0;
   const priceTomorrow =
     priceTodayIndex > 0 ? priceAccessor(results, priceTodayIndex - 1) : "--";
-  const priceTomorrowDisplay = priceTomorrow ? (
-    <>
-      {priceTomorrow}
-      <span className="text-sm font-thin font-sans pl-1">p</span>
-    </>
-  ) : (
-    <>
-      --
-      <Remark>
-        Tomorrow’s rates is usually available between 11.00am and 6.00pm
-      </Remark>
-    </>
-  );
+  const priceTomorrowDisplay =
+    typeof priceTomorrow === "number" ? (
+      <>
+        {priceTomorrow}
+        <span className="text-sm font-thin font-sans pl-1">p</span>
+      </>
+    ) : (
+      <>
+        --
+        <Remark>
+          Tomorrow’s rates is usually available between 11.00am and 6.00pm
+        </Remark>
+      </>
+    );
   return (
     <div
       className="relative flex-1 flex flex-col gap-8 min-h-[300px] rounded-xl p-4 bg-theme-950 border border-accentPink-900/50 shadow-inner bg-gradient-to-br from-transparent via-theme-800/20 to-purple-600/30 bg-cover"

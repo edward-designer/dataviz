@@ -8,11 +8,10 @@ const Header = ({
 }: ComponentPropsWithoutRef<"header">) => {
   return (
     <header
-      className={`flex gap-4 justify-center items-center ${className} py-4`}
+      className={`flex gap-4 justify-between items-center ${className} py-4`}
       {...props}
     >
-      <Image priority src={logo} alt="Octoprice logo" />
-      <nav className="flex-1">Menu</nav>
+      <Image priority src={logo} alt="Octoprice logo" className="w-40 h-auto" />
       <div>PostCode</div>
     </header>
   );
