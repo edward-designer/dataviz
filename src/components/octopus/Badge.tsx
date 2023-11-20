@@ -9,7 +9,7 @@ const Badge = ({
 }) => {
   return (
     <span
-      className={`font-display font-bold text-xs inline-block text-white rounded-md align-middle ${
+      className={`font-display text-base inline-block text-white/60 rounded-md align-middle ${
         variant === "default"
           ? "border-accentPink-500 border px-2 ml-2"
           : ""

@@ -509,52 +509,58 @@ const PricePane = ({
         <>
           <div className="flex flex-1 self-start flex-col">
             <Badge
-              label={`TODAY - ${new Date().toLocaleDateString()}`}
+              label={`Today - ${new Date().toLocaleDateString()}`}
               variant="secondary"
             />
-            <div className="font-digit text-center text-5xl md:text-6xl text-white flex justify-center items-end">
-              {priceToday} <span className="text-sm font-sans font-thin pl-1">p</span>
-              <Comparison
-                change={
-                  priceToday !== 0
-                    ? parseInt(
-                        (
-                          ((priceToday - priceYesterday) / priceYesterday) *
-                          100
-                        ).toFixed(0)
-                      )
-                    : null
-                }
-                compare="yesterday"
-              />
-              <Comparison
-                change={
-                  priceToday !== 0
-                    ? parseInt(
-                        (
-                          ((priceToday - priceCap[type]) / priceCap[type]) *
-                          100
-                        ).toFixed(0)
-                      )
-                    : null
-                }
-                compare="price cap"
-              >
-                <Remark variant="badge">
-                  The{" "}
-                  <a
-                    href="https://www.ofgem.gov.uk/energy-price-cap"
-                    target="_blank"
-                  >
-                    Ofgem Price Cap
-                  </a>{" "}
-                  is currently{" "}
-                  <strong className="text-bold">
-                    {type === "E" ? "27" : "7"}p
-                  </strong>{" "}
-                  (from 1 October to 31 December 2023).
-                </Remark>
-              </Comparison>
+            <div className="font-digit text-6xl text-white flex flex-col items-start gap-1">
+              <div>
+                {priceToday}
+                <span className="text-sm font-sans font-thin pl-1">p</span>
+              </div>
+              <div className="flex">
+                <Comparison
+                  change={
+                    priceToday !== 0
+                      ? parseInt(
+                          (
+                            ((priceToday - priceYesterday) / priceYesterday) *
+                            100
+                          ).toFixed(0)
+                        )
+                      : null
+                  }
+                  compare="yesterday"
+                />
+
+                <Comparison
+                  change={
+                    priceToday !== 0
+                      ? parseInt(
+                          (
+                            ((priceToday - priceCap[type]) / priceCap[type]) *
+                            100
+                          ).toFixed(0)
+                        )
+                      : null
+                  }
+                  compare="price cap"
+                >
+                  <Remark variant="badge">
+                    The{" "}
+                    <a
+                      href="https://www.ofgem.gov.uk/energy-price-cap"
+                      target="_blank"
+                    >
+                      Ofgem Price Cap
+                    </a>{" "}
+                    is currently{" "}
+                    <strong className="text-bold">
+                      {`${priceCap[type]}p`}
+                    </strong>
+                    (from 1 October to 31 December 2023).
+                  </Remark>
+                </Comparison>
+              </div>
             </div>
           </div>
           <div className="absolute top-4 right-0 flex flex-col items-end">
@@ -571,7 +577,7 @@ const PricePane = ({
           </div>
           <div className="flex justify-between items-start">
             <div className="flex justify-center items-start flex-col">
-              <Badge label="YESTERDAY" variant="secondary" />
+              <Badge label="Yesterday" variant="secondary" />
               <div className="font-digit font-thin text-center text-3xl text-white flex justify-center items-end">
                 {priceYesterday}
                 <span className="text-sm font-sans pl-1">p</span>
@@ -579,7 +585,7 @@ const PricePane = ({
             </div>
 
             <div className="flex justify-center items-start flex-col">
-              <Badge label="TOMORROW" variant="secondary" />
+              <Badge label="Tomorrow" variant="secondary" />
               <div className="font-digit text-center text-3xl text-white flex justify-center items-end">
                 {priceTomorrowDisplay}
                 {typeof priceTomorrow === "number" && (
