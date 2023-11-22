@@ -89,6 +89,7 @@ import gasIcon from "../../../public/lottie/gas.json";
 import {
   assertExtentNotUndefined,
   fetchApi,
+  isSameDate,
   isToday,
   priceAccessor,
 } from "../../utils/helpers";
@@ -502,11 +503,41 @@ const PricePane = ({
   const priceTodayIndex = results.findIndex((data) =>
     isToday(new Date(data.valid_from))
   );
+  const priceYesterdayIndex = results.findIndex((data) =>
+    isSameDate(
+      new Date(new Date().setDate(new Date().getDate() - 1)),
+      new Date(data.valid_from)
+    )
+  );
 
-  const priceYesterday = priceAccessor(results, priceTodayIndex + 1) ?? 0;
-  const priceToday = priceAccessor(results, priceTodayIndex) ?? 0;
+  const priceYesterday =
+    priceTodayIndex !== undefined
+      ? priceAccessor(results, priceYesterdayIndex) ?? "--"
+      : "--";
+  const priceToday =
+    priceTodayIndex !== undefined
+      ? priceAccessor(results, priceTodayIndex) ?? "--"
+      : "--";
   const priceTomorrow =
     priceTodayIndex > 0 ? priceAccessor(results, priceTodayIndex - 1) : "--";
+
+  const getPriceDisplay = (
+    price: unknown,
+    message = "Sorry, the price is currently unavailable, please check back later."
+  ) =>
+    typeof price === "number" ? (
+      <>
+        {price}
+        <span className="text-sm font-thin font-sans pl-1">p</span>
+      </>
+    ) : (
+      <>
+        --
+        <Remark>{message}</Remark>
+      </>
+    );
+  const priceTodayDisplay = getPriceDisplay(priceToday);
+  const priceYesterdayDisplay = getPriceDisplay(priceYesterday);
   const priceTomorrowDisplay =
     typeof priceTomorrow === "number" ? (
       <>
@@ -541,53 +572,56 @@ const PricePane = ({
               variant="secondary"
             />
             <div className="font-digit text-6xl text-white flex flex-col items-start gap-1">
-              <div>
-                {priceToday}
-                <span className="text-sm font-sans font-thin pl-1">p</span>
-              </div>
+              <div>{priceTodayDisplay}</div>
               <div className="flex">
-                <Comparison
-                  change={
-                    priceToday !== 0
-                      ? parseInt(
-                          (
-                            ((priceToday - priceYesterday) / priceYesterday) *
-                            100
-                          ).toFixed(0)
-                        )
-                      : null
-                  }
-                  compare="yesterday"
-                />
+                {typeof priceToday === "number" &&
+                  typeof priceYesterday === "number" && (
+                    <Comparison
+                      change={
+                        priceToday !== 0
+                          ? parseInt(
+                              (
+                                ((priceToday - priceYesterday) /
+                                  priceYesterday) *
+                                100
+                              ).toFixed(0)
+                            )
+                          : null
+                      }
+                      compare="yesterday"
+                    />
+                  )}
 
-                <Comparison
-                  change={
-                    priceToday !== 0
-                      ? parseInt(
-                          (
-                            ((priceToday - priceCap[type]) / priceCap[type]) *
-                            100
-                          ).toFixed(0)
-                        )
-                      : null
-                  }
-                  compare="price cap"
-                >
-                  <Remark variant="badge">
-                    The{" "}
-                    <a
-                      href="https://www.ofgem.gov.uk/energy-price-cap"
-                      target="_blank"
-                    >
-                      Ofgem Price Cap
-                    </a>{" "}
-                    is currently{" "}
-                    <strong className="text-bold">
-                      {`${priceCap[type]}p`}
-                    </strong>{" "}
-                    (from 1 October to 31 December 2023).
-                  </Remark>
-                </Comparison>
+                {typeof priceToday === "number" && (
+                  <Comparison
+                    change={
+                      priceToday !== 0
+                        ? parseInt(
+                            (
+                              ((priceToday - priceCap[type]) / priceCap[type]) *
+                              100
+                            ).toFixed(0)
+                          )
+                        : null
+                    }
+                    compare="price cap"
+                  >
+                    <Remark variant="badge">
+                      The{" "}
+                      <a
+                        href="https://www.ofgem.gov.uk/energy-price-cap"
+                        target="_blank"
+                      >
+                        Ofgem Price Cap
+                      </a>{" "}
+                      is currently{" "}
+                      <strong className="text-bold">
+                        {`${priceCap[type]}p`}
+                      </strong>{" "}
+                      (from 1 October to 31 December 2023).
+                    </Remark>
+                  </Comparison>
+                )}
               </div>
             </div>
           </div>
@@ -607,8 +641,7 @@ const PricePane = ({
             <div className="flex justify-center items-start flex-col">
               <Badge label="Yesterday" variant="secondary" />
               <div className="font-digit font-thin text-center text-3xl text-white flex justify-center items-end">
-                {priceYesterday}
-                <span className="text-sm font-sans pl-1">p</span>
+                {priceYesterdayDisplay}
               </div>
             </div>
 
@@ -616,17 +649,18 @@ const PricePane = ({
               <Badge label="Tomorrow" variant="secondary" />
               <div className="font-digit text-center text-3xl text-white flex justify-center items-end">
                 {priceTomorrowDisplay}
-                {typeof priceTomorrow === "number" && (
-                  <Comparison
-                    change={parseInt(
-                      (
-                        ((priceTomorrow - priceToday) / priceToday) *
-                        100
-                      ).toFixed(0)
-                    )}
-                    compare="today"
-                  />
-                )}
+                {typeof priceTomorrow === "number" &&
+                  typeof priceToday === "number" && (
+                    <Comparison
+                      change={parseInt(
+                        (
+                          ((priceTomorrow - priceToday) / priceToday) *
+                          100
+                        ).toFixed(0)
+                      )}
+                      compare="today"
+                    />
+                  )}
               </div>
             </div>
           </div>
