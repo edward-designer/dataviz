@@ -6,7 +6,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { IoIosInformationCircleOutline } from "react-icons/io";
-import { TVariant } from "../../app/octoprice/page";
+import { TVariant } from "@/data/source";
 
 const Remark = ({
   children,

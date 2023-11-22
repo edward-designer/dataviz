@@ -22,6 +22,15 @@ import {
   axisRight,
   timeFormat,
   timeMonth,
+  utcSecond,
+  utcDay,
+  utcHour,
+  utcMinute,
+  utcMonth,
+  utcWeek,
+  utcYear,
+  utcFormat,
+  timeFormatDefaultLocale,
 } from "d3";
 import toast from "react-hot-toast";
 
@@ -116,7 +125,7 @@ const BrushChart = ({
         [widgetHeight - padding.top - padding.bottom, 0]
       ).nice();
 
-      const xAxis = axisBottom<Date>(xScale).ticks(widgetWidth / 100);
+      const xAxis = axisBottom<Date>(xScale).ticks(widgetWidth / 130);
       const yGrid = axisRight<number>(yScale)
         .tickFormat((d) => "")
         .tickSizeInner(widgetWidth - padding.left - padding.right)
@@ -216,7 +225,7 @@ const BrushChart = ({
       chart
         .select(".cap")
         .select(".capE")
-        .text("electricity price cap (for flexible plan only)")
+        .text("current electricity price cap (for flexible plan only)")
         .attr("transform", "translate(0 -5)")
         .attr("text-anchor", "end")
         .attr("alignment-basline", "baseline")
@@ -230,7 +239,7 @@ const BrushChart = ({
       chart
         .select(".cap")
         .select(".capG")
-        .text("gas price cap (for flexible plan only)")
+        .text("current gas price cap (for flexible plan only)")
         .attr("transform", "translate(0 -5)")
         .attr("text-anchor", "end")
         .attr("alignment-basline", "baseline")
@@ -430,7 +439,7 @@ const BrushChart = ({
       lineGenerator
     );
     const lineChart2 = drawLine(chart, [data[1].results], "gas", lineGenerator);
-    //const chartBrush = drawBrush(chart, [lineChart, lineChart2], xExtent);
+    const chartBrush = drawBrush(chart, [lineChart, lineChart2], xExtent);
     drawCurrentCap(chart);
     mouseInteraction(chart);
   }, [
