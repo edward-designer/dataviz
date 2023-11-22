@@ -72,7 +72,7 @@ const BrushChart = ({
   const fontSize = 14;
   const leadingSize = fontSize * 1.5;
   const innerPadding = 10;
-  const padding = { top: 40, bottom: 60, left: 100, right: 20 };
+  const padding = { top: 40, bottom: 60, left: 80, right: 20 };
   const axisColor = "#63acb8";
   if (typeof document !== "undefined") {
     widgetWidth =
@@ -155,9 +155,12 @@ const BrushChart = ({
         .transition()
         .call(yAxis);
 
+      chart.select(".yAxisText").remove();
       chart
         .select(".yAxis")
         .append("text")
+        .classed("yAxisText", true)
+        .classed("axisText", true)
         .text("Unit Rate")
         .attr(
           "transform",
@@ -457,67 +460,60 @@ const BrushChart = ({
     <div className="chartDiv relative w-full h-[450px] flex-1 flex items-center justify-center flex-col rounded-xl bg-theme-950 border border-accentPink-700/50 shadow-inner overflow-hidden">
       {isLoading && <Loading />}
       {isError && <ErrorMessage error={error} errorHandler={() => refetch()} />}
-      {isSuccess && (
-        <>
-          <svg
-            width={widgetWidth}
-            height={widgetHeight}
-            viewBox={`0, 0, ${widgetWidth}, ${widgetHeight}`}
-            ref={svgRef}
-          >
-            <defs>
-              <linearGradient
-                id="electricity"
-                x1="0%"
-                y1="0%"
-                x2="0%"
-                y2="100%"
-              >
-                <stop offset="0%" stopColor="#aa33cc" />
-                <stop offset="50%" stopColor="#3377bb" />
-                <stop offset="100%" stopColor="#aaffdd" />
-              </linearGradient>
-              <linearGradient id="gas" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="red" />
-                <stop offset="50%" stopColor="green" />
-                <stop offset="100%" stopColor="yellow" />
-              </linearGradient>
-            </defs>
-            <g className="chartContainer">
-              <g className="grid" />
-              <g className="xAxis" />
-              <g className="yAxis" />
-              <g className="cap">
-                <text className="capE"></text>
-                <text className="capG"></text>
-              </g>
+
+      <>
+        <svg
+          width={widgetWidth}
+          height={widgetHeight}
+          viewBox={`0, 0, ${widgetWidth}, ${widgetHeight}`}
+          ref={svgRef}
+        >
+          <defs>
+            <linearGradient id="electricity" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#aa33cc" />
+              <stop offset="50%" stopColor="#3377bb" />
+              <stop offset="100%" stopColor="#aaffdd" />
+            </linearGradient>
+            <linearGradient id="gas" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="red" />
+              <stop offset="50%" stopColor="green" />
+              <stop offset="100%" stopColor="yellow" />
+            </linearGradient>
+          </defs>
+          <g className="chartContainer">
+            <g className="grid" />
+            <g className="xAxis" />
+            <g className="yAxis" />
+            <g className="cap">
+              <text className="capE"></text>
+              <text className="capG"></text>
             </g>
-            <g className="interactionContainer">
-              <g className="mouseInteraction" />
-              <g className="tooltip" opacity="0">
-                <rect
-                  width="150"
-                  height={leadingSize * 3 + innerPadding * 2}
-                  rx={leadingSize / 2}
-                  fill="#00000060"
-                  x="0"
-                  y="0"
-                />
-                <g
-                  className="date"
-                  transform={`translate(${innerPadding} ${innerPadding})`}
-                />
-                <g
-                  className="price"
-                  transform={`translate(${innerPadding} ${
-                    leadingSize + innerPadding
-                  })`}
-                />
-              </g>
+          </g>
+          <g className="interactionContainer">
+            <g className="mouseInteraction" />
+            <g className="tooltip" opacity="0">
+              <rect
+                width="150"
+                height={leadingSize * 3 + innerPadding * 2}
+                rx={leadingSize / 2}
+                fill="#00000060"
+                x="0"
+                y="0"
+              />
+              <g
+                className="date"
+                transform={`translate(${innerPadding} ${innerPadding})`}
+              />
+              <g
+                className="price"
+                transform={`translate(${innerPadding} ${
+                  leadingSize + innerPadding
+                })`}
+              />
             </g>
-          </svg>
-        </>
-      )}
+          </g>
+        </svg>
+      </>
     </div>
   );
 };
