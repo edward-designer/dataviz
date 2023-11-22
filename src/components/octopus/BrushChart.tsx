@@ -72,7 +72,7 @@ const BrushChart = ({
   const fontSize = 14;
   const leadingSize = fontSize * 1.5;
   const innerPadding = 10;
-  const padding = { top: 40, bottom: 60, left: 80, right: 20 };
+  const padding = { top: 40, bottom: 60, left: 60, right: 20 };
   const axisColor = "#63acb8";
   if (typeof document !== "undefined") {
     widgetWidth =
@@ -168,7 +168,7 @@ const BrushChart = ({
         .text("Unit Rate")
         .attr(
           "transform",
-          `translate(-${padding.left / 2} ${
+          `translate(-${padding.left - leadingSize} ${
             widgetHeight / 2 - padding.top
           }) rotate(-90)`
         )
@@ -232,7 +232,7 @@ const BrushChart = ({
       chart
         .select(".cap")
         .select(".capE")
-        .text("current electricity price cap (for flexible plan only)")
+        .text("ref: flexible Electricity price cap")
         .attr("transform", "translate(0 -5)")
         .attr("text-anchor", "end")
         .attr("alignment-basline", "baseline")
@@ -246,7 +246,7 @@ const BrushChart = ({
       chart
         .select(".cap")
         .select(".capG")
-        .text("current gas price cap (for flexible plan only)")
+        .text("ref: flexible Gas price cap")
         .attr("transform", "translate(0 -5)")
         .attr("text-anchor", "end")
         .attr("alignment-basline", "baseline")
