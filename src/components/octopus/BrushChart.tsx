@@ -83,6 +83,10 @@ const BrushChart = ({
   useEffect(() => {
     if (!data || !svgRef) return;
 
+    select(svgRef.current)
+      .attr("width", widgetWidth)
+      .attr("height", widgetHeight)
+      .attr("viewBox", `0, 0, ${widgetWidth}, ${widgetHeight}`);
     // add clip
     select(svgRef.current)
       .select("defs")
@@ -462,12 +466,7 @@ const BrushChart = ({
       {isError && <ErrorMessage error={error} errorHandler={() => refetch()} />}
 
       <>
-        <svg
-          width={widgetWidth}
-          height={widgetHeight}
-          viewBox={`0, 0, ${widgetWidth}, ${widgetHeight}`}
-          ref={svgRef}
-        >
+        <svg ref={svgRef}>
           <defs>
             <linearGradient id="electricity" x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor="#aa33cc" />
