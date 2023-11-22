@@ -1,4 +1,10 @@
-export const TRACKER = [
+export interface ITariffPlan {
+  code: string;
+  name: string;
+  currentPlan: boolean;
+}
+
+export const TRACKER: ITariffPlan[] = [
   {
     code: "SILVER-FLEX-BB-23-02-08",
     name: "Tracker February 2023 v1",
@@ -34,7 +40,7 @@ export const ENERGY_TYPE = {
   G: "gas",
 };
 
-export interface tariffResult {
+export interface TariffResult {
   value_exc_vat: number;
   value_inc_vat: number;
   valid_from: string;
@@ -42,13 +48,16 @@ export interface tariffResult {
   payment_method: null | string;
 }
 
-export interface queryTariffResult {
+export interface QueryTariffResult {
   tariffType: ApiTariffType;
   count: number;
   next: null | string;
   previous: null | string;
-  results: tariffResult[];
+  results: TariffResult[];
 }
 
 export type ApiTariffType = keyof typeof ENERGY_TYPE;
 export type TariffType = ApiTariffType | "EG";
+export type TVariant = "default" | "badge";
+
+export const FETCH_ERROR = "Sorry. Cannot fetch data. Please try again.";

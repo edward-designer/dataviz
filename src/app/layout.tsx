@@ -6,6 +6,7 @@ import Providers from "./providers";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import Header from "@/components/Header";
+import Toast from "@/components/Toast";
 
 import { Advent_Pro, Roboto } from "next/font/google";
 
@@ -38,13 +39,15 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <Providers>
       <html lang="en">
         <body
-          className={`dark ${font.variable} ${font2.variable} ${font3.variable} bg-theme-950`}
+          className={`dark ${font.variable} ${font2.variable} ${font3.variable} bg-theme-950 text-white/80`}
         >
-          <ReactQueryDevtools initialIsOpen={false} />
-          <div className="p-2 lg:p-0 lg:grid lg:grid-cols-[[fullwidth_start]_minmax(0,5%)_[breakout_start]_minmax(0,5%)_[content_start]_minmax(1000px,_1fr)_[content_end]_minmax(0,5%)_[breakout_end]_minmax(0,5%)_[fullwidth_end]]">
-            <Header className="lg:col-[content]" />
-            {children}
-          </div>
+          <Toast>
+            <ReactQueryDevtools initialIsOpen={false} />
+            <div className="p-2 lg:p-0 lg:grid lg:grid-cols-[[fullwidth_start]_minmax(0,5%)_[breakout_start]_minmax(0,5%)_[content_start]_minmax(1000px,_1fr)_[content_end]_minmax(0,5%)_[breakout_end]_minmax(0,5%)_[fullwidth_end]]">
+              <Header className="lg:col-[content]" />
+              {children}
+            </div>
+          </Toast>
         </body>
       </html>
     </Providers>

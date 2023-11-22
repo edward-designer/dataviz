@@ -1,28 +1,17 @@
-import {
-  ApiTariffType,
-  ENERGY_TYPE,
-  TariffType,
-  tariffResult,
-} from "@/data/source";
+import { ApiTariffType, TariffResult, FETCH_ERROR } from "@/data/source";
 
 export const fetchEachApi = async (tariffType: ApiTariffType, url: string) => {
-  const response = await fetch(url);
-  console.log(url);
-  if (!response.ok) throw new Error("Cannot fetch data. Please try again.");
+  const response = await tryFetch(fetch(url));
+  if (!response.ok) throw new Error(FETCH_ERROR);
   const json = await response.json();
   return { ...json, tariffType };
 };
 
-type Entries<T> = {
-  [K in keyof T]: [K, T[K]];
-}[keyof T][];
-
 export const fetchApi =
   (urls: { tariffType: ApiTariffType; url: string }[]) => async () => {
-    const results = await Promise.all(
-      urls.map((url) => fetchEachApi(url.tariffType, url.url))
+    return await tryFetch(
+      Promise.all(urls.map((url) => fetchEachApi(url.tariffType, url.url)))
     );
-    return results;
   };
 
 export const isSameDate = (date1: Date, date2: Date) => {
@@ -40,9 +29,9 @@ export const isTomorrow = (date: Date) =>
   isSameDate(new Date(new Date().getTime() + 24 * 60 * 60 * 1000), date);
 
 export const priceAccessor = (
-  data: tariffResult | tariffResult[],
+  data: TariffResult | TariffResult[],
   index: number = 0
-) => {
+): undefined | number => {
   const value = Array.isArray(data)
     ? data.at(index)?.value_inc_vat
     : data?.value_inc_vat;
@@ -50,6 +39,7 @@ export const priceAccessor = (
   return evenRound(value, 2);
 };
 
+// Octopus uses unbiased rounding
 export const evenRound = (num: number, decimalPlaces: number) => {
   var d = decimalPlaces || 0;
   var m = Math.pow(10, d);
@@ -61,9 +51,37 @@ export const evenRound = (num: number, decimalPlaces: number) => {
   return d ? r / m : r;
 };
 
+export const calculateChangePercentage = (
+  price: unknown,
+  priceToCompare: unknown
+): number | boolean => {
+  if (
+    typeof price !== "number" ||
+    typeof priceToCompare !== "number" ||
+    price === 0 ||
+    priceToCompare === 0
+  )
+    return false;
+  return parseInt(
+    (((price - priceToCompare) / priceToCompare) * 100).toFixed(0)
+  );
+};
+
 export function assertExtentNotUndefined<T>(
   extent: Array<T | undefined>
 ): asserts extent is [T, T] {
   if (!!extent.find((element) => typeof element === "undefined"))
     throw new Error("some element is undefined");
 }
+
+export const tryFetch = async <T>(asyncProcess: Promise<T>) => {
+  try {
+    const results = await asyncProcess;
+    return results;
+  } catch (error) {
+    if (error instanceof Error && error.message) {
+      throw new Error(error.message);
+    }
+    throw new Error(FETCH_ERROR);
+  }
+};

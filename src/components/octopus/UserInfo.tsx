@@ -7,11 +7,19 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { IoLocationOutline } from "react-icons/io5";
+
+import toast from "react-hot-toast";
+
+import { FETCH_ERROR } from "@/data/source";
+
+import { IValue, UserContext } from "@/context/user";
 import Remark from "./Remark";
 import Button from "./Button";
-import { UserContext } from "@/context/user";
 import InfoInput from "./InfoInput";
+
+import { tryFetch } from "@/utils/helpers";
+
+import { IoLocationOutline } from "react-icons/io5";
 
 export type ErrorType = Record<string, string>;
 
@@ -23,6 +31,7 @@ const UserInfo = () => {
   const [postcode, setPostCode] = useState(value.postcode);
 
   const clearPostCodeHandler = () => {
+    toast.success("Postcode cleared.");
     setPostCode("");
     const newError = { ...error };
     delete newError.postcode;
@@ -33,16 +42,20 @@ const UserInfo = () => {
   const submitHandler = () => {
     setError({});
     const getGsp = async () => {
-      const response = await fetch(
-        `https://api.octopus.energy/v1/industry/grid-supply-points/?postcode=${postcode}`
+      const response = await tryFetch(
+        fetch(
+          `https://api.octopus.energy/v1/industry/grid-supply-points/?postcode=${postcode}`
+        )
       );
+      if (!response.ok) throw new Error(FETCH_ERROR);
+
       const result = await response.json();
       const gsp = result?.results?.[0]?.group_id;
       if (!result.count || typeof gsp !== "string") {
+        toast.error("Sorry, something went wrong.");
         setError({
           ...error,
-          postcode:
-            "Sorry, something went wrong. Please check your postcode and try again.",
+          postcode: "Please check your postcode and try again.",
         });
         return false;
       }
@@ -51,6 +64,7 @@ const UserInfo = () => {
         postcode: postcode.toUpperCase(),
         gsp: gsp.replace("_", ""),
       });
+      toast.success("Changes are cancelled.");
       return true;
     };
     getGsp().then((result) => {
@@ -58,10 +72,11 @@ const UserInfo = () => {
     });
   };
 
-  const cancelHandler = () => {
-    setPostCode("");
+  const cancelHandler = (value: IValue) => {
+    setPostCode(value.postcode);
     setOpen(false);
     setError({});
+    toast.error("Changes are cancelled.");
   };
 
   return (
@@ -95,7 +110,7 @@ const UserInfo = () => {
               Submit
             </Button>
             <Button
-              clickHandler={cancelHandler}
+              clickHandler={() => cancelHandler(value)}
               className="border-white/50 border"
             >
               Cancel

@@ -38,9 +38,11 @@ const InfoInput = ({
           className="flex-1"
           onChange={(e) => setValue(e.target.value)}
         />
-        <Button clickHandler={clearHandler}>
-          <MdOutlineClear className="w-6 h-6 text-accentPink-800 hover:text-accentPink-600" />
-        </Button>
+        {value && (
+          <Button clickHandler={clearHandler}>
+            <MdOutlineClear className="w-6 h-6 text-accentPink-800 hover:text-accentPink-600" />
+          </Button>
+        )}
       </div>
       {error?.[label] && <div className="text-red-800">{error[label]}</div>}
     </div>
