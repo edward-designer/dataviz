@@ -1,4 +1,9 @@
-import { ApiTariffType, TariffResult, FETCH_ERROR } from "@/data/source";
+import {
+  ApiTariffType,
+  TariffResult,
+  FETCH_ERROR,
+  QueryTariffResult,
+} from "@/data/source";
 
 export const fetchEachApi = async (tariffType: ApiTariffType, url: string) => {
   const response = await tryFetch(fetch(url));
@@ -9,9 +14,11 @@ export const fetchEachApi = async (tariffType: ApiTariffType, url: string) => {
 
 export const fetchApi =
   (urls: { tariffType: ApiTariffType; url: string }[]) => async () => {
-    return await tryFetch(
+    console.log(urls);
+    const allResponse = await tryFetch(
       Promise.all(urls.map((url) => fetchEachApi(url.tariffType, url.url)))
     );
+    return allResponse;
   };
 
 export const isSameDate = (date1: Date, date2: Date) => {

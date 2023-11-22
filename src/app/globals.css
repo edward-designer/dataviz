@@ -152,8 +152,15 @@ input[type="range"]:focus::-webkit-slider-runnable-track {
   box-shadow: 2px 1px 1px rgba(16, 0, 48, 0.5);
 }
 
+.tick {
+  font-size: 14px;
+}
+
 @media screen and (max-width: 500px) {
   .leaflet-control-attribution {
     width: 100dvw;
+  }
+  .tick {
+    font-size: 10px;
   }
 }

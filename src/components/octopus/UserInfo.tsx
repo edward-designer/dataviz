@@ -1,5 +1,5 @@
 "use client";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -28,11 +28,15 @@ const UserInfo = () => {
 
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<Record<string, string>>({});
-  const [postcode, setPostCode] = useState(value.postcode);
+  const [postcode, setPostcode] = useState(value.postcode);
+
+  useEffect(() => {
+    setPostcode(value.postcode);
+  }, [value.postcode]);
 
   const clearPostCodeHandler = () => {
     toast.success("Postcode cleared.");
-    setPostCode("");
+    setPostcode("");
     const newError = { ...error };
     delete newError.postcode;
     setError(newError);
@@ -64,7 +68,7 @@ const UserInfo = () => {
         postcode: postcode.toUpperCase(),
         gsp: gsp.replace("_", ""),
       });
-      toast.success("Changes are cancelled.");
+      toast.success("Changes are saved.");
       return true;
     };
     getGsp().then((result) => {
@@ -73,15 +77,21 @@ const UserInfo = () => {
   };
 
   const cancelHandler = (value: IValue) => {
-    setPostCode(value.postcode);
+    setPostcode(value.postcode);
     setOpen(false);
     setError({});
-    toast.error("Changes are cancelled.");
+  };
+
+  const handleDialogOpenChange = (state: boolean) => {
+    if (!state) {
+      cancelHandler(value);
+    }
+    setOpen(state);
   };
 
   return (
     <div className="flex">
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open} onOpenChange={handleDialogOpenChange}>
         <DialogTrigger className="text-accentPink-600 flex">
           <IoLocationOutline
             className="w-6 h-6 text-accentPink-600"
@@ -99,7 +109,7 @@ const UserInfo = () => {
             placeHolder="Please enter your postcode"
             error={error}
             value={postcode}
-            setValue={setPostCode}
+            setValue={setPostcode}
             clearHandler={clearPostCodeHandler}
           />
           <div className="flex gap-2">

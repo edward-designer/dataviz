@@ -89,6 +89,15 @@ const TrackerTariff = () => {
         <PricePane tariff={tariff} type="E" gsp={gsp} />
         <PricePane tariff={tariff} type="G" gsp={gsp} />
       </section>
+      <div className="flex-0 text-center translate-y-3 text-accentPink-600">
+        Graph of Electricity and Gas Unit Rates Over Time
+        <Remark variant="badge">
+          The current Government guaranteed price caps for electricity and gas
+          shown here are for flexible plans only. All tracker plans have
+          different price caps set at the time of joining the plan. Please refer
+          to the table below.
+        </Remark>
+      </div>
       <section className="flex justify-center items-center gap-4 my-4">
         <BrushChart tariff={tariff} type="EG" gsp={gsp} />
       </section>

@@ -40,6 +40,11 @@ export const ENERGY_TYPE = {
   G: "gas",
 };
 
+export const ENERGY_TYPE_ICON = {
+  E: "⚡",
+  G: "🔥",
+};
+
 export interface TariffResult {
   value_exc_vat: number;
   value_inc_vat: number;
