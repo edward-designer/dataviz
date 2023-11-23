@@ -1,4 +1,4 @@
-"use client";
+/*"use client";
 import Lottie from "lottie-react";
 import electricityIcon from "../../../public/lottie/electricity.json";
 import gasIcon from "../../../public/lottie/gas.json";
@@ -151,3 +151,4 @@ const PricePane2 = ({
 };
 
 export default PricePane2;
+*/
