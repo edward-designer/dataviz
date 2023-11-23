@@ -60,6 +60,7 @@ import BrushChart from "../../components/octopus/BrushChart";
 import PricePane from "../../components/octopus/PricePane";
 import Remark from "../../components/octopus/Remark";
 import TariffSelect from "../../components/octopus/TariffSelect";
+import MapChart from "@/components/octopus/MapChart";
 
 const TrackerTariff = () => {
   const [tariff, setTariff] = useState(TRACKER[0].code);
@@ -89,7 +90,7 @@ const TrackerTariff = () => {
         <PricePane tariff={tariff} type="E" gsp={gsp} />
         <PricePane tariff={tariff} type="G" gsp={gsp} />
       </section>
-      <div className="flex-0 text-center translate-y-3 text-accentPink-600">
+      <div className="flex-0 text-lg text-center translate-y-3 text-accentPink-600">
         Electricity and Gas Unit Rates Over Time
         <Remark variant="badge">
           The current Government guaranteed price caps for electricity and gas
@@ -100,6 +101,59 @@ const TrackerTariff = () => {
       </div>
       <section className="flex justify-center items-center gap-4 my-4">
         <BrushChart tariff={tariff} type="EG" gsp={gsp} />
+      </section>
+      <div className="flex-0 text-lg text-center translate-y-3 text-accentPink-600">
+        Comparision of Octopus Tracker Plans
+      </div>
+      <section className="flex justify-center items-center gap-4 my-4 flex-col bg-black/20 rounded-lg p-10">
+        <p className="text-sm">
+          Octopus Tracker gives the most transparent energy pricing in the UK.
+          Every day, Octopus update the price of energy based on an
+          independently published wholesale market price. The unit rate is
+          capped according to the following table (inclusive of VAT):
+        </p>
+        <table cellPadding={1}>
+          <thead>
+            <tr>
+              <th className="w-1/4">Tracker Plan</th>
+              <th className="w-1/4">Electricity Cap / kWh</th>
+              <th className="w-1/4">Gas Cap / kWh</th>
+            </tr>
+          </thead>
+          <tbody>
+            {TRACKER.map((plan) => (
+              <tr
+                key={plan.code}
+                className={`${
+                  tariff === plan.code
+                    ? "border-2 border-accentPink-500 bg-black/50"
+                    : "border-b border-b-accentBlue-950"
+                }`}
+              >
+                <td className="p-2">{plan.name}</td>
+                <td className="text-center">{plan.cap.E}</td>
+                <td className="text-center">{plan.cap.G}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+      <div className="flex-0 text-lg text-center translate-y-3 text-accentPink-600">
+        Unit Rates Over Location
+        <Remark variant="badge">
+          The unit rates for different parts of the UK is calcuated based on{" "}
+          <a
+            href="https://octopus.energy/tracker-faqs//#formula"
+            target="_blank"
+          >
+            a set of formulae
+          </a>
+          .
+        </Remark>
+      </div>
+      <section className="flex flex-col sm:flex-row items-stretch sm:justify-center sm:items-center gap-4 my-4">
+        <MapChart tariff={tariff} type="E" gsp={gsp} />
+        <MapChart tariff={tariff} type="G" gsp={gsp} />
       </section>
     </div>
   );

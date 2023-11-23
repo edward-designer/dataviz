@@ -5,7 +5,12 @@ import Badge from "@/components/octopus/Badge";
 import Comparison from "@/components/octopus/Comparison";
 import Remark from "./Remark";
 
-import { ENERGY_TYPE, TariffResult, TariffType, priceCap } from "@/data/source";
+import {
+  QueryTariffResult,
+  TariffResult,
+  TariffType,
+  priceCap,
+} from "@/data/source";
 
 import useTariffQuery from "../../hooks/useTariffQuery";
 
@@ -16,12 +21,10 @@ import {
   priceAccessor,
 } from "../../utils/helpers";
 
-import Lottie from "lottie-react";
 import backgroundE from "../../../public/images/E.jpg";
 import backgroundG from "../../../public/images/G.jpg";
-import electricityIcon from "../../../public/lottie/electricity.json";
-import gasIcon from "../../../public/lottie/gas.json";
 import ErrorMessage from "./ErrorMessage";
+import { EnergyIcon } from "./EnergyIcon";
 
 const PricePane = ({
   tariff,
@@ -33,7 +36,7 @@ const PricePane = ({
   gsp: string;
 }) => {
   const { isLoading, isError, isSuccess, refetch, data, error } =
-    useTariffQuery({
+    useTariffQuery<QueryTariffResult>({
       tariff,
       type,
       gsp,
@@ -97,18 +100,7 @@ const PricePane = ({
       {isError && <ErrorMessage error={error} errorHandler={() => refetch()} />}
       {isSuccess && (
         <>
-          <div className="absolute top-4 right-0 flex flex-col items-end">
-            <Lottie
-              animationData={type === "G" ? gasIcon : electricityIcon}
-              loop={2}
-              aria-hidden={true}
-              className="w-16 h-16"
-              initialSegment={[0, 25]}
-            />
-            <span className="text-accentBlue-600 -mt-2 sr-only">
-              {ENERGY_TYPE[type]}
-            </span>
-          </div>
+          <EnergyIcon type={type} />
           <div className="flex flex-1 self-start flex-col">
             <Badge
               label={`Today - ${new Date().toLocaleDateString()}`}
@@ -123,7 +115,7 @@ const PricePane = ({
                 {typeof priceChangeTodayVsPriceCap === "number" && (
                   <Comparison
                     change={priceChangeTodayVsPriceCap}
-                    compare="price cap"
+                    compare="Ofgem cap"
                   >
                     <Remark variant="badge">
                       The{" "}
@@ -137,7 +129,8 @@ const PricePane = ({
                       <strong className="text-bold">
                         {`${priceCap[type]}p`}
                       </strong>{" "}
-                      (from 1 October to 31 December 2023).
+                      (from 1 October to 31 December 2023). But note that
+                      Tracker has much higher cap.
                     </Remark>
                   </Comparison>
                 )}

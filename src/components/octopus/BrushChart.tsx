@@ -48,6 +48,7 @@ import {
   ENERGY_TYPE,
   ENERGY_TYPE_ICON,
   priceCap,
+  QueryTariffResult,
 } from "@/data/source";
 
 import useTariffQuery from "../../hooks/useTariffQuery";
@@ -69,7 +70,7 @@ const BrushChart = ({
 }) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const { isLoading, isError, isSuccess, refetch, data, error } =
-    useTariffQuery({
+    useTariffQuery<QueryTariffResult>({
       tariff,
       type,
       gsp,
@@ -469,7 +470,14 @@ const BrushChart = ({
         select(".tooltip")
           .transition()
           .duration(20)
-          .attr("opacity", `${pointValues.every((point) => typeof point[1] !== "number")?"0":"1"}`)
+          .attr(
+            "opacity",
+            `${
+              pointValues.every((point) => typeof point[1] !== "number")
+                ? "0"
+                : "1"
+            }`
+          )
           .style("transform", `translate(${tooltipLeft}px, ${padding.top}px)`);
         select(".date")
           .selectAll("text")
