@@ -105,7 +105,7 @@ const TrackerTariff = () => {
       <div className="flex-0 text-lg text-center translate-y-3 text-accentPink-600">
         Comparision of Octopus Tracker Plans
       </div>
-      <section className="flex justify-center items-center gap-4 my-4 flex-col bg-black/20 rounded-lg p-10">
+      <section className="flex justify-center items-center gap-4 my-4 flex-col bg-black/20 rounded-lg p-4 lg:p-10">
         <p className="text-sm">
           Octopus Tracker gives the most transparent energy pricing in the UK.
           Every day, Octopus update the price of energy based on an
@@ -139,7 +139,7 @@ const TrackerTariff = () => {
         </table>
       </section>
       <div className="flex-0 text-lg text-center translate-y-3 text-accentPink-600">
-        Unit Rates Over Location
+        Current Unit Rates Around UK
         <Remark variant="badge">
           The unit rates for different parts of the UK is calcuated based on{" "}
           <a
