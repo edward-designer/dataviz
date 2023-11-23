@@ -424,8 +424,6 @@ const BrushChart = ({
       pointerInteractionArea.attr("clip-path", "url(#clip)");
       /* Remove all visible elements in case on Zoom */
       tooltip.attr("opacity", "0");
-      pointerInteractionArea.selectAll("circle").remove();
-      pointerInteractionArea.selectAll("line").remove();
 
       /* Pointer move */
       chart.on("pointermove", function (e: PointerEvent) {
@@ -471,7 +469,7 @@ const BrushChart = ({
         select(".tooltip")
           .transition()
           .duration(20)
-          .attr("opacity", "1")
+          .attr("opacity", `${pointValues.every((point) => typeof point[1] !== "number")?"0":"1"}`)
           .style("transform", `translate(${tooltipLeft}px, ${padding.top}px)`);
         select(".date")
           .selectAll("text")
@@ -493,10 +491,6 @@ const BrushChart = ({
             if (typeof d[1] === "string") return `${d[2]} ${d[1]}`;
             return "--";
           });
-
-        /* Hide tooltip if all prices are undefined or unavailable */
-        if (pointValues.every((point) => typeof point[1] !== "number"))
-          select(".tooltip").attr("opacity", 0);
 
         // Indication line and dots
         pointerInteractionArea
