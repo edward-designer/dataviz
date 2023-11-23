@@ -31,6 +31,14 @@ import {
   utcYear,
   utcFormat,
   timeFormatDefaultLocale,
+  D3ZoomEvent,
+  ZoomScale,
+  zoom,
+  ScaleTime,
+  ScaleLinear,
+  timeDay,
+  timeWeek,
+  timeYear,
 } from "d3";
 import toast from "react-hot-toast";
 
@@ -67,6 +75,7 @@ const BrushChart = ({
       gsp,
     });
 
+  // Specify chart properties (dimensions and colors)
   let widgetWidth = 1000;
   let widgetHeight = 450;
   const fontSize = 14;
@@ -74,6 +83,8 @@ const BrushChart = ({
   const innerPadding = 10;
   const padding = { top: 40, bottom: 60, left: 60, right: 20 };
   const axisColor = "#63acb8";
+
+  // Update chart to content width (for responsive layout)
   if (typeof document !== "undefined") {
     widgetWidth =
       document.querySelector(".chartDiv")?.getBoundingClientRect().width ??
@@ -81,14 +92,27 @@ const BrushChart = ({
   }
 
   useEffect(() => {
-    if (!data || !svgRef) return;
+    if (!data || !svgRef || !svgRef.current) return;
+    // ↓↓↓ when svgRef.current and data are ready //
 
-    select(svgRef.current)
+    // Select the SVG element
+    const chart = select(svgRef.current) as Selection<
+      SVGSVGElement,
+      unknown,
+      null,
+      undefined
+    >;
+    // Add attr to svg
+    chart
       .attr("width", widgetWidth)
       .attr("height", widgetHeight)
       .attr("viewBox", `0, 0, ${widgetWidth}, ${widgetHeight}`);
-    // add clip
-    select(svgRef.current)
+    chart
+      .selectAll("g.chartContainer, g.interactionContainer")
+      .attr("transform", `translate(${padding.left}, ${padding.top})`);
+
+    // Add clip path to hide chart outside of the showing area
+    chart
       .select("defs")
       .append("svg:clipPath")
       .attr("id", "clip")
@@ -98,48 +122,67 @@ const BrushChart = ({
       .attr("x", 0)
       .attr("y", 0);
 
-    // translate
-    select(svgRef.current)
-      .selectAll("g.chartContainer, g.interactionContainer")
-      .attr("transform", `translate(${padding.left}, ${padding.top})`);
+    // Time formatter
+    const formatHour = utcFormat("%I %p"),
+      formatDay = utcFormat("%a %d"),
+      formatWeek = utcFormat("%b %d"),
+      formatMonth = utcFormat("%b"),
+      formatYear = utcFormat("%Y");
 
+    function multiFormat(date: Date) {
+      // note: UK has daylight saving time, so utcUYear variant will NOT work as expected
+      return (
+        timeDay(date) < date
+          ? formatHour
+          : timeMonth(date) < date
+          ? timeWeek(date) < date
+            ? formatDay
+            : formatWeek
+          : timeYear(date) < date
+          ? formatMonth
+          : formatYear
+      )(date);
+    }
+    // ↓↓↓ DRAW AXES
+
+    // Create the horizontal and vertical scales.
+    // different datasets may have different end dates, have to loop over all of them to find the extent
+    const xExtent = extent(
+      data
+        .map((dataset) =>
+          extent(dataset.results, (d) => new Date(d.valid_to) ?? new Date())
+        )
+        .flat(),
+      (d) => d
+    );
+    assertExtentNotUndefined<Date>(xExtent);
+    const xScale = scaleTime()
+      .domain(xExtent)
+      .range([0, widgetWidth - padding.left - padding.right]);
+
+    const maxPrice =
+      max(
+        data.find((tariff) => tariff.tariffType === "E")?.results ?? [],
+        (data) => data?.value_inc_vat ?? 0
+      ) ?? 0;
+    const yScale = scaleLinear(
+      [0, maxPrice + 5],
+      [widgetHeight - padding.top - padding.bottom, 0]
+    ).nice();
+
+    // Function to actually draw axes
     const drawAxes = (
-      chart: Selection<SVGSVGElement | null, unknown, null, undefined>
+      xScale: ScaleTime<number, number, never>,
+      yScale: ScaleLinear<number, number, never>
     ) => {
-      const xExtent = extent(
-        data
-          .map((dataset) =>
-            extent(dataset.results, (d) => new Date(d.valid_to) ?? new Date())
-          )
-          .flat(),
-        (d) => d
-      );
-      assertExtentNotUndefined<Date>(xExtent);
-      const xScale = scaleTime()
-        .domain(xExtent)
-        .range([0, widgetWidth - padding.left - padding.right]);
-
-      const maxPrice =
-        max(
-          data.find((tariff) => tariff.tariffType === "E")?.results ?? [],
-          (data) => data?.value_inc_vat ?? 0
-        ) ?? 0;
-      const yScale = scaleLinear(
-        [0, maxPrice + 5],
-        [widgetHeight - padding.top - padding.bottom, 0]
-      ).nice();
-
-      const xAxis = axisBottom<Date>(xScale).ticks(widgetWidth / 130);
       const yGrid = axisRight<number>(yScale)
         .tickFormat((d) => "")
         .tickSizeInner(widgetWidth - padding.left - padding.right)
         .tickPadding(0);
       const yAxis = axisLeft<number>(yScale).tickFormat((d) => `${d}p`);
-
-      const lineGenerator = line<TariffResult>()
-        .x((d) => xScale(new Date(d.valid_to)))
-        .y((d) => yScale(d.value_inc_vat))
-        .curve(curveStepAfter);
+      const xAxis = axisBottom<Date>(xScale)
+        .ticks(widgetWidth / 130)
+        .tickFormat(multiFormat);
       chart
         .select<SVGSVGElement>("g.grid")
         .attr("color", "#FFFFFF20")
@@ -158,7 +201,6 @@ const BrushChart = ({
         .attr("color", axisColor)
         .transition()
         .call(yAxis);
-
       chart.select(".yAxisText").remove();
       chart
         .select(".yAxis")
@@ -178,24 +220,29 @@ const BrushChart = ({
         .attr("alignment-basline", "baseline")
         .attr("font-size", "14")
         .attr("fill", axisColor);
-
-      return {
-        xAxis,
-        yAxis,
-        xExtent,
-        xScale,
-        yScale,
-        xAxisGroup,
-        lineGenerator,
-      };
     };
 
+    // ↓↓↓ DRAW LINES
+
+    const lineGeneratorFunc = (
+      xScale: ScaleTime<number, number, never>,
+      yScale: ScaleLinear<number, number, never>
+    ) =>
+      line<TariffResult>()
+        .x((d) => xScale(new Date(d.valid_to)))
+        .y((d) => yScale(d.value_inc_vat))
+        .curve(curveStepAfter);
+
+    // Function to actually draw lines
     const drawLine = (
-      chart: Selection<SVGSVGElement | null, unknown, null, undefined>,
       data: [TariffResult[]],
       name: string,
-      lineGenerator: Line<TariffResult>
+      xScale: ScaleTime<number, number, never>,
+      yScale: ScaleLinear<number, number, never>,
+      drawAnimate: boolean = false
     ) => {
+      const lineGenerator = lineGeneratorFunc(xScale, yScale);
+
       chart.select("g.chartContainer").append("g").classed(name, true);
       const line = chart
         .select<SVGPathElement>(`g.${name}`)
@@ -214,25 +261,30 @@ const BrushChart = ({
         );
       line.attr("d", lineGenerator);
 
-      const length = (line.node() as SVGPathElement).getTotalLength() ?? 0;
-      line
-        .attr("stroke-dasharray", length + " " + length)
-        .attr("stroke-dashoffset", -length)
-        .transition()
-        .duration(500)
-        .ease(easeLinear)
-        .attr("stroke-dashoffset", 0);
+      if (drawAnimate) {
+        /* Line animation - simulate draw from left to rigth NOTE: for first time only */
+        const length = (line.node() as SVGPathElement).getTotalLength() ?? 0;
+        line
+          .attr("stroke-dasharray", length + " " + length)
+          .attr("stroke-dashoffset", -length)
+          .transition()
+          .duration(500)
+          .ease(easeLinear)
+          .attr("stroke-dashoffset", 0);
+      }
 
       return line;
     };
 
+    // Function to draw price cap levels
     const drawCurrentCap = (
-      chart: Selection<SVGSVGElement | null, unknown, null, undefined>
+      xScale: ScaleTime<number, number, never>,
+      yScale: ScaleLinear<number, number, never>
     ) => {
       chart
         .select(".cap")
         .select(".capE")
-        .text("ref: flexible Electricity price cap")
+        .text("Electricity price cap - flexible plan")
         .attr("transform", "translate(0 -5)")
         .attr("text-anchor", "end")
         .attr("alignment-basline", "baseline")
@@ -246,7 +298,7 @@ const BrushChart = ({
       chart
         .select(".cap")
         .select(".capG")
-        .text("ref: flexible Gas price cap")
+        .text("Gas price cap - flexible plan")
         .attr("transform", "translate(0 -5)")
         .attr("text-anchor", "end")
         .attr("alignment-basline", "baseline")
@@ -274,6 +326,35 @@ const BrushChart = ({
         .attr("y2", (d) => yScale(d[1]));
     };
 
+    // ↓↓↓ ZOOM
+
+    // Zoom limits
+    const zoomBehavior = zoom<SVGSVGElement, unknown>()
+      .scaleExtent([1, 32])
+      .extent([
+        [padding.left, 0],
+        [widgetWidth - padding.right, widgetHeight],
+      ])
+      .translateExtent([
+        [padding.left, -Infinity],
+        [widgetWidth - padding.right, Infinity],
+      ])
+      .on("zoom", zoomed);
+
+    function zoomed(event: D3ZoomEvent<SVGSVGElement, ZoomScale>) {
+      const zxScale = event.transform.rescaleX(xScale);
+      pointerInteraction(zxScale, yScale);
+      drawAxes(zxScale, yScale);
+      [lineChart, lineChart2].map((chart) => {
+        chart
+          .attr("stroke-dasharray", "0 0")
+          .transition()
+          .duration(50)
+          .attr("d", lineGeneratorFunc(zxScale, yScale));
+      });
+    }
+
+    /* brush zoom function
     const drawBrush = (
       chart: Selection<SVGSVGElement | null, unknown, null, undefined>,
       targetCharts: Selection<
@@ -282,7 +363,7 @@ const BrushChart = ({
         SVGPathElement,
         unknown
       >[],
-      xExtent: [Date, Date]
+      xExtent: [Date, Date],
     ) => {
       const updateChart = (
         event: D3BrushEvent<TariffResult>,
@@ -328,19 +409,34 @@ const BrushChart = ({
       });
 
       return chartBrush;
-    };
+    };*/
 
-    const mouseInteraction = (
-      chart: Selection<SVGSVGElement | null, unknown, null, undefined>
+    // ↓↓↓ TOOLTIP
+
+    // Show points with value on mouse hover
+    const pointerInteraction = (
+      xScale: ScaleTime<number, number, never>,
+      yScale: ScaleLinear<number, number, never>
     ) => {
-      chart.on("pointermove", function (e: MouseEvent) {
+      const tooltip = select(".tooltip");
+      const pointerInteractionArea = chart.select("g.pointerInteraction");
+      /* Add clip */
+      pointerInteractionArea.attr("clip-path", "url(#clip)");
+      /* Remove all visible elements in case on Zoom */
+      tooltip.attr("opacity", "0");
+      pointerInteractionArea.selectAll("circle").remove();
+      pointerInteractionArea.selectAll("line").remove();
+
+      /* Pointer move */
+      chart.on("pointermove", function (e: PointerEvent) {
         const coordinates = pointer(e);
-        const mouseX = coordinates[0] - padding.left;
-        const xValue = xScale.invert(mouseX);
+        const pointerX = coordinates[0] - padding.left;
+        const xValue = xScale.invert(pointerX);
+
         const bisectDate = bisector(
           (d: TariffResult) => new Date(d.valid_to)
         ).left;
-        //bisector requires ASCENDING order
+        // NOTE:bisector requires ASCENDING order!!
         const index =
           data[0].results.length -
           1 -
@@ -351,11 +447,10 @@ const BrushChart = ({
             ),
             xValue
           );
-
         const dateAtZeroHour = xValue.setHours(0, 0, 0, 0);
         const pointValues = data.map((set) => {
           return [
-            mouseX,
+            pointerX,
             set.results.find(
               (result) =>
                 new Date(result.valid_from).getTime() === dateAtZeroHour
@@ -364,19 +459,19 @@ const BrushChart = ({
           ] as const;
         });
 
+        // Tooltip position
         const tooltipWidth =
           document.querySelector(".tooltip")?.getBoundingClientRect()?.width ??
           0;
-
         const tooltipLeft =
-          widgetWidth - (mouseX + padding.left + 20) < tooltipWidth
-            ? mouseX - 10 - tooltipWidth
-            : mouseX + 10;
+          widgetWidth - (pointerX + padding.left + 20) < tooltipWidth
+            ? pointerX - 10 - tooltipWidth
+            : pointerX + 10;
 
         select(".tooltip")
-          .attr("opacity", "1")
           .transition()
           .duration(20)
+          .attr("opacity", "1")
           .style("transform", `translate(${tooltipLeft}px, ${padding.top}px)`);
         select(".date")
           .selectAll("text")
@@ -399,12 +494,12 @@ const BrushChart = ({
             return "--";
           });
 
+        /* Hide tooltip if all prices are undefined or unavailable */
         if (pointValues.every((point) => typeof point[1] !== "number"))
           select(".tooltip").attr("opacity", 0);
 
-        chart
-          .select("g.mouseInteraction")
-          .attr("clip-path", "url(#clip)")
+        // Indication line and dots
+        pointerInteractionArea
           .selectAll("circle")
           .data(pointValues)
           .join("circle")
@@ -417,11 +512,9 @@ const BrushChart = ({
           })
           .attr("fill", "white")
           .attr("r", 4);
-        chart
-          .select("g.mouseInteraction")
-          .attr("clip-path", "url(#clip)")
+        pointerInteractionArea
           .selectAll("line")
-          .data([mouseX])
+          .data([pointerX])
           .join("line")
           .transition()
           .duration(20)
@@ -436,19 +529,18 @@ const BrushChart = ({
     };
 
     /* draw charts */
-    const chart = select(svgRef.current);
-    const { xAxis, yAxis, xExtent, xScale, yScale, xAxisGroup, lineGenerator } =
-      drawAxes(chart);
+    drawAxes(xScale, yScale);
     const lineChart = drawLine(
-      chart,
       [data[0].results],
       "electricity",
-      lineGenerator
+      xScale,
+      yScale,
+      true
     );
-    const lineChart2 = drawLine(chart, [data[1].results], "gas", lineGenerator);
-    const chartBrush = drawBrush(chart, [lineChart, lineChart2], xExtent);
-    drawCurrentCap(chart);
-    mouseInteraction(chart);
+    const lineChart2 = drawLine([data[1].results], "gas", xScale, yScale, true);
+    drawCurrentCap(xScale, yScale);
+    pointerInteraction(xScale, yScale);
+    chart.call(zoomBehavior);
   }, [
     data,
     leadingSize,
@@ -489,7 +581,7 @@ const BrushChart = ({
             </g>
           </g>
           <g className="interactionContainer">
-            <g className="mouseInteraction" />
+            <g className="pointerInteraction" />
             <g className="tooltip" opacity="0">
               <rect
                 width="150"
