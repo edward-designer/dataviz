@@ -49,9 +49,6 @@ const MapChart = ({ tariff, type, gsp }: IMapChart) => {
   if (typeof document !== "undefined") {
     width =
       document.querySelector(".mapDiv")?.getBoundingClientRect().width ?? width;
-    height =
-      document.querySelector(".mapDiv")?.getBoundingClientRect().height ??
-      height;
   }
 
   const { isLoading, isError, isSuccess, refetch, data, error } =
