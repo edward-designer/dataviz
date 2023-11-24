@@ -194,7 +194,7 @@ const TrackerTariff = () => {
           </AccordionItem>
           <AccordionItem value="item-1a" className="border-b-accentBlue-600/50">
             <AccordionTrigger>
-              What do the unit rates for different locations different?
+              Why do the unit rates different depending on where I live?
             </AccordionTrigger>
             <AccordionContent>
               That is because Octopus need to pay different amount of
@@ -208,7 +208,9 @@ const TrackerTariff = () => {
         <h3 className="font-bold text-accentBlue-700 mt-6">Joining Tracker</h3>
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="item-1b" className="border-b-accentBlue-600/50">
-            <AccordionTrigger>How to sign up for Tracker?</AccordionTrigger>
+            <AccordionTrigger>
+              How do I sign up for the Octopus Tracker plan?
+            </AccordionTrigger>
             <AccordionContent>
               For current Octopus clients with smart meters, it is officially
               told to take around 2 weeks, though some managed to get response
