@@ -201,7 +201,6 @@ const MapChart = ({ tariff, type, gsp }: IMapChart) => {
           "fill",
           select(this).attr("data-zone") === `_${gsp}` ? "#630a58" : "#03155e"
         );
-        tooltip.attr("opacity", "0");
       })
       .on("pointerleave.zoom", null);
 

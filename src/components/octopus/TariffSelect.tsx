@@ -43,8 +43,10 @@ const TariffSelect = ({
             <SelectLabel className="text-slate-500">- {type} -</SelectLabel>
             {source.map(({ code, name, currentPlan }) => (
               <SelectItem key={code} value={code}>
-                {name}
-                {currentPlan && <Badge label="CURRENT" />}
+                <h1>
+                  {name}
+                  {currentPlan && <Badge label="CURRENT" />}
+                </h1>
               </SelectItem>
             ))}
           </SelectGroup>
