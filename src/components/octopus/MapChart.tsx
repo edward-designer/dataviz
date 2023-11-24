@@ -157,10 +157,9 @@ const MapChart = ({ tariff, type, gsp }: IMapChart) => {
       )
       .attr("data-zone", (d) => d.properties?.Name)
       .attr("data-zoneName", (d) => d.properties?.LongName)
-      .on("pointerenter", function (d) {
+      .on("pointerenter pointermove", function (e) {
         select(this).attr("fill", "#092287");
-      })
-      .on("pointermove", function (e: PointerEvent) {
+
         const coordinates = pointer(e);
         const gsp = select(this).attr("data-zone") as gsp;
 
