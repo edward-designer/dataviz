@@ -153,7 +153,7 @@ const MapChart = ({ tariff, type, gsp }: IMapChart) => {
       .join("path")
       .attr("d", (d) => path(d.geometry) ?? null)
       .attr("fill", (d) =>
-        d.properties?.Name === `_${gsp}` ? "#630a58" : "#03155e"
+        d.properties?.Name === `_${gsp}` ? "#13357e" : "#03155e"
       )
       .attr("data-zone", (d) => d.properties?.Name)
       .attr("data-zoneName", (d) => d.properties?.LongName)
@@ -199,7 +199,7 @@ const MapChart = ({ tariff, type, gsp }: IMapChart) => {
       .on("pointerleave", function (d) {
         select(this).attr(
           "fill",
-          select(this).attr("data-zone") === `_${gsp}` ? "#630a58" : "#03155e"
+          select(this).attr("data-zone") === `_${gsp}` ? "#13357e" : "#03155e"
         );
       })
       .on("pointerleave.zoom", null);

@@ -35,7 +35,7 @@ const TariffSelect = ({
         onValueChange={(value: string) => setTariff(value)}
         defaultValue={tariff}
       >
-        <SelectTrigger className="w-auto max-w-full text-xl md:text-4xl text-accentBlue-400 flex items-center justify-center">
+        <SelectTrigger className="w-auto max-w-full leading-[2.5em] text-[clamp(20px,7vw,80px)] text-accentBlue-400 flex items-center justify-center">
           <SelectValue placeholder="Select a Tariff" />
         </SelectTrigger>
         <SelectContent>
@@ -43,10 +43,8 @@ const TariffSelect = ({
             <SelectLabel className="text-slate-500">- {type} -</SelectLabel>
             {source.map(({ code, name, currentPlan }) => (
               <SelectItem key={code} value={code}>
-                <h1>
-                  {name}
-                  {currentPlan && <Badge label="CURRENT" />}
-                </h1>
+                {name}
+                {currentPlan && <Badge label="CURRENT" />}
               </SelectItem>
             ))}
           </SelectGroup>
