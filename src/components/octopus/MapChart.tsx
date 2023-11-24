@@ -202,7 +202,8 @@ const MapChart = ({ tariff, type, gsp }: IMapChart) => {
           select(this).attr("data-zone") === `_${gsp}` ? "#630a58" : "#03155e"
         );
         tooltip.attr("opacity", "0");
-      });
+      })
+      .on("pointerleave.zoom", null);
 
     function updatePrice(mapData: IUkMapData) {
       svg
