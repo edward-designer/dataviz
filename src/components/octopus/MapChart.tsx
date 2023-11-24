@@ -204,6 +204,10 @@ const MapChart = ({ tariff, type, gsp }: IMapChart) => {
       })
       .on("pointerleave.zoom", null);
 
+    svg.on("pointerleave", function () {
+      tooltip.attr("opacity", "0");
+    });
+
     function updatePrice(mapData: IUkMapData) {
       svg
         .select(".figures")
