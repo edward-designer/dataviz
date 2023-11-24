@@ -204,7 +204,7 @@ const MapChart = ({ tariff, type, gsp }: IMapChart) => {
       })
       .on("pointerleave.zoom", null);
 
-    svg.on("pointerleave", function () {
+    svg.on("mouseleave", function () {
       tooltip.attr("opacity", "0");
     });
 
