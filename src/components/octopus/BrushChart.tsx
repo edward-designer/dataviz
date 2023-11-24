@@ -285,7 +285,7 @@ const BrushChart = ({
       chart
         .select(".cap")
         .select(".capE")
-        .text("Electricity price cap - flexible plan")
+        .text("Ofgem Electricity price cap - variable plan only")
         .attr("transform", "translate(0 -5)")
         .attr("text-anchor", "end")
         .attr("alignment-basline", "baseline")
@@ -299,7 +299,7 @@ const BrushChart = ({
       chart
         .select(".cap")
         .select(".capG")
-        .text("Gas price cap - flexible plan")
+        .text("Ofgen Gas price cap - fvariable plan only")
         .attr("transform", "translate(0 -5)")
         .attr("text-anchor", "end")
         .attr("alignment-basline", "baseline")

@@ -114,6 +114,7 @@ export interface Single_tariff_gsp_record {
 }
 
 export interface QuerySingleTariffPlanResult {
+  tariffs_active_at: string;
   single_register_electricity_tariffs: Single_tariff;
   single_register_gas_tariffs: Single_tariff;
 }

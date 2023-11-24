@@ -6,7 +6,7 @@ import {
 } from "@/data/source";
 
 export const fetchEachApi = async (tariffType: ApiTariffType, url: string) => {
-  const response = await tryFetch(fetch(url));
+  const response = await tryFetch(fetch(url, { cache: "no-store" }));
   if (!response.ok) throw new Error(FETCH_ERROR);
   const json = await response.json();
   return { ...json, tariffType };

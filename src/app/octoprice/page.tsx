@@ -103,9 +103,26 @@ const TrackerTariff = () => {
         <BrushChart tariff={tariff} type="EG" gsp={gsp} />
       </section>
       <div className="flex-0 text-lg text-center translate-y-3 text-accentPink-600">
+        Energy Unit Rates Around UK
+        <Remark variant="badge">
+          The unit rates for different parts of the UK is calcuated based on{" "}
+          <a
+            href="https://octopus.energy/tracker-faqs//#formula"
+            target="_blank"
+          >
+            a set of formulae
+          </a>
+          . The prices shown here are usually updated at around 9:30am each day.
+        </Remark>
+      </div>
+      <section className="flex flex-col sm:flex-row items-stretch sm:justify-center sm:items-center gap-4 my-4">
+        <MapChart tariff={tariff} type="E" gsp={gsp} />
+        <MapChart tariff={tariff} type="G" gsp={gsp} />
+      </section>
+      <div className="flex-0 text-lg text-center translate-y-3 text-accentPink-600">
         Comparision of Octopus Tracker Plans
       </div>
-      <section className="flex justify-center items-center gap-4 my-4 flex-col bg-black/20 rounded-lg p-4 lg:p-10">
+      <section className="flex justify-center items-center gap-4 my-4 flex-col bg-black/30 rounded-xl p-4 lg:p-10">
         <p className="text-sm">
           Octopus Tracker gives the most transparent energy pricing in the UK.
           Every day, Octopus update the price of energy based on an
@@ -137,23 +154,6 @@ const TrackerTariff = () => {
             ))}
           </tbody>
         </table>
-      </section>
-      <div className="flex-0 text-lg text-center translate-y-3 text-accentPink-600">
-        Current Unit Rates Around UK
-        <Remark variant="badge">
-          The unit rates for different parts of the UK is calcuated based on{" "}
-          <a
-            href="https://octopus.energy/tracker-faqs//#formula"
-            target="_blank"
-          >
-            a set of formulae
-          </a>
-          .
-        </Remark>
-      </div>
-      <section className="flex flex-col sm:flex-row items-stretch sm:justify-center sm:items-center gap-4 my-4">
-        <MapChart tariff={tariff} type="E" gsp={gsp} />
-        <MapChart tariff={tariff} type="G" gsp={gsp} />
       </section>
     </div>
   );

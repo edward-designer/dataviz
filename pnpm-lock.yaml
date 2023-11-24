@@ -38,6 +38,9 @@ dependencies:
   d3:
     specifier: ^7.8.5
     version: 7.8.5
+  d3-color-legend:
+    specifier: ^1.4.1
+    version: 1.4.1
   geojson:
     specifier: ^0.5.0
     version: 0.5.0
@@ -1695,6 +1698,17 @@ packages:
       d3-path: 3.1.0
     dev: false
 
+  /d3-color-legend@1.4.1:
+    resolution: {integrity: sha512-3yypvVkxAr8HVS+i1r+KInPKV3fkdYpXvqqjubX8OSrESn7TgzrkiZslJdCmPRN/o/Th5nzV4wjIy9JlHYL8eQ==}
+    engines: {node: '>=12'}
+    dependencies:
+      d3-selection: 3.0.0
+      kapsule: 1.14.5
+      svg-text-fit: 1.2.1
+      svg-utils: 1.3.1
+      tinycolor2: 1.6.0
+    dev: false
+
   /d3-color@3.1.0:
     resolution: {integrity: sha512-zg/chbXyeBtMQ1LbD/WSoW2DpC3I0mpmPdW+ynRTj/x2DAWYrIY7qeZIHidozwV24m4iavr15lNwIwLxRmOxhA==}
     engines: {node: '>=12'}
@@ -2927,6 +2941,13 @@ packages:
       object.values: 1.1.7
     dev: true
 
+  /kapsule@1.14.5:
+    resolution: {integrity: sha512-H0iSpTynUzZw3tgraDmReprpFRmH5oP5GPmaNsurSwLx2H5iCpOMIkp5q+sfhB4Tz/UJd1E1IbEE9Z6ksnJ6RA==}
+    engines: {node: '>=12'}
+    dependencies:
+      lodash-es: 4.17.21
+    dev: false
+
   /kdbush@4.0.2:
     resolution: {integrity: sha512-WbCVYJ27Sz8zi9Q7Q0xHC+05iwkm3Znipc2XTlrnJbsHMYktW4hPhXUE8Ys1engBrvffoSCqbil1JQAa7clRpA==}
     dev: false
@@ -2981,6 +3002,10 @@ packages:
     dependencies:
       p-locate: 5.0.0
     dev: true
+
+  /lodash-es@4.17.21:
+    resolution: {integrity: sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==}
+    dev: false
 
   /lodash.merge@4.6.2:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
@@ -3752,6 +3777,23 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
+  /svg-text-fit@1.2.1:
+    resolution: {integrity: sha512-QDs1SIDdiD5xah1ic8XvYCKLoDeq+YSbFbE4ReCNw9jBezXKAedDg0Mr8Rj7HZ6qRmO+C378JQ8enUnYgFs2sA==}
+    engines: {node: '>=12'}
+    dependencies:
+      kapsule: 1.14.5
+    dev: false
+
+  /svg-utils@1.3.1:
+    resolution: {integrity: sha512-ljuVBX7TovEtX8E0IE3dXD5AH+AMc8u5MQkmflVm9zDp0E4cz/F7WA6yhMW3qxribHmobWDbwwuLsHIAPi5NYg==}
+    engines: {node: '>=12'}
+    dependencies:
+      d3-array: 3.2.4
+      d3-scale: 4.0.2
+      d3-selection: 3.0.0
+      kapsule: 1.14.5
+    dev: false
+
   /tailwind-merge@2.0.0:
     resolution: {integrity: sha512-WO8qghn9yhsldLSg80au+3/gY9E4hFxIvQ3qOmlpXnqpDKoMruKfi/56BbbMg6fHTQJ9QD3cc79PoWqlaQE4rw==}
     dependencies:
@@ -3815,6 +3857,10 @@ packages:
     resolution: {integrity: sha512-RVZSIV5IG10Hk3enotrhvz0T9em6cyHBLkH/YAZuKqd8hRkKhSfCGIcP2KUY0EPxndzANBmNllzWPwak+bheSw==}
     dependencies:
       any-promise: 1.3.0
+
+  /tinycolor2@1.6.0:
+    resolution: {integrity: sha512-XPaBkWQJdsf3pLKJV9p4qN/S+fm2Oj8AIPo1BTUhg5oxkvm9+SVEGFdhyOz7tTdUTfvxMiAs4sp6/eZO2Ew+pw==}
+    dev: false
 
   /to-regex-range@5.0.1:
     resolution: {integrity: sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==}
