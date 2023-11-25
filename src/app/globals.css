@@ -152,6 +152,12 @@ input[type="range"]:focus::-webkit-slider-runnable-track {
   box-shadow: 2px 1px 1px rgba(16, 0, 48, 0.5);
 }
 
+.leaflet-div-icon.leaflet-marker-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .tick {
   font-size: 14px;
 }

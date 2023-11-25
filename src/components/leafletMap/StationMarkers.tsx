@@ -22,14 +22,25 @@ export const Markers = ({
     points: data,
     bounds,
     zoom,
-    options: { radius: 700 / zoom, maxZoom: 12 },
+    options: {
+      radius: 700 / zoom,
+      maxZoom: 12,
+      map: (props) => ({
+        lowest: props.prices.E10 ?? Infinity,
+      }),
+      reduce: (acc, props) => {
+        acc.lowest = props.lowest
+          ? Math.min(acc.lowest, props.lowest)
+          : acc.lowest;
+      },
+    },
   });
 
   const domain = extent(
     clusters.filter((point) => point.properties.cluster) as TCluster[],
     (point) => point.properties?.point_count
   ) as [number, number];
-  const circleScale = scaleLog().domain(domain).range([20, 35]);
+  const circleScale = scaleLog().domain(domain).range([30, 50]);
 
   const getClusterIcon = (count: number, size: number) => {
     return L.divIcon({
@@ -47,17 +58,13 @@ export const Markers = ({
     clusters.map((cluster) => {
       const [longitude, latitude] = cluster.geometry.coordinates;
       const { cluster: isCluster } = cluster.properties;
-
       if (isCluster) {
-        const { point_count: pointCount } = cluster.properties;
+        const { point_count: pointCount, lowest } = cluster.properties;
         return (
           <Marker
             key={`${cluster.id}`}
             position={[latitude, longitude]}
-            icon={getClusterIcon(
-              pointCount,
-              (circleScale(pointCount) * 10) / zoom
-            )}
+            icon={getClusterIcon(lowest, (circleScale(pointCount) * 10) / zoom)}
             eventHandlers={{
               click: () => {
                 const expansionZoom = Math.min(
@@ -75,17 +82,23 @@ export const Markers = ({
         );
       }
 
+      const iconText = L.divIcon({
+        html: cluster.properties.prices.E10
+          ? `${cluster.properties.prices.E10}p`
+          : "N/A",
+      });
       return (
         <CircleMarker
           key={`${cluster.properties.siteID}`}
           center={[latitude, longitude]}
           fillColor={colorScaleD3(cluster.properties.brand)}
           fillOpacity={0.5}
-          radius={7}
+          radius={20}
           stroke={true}
           color="white"
           weight={1}
         >
+          <Marker position={[latitude, longitude]} icon={iconText} />
           <Popup>
             <h3 className="font-bold">{cluster.properties.postcode}</h3>
             <dl className="grid grid-cols-[70px_1fr]">

@@ -37,4 +37,5 @@ next-env.d.ts
 
 #dummy
 /src/app/chargePoint
-/src/app/petrol
+/src/app/petrol/page.tsx
+/src/comp
