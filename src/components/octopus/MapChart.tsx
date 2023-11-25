@@ -138,7 +138,7 @@ const MapChart = ({ tariff, type, gsp }: IMapChart) => {
       .style("fill", "url(#legendGradient)");
     const legendAxisRender = svg
       .select<SVGGElement>(".legend")
-      .attr("transform", `translate(0,${height / 2 - 20})`)
+      .attr("transform", `translate(10,${height / 2 - 20})`)
       .call(legendAxis);
     legendAxisRender
       .style("color", "#00000080")
@@ -325,7 +325,7 @@ const MapChart = ({ tariff, type, gsp }: IMapChart) => {
                 </g>
               </g>
               <g className="legend"></g>
-              <text className="date font-display fill-white/60" x="0" y="30" />
+              <text className="date font-display fill-white/60" x="10" y="30" />
             </g>
           </svg>
           <p className="absolute text-xs text-accentBlue-800 right-1 bottom-1">
