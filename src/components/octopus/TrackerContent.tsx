@@ -1,56 +1,5 @@
 "use client";
 
-/*
- * global states: (postcode), gsp, (api key, account number) => to be stored in localstorage
-*  server states: products/tariff 
-https://api.octopus.energy/v1/products/?brand=OCTOPUS_ENERGY
-
-tracker code:
-<select id="P1_TRACKER" name="P1_TRACKER" class="selectlist apex-item-select" data-native-menu="false" size="1" onchange="apex.submit('P1_TRACKER');"><option value="">Please select...</option>
-<option value="SILVER-FLEX-BB-23-02-08" selected="selected">Tracker February 2023 v1</option>
-<option value="SILVER-FLEX-22-11-25">Tracker Nov 2022 V1</option>
-<option value="SILVER-VAR-22-10-21">Tracker Oct 2022 V1</option>
-<option value="SILVER-22-08-31">Tracker Aug 2022 V1</option>
-<option value="SILVER-22-07-22">Tracker Jul 2022 V1</option>
-<option value="SILVER-22-04-25">Tracker V3 (Apr 2022)</option>
-<option value="SILVER-2017-1">Tracker V1</option>
-</select>
-
-tracker formula (https://octopus.energy/tracker-faqs/) https://www.guylipman.com/octopus/formulas
-bill calculator https://www.guylipman.com/octopus/bill_agile.html?startdate=2020-03-23&enddate=2020-03-31
-
-get gsp:
-https://api.octopus.energy/v1/industry/grid-supply-points/?postcode=RG19
-
-get all products
-https://api.octopus.energy/v1/products/
-
-get a month of agile tariff
-https://api.octopus.energy/v1/products/AGILE-FLEX-22-11-25/electricity-tariffs/E-1R-AGILE-FLEX-22-11-25-A/standard-unit-rates/?page_size=1500
-
-Phase 1
-- live dashboard data for all tariffs
-- set postcode for gsp (https://opennetzero.org/dataset/gis-boundaries-for-gb-grid-supply-points)
-- comparision of current rate (no historical tariffs)
-- tracker and agile
-
-| header + postcode lookup |
-| select       |
-| elect | gas |
-| trend        |
-| different tariff |
-| regional diff   |
-
-
-Phase 2
-- accept api key (note: override gsp via postcode)
-- compare all traiffs
-
-
-Phase 3
-- forecast (https://opennetzero.org/dataset/oe-03782949-elexon_insights_14d_generation_forecast_summary   need saving to db)
-- energy end use
-*/
 import { ReactNode, useContext, useState } from "react";
 
 import {
@@ -168,7 +117,7 @@ const TrackerTariff = () => {
       <section className="flex justify-center items-center gap-4 my-4 flex-col bg-black/30 rounded-xl p-4 lg:p-10">
         <h3 className="font-bold text-accentBlue-700">About Octopus Tracker</h3>
         <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="item-1a" className="border-b-accentBlue-600/50">
+          <AccordionItem value="item-0a" className="border-b-accentBlue-600/50">
             <AccordionTrigger>
               What have the Ofgem price caps to do with Tracker?
             </AccordionTrigger>
@@ -180,7 +129,7 @@ const TrackerTariff = () => {
               the near future.
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value="item-1a" className="border-b-accentBlue-600/50">
+          <AccordionItem value="item-0b" className="border-b-accentBlue-600/50">
             <AccordionTrigger>
               I am currently on Octopus Agile/Go/flexible/fixed. Will I save
               more by switching to Tracker?
@@ -192,7 +141,7 @@ const TrackerTariff = () => {
               and take action if deemded appropriate.
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value="item-1a" className="border-b-accentBlue-600/50">
+          <AccordionItem value="item-0c" className="border-b-accentBlue-600/50">
             <AccordionTrigger>
               Why do the unit rates different depending on where I live?
             </AccordionTrigger>
@@ -207,7 +156,7 @@ const TrackerTariff = () => {
         </Accordion>
         <h3 className="font-bold text-accentBlue-700 mt-6">Joining Tracker</h3>
         <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="item-1b" className="border-b-accentBlue-600/50">
+          <AccordionItem value="item-1a" className="border-b-accentBlue-600/50">
             <AccordionTrigger>
               How do I sign up for the Octopus Tracker plan?
             </AccordionTrigger>
@@ -219,7 +168,7 @@ const TrackerTariff = () => {
               an Octopus client or do not have a smart meters.
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value="item-1c" className="border-b-accentBlue-600/50">
+          <AccordionItem value="item-1b" className="border-b-accentBlue-600/50">
             <AccordionTrigger>
               How long now it takes to join Octopus tracker plans?
             </AccordionTrigger>
@@ -231,7 +180,7 @@ const TrackerTariff = () => {
               and sign up there.
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value="item-1d" className="border-b-accentBlue-600/50">
+          <AccordionItem value="item-1c" className="border-b-accentBlue-600/50">
             <AccordionTrigger>
               What if I do not have a smart meter?
             </AccordionTrigger>
@@ -243,7 +192,7 @@ const TrackerTariff = () => {
               smart meter is installed and running properly.
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value="item-1e" className="border-b-accentBlue-600/50">
+          <AccordionItem value="item-1d" className="border-b-accentBlue-600/50">
             <AccordionTrigger>
               I have submitted my application for over 2 weeks but still have
               not hear from Octopus. What to do now?
@@ -254,7 +203,7 @@ const TrackerTariff = () => {
               far the most efficient way to get a response.
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value="item-1f" className="border-b-accentBlue-600/50">
+          <AccordionItem value="item-1e" className="border-b-accentBlue-600/50">
             <AccordionTrigger>
               When is the best time to make the switch?
             </AccordionTrigger>

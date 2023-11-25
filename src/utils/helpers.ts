@@ -9,12 +9,12 @@ export const fetchEachApi = async (tariffType: ApiTariffType, url: string) => {
   const response = await tryFetch(fetch(url, { cache: "no-store" }));
   if (!response.ok) throw new Error(FETCH_ERROR);
   const json = await response.json();
+  json.dataStamp = new Date().toLocaleDateString();
   return { ...json, tariffType };
 };
 
 export const fetchApi =
   (urls: { tariffType: ApiTariffType; url: string }[]) => async () => {
-    console.log(urls);
     const allResponse = await tryFetch(
       Promise.all(urls.map((url) => fetchEachApi(url.tariffType, url.url)))
     );

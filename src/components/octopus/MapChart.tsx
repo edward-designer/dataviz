@@ -67,7 +67,6 @@ const MapChart = ({ tariff, type, gsp }: IMapChart) => {
 
   useEffect(() => {
     if (!svgRef.current || !mapData || !mapData?.districts || !data) return;
-    console.log(mapData.districts);
     let scale = 1;
     const svg = select(svgRef.current);
     const tooltip = svg.select(".tooltipContainer");
@@ -76,7 +75,16 @@ const MapChart = ({ tariff, type, gsp }: IMapChart) => {
     const validDate = new Date(
       data[0].tariffs_active_at as string
     ).toLocaleDateString();
-    svg.select(".date").text(`Updated: ${validDate}`);
+    const updateDate =
+      validDate === new Date().toLocaleDateString()
+        ? `Today (${validDate})`
+        : validDate ===
+          new Date(
+            new Date().setDate(new Date().getDate() - 1)
+          ).toLocaleDateString()
+        ? `Yesterday (${validDate})`
+        : `Updated at ${validDate}`;
+    svg.select(".date").text(updateDate);
 
     const tariffTypeKey =
       `single_register_${ENERGY_TYPE[type]}_tariffs` as keyof QuerySingleTariffPlanResult;
@@ -130,7 +138,7 @@ const MapChart = ({ tariff, type, gsp }: IMapChart) => {
       .style("fill", "url(#legendGradient)");
     const legendAxisRender = svg
       .select<SVGGElement>(".legend")
-      .attr("transform", `translate(20,${height / 2 - 20})`)
+      .attr("transform", `translate(0,${height / 2 - 20})`)
       .call(legendAxis);
     legendAxisRender
       .style("color", "#00000080")
@@ -262,7 +270,7 @@ const MapChart = ({ tariff, type, gsp }: IMapChart) => {
       });
 
     svg.call(zoomBehavior);
-  }, [mapData, data, type, path]);
+  }, [mapData, data, type, path, height, gsp]);
 
   return (
     <div className="mapDiv relative w-full h-[450px] flex-1 flex items-center justify-center flex-col rounded-xl bg-black/30 border border-accentPink-700/50 shadow-inner overflow-hidden">
@@ -317,7 +325,7 @@ const MapChart = ({ tariff, type, gsp }: IMapChart) => {
                 </g>
               </g>
               <g className="legend"></g>
-              <text className="date font-display fill-white/60" x="14" y="30" />
+              <text className="date font-display fill-white/60" x="0" y="30" />
             </g>
           </svg>
           <p className="absolute text-xs text-accentBlue-800 right-1 bottom-1">
