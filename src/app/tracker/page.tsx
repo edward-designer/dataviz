@@ -1,4 +1,4 @@
-import TrackerTariff from "@/components/octopus/TrackerContent";
+import TrackerTariff from "@/components/octopus/TrackerTariff";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

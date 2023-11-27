@@ -115,7 +115,7 @@ const PricePane = ({
                 {typeof priceChangeTodayVsPriceCap === "number" && (
                   <Comparison
                     change={priceChangeTodayVsPriceCap}
-                    compare="Ofgem cap"
+                    compare="SVT cap"
                   >
                     <Remark variant="badge">
                       The{" "}
@@ -123,14 +123,15 @@ const PricePane = ({
                         href="https://www.ofgem.gov.uk/energy-price-cap"
                         target="_blank"
                       >
-                        Ofgem Price Cap
+                        Ofgem Price Cap for standard variable tariff (SVT)
                       </a>{" "}
                       is currently{" "}
                       <strong className="text-bold">
                         {`${priceCap[type]}p`}
                       </strong>{" "}
-                      (from 1 October to 31 December 2023). But note that
-                      Tracker has much higher cap.
+                      (from 1 October to 31 December 2023). Please note that the
+                      Ofgem caps are not applicable to Tracker tariffs which
+                      have a much higher cap.
                     </Remark>
                   </Comparison>
                 )}

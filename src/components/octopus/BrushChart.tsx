@@ -19,6 +19,7 @@ import {
   pointer,
   bisector,
   curveStepAfter,
+  curveStepBefore,
   axisRight,
   timeFormat,
   timeMonth,
@@ -39,6 +40,7 @@ import {
   timeDay,
   timeWeek,
   timeYear,
+  tsv,
 } from "d3";
 import toast from "react-hot-toast";
 
@@ -49,15 +51,25 @@ import {
   ENERGY_TYPE_ICON,
   priceCap,
   QueryTariffResult,
+  ApiTariffType,
+  FETCH_ERROR,
+  CapsTSVResult,
 } from "@/data/source";
 
 import useTariffQuery from "../../hooks/useTariffQuery";
 
-import { assertExtentNotUndefined, evenRound } from "../../utils/helpers";
+import {
+  assertExtentNotUndefined,
+  evenRound,
+  fetchApi,
+  fetchEachApi,
+  tryFetch,
+} from "../../utils/helpers";
 
 import Loading from "@/components/Loading";
 import Button from "./Button";
 import ErrorMessage from "./ErrorMessage";
+import { useQuery } from "@tanstack/react-query";
 
 const BrushChart = ({
   tariff,
@@ -69,12 +81,24 @@ const BrushChart = ({
   gsp: string;
 }) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
+
   const { isLoading, isError, isSuccess, refetch, data, error } =
     useTariffQuery<QueryTariffResult>({
       tariff,
       type,
       gsp,
     });
+
+  const queryCapFn = (url: string) => async () => {
+    const capsTsv = await tsv(url, (d) => d as CapsTSVResult);
+    return capsTsv;
+  };
+  const caps = useQuery({
+    queryKey: ["getCaps", tariff, type],
+    queryFn: queryCapFn(
+      "https://gist.githubusercontent.com/edward-designer/232d54ace5006183d873e9eebcf82da2/raw/42772cf5ed5b3e87f1d3d4a4cdc2dd12accd67ed/energy_price_caps.tsv"
+    ),
+  });
 
   // Specify chart properties (dimensions and colors)
   let widgetWidth = 1000;
@@ -131,7 +155,8 @@ const BrushChart = ({
       formatYear = utcFormat("%Y");
 
     function multiFormat(date: Date) {
-      // note: UK has daylight saving time, so utcUYear variant will NOT work as expected
+      // note: UK has daylight saving time, so utcYear variant will NOT work as expected
+      // use getTimezoneOffset()
       return (
         timeDay(date) < date
           ? formatHour
@@ -142,7 +167,7 @@ const BrushChart = ({
           : timeYear(date) < date
           ? formatMonth
           : formatYear
-      )(date);
+      )(new Date(date.valueOf() - date.getTimezoneOffset() * 60 * 1000));
     }
     // ↓↓↓ DRAW AXES
 
@@ -232,7 +257,7 @@ const BrushChart = ({
       line<TariffResult>()
         .x((d) => xScale(new Date(d.valid_to)))
         .y((d) => yScale(d.value_inc_vat))
-        .curve(curveStepAfter);
+        .curve(curveStepBefore);
 
     // Function to actually draw lines
     const drawLine = (
@@ -259,8 +284,8 @@ const BrushChart = ({
               .attr("stroke-width", 1.5),
           (update) => update.transition().duration(500),
           (exit) => exit.remove()
-        );
-      line.attr("d", lineGenerator);
+        )
+        .attr("d", lineGenerator);
 
       if (drawAnimate) {
         /* Line animation - simulate draw from left to rigth NOTE: for first time only */
@@ -282,49 +307,44 @@ const BrushChart = ({
       xScale: ScaleTime<number, number, never>,
       yScale: ScaleLinear<number, number, never>
     ) => {
+      const capsData =
+        caps.data
+          ?.filter((row) => row.Region === `_${gsp}`)
+          .sort(
+            (a, b) => new Date(a.Date).valueOf() - new Date(b.Date).valueOf()
+          ) ?? [];
+
+      const capLineGenerator = (type: keyof CapsTSVResult) =>
+        line<CapsTSVResult>()
+          .x((d) => xScale(new Date(d.Date).setHours(0, 0, 0, 0)))
+          .y((d) => yScale(parseFloat(String(d[type]))))
+          .curve(curveStepAfter);
       chart
-        .select(".cap")
         .select(".capE")
-        .text("Ofgem Electricity price cap - variable plan only")
-        .attr("transform", "translate(0 -5)")
-        .attr("text-anchor", "end")
-        .attr("alignment-basline", "baseline")
-        .attr("font-size", "10")
-        .attr("fill", "#aa33cc")
-        .attr("x", widgetWidth - padding.right - padding.left)
-        .transition()
-        .duration(500)
-        .attr("y", yScale(priceCap.E));
-
-      chart
-        .select(".cap")
-        .select(".capG")
-        .text("Ofgem Gas price cap - variable plan only")
-        .attr("transform", "translate(0 -5)")
-        .attr("text-anchor", "end")
-        .attr("alignment-basline", "baseline")
-        .attr("font-size", "10")
-        .attr("fill", "#FF0000AA")
-        .attr("x", widgetWidth - padding.right - padding.left)
-        .transition()
-        .duration(500)
-        .attr("y", yScale(priceCap.G));
-
-      chart
-        .select(".cap")
         .attr("clip-path", "url(#clip)")
-        .selectAll("line")
-        .data(Object.entries(priceCap))
-        .join("line")
-        .attr("x1", 0)
-        .attr("x2", widgetWidth)
-        .attr("stroke", (d) => (d[0] === "E" ? "#aa33cc80" : "#FF000080"))
-        .attr("strokeWidth", 1)
-        .attr("stroke-dasharray", "2 2")
+        .selectAll("path")
+        .data([capsData])
+        .join("path")
         .transition()
         .duration(500)
-        .attr("y1", (d) => yScale(d[1]))
-        .attr("y2", (d) => yScale(d[1]));
+        .attr("stroke", "#aa33cc99")
+        .attr("stroke-width", 1)
+        .attr("fill", "none")
+        .attr("stroke-dasharray", "2 2")
+        .attr("d", capLineGenerator("E"));
+      chart
+        .select(".capG")
+        .attr("clip-path", "url(#clip)")
+        .selectAll("path")
+        .data([capsData])
+        .join("path")
+        .transition()
+        .duration(500)
+        .attr("stroke", "#FF000080")
+        .attr("stroke-width", 1)
+        .attr("fill", "none")
+        .attr("stroke-dasharray", "2 2")
+        .attr("d", capLineGenerator("G"));
     };
 
     // ↓↓↓ ZOOM
@@ -353,6 +373,7 @@ const BrushChart = ({
           .duration(50)
           .attr("d", lineGeneratorFunc(zxScale, yScale));
       });
+      drawCurrentCap(zxScale, yScale);
     }
 
     /* brush zoom function
@@ -542,9 +563,55 @@ const BrushChart = ({
     const lineChart2 = drawLine([data[1].results], "gas", xScale, yScale, true);
     drawCurrentCap(xScale, yScale);
     pointerInteraction(xScale, yScale);
+
+    /* Legend */
+    chart
+      .select(".capEText")
+      .text("electricity SVT price cap")
+      .attr("transform", "translate(-55 0)")
+      .attr("text-anchor", "end")
+      .attr("alignment-basline", "baseline")
+      .attr("font-size", "10")
+      .attr("fill", "#aa33cc")
+      .attr("x", widgetWidth - padding.right - padding.left)
+      .attr("y", fontSize);
+    chart
+      .select(".capE")
+      .selectAll("line")
+      .attr("stroke", "#aa33cc99")
+      .attr("stroke-width", 1)
+      .attr("stroke-dasharray", "2 2")
+      .attr("x1", widgetWidth - padding.right - padding.left - 50)
+      .attr("y1", fontSize / 2 + 5)
+      .attr("x2", widgetWidth - padding.right - padding.left)
+      .attr("y2", fontSize / 2 + 5);
+
+    chart
+      .select(".capGText")
+      .text("gas SVT price cap")
+      .attr("transform", `translate(-55 ${fontSize})`)
+      .attr("text-anchor", "end")
+      .attr("alignment-basline", "baseline")
+      .attr("font-size", "10")
+      .attr("fill", "#FF000099")
+      .attr("x", widgetWidth - padding.right - padding.left)
+      .attr("y", fontSize);
+    chart
+      .select(".capG")
+      .selectAll("line")
+      .attr("stroke", "#ff000080")
+      .attr("stroke-width", 1)
+      .attr("stroke-dasharray", "2 2")
+      .attr("x1", widgetWidth - padding.right - padding.left - 50)
+      .attr("y1", (3 * fontSize) / 2 + 5)
+      .attr("x2", widgetWidth - padding.right - padding.left)
+      .attr("y2", (3 * fontSize) / 2 + 5);
+
     chart.call(zoomBehavior);
   }, [
+    caps.data,
     data,
+    gsp,
     leadingSize,
     padding.bottom,
     padding.left,
@@ -577,9 +644,13 @@ const BrushChart = ({
             <g className="grid" />
             <g className="xAxis" />
             <g className="yAxis" />
-            <g className="cap">
-              <text className="capE"></text>
-              <text className="capG"></text>
+            <g className="capE">
+              <text className="capEText"></text>
+              <line></line>
+            </g>
+            <g className="capG">
+              <text className="capGText"></text>
+              <line></line>
             </g>
           </g>
           <g className="interactionContainer">

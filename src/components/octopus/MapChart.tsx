@@ -12,9 +12,11 @@ import {
   Single_tariff_gsp_record,
   TRACKER,
   gsp,
+  priceCap,
+  standingCap,
 } from "@/data/source";
 import useTariffQuery from "@/hooks/useTariffQuery";
-import { evenRound } from "@/utils/helpers";
+import { calculateChangePercentage, evenRound } from "@/utils/helpers";
 import {
   axisRight,
   extent,
@@ -36,10 +38,16 @@ import ErrorMessage from "./ErrorMessage";
 interface IMapChart {
   tariff: string;
   type: keyof typeof ENERGY_TYPE;
+  rate?: keyof Single_tariff_gsp_record["direct_debit_monthly"];
   gsp: string;
 }
 
-const MapChart = ({ tariff, type, gsp }: IMapChart) => {
+const MapChart = ({
+  tariff,
+  type,
+  rate = "standard_unit_rate_inc_vat",
+  gsp,
+}: IMapChart) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const mapData = useUkGspMapData();
 
@@ -72,19 +80,25 @@ const MapChart = ({ tariff, type, gsp }: IMapChart) => {
     const tooltip = svg.select(".tooltipContainer");
     const defs = svg.append("defs");
 
-    const validDate = new Date(
-      data[0].tariffs_active_at as string
-    ).toLocaleDateString();
-    const updateDate =
-      validDate === new Date().toLocaleDateString()
-        ? `Today (${validDate})`
-        : validDate ===
-          new Date(
-            new Date().setDate(new Date().getDate() - 1)
-          ).toLocaleDateString()
-        ? `Yesterday (${validDate})`
-        : `Updated at ${validDate}`;
-    svg.select(".date").text(updateDate);
+    if (rate === "standard_unit_rate_inc_vat") {
+      const validDate = new Date(
+        data[0].tariffs_active_at as string
+      ).toLocaleDateString();
+      const updateDate =
+        validDate === new Date().toLocaleDateString()
+          ? `Today (${validDate})`
+          : validDate ===
+            new Date(
+              new Date().setDate(new Date().getDate() - 1)
+            ).toLocaleDateString()
+          ? `Yesterday (${validDate})`
+          : `Updated at ${validDate}`;
+      svg.select(".info").text(updateDate);
+    }
+    if (rate === "standing_charge_inc_vat") {
+      const ofgemCap = `Average SVT Cap: ${standingCap[type]}p`;
+      svg.select(".info").text(ofgemCap);
+    }
 
     const tariffTypeKey =
       `single_register_${ENERGY_TYPE[type]}_tariffs` as keyof QuerySingleTariffPlanResult;
@@ -92,10 +106,7 @@ const MapChart = ({ tariff, type, gsp }: IMapChart) => {
     const allValues = Object.values(
       singleTariffByGsp
     ) as Single_tariff_gsp_record[];
-    let valueExtent = extent(
-      allValues,
-      (d) => d["direct_debit_monthly"]["standard_unit_rate_inc_vat"]
-    );
+    let valueExtent = extent(allValues, (d) => d["direct_debit_monthly"][rate]);
     if (!valueExtent[0] && !valueExtent[1]) {
       valueExtent = [0, TRACKER[0].cap.E];
     }
@@ -147,12 +158,8 @@ const MapChart = ({ tariff, type, gsp }: IMapChart) => {
       .attr("fill", "#FFFFFF80");
 
     const getPrice = (gsp: gsp) =>
-      evenRound(
-        singleTariffByGsp[gsp]?.["direct_debit_monthly"]?.[
-          "standard_unit_rate_inc_vat"
-        ],
-        2
-      ) + "p" ?? "--";
+      evenRound(singleTariffByGsp[gsp]?.["direct_debit_monthly"]?.[rate], 2) +
+        "p" ?? "--";
 
     svg
       .select(".districtGroup")
@@ -170,7 +177,10 @@ const MapChart = ({ tariff, type, gsp }: IMapChart) => {
 
         const coordinates = pointer(e);
         const gsp = select(this).attr("data-zone") as gsp;
-
+        const capToCompare =
+          rate === "standard_unit_rate_inc_vat"
+            ? priceCap[type]
+            : standingCap[type];
         // Tooltip position
         const tooltipPosition = svgRef.current
           ?.querySelector(".tooltip")
@@ -203,6 +213,14 @@ const MapChart = ({ tariff, type, gsp }: IMapChart) => {
         tooltip
           .select(".zonePrice")
           .text(`${ENERGY_TYPE_ICON[type]} ${getPrice(gsp)}`);
+        tooltip
+          .select(".zoneCompareT1")
+          .text(
+            `🆚 ${calculateChangePercentage(
+              parseFloat(getPrice(gsp)),
+              capToCompare
+            )}%`
+          );
       })
       .on("pointerleave", function (d) {
         select(this).attr(
@@ -233,7 +251,7 @@ const MapChart = ({ tariff, type, gsp }: IMapChart) => {
             evenRound(
               singleTariffByGsp[d?.properties?.Name as gsp]?.[
                 "direct_debit_monthly"
-              ]?.["standard_unit_rate_inc_vat"],
+              ]?.[rate],
               2
             ) ?? 100;
           return colorScale(value);
@@ -246,6 +264,10 @@ const MapChart = ({ tariff, type, gsp }: IMapChart) => {
 
     var zoomBehavior = zoom<SVGSVGElement, unknown>()
       .scaleExtent([1, 4])
+      .translateExtent([
+        [0, 0],
+        [width, height],
+      ])
       .on("zoom", function (event) {
         scale = event.transform.k;
         selectAll(".zoomGroup").attr("transform", event.transform);
@@ -270,7 +292,7 @@ const MapChart = ({ tariff, type, gsp }: IMapChart) => {
       });
 
     svg.call(zoomBehavior);
-  }, [mapData, data, type, path, height, gsp]);
+  }, [mapData, data, type, path, height, gsp, rate]);
 
   return (
     <div className="mapDiv relative w-full h-[450px] flex-1 flex items-center justify-center flex-col rounded-xl bg-black/30 border border-accentPink-700/50 shadow-inner overflow-hidden">
@@ -304,7 +326,7 @@ const MapChart = ({ tariff, type, gsp }: IMapChart) => {
                 >
                   <g className="tooltip" transform="translate(10 10)">
                     <g className="tooltipTranslate">
-                      <rect width="150" height="86" fill="#000000CC" />
+                      <rect width="150" height="116" fill="#000000CC" />
                       <text
                         className="zone text-2xl font-bold fill-accentPink-500"
                         x="10"
@@ -320,12 +342,23 @@ const MapChart = ({ tariff, type, gsp }: IMapChart) => {
                         x="10"
                         y="70"
                       ></text>
+                      <text className="zoneCompare fill-white" x="10" y="90">
+                        <tspan className="zoneCompareT1"></tspan>
+                        <tspan className="zoneCompareT2" fontSize="8">
+                          {" "}
+                          vs SVT cap
+                        </tspan>
+                      </text>
                     </g>
                   </g>
                 </g>
               </g>
               <g className="legend"></g>
-              <text className="date font-display fill-white/60" x="10" y="30" />
+              <text
+                className="info font-display font-bold fill-white/60 text-lg"
+                x="10"
+                y="30"
+              />
             </g>
           </svg>
           <p className="absolute text-xs text-accentBlue-800 right-1 bottom-1">

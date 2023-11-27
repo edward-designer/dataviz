@@ -74,11 +74,75 @@ export const TRACKER: ITariffPlan[] = [
   },
 ];
 
-export const priceCap = {
-  E: 27,
-  G: 7,
+export const priceCaps = {
+  "2023-10-01": {
+    period: {
+      from: "2023-10-01",
+      to: "2023-12-31",
+    },
+    cap: {
+      E: 27.35,
+      G: 6.89,
+    },
+  },
+  "2024-01-01": {
+    period: {
+      from: "2024-01-01",
+      to: "2024-03-31",
+    },
+    cap: {
+      E: 28.62,
+      G: 7.42,
+    },
+  },
 };
 
+export const standingCaps = {
+  "2023-10-01": {
+    period: {
+      from: "2023-10-01",
+      to: "2023-12-31",
+    },
+    cap: {
+      E: 53.37,
+      G: 29.62,
+    },
+  },
+  "2024-01-01": {
+    period: {
+      from: "2024-01-01",
+      to: "2024-03-31",
+    },
+    cap: {
+      E: 53.35,
+      G: 29.6,
+    },
+  },
+};
+
+const getCurrentCap = <T extends typeof priceCaps>(
+  caps: T
+): { E: number; G: number } => {
+  const today = new Date();
+  const dateThresholds = Object.keys(caps);
+  dateThresholds.sort((a, b) => new Date(b).valueOf() - new Date(a).valueOf());
+  const currentPeriod = dateThresholds.filter(
+    (date) => today.valueOf() - new Date(date).valueOf() >= 0
+  )?.[0] as unknown as keyof typeof priceCaps;
+  return caps[currentPeriod].cap ?? { E: null, G: null };
+};
+
+export const priceCap = getCurrentCap(priceCaps);
+export const standingCap = getCurrentCap(standingCaps);
+
+export type CapsTSVResult = {
+  Region: string;
+  Date: string;
+  E: string;
+  G: string;
+  ES: string;
+  GS: string;
+};
 export const ENERGY_TYPE = {
   E: "electricity",
   G: "gas",
@@ -110,6 +174,7 @@ export type Single_tariff = Record<gsp, Single_tariff_gsp_record>;
 export interface Single_tariff_gsp_record {
   direct_debit_monthly: {
     standard_unit_rate_inc_vat: number;
+    standing_charge_inc_vat: number;
   };
 }
 

@@ -12,10 +12,10 @@ import {
 import { TRACKER } from "@/data/source";
 
 import { UserContext } from "@/context/user";
-import BrushChart from "../../components/octopus/BrushChart";
-import PricePane from "../../components/octopus/PricePane";
-import Remark from "../../components/octopus/Remark";
-import TariffSelect from "../../components/octopus/TariffSelect";
+import BrushChart from "./BrushChart";
+import PricePane from "./PricePane";
+import Remark from "./Remark";
+import TariffSelect from "./TariffSelect";
 import MapChart from "@/components/octopus/MapChart";
 
 const TrackerTariff = () => {
@@ -46,19 +46,19 @@ const TrackerTariff = () => {
         <PricePane tariff={tariff} type="E" gsp={gsp} />
         <PricePane tariff={tariff} type="G" gsp={gsp} />
       </section>
-      <div className="flex-0 text-lg text-center translate-y-3 text-accentPink-600">
+      <div className="flex-0 text-lg font-bold text-center translate-y-3 text-accentPink-600">
         Electricity and Gas Unit Rates Over Time
         <Remark variant="badge">
-          The current Government guaranteed price caps for electricity and gas
-          shown here are for flexible plans only. All tracker plans have
-          different price caps set at the time of joining the plan. Please refer
-          to the table below.
+          The average price caps for standard variable tariff (SVT) shown here
+          are for reference only. All Octopus tracker plans have different price
+          caps set at the time of joining the plan. Please scroll down to view
+          the price caps.
         </Remark>
       </div>
       <section className="flex justify-center items-center gap-4 my-4">
         <BrushChart tariff={tariff} type="EG" gsp={gsp} />
       </section>
-      <h2 className="flex-0 text-lg text-center translate-y-3 text-accentPink-600">
+      <h2 className="flex-0 text-lg font-bold text-center translate-y-3 text-accentPink-600">
         Energy Unit Rates Around UK
         <Remark variant="badge">
           The unit rates for different parts of the UK is calcuated based on{" "}
@@ -69,13 +69,44 @@ const TrackerTariff = () => {
             a set of formulae
           </a>
           . The prices shown here are usually updated at around 9:30am each day.
+          Comparision is made to the average cap of standard variable tariff
+          (SVT) of UK.
         </Remark>
       </h2>
       <section className="flex flex-col sm:flex-row items-stretch sm:justify-center sm:items-center gap-4 my-4">
         <MapChart tariff={tariff} type="E" gsp={gsp} />
         <MapChart tariff={tariff} type="G" gsp={gsp} />
       </section>
-      <h2 className="flex-0 text-lg text-center translate-y-3 text-accentPink-600">
+      <h2 className="flex-0 text-lg font-bold text-center translate-y-3 text-accentPink-600">
+        Standing Charges Around UK
+        <Remark variant="badge">
+          The standing charge is compared to the average standard variable
+          tariff (SVT) cap of UK. Different regions have different caps as
+          detailed in this{" "}
+          <a
+            href="https://www.ofgem.gov.uk/information-consumers/energy-advice-households/get-energy-price-cap-standing-charges-and-unit-rates-region"
+            target="_blank"
+          >
+            Ofgem article
+          </a>
+          .
+        </Remark>
+      </h2>
+      <section className="flex flex-col sm:flex-row items-stretch sm:justify-center sm:items-center gap-4 my-4">
+        <MapChart
+          tariff={tariff}
+          type="E"
+          gsp={gsp}
+          rate="standing_charge_inc_vat"
+        />
+        <MapChart
+          tariff={tariff}
+          type="G"
+          gsp={gsp}
+          rate="standing_charge_inc_vat"
+        />
+      </section>
+      <h2 className="flex-0 text-lg font-bold text-center translate-y-3 text-accentPink-600">
         Comparision of Octopus Tracker Plans
       </h2>
       <section className="flex justify-center items-center gap-4 my-4 flex-col bg-black/30 rounded-xl p-4 lg:p-10">
@@ -111,7 +142,7 @@ const TrackerTariff = () => {
           </tbody>
         </table>
       </section>
-      <h2 className="flex-0 text-lg text-center translate-y-3 text-accentPink-600">
+      <h2 className="flex-0 text-lg font-bold text-center translate-y-3 text-accentPink-600">
         Octopus Tracker Plans FAQ
       </h2>
       <section className="flex justify-center items-center gap-4 my-4 flex-col bg-black/30 rounded-xl p-4 lg:p-10">
