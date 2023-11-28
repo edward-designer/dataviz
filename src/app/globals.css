@@ -170,3 +170,25 @@ input[type="range"]:focus::-webkit-slider-runnable-track {
     font-size: 10px;
   }
 }
+
+/* ===== Scrollbar CSS ===== */
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #3cc9ec #000242;
+}
+
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #001052;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #1a6376;
+  border-radius: 0px;
+  border: 0px none #05114d;
+}

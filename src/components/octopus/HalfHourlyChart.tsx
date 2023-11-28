@@ -28,29 +28,20 @@ const HalfHourlyChart = ({
     isScrolling: false,
     originY: 0,
   });
-  const [width, setWidth] = useState(300);
 
   useEffect(() => {
-    if (!currentPeriodRef.current) return;
-    currentPeriodRef.current.scrollIntoView({
-      block: "center",
+    if (!listContainerRef.current || !currentPeriodRef.current) return;
+    listContainerRef.current.scroll({
+      top: currentPeriodRef.current.offsetTop - 100,
+      left: 0,
+      behavior: "smooth",
     });
-    if (!window) return;
-    const resizeBarChart = () => {
-      setWidth(
-        window.innerWidth > 1400 || window.innerWidth < 765
-          ? 300
-          : 300 - (1400 - window.innerWidth) / 3
-      );
-    };
-    resizeBarChart();
-    window.addEventListener("resize", resizeBarChart, true);
-    return () => window.removeEventListener("resize", resizeBarChart, true);
   }, []);
 
+  const width = 100;
   const xScale = scaleLinear()
     .domain([0, rates[max]?.value_inc_vat ?? 0])
-    .range([0, width]);
+    .range([50, width]);
   const colorScale = scaleSequential(
     interpolateRgbBasis(["#aaffdd", "#3377bb", "#aa33cc"])
   ).domain([rates[min]?.value_inc_vat ?? 0, rates[max]?.value_inc_vat ?? 0]);
@@ -59,7 +50,6 @@ const HalfHourlyChart = ({
     const now = new Date();
     return new Date(data.valid_from) < now && new Date(data.valid_to) > now;
   });
-
 
   return (
     <ol
@@ -70,7 +60,6 @@ const HalfHourlyChart = ({
           isScrolling: true,
           originY: event.clientY,
         });
-        listContainerRef.current?.setAttribute("style", "touch-action:none");
       }}
       onPointerMove={(event: PointerEvent<HTMLOListElement>) => {
         if (!listContainerRef.current) return;
@@ -91,7 +80,6 @@ const HalfHourlyChart = ({
           isScrolling: false,
           originY: event.clientY,
         });
-        listContainerRef.current?.setAttribute("style", "touch-action:auto");
       }}
       onPointerLeave={(event: PointerEvent<HTMLOListElement>) => {
         setScrollProperty({
@@ -104,29 +92,37 @@ const HalfHourlyChart = ({
         [...rates].reverse().map((rate, ind) => (
           <li
             key={ind}
-            className={`flex gap-2 items-center p-2 select-none ${
+            className={`flex items-center select-none ${
               ind === priceNowIndex
-                ? "shadow-md drop-shadow-[0_-1px_5px_rgba(20,0,30,0.4)] z-50"
+                ? "shadow-[0_-1px_7px_rgba(20,0,30,0.5),_0_1px_7px_rgba(20,0,30,0.7)] z-50"
                 : ""
             }`}
-            style={{ background: colorScale(rate.value_inc_vat) }}
+            style={{}}
             ref={ind === priceNowIndex ? currentPeriodRef : null}
           >
-            <span className="text-xs font-bold text-black w-12">
-              {formatLocaleTimePeriod(rate.valid_from, rate.valid_to)}
-            </span>
-            <span className="text-4xl font-normal text-theme-950 w-30">
-              <FormattedPrice price={rate.value_inc_vat} />
-            </span>
-            <span className="flex-1 h-4 relative hidden sm:block">
+            <span
+              className="text-xs font-bold text-theme-950 flex items-center p-2 overflow-visible"
+              style={{
+                width: `${xScale(rate.value_inc_vat)}%`,
+                background: colorScale(rate.value_inc_vat),
+              }}
+            >
               <span
-                className="absolute block h-4 w-1 border-l-theme-950/30 border-dashed border-l"
-                style={{ left: `${xScale(priceAverage)}px` }}
-              ></span>
+                className={`block w-12  ${
+                  ind === priceNowIndex ? " text-accentBlue-950" : ""
+                }`}
+              >
+                {formatLocaleTimePeriod(rate.valid_from, rate.valid_to)}
+              </span>
               <span
-                className="block h-4 bg-white/50"
-                style={{ width: xScale(rate.value_inc_vat) }}
-              ></span>
+                className={`block w-18  ${
+                  ind === priceNowIndex
+                    ? "text-4xl text-accentBlue-950"
+                    : "text-3xl"
+                }`}
+              >
+                <FormattedPrice price={rate.value_inc_vat} />
+              </span>
             </span>
           </li>
         ))}
