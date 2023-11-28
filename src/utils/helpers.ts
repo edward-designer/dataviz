@@ -49,16 +49,29 @@ export const priceAccessor = (
 };
 
 // Octopus uses unbiased rounding
-export const evenRound = (num: number, decimalPlaces: number) => {
-  var d = decimalPlaces || 0;
-  var m = Math.pow(10, d);
-  var n = +(d ? num * m : num).toFixed(8);
-  var i = Math.floor(n),
+export function evenRound(num: number): number;
+export function evenRound(num: number, decimalPlaces: number): number;
+export function evenRound(
+  num: number,
+  decimalPlaces: number,
+  padZero: boolean
+): string;
+export function evenRound(
+  num: number,
+  decimalPlaces: number = 2,
+  padZero: boolean = false
+): any {
+  const d = decimalPlaces || 0;
+  const m = Math.pow(10, d);
+  const n = +(d ? num * m : num).toFixed(8);
+  const i = Math.floor(n),
     f = n - i;
-  var e = 1e-8;
-  var r = f > 0.5 - e && f < 0.5 + e ? (i % 2 == 0 ? i : i + 1) : Math.round(n);
-  return d ? r / m : r;
-};
+  const e = 1e-8;
+  const r =
+    f > 0.5 - e && f < 0.5 + e ? (i % 2 == 0 ? i : i + 1) : Math.round(n);
+  const returnValue = d ? r / m : r;
+  return padZero ? returnValue.toFixed(2) : returnValue;
+}
 
 export const calculateChangePercentage = (
   price: unknown,
@@ -106,3 +119,12 @@ export const selectOrAppend = (
     : parentNode.append(element).classed(className, true);
   return node;
 };
+
+export const formatLocaleTime = (time: string) =>
+  new Date(time).toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+export const formatLocaleTimePeriod = (fromTime: string, toTime: string) =>
+  `${formatLocaleTime(fromTime)} - ${formatLocaleTime(toTime)}`;
