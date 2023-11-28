@@ -72,7 +72,6 @@ import {
 import Loading from "@/components/Loading";
 import ErrorMessage from "./ErrorMessage";
 import { useQuery } from "@tanstack/react-query";
-import { colorScaleD3 } from "@/app/chargePoint/define";
 
 const BrushChart = ({
   tariff,
@@ -84,6 +83,7 @@ const BrushChart = ({
   gsp: string;
 }) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
+  const timeIdRef = useRef<number | undefined>(undefined);
   const id = useId();
 
   const { isLoading, isError, isSuccess, refetch, data, error } =
@@ -103,6 +103,8 @@ const BrushChart = ({
       "https://gist.githubusercontent.com/edward-designer/232d54ace5006183d873e9eebcf82da2/raw/42772cf5ed5b3e87f1d3d4a4cdc2dd12accd67ed/energy_price_caps.tsv"
     ),
   });
+
+  const isAgile = tariff.includes("AGILE");
 
   // Specify chart properties (dimensions and colors)
   let widgetWidth = 1000;
@@ -125,7 +127,7 @@ const BrushChart = ({
     // ↓↓↓ when svgRef.current and data are ready //
 
     select(svgRef.current);
-    const isAgile = tariff.includes("AGILE");
+
     const lineCharts: Selection<
       BaseType | SVGPathElement,
       TariffResult[],
@@ -434,6 +436,58 @@ const BrushChart = ({
       }
     };
 
+    // ↓↓↓ TIMELINE
+    const drawTimeLine = (xScale: ScaleTime<number, number, never>) => {
+      if (isAgile) {
+        window.clearInterval(timeIdRef.current);
+        const timelineG = selectOrAppend(
+          "g",
+          "timeline",
+          chart.select("g.chartContainer")
+        ) as Selection<SVGGElement, unknown, null, undefined>;
+        const timelineTriangle = timelineG
+          .append("polygon")
+          .classed("timelineTriangle", true)
+          .attr("points", "0,0 10,0 5,8")
+          .attr("fill", "#ce2cb9");
+        const timeline = timelineG.append("line");
+        timeline
+          .attr("x1", padding.left)
+          .attr("x2", padding.left)
+          .attr("y1", 0)
+          .attr("y2", widgetHeight - padding.bottom - padding.top)
+          .attr("stroke", "#ce2cb9")
+          .attr("stroke-width", 1);
+        const setTimelinePosition = () => {
+          const xPos = xScale(new Date());
+          timeline.transition().duration(50).attr("x1", xPos).attr("x2", xPos);
+          timelineTriangle
+            .transition()
+            .duration(50)
+            .attr("transform", `translate(${xPos - 5},0)`);
+        };
+        setTimelinePosition();
+        timeIdRef.current = window.setInterval(setTimelinePosition, 1000);
+      }
+    };
+
+    const redrawTimeLine = (xScale: ScaleTime<number, number, never>) => {
+      if (isAgile) {
+        window.clearInterval(timeIdRef.current);
+        const timeline = select(".timeline").select("line");
+        const timelineTriangle = select(".timelineTriangle");
+        const setTimelinePosition = () => {
+          const xPos = xScale(new Date());
+          timeline.transition().duration(50).attr("x1", xPos).attr("x2", xPos);
+          timelineTriangle
+            .transition()
+            .duration(50)
+            .attr("transform", `translate(${xPos - 5},0)`);
+        };
+        setTimelinePosition();
+        timeIdRef.current = window.setInterval(setTimelinePosition, 1000);
+      }
+    };
     // ↓↓↓ ZOOM
 
     // Zoom limits
@@ -462,6 +516,7 @@ const BrushChart = ({
       });
       drawCurrentCap(zxScale, yScale);
       drawArea("electricity", zxScale, yScale);
+      redrawTimeLine(zxScale);
     }
 
     /* brush zoom function
@@ -686,6 +741,9 @@ const BrushChart = ({
     drawCurrentCap(xScale, yScale);
     pointerInteraction(xScale, yScale);
 
+    /* draw timeline */
+    drawTimeLine(xScale);
+
     /* Legend */
     if (type.includes("E")) {
       chart
@@ -737,6 +795,7 @@ const BrushChart = ({
     data,
     gsp,
     id,
+    isAgile,
     leadingSize,
     padding.bottom,
     padding.left,

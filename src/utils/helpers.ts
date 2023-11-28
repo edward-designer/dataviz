@@ -109,7 +109,7 @@ export const tryFetch = async <T>(asyncProcess: Promise<T>) => {
 };
 
 export const selectOrAppend = (
-  element: "g" | "rect" | "circle" | "text",
+  element: "g" | "rect" | "circle" | "text" | "line",
   className: string,
   parentNode: Selection<SVGSVGElement, unknown, null, undefined>
 ) => {
