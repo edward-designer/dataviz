@@ -72,7 +72,7 @@ const PricePane = ({
     todayEnd.setHours(23, 59, 59, 999);
     return (
       new Date(data.valid_from) >= todayStart &&
-      new Date(data.valid_to) <= todayEnd
+      new Date(data.valid_from) <= todayEnd
     );
   });
   const priceAverage = mean(todayRates, (d) => d.value_inc_vat) ?? 0;
@@ -81,7 +81,7 @@ const PricePane = ({
 
   return (
     <div
-      className="relative flex-1 flex flex-col gap-8 h-[250px] md:h-[300px]  rounded-xl p-4 bg-theme-950 border border-accentPink-800/60 shadow-inner bg-gradient-to-br from-transparent via-theme-800/20 to-purple-600/30 bg-cover"
+      className="relative flex-1 flex flex-col gap-8 max-h-[300px] md:h-[300px]  rounded-xl p-4 bg-theme-950 border border-accentPink-800/60 shadow-inner bg-gradient-to-br from-transparent via-theme-800/20 to-purple-600/30 bg-cover"
       style={{
         backgroundImage: `linear-gradient(0deg, rgba(0,3,35,0.7) 30% , rgba(0,3,35,0.9) 70%, rgba(0,4,51,1) 100% )`,
       }}

@@ -78,8 +78,13 @@ const AgileTariff = () => {
           </Remark>
         </TariffSelect>
       </section>
-      <section className="flex flex-col sm:flex-row items-stretch sm:justify-center sm:items-center gap-4 my-4">
-        <PricePaneAgile tariff={tariff} type="E" gsp={gsp} setCurrentPeriod={setCurrentPeriod} />
+      <section className="flex flex-col md:flex-row items-stretch md:justify-center md:items-center gap-4 my-4">
+        <PricePaneAgile
+          tariff={tariff}
+          type="E"
+          gsp={gsp}
+          setCurrentPeriod={setCurrentPeriod}
+        />
         <PricePaneAgile2 tariff={tariff} type="E" gsp={gsp} />
       </section>
       <section className="flex justify-center items-center gap-4 my-4">

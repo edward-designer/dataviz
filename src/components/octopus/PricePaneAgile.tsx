@@ -58,7 +58,7 @@ const PricePane = ({ tariff, type, gsp, setCurrentPeriod }: IPricePane) => {
     todayEnd.setHours(23, 59, 59, 999);
     return (
       new Date(data.valid_from) >= todayStart &&
-      new Date(data.valid_to) <= todayEnd
+      new Date(data.valid_from) <= todayEnd
     );
   });
   const priceAverage = mean(todayRates, (d) => d.value_inc_vat) ?? 0;
