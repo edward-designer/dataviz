@@ -101,27 +101,27 @@ const HalfHourlyChart = ({
             ref={ind === priceNowIndex ? currentPeriodRef : null}
           >
             <span
-              className="text-xs font-bold text-theme-950 flex items-center p-2 overflow-visible"
+              className="text-xs font-light text-white sm:text-theme-950 p-2 overflow-visible [text-shadow:_0_0_3px_rgb(0_0_0_/_100%)] sm:[text-shadow:none]"
               style={{
                 width: `${xScale(rate.value_inc_vat)}%`,
                 background: colorScale(rate.value_inc_vat),
               }}
             >
-              <span
-                className={`block w-12  ${
-                  ind === priceNowIndex ? " text-accentBlue-950" : ""
-                }`}
-              >
-                {formatLocaleTimePeriod(rate.valid_from, rate.valid_to)}
-              </span>
-              <span
-                className={`block w-18  ${
-                  ind === priceNowIndex
-                    ? "text-4xl text-accentBlue-950"
-                    : "text-3xl"
-                }`}
-              >
-                <FormattedPrice price={rate.value_inc_vat} />
+              <span className="flex sm:items-center flex-col sm:flex-row overflow-visible ">
+                <span
+                  className={`whitespace-nowrap sm:whitespace-normal block leading-tight min-w-18 sm:w-12 shrink-0`}
+                >
+                  {formatLocaleTimePeriod(rate.valid_from, rate.valid_to)}
+                </span>
+                <span
+                  className={`block leading-tight w-18 ${
+                    ind === priceNowIndex
+                      ? "text-3xl md:text-4xl font-bold"
+                      : "text-2xl md:text-3xl font-bold"
+                  }`}
+                >
+                  <FormattedPrice price={rate.value_inc_vat} />
+                </span>
               </span>
             </span>
           </li>
