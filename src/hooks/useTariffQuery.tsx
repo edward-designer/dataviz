@@ -34,14 +34,17 @@ function useTariffQuery<T>({
   if (!gsp) typeArr.length = 1;
 
   const query = useQuery<T[]>({
+    enabled: !!tariff,
     queryKey: ["getTariff", tariff, type, gsp],
     queryFn: fetchApi(
-      typeArr.map((type) => ({
-        tariffType: type,
-        url: gsp
-          ? `https://api.octopus.energy/v1/products/${tariff}/${ENERGY_TYPE[type]}-tariffs/${type}-1R-${tariff}-${gsp}/standard-unit-rates/?page_size=1500`
-          : `https://api.octopus.energy/v1/products/${tariff}/`,
-      }))
+      typeArr.map((type) => {
+        return {
+          tariffType: type,
+          url: gsp
+            ? `https://api.octopus.energy/v1/products/${tariff}/${ENERGY_TYPE[type]}-tariffs/${type}-1R-${tariff}-${gsp}/standard-unit-rates/?page_size=1500`
+            : `https://api.octopus.energy/v1/products/${tariff}/`,
+        };
+      })
     ),
   });
   return query;

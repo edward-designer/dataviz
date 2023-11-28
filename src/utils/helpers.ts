@@ -5,6 +5,8 @@ import {
   QueryTariffResult,
 } from "@/data/source";
 
+import { BaseType, Selection, select } from "d3";
+
 export const fetchEachApi = async (tariffType: ApiTariffType, url: string) => {
   const response = await tryFetch(fetch(url, { cache: "no-store" }));
   if (!response.ok) throw new Error(FETCH_ERROR);
@@ -91,4 +93,16 @@ export const tryFetch = async <T>(asyncProcess: Promise<T>) => {
     }
     throw new Error(FETCH_ERROR);
   }
+};
+
+export const selectOrAppend = (
+  element: "g" | "rect" | "circle" | "text",
+  className: string,
+  parentNode: Selection<SVGSVGElement, unknown, null, undefined>
+) => {
+  if (!element) throw new Error("Element must be specified.");
+  const node = parentNode.select(`${element}.${className}`).node()
+    ? parentNode.select(`${element}.${className}`)
+    : parentNode.append(element).classed(className, true);
+  return node;
 };

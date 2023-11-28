@@ -59,7 +59,7 @@ const TrackerTariff = () => {
         <BrushChart tariff={tariff} type="EG" gsp={gsp} />
       </section>
       <h2 className="flex-0 text-lg font-bold text-center translate-y-3 text-accentPink-600">
-        Energy Unit Rates Around UK
+        Regional Energy Unit Rates Map
         <Remark variant="badge">
           The unit rates for different parts of the UK is calcuated based on{" "}
           <a
@@ -78,7 +78,7 @@ const TrackerTariff = () => {
         <MapChart tariff={tariff} type="G" gsp={gsp} />
       </section>
       <h2 className="flex-0 text-lg font-bold text-center translate-y-3 text-accentPink-600">
-        Standing Charges Around UK
+        Regional Standing Charges Map
         <Remark variant="badge">
           The standing charge is compared to the average standard variable
           tariff (SVT) cap of UK. Different regions have different caps as

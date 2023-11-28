@@ -2,13 +2,19 @@ export interface ITariffPlan {
   code: string;
   name: string;
   currentPlan: boolean;
+}
+
+export interface ITrackerTariffPlan extends ITariffPlan {
+  code: string;
+  name: string;
+  currentPlan: boolean;
   cap: {
     E: number;
     G: number;
   };
 }
 
-export const TRACKER: ITariffPlan[] = [
+export const TRACKER: ITrackerTariffPlan[] = [
   {
     code: "SILVER-FLEX-BB-23-02-08",
     name: "Tracker February 2023 v1",
@@ -207,3 +213,35 @@ export type gsp =
   | "_N"
   | "_O"
   | "_P";
+
+export interface QueryProducts {
+  count: number;
+  next: null | string;
+  previous: null | string;
+  results: QueryProductsResult[];
+  brand: string;
+}
+
+export interface QueryProductsResult {
+  code: string;
+  direction: "IMPORT" | "EXPORT";
+  full_name: string;
+  display_name: string;
+  description: string;
+  is_variable: boolean;
+  is_green: boolean;
+  is_tracker: boolean;
+  is_prepay: boolean;
+  is_business: boolean;
+  is_restricted: boolean;
+  term: null | string;
+  available_from: string;
+  available_to: null | string;
+  links: LinkResult[];
+}
+
+export interface LinkResult {
+  href: string;
+  method: "GET";
+  rel: "self";
+}

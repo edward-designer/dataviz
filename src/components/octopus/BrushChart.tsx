@@ -1,11 +1,12 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useId, useRef } from "react";
 
 import {
   select,
   axisBottom,
   extent,
   max,
+  min,
   scaleLinear,
   scaleTime,
   axisLeft,
@@ -41,6 +42,7 @@ import {
   timeWeek,
   timeYear,
   tsv,
+  area,
 } from "d3";
 import toast from "react-hot-toast";
 
@@ -63,13 +65,14 @@ import {
   evenRound,
   fetchApi,
   fetchEachApi,
+  selectOrAppend,
   tryFetch,
 } from "../../utils/helpers";
 
 import Loading from "@/components/Loading";
-import Button from "./Button";
 import ErrorMessage from "./ErrorMessage";
 import { useQuery } from "@tanstack/react-query";
+import { colorScaleD3 } from "@/app/chargePoint/define";
 
 const BrushChart = ({
   tariff,
@@ -81,6 +84,7 @@ const BrushChart = ({
   gsp: string;
 }) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
+  const id = useId();
 
   const { isLoading, isError, isSuccess, refetch, data, error } =
     useTariffQuery<QueryTariffResult>({
@@ -112,13 +116,22 @@ const BrushChart = ({
   // Update chart to content width (for responsive layout)
   if (typeof document !== "undefined") {
     widgetWidth =
-      document.querySelector(".chartDiv")?.getBoundingClientRect().width ??
+      document.getElementById(`chart-${id}`)?.getBoundingClientRect().width ??
       widgetWidth;
   }
 
   useEffect(() => {
     if (!data || !svgRef || !svgRef.current) return;
     // ↓↓↓ when svgRef.current and data are ready //
+
+    select(svgRef.current);
+    const isAgile = tariff.includes("AGILE");
+    const lineCharts: Selection<
+      BaseType | SVGPathElement,
+      TariffResult[],
+      BaseType,
+      unknown
+    >[] = [];
 
     // Select the SVG element
     const chart = select(svgRef.current) as Selection<
@@ -138,14 +151,9 @@ const BrushChart = ({
 
     // Add clip path to hide chart outside of the showing area
     chart
-      .select("defs")
-      .append("svg:clipPath")
-      .attr("id", "clip")
-      .append("svg:rect")
+      .select(`defs rect`)
       .attr("width", widgetWidth - padding.left - padding.right)
-      .attr("height", widgetHeight - padding.top - padding.bottom)
-      .attr("x", 0)
-      .attr("y", 0);
+      .attr("height", widgetHeight - padding.top - padding.bottom);
 
     // Time formatter
     const formatHour = utcFormat("%I %p"),
@@ -176,7 +184,7 @@ const BrushChart = ({
     const xExtent = extent(
       data
         .map((dataset) =>
-          extent(dataset.results, (d) => new Date(d.valid_to) ?? new Date())
+          extent(dataset.results, (d) => new Date(d.valid_from) ?? new Date())
         )
         .flat(),
       (d) => d
@@ -191,8 +199,15 @@ const BrushChart = ({
         data.find((tariff) => tariff.tariffType === "E")?.results ?? [],
         (data) => data?.value_inc_vat ?? 0
       ) ?? 0;
+    const minPrice = Math.min(
+      0,
+      min(
+        data.find((tariff) => tariff.tariffType === "E")?.results ?? [],
+        (data) => data?.value_inc_vat - 5 ?? 0
+      ) ?? 0
+    );
     const yScale = scaleLinear(
-      [0, maxPrice + 5],
+      [minPrice, maxPrice + 5],
       [widgetHeight - padding.top - padding.bottom, 0]
     ).nice();
 
@@ -221,6 +236,21 @@ const BrushChart = ({
           `translate(0, ${widgetHeight - padding.top - padding.bottom})`
         )
         .attr("color", axisColor);
+      chart
+        .select(".yAxis")
+        .selectAll("line")
+        .data([yScale(0)])
+        .join("line")
+        .attr("x1", 0)
+        .attr("x2", 0)
+        .attr("y1", (d) => d)
+        .attr("y2", (d) => d)
+        .attr("stroke-width", "2")
+        .attr("stroke", "#63acb8")
+        .transition()
+        .duration(20)
+        .attr("x2", widgetWidth - padding.left - padding.right);
+
       xAxisGroup.transition().call(xAxis);
       chart
         .select<SVGSVGElement>("g.yAxis")
@@ -257,7 +287,7 @@ const BrushChart = ({
       line<TariffResult>()
         .x((d) => xScale(new Date(d.valid_to)))
         .y((d) => yScale(d.value_inc_vat))
-        .curve(curveStepBefore);
+        .curve(curveStepAfter);
 
     // Function to actually draw lines
     const drawLine = (
@@ -268,17 +298,21 @@ const BrushChart = ({
       drawAnimate: boolean = false
     ) => {
       const lineGenerator = lineGeneratorFunc(xScale, yScale);
+      const lineGraph = selectOrAppend(
+        "g",
+        name,
+        chart.select("g.chartContainer")
+      ).attr("clip-path", `url(#clip-${id})`);
+      if (typeof lineGraph === "string")
+        throw new Error("Selection is not a string");
 
-      chart.select("g.chartContainer").append("g").classed(name, true);
-      const line = chart
-        .select<SVGPathElement>(`g.${name}`)
-        .attr("clip-path", "url(#clip)")
+      const line = lineGraph
         .selectAll("path")
         .data(data)
         .join(
           (enter) =>
             enter
-              .append("path")
+              .append<SVGPathElement>("path")
               .attr("fill", "none")
               .attr("stroke", `url(#${name})`)
               .attr("stroke-width", 1.5),
@@ -301,6 +335,55 @@ const BrushChart = ({
 
       return line;
     };
+    const drawArea = (
+      name: string,
+      xScale: ScaleTime<number, number, never>,
+      yScale: ScaleLinear<number, number, never>,
+      delay: boolean = false
+    ) => {
+      const areaGraph = selectOrAppend(
+        "g",
+        `${name}-Area`,
+        chart.select("g.chartContainer")
+      ).attr("clip-path", `url(#clip-${id})`);
+      if (typeof areaGraph === "string")
+        throw new Error("Selection is not a string");
+
+      const areaGenerator = area<TariffResult>()
+        .x((d) => xScale(new Date(d.valid_from)))
+        .y0((d) => yScale(Math.min(0, d.value_inc_vat)))
+        .y1(yScale(0))
+        .curve(curveStepBefore);
+      const payToUseArea = areaGraph
+        .selectAll("path")
+        .data([data[0].results])
+        .join("path")
+        .attr("fill", "#aaffdd")
+        .attr("stroke", "#aaffdd")
+        .transition()
+        .delay(delay ? 300 : 0)
+        .duration(50)
+        .attr("d", areaGenerator);
+      areaGraph
+        .select<SVGPathElement>(`path`)
+        .on("pointermove", (e: PointerEvent) => {
+          const coordinates = pointer(e);
+          const pointerX = coordinates[0] - padding.left + 70;
+          const pointerY = coordinates[1] - padding.top - 20;
+          chart
+            .select<SVGGElement>(".payToUse")
+            .attr("opacity", 1)
+            .attr("transform", `translate(${pointerX}, ${pointerY})`);
+        })
+        .on("pointerleave", (e: PointerEvent) => {
+          chart.select<SVGGElement>(".payToUse").attr("opacity", 0);
+        });
+      chart
+        .select<SVGPathElement>(`.yAxis`)
+        .on("pointerleave", (e: PointerEvent) => {
+          chart.select(".tooltip").attr("opacity", 0);
+        });
+    };
 
     // Function to draw price cap levels
     const drawCurrentCap = (
@@ -319,32 +402,36 @@ const BrushChart = ({
           .x((d) => xScale(new Date(d.Date).setHours(0, 0, 0, 0)))
           .y((d) => yScale(parseFloat(String(d[type]))))
           .curve(curveStepAfter);
-      chart
-        .select(".capE")
-        .attr("clip-path", "url(#clip)")
-        .selectAll("path")
-        .data([capsData])
-        .join("path")
-        .transition()
-        .duration(500)
-        .attr("stroke", "#aa33cc99")
-        .attr("stroke-width", 1)
-        .attr("fill", "none")
-        .attr("stroke-dasharray", "2 2")
-        .attr("d", capLineGenerator("E"));
-      chart
-        .select(".capG")
-        .attr("clip-path", "url(#clip)")
-        .selectAll("path")
-        .data([capsData])
-        .join("path")
-        .transition()
-        .duration(500)
-        .attr("stroke", "#FF000080")
-        .attr("stroke-width", 1)
-        .attr("fill", "none")
-        .attr("stroke-dasharray", "2 2")
-        .attr("d", capLineGenerator("G"));
+      if (type.includes("E")) {
+        chart
+          .select(".capE")
+          .attr("clip-path", `url(#clip-${id})`)
+          .selectAll("path")
+          .data([capsData])
+          .join("path")
+          .transition()
+          .duration(500)
+          .attr("stroke", "#aa33cc99")
+          .attr("stroke-width", 1)
+          .attr("fill", "none")
+          .attr("stroke-dasharray", "2 2")
+          .attr("d", capLineGenerator("E"));
+      }
+      if (type.includes("G")) {
+        chart
+          .select(".capG")
+          .attr("clip-path", `url(#clip-${id})`)
+          .selectAll("path")
+          .data([capsData])
+          .join("path")
+          .transition()
+          .duration(500)
+          .attr("stroke", "#FF000080")
+          .attr("stroke-width", 1)
+          .attr("fill", "none")
+          .attr("stroke-dasharray", "2 2")
+          .attr("d", capLineGenerator("G"));
+      }
     };
 
     // ↓↓↓ ZOOM
@@ -366,7 +453,7 @@ const BrushChart = ({
       const zxScale = event.transform.rescaleX(xScale);
       pointerInteraction(zxScale, yScale);
       drawAxes(zxScale, yScale);
-      [lineChart, lineChart2].map((chart) => {
+      lineCharts.map((chart) => {
         chart
           .attr("stroke-dasharray", "0 0")
           .transition()
@@ -374,6 +461,7 @@ const BrushChart = ({
           .attr("d", lineGeneratorFunc(zxScale, yScale));
       });
       drawCurrentCap(zxScale, yScale);
+      drawArea("electricity", zxScale, yScale);
     }
 
     /* brush zoom function
@@ -440,10 +528,10 @@ const BrushChart = ({
       xScale: ScaleTime<number, number, never>,
       yScale: ScaleLinear<number, number, never>
     ) => {
-      const tooltip = select(".tooltip");
+      const tooltip = chart.select(".tooltip");
       const pointerInteractionArea = chart.select("g.pointerInteraction");
       /* Add clip */
-      pointerInteractionArea.attr("clip-path", "url(#clip)");
+      pointerInteractionArea.attr("clip-path", `url(#clip-${id})`);
       /* Remove all visible elements in case on Zoom */
       tooltip.attr("opacity", "0");
 
@@ -467,47 +555,67 @@ const BrushChart = ({
             ),
             xValue
           );
-        const dateAtZeroHour = xValue.setHours(0, 0, 0, 0);
-        const pointValues = data.map((set) => {
-          return [
-            pointerX,
-            set.results.find(
-              (result) =>
-                new Date(result.valid_from).getTime() === dateAtZeroHour
-            )?.value_inc_vat ?? "--",
-            ENERGY_TYPE_ICON[set.tariffType],
-          ] as const;
-        });
+
+        const pointValues = isAgile
+          ? [
+              [
+                pointerX,
+                data[0].results[index]?.value_inc_vat ?? "--",
+                ENERGY_TYPE_ICON[data[0].tariffType],
+              ] as const,
+            ]
+          : data?.map((set) => {
+              return [
+                pointerX,
+                set.results.find(
+                  (result) =>
+                    new Date(result.valid_from).getTime() ===
+                    xValue.setHours(0, 0, 0, 0)
+                )?.value_inc_vat ?? "--",
+                ENERGY_TYPE_ICON[set.tariffType],
+              ] as const;
+            });
 
         // Tooltip position
         const tooltipWidth =
-          document.querySelector(".tooltip")?.getBoundingClientRect()?.width ??
-          0;
+          document
+            .getElementById(`chart-${id}`)
+            ?.querySelector(`.tooltip`)
+            ?.getBoundingClientRect()?.width ?? 0;
         const tooltipLeft =
           widgetWidth - (pointerX + padding.left + 20) < tooltipWidth
             ? pointerX - 10 - tooltipWidth
             : pointerX + 10;
-
-        select(".tooltip")
+        chart
+          .select(".tooltip rect")
+          .attr("height", leadingSize * (type.length + 1) + innerPadding * 2);
+        chart
+          .select(".tooltip")
           .transition()
           .duration(20)
           .attr(
             "opacity",
             `${
-              pointValues.every((point) => typeof point[1] !== "number")
+              pointValues.every(
+                (point) => typeof point[1] !== "number" || point[0] <= 0
+              )
                 ? "0"
                 : "1"
             }`
           )
           .style("transform", `translate(${tooltipLeft}px, ${padding.top}px)`);
-        select(".date")
+        chart
+          .select(".date")
           .selectAll("text")
           .data([xValue])
           .join("text")
           .attr("fill", "#FFFFFF80")
           .attr("alignment-baseline", "hanging")
-          .text(xValue.toLocaleDateString());
-        select(".price")
+          .text(
+            isAgile ? xValue.toLocaleString() : xValue.toLocaleDateString()
+          );
+        chart
+          .select(".price")
           .selectAll("text")
           .data(pointValues)
           .join("text")
@@ -553,76 +661,98 @@ const BrushChart = ({
 
     /* draw charts */
     drawAxes(xScale, yScale);
-    const lineChart = drawLine(
-      [data[0].results],
-      "electricity",
-      xScale,
-      yScale,
-      true
-    );
-    const lineChart2 = drawLine([data[1].results], "gas", xScale, yScale, true);
+
+    if (type.includes("E")) {
+      const lineChart = drawLine(
+        [data[0].results],
+        "electricity",
+        xScale,
+        yScale,
+        true
+      );
+      lineCharts.push(lineChart);
+      drawArea("electricity", xScale, yScale, true);
+    }
+    if (type.includes("G")) {
+      const lineChart2 = drawLine(
+        [data[1].results],
+        "gas",
+        xScale,
+        yScale,
+        true
+      );
+      lineCharts.push(lineChart2);
+    }
     drawCurrentCap(xScale, yScale);
     pointerInteraction(xScale, yScale);
 
     /* Legend */
-    chart
-      .select(".capEText")
-      .text("electricity SVT price cap")
-      .attr("transform", "translate(-55 0)")
-      .attr("text-anchor", "end")
-      .attr("alignment-basline", "baseline")
-      .attr("font-size", "10")
-      .attr("fill", "#aa33cc")
-      .attr("x", widgetWidth - padding.right - padding.left)
-      .attr("y", fontSize);
-    chart
-      .select(".capE")
-      .selectAll("line")
-      .attr("stroke", "#aa33cc99")
-      .attr("stroke-width", 1)
-      .attr("stroke-dasharray", "2 2")
-      .attr("x1", widgetWidth - padding.right - padding.left - 50)
-      .attr("y1", fontSize / 2 + 5)
-      .attr("x2", widgetWidth - padding.right - padding.left)
-      .attr("y2", fontSize / 2 + 5);
-
-    chart
-      .select(".capGText")
-      .text("gas SVT price cap")
-      .attr("transform", `translate(-55 ${fontSize})`)
-      .attr("text-anchor", "end")
-      .attr("alignment-basline", "baseline")
-      .attr("font-size", "10")
-      .attr("fill", "#FF000099")
-      .attr("x", widgetWidth - padding.right - padding.left)
-      .attr("y", fontSize);
-    chart
-      .select(".capG")
-      .selectAll("line")
-      .attr("stroke", "#ff000080")
-      .attr("stroke-width", 1)
-      .attr("stroke-dasharray", "2 2")
-      .attr("x1", widgetWidth - padding.right - padding.left - 50)
-      .attr("y1", (3 * fontSize) / 2 + 5)
-      .attr("x2", widgetWidth - padding.right - padding.left)
-      .attr("y2", (3 * fontSize) / 2 + 5);
-
+    if (type.includes("E")) {
+      chart
+        .select(".capEText")
+        .text("electricity SVT price cap")
+        .attr("transform", "translate(-55 0)")
+        .attr("text-anchor", "end")
+        .attr("alignment-basline", "baseline")
+        .attr("font-size", "10")
+        .attr("fill", "#aa33cc")
+        .attr("x", widgetWidth - padding.right - padding.left)
+        .attr("y", fontSize);
+      chart
+        .select(".capE")
+        .selectAll("line")
+        .attr("stroke", "#aa33cc99")
+        .attr("stroke-width", 1)
+        .attr("stroke-dasharray", "2 2")
+        .attr("x1", widgetWidth - padding.right - padding.left - 50)
+        .attr("y1", fontSize / 2 + 5)
+        .attr("x2", widgetWidth - padding.right - padding.left)
+        .attr("y2", fontSize / 2 + 5);
+    }
+    if (type.includes("G")) {
+      chart
+        .select(".capGText")
+        .text("gas SVT price cap")
+        .attr("transform", `translate(-55 ${fontSize})`)
+        .attr("text-anchor", "end")
+        .attr("alignment-basline", "baseline")
+        .attr("font-size", "10")
+        .attr("fill", "#FF000099")
+        .attr("x", widgetWidth - padding.right - padding.left)
+        .attr("y", fontSize);
+      chart
+        .select(".capG")
+        .selectAll("line")
+        .attr("stroke", "#ff000080")
+        .attr("stroke-width", 1)
+        .attr("stroke-dasharray", "2 2")
+        .attr("x1", widgetWidth - padding.right - padding.left - 50)
+        .attr("y1", (3 * fontSize) / 2 + 5)
+        .attr("x2", widgetWidth - padding.right - padding.left)
+        .attr("y2", (3 * fontSize) / 2 + 5);
+    }
     chart.call(zoomBehavior);
   }, [
     caps.data,
     data,
     gsp,
+    id,
     leadingSize,
     padding.bottom,
     padding.left,
     padding.right,
     padding.top,
+    tariff,
+    type,
     widgetHeight,
     widgetWidth,
   ]);
 
   return (
-    <div className="chartDiv relative w-full h-[450px] flex-1 flex items-center justify-center flex-col rounded-xl bg-theme-950 border border-accentPink-700/50 shadow-inner overflow-hidden">
+    <div
+      id={`chart-${id}`}
+      className="chartDiv relative w-full h-[450px] flex-1 flex items-center justify-center flex-col rounded-xl bg-theme-950 border border-accentPink-700/50 shadow-inner overflow-hidden"
+    >
       {isLoading && <Loading />}
       {isError && <ErrorMessage error={error} errorHandler={() => refetch()} />}
 
@@ -639,6 +769,9 @@ const BrushChart = ({
               <stop offset="50%" stopColor="green" />
               <stop offset="100%" stopColor="yellow" />
             </linearGradient>
+            <clipPath id={`clip-${id}`}>
+              <rect x="0" y="0"></rect>
+            </clipPath>
           </defs>
           <g className="chartContainer">
             <g className="grid" />
@@ -655,10 +788,30 @@ const BrushChart = ({
           </g>
           <g className="interactionContainer">
             <g className="pointerInteraction" />
-            <g className="tooltip" opacity="0">
+            <g className="payToUse" opacity="0">
               <rect
                 width="150"
-                height={leadingSize * 3 + innerPadding * 2}
+                height="3em"
+                rx={leadingSize / 2}
+                fill="#ce2cb9"
+                x="0"
+                y="0"
+              />
+              <text fill="#aaffdd" fontSize={10} y="1em" x="0">
+                <tspan x="1em" dy=".6em">
+                  Yes, you read it right!
+                </tspan>
+                <tspan x="1em" dy="1.2em">
+                  Octopus pays you to use
+                </tspan>
+                <tspan x="1em" dy="1.2em">
+                  electricity for this period!
+                </tspan>
+              </text>
+            </g>
+            <g className="tooltip" opacity="0">
+              <rect
+                width="180"
                 rx={leadingSize / 2}
                 fill="#00000060"
                 x="0"

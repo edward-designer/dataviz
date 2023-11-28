@@ -33,10 +33,10 @@ const TariffSelect = ({
     <div className="flex items-center justify-center font-display">
       <Select
         onValueChange={(value: string) => setTariff(value)}
-        defaultValue={tariff}
+        value={tariff}
       >
         <SelectTrigger className="w-auto max-w-full leading-[2.5em] text-[clamp(20px,7vw,80px)] text-accentBlue-400 flex items-center justify-center">
-          <SelectValue placeholder="Select a Tariff" />
+          <SelectValue placeholder="" />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
