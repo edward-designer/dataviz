@@ -33,7 +33,6 @@ const HalfHourlyChart = ({
   useEffect(() => {
     if (!currentPeriodRef.current) return;
     currentPeriodRef.current.scrollIntoView({
-      behavior: "smooth",
       block: "center",
     });
     if (!window) return;
@@ -79,6 +78,7 @@ const HalfHourlyChart = ({
       }}
       onMouseEnter={handledisableScroll}
       onPointerDown={(event: PointerEvent<HTMLOListElement>) => {
+        handledisableScroll();
         setScrollProperty({
           isScrolling: true,
           originY: event.clientY,
