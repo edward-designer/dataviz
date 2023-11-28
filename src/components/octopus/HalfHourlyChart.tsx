@@ -38,7 +38,9 @@ const HalfHourlyChart = ({
     if (!window) return;
     const resizeBarChart = () => {
       setWidth(
-        window.innerWidth > 1400 ? 300 : 300 - (1400 - window.innerWidth) / 3
+        window.innerWidth > 1400 || window.innerWidth < 765
+          ? 300
+          : 300 - (1400 - window.innerWidth) / 3
       );
     };
     resizeBarChart();
@@ -58,31 +60,17 @@ const HalfHourlyChart = ({
     return new Date(data.valid_from) < now && new Date(data.valid_to) > now;
   });
 
-  const preventWheelScroll = (event: Event) => event.preventDefault();
-  const handledisableScroll = () => {
-    document.addEventListener("wheel", preventWheelScroll, {
-      passive: false,
-    });
-  };
-  const handleenableScroll = () => {
-    document.removeEventListener("wheel", preventWheelScroll, false);
-  };
 
   return (
     <ol
       ref={listContainerRef}
-      className="flex-1 font-digit max-h-[100%] overflow-hidden flex flex-col"
-      onWheel={(event: WheelEvent<HTMLOListElement>) => {
-        if (!listContainerRef.current) return;
-        listContainerRef.current.scrollTop += event.deltaY;
-      }}
-      onMouseEnter={handledisableScroll}
+      className="flex-1 font-digit max-h-[100%] overflow-y-scroll flex flex-col"
       onPointerDown={(event: PointerEvent<HTMLOListElement>) => {
-        handledisableScroll();
         setScrollProperty({
           isScrolling: true,
           originY: event.clientY,
         });
+        listContainerRef.current?.setAttribute("style", "touch-action:none");
       }}
       onPointerMove={(event: PointerEvent<HTMLOListElement>) => {
         if (!listContainerRef.current) return;
@@ -103,13 +91,13 @@ const HalfHourlyChart = ({
           isScrolling: false,
           originY: event.clientY,
         });
+        listContainerRef.current?.setAttribute("style", "touch-action:auto");
       }}
       onPointerLeave={(event: PointerEvent<HTMLOListElement>) => {
         setScrollProperty({
           isScrolling: false,
           originY: event.clientY,
         });
-        handleenableScroll();
       }}
     >
       {reversedRates.length > 0 &&
@@ -130,7 +118,7 @@ const HalfHourlyChart = ({
             <span className="text-4xl font-normal text-theme-950 w-30">
               <FormattedPrice price={rate.value_inc_vat} />
             </span>
-            <span className="block flex-1 h-4 relative">
+            <span className="flex-1 h-4 relative hidden sm:block">
               <span
                 className="absolute block h-4 w-1 border-l-theme-950/30 border-dashed border-l"
                 style={{ left: `${xScale(priceAverage)}px` }}
