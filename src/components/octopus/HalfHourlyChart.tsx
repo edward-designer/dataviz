@@ -101,7 +101,7 @@ const HalfHourlyChart = ({
             ref={ind === priceNowIndex ? currentPeriodRef : null}
           >
             <span
-              className="text-xs font-light text-white sm:text-theme-950 p-2 overflow-visible [text-shadow:_0_0_3px_rgb(0_0_0_/_100%)] sm:[text-shadow:none]"
+              className="text-xs font-light text-white sm:text-theme-950 p-2 overflow-visible [text-shadow:_0_0_1px_rgb(0_0_0_/_70%)] sm:[text-shadow:none]"
               style={{
                 width: `${xScale(rate.value_inc_vat)}%`,
                 background: colorScale(rate.value_inc_vat),
