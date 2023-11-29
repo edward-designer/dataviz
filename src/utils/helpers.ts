@@ -3,22 +3,41 @@ import {
   TariffResult,
   FETCH_ERROR,
   QueryTariffResult,
+  gsp,
 } from "@/data/source";
 
 import { BaseType, Selection, select } from "d3";
 
-export const fetchEachApi = async (tariffType: ApiTariffType, url: string) => {
+export const fetchEachApi = async ({
+  tariffType,
+  gsp,
+  url,
+}: {
+  tariffType?: ApiTariffType;
+  gsp?: gsp;
+  url: string;
+}) => {
+  console.log(url);
   const response = await tryFetch(fetch(url, { cache: "no-store" }));
   if (!response.ok) throw new Error(FETCH_ERROR);
   const json = await response.json();
   json.dataStamp = new Date().toLocaleDateString();
-  return { ...json, tariffType };
+  return { ...json, tariffType, gsp };
 };
 
 export const fetchApi =
-  (urls: { tariffType: ApiTariffType; url: string }[]) => async () => {
+  (urls: { tariffType?: ApiTariffType; url: string; gsp?: gsp }[]) =>
+  async () => {
     const allResponse = await tryFetch(
-      Promise.all(urls.map((url) => fetchEachApi(url.tariffType, url.url)))
+      Promise.all(
+        urls.map((url) =>
+          fetchEachApi({
+            tariffType: url.tariffType,
+            url: url.url,
+            gsp: url.gsp,
+          })
+        )
+      )
     );
     return allResponse;
   };
@@ -89,6 +108,11 @@ export const calculateChangePercentage = (
   );
 };
 
+export const addSign = (price: number) => {
+  if (price > 0) return `+${price}`;
+  return String(price);
+};
+
 export function assertExtentNotUndefined<T>(
   extent: Array<T | undefined>
 ): asserts extent is [T, T] {
@@ -109,9 +133,9 @@ export const tryFetch = async <T>(asyncProcess: Promise<T>) => {
 };
 
 export const selectOrAppend = (
-  element: "g" | "rect" | "circle" | "text" | "line",
+  element: "g" | "rect" | "circle" | "text" | "line" | "polygon",
   className: string,
-  parentNode: Selection<SVGSVGElement, unknown, null, undefined>
+  parentNode: Selection<SVGSVGElement | SVGGElement, unknown, null, undefined>
 ) => {
   if (!element) throw new Error("Element must be specified.");
   const node = parentNode.select(`${element}.${className}`).node()

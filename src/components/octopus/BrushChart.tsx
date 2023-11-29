@@ -56,6 +56,7 @@ import {
   ApiTariffType,
   FETCH_ERROR,
   CapsTSVResult,
+  DurationType,
 } from "@/data/source";
 
 import useTariffQuery from "../../hooks/useTariffQuery";
@@ -77,10 +78,14 @@ const BrushChart = ({
   tariff,
   type,
   gsp,
+  duration = "month",
+  height = 450,
 }: {
   tariff: string;
   type: TariffType;
   gsp: string;
+  duration?: DurationType;
+  height?: number;
 }) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const timeIdRef = useRef<number | undefined>(undefined);
@@ -91,6 +96,7 @@ const BrushChart = ({
       tariff,
       type,
       gsp,
+      duration,
     });
 
   const queryCapFn = (url: string) => async () => {
@@ -108,7 +114,7 @@ const BrushChart = ({
 
   // Specify chart properties (dimensions and colors)
   let widgetWidth = 1000;
-  let widgetHeight = 450;
+  let widgetHeight = height;
   const fontSize = 14;
   const leadingSize = fontSize * 1.5;
   const innerPadding = 10;
@@ -442,15 +448,21 @@ const BrushChart = ({
         window.clearInterval(timeIdRef.current);
         const timelineG = selectOrAppend(
           "g",
-          "timeline",
+          "timelineG",
           chart.select("g.chartContainer")
         ) as Selection<SVGGElement, unknown, null, undefined>;
-        const timelineTriangle = timelineG
-          .append("polygon")
-          .classed("timelineTriangle", true)
-          .attr("points", "0,0 10,0 5,8")
-          .attr("fill", "#ce2cb9");
-        const timeline = timelineG.append("line");
+        timelineG.attr("clip-path", `url(#clip-${id})`);
+        const timelineTriangle = selectOrAppend(
+          "polygon",
+          "timelineTriangle",
+          timelineG
+        ) as Selection<SVGPolygonElement, unknown, null, undefined>;
+        timelineTriangle.attr("points", "0,0 10,0 5,8").attr("fill", "#ce2cb9");
+        const timeline = selectOrAppend(
+          "line",
+          "timeline",
+          timelineG
+        ) as Selection<SVGPolygonElement, unknown, null, undefined>;
         timeline
           .attr("x1", padding.left)
           .attr("x2", padding.left)
@@ -474,8 +486,10 @@ const BrushChart = ({
     const redrawTimeLine = (xScale: ScaleTime<number, number, never>) => {
       if (isAgile) {
         window.clearInterval(timeIdRef.current);
-        const timeline = select(".timeline").select("line");
-        const timelineTriangle = select(".timelineTriangle");
+        const timeline = chart.select(".timelineG").select(".timeline");
+        const timelineTriangle = chart
+          .select(".timelineG")
+          .select(".timelineTriangle");
         const setTimelinePosition = () => {
           const xPos = xScale(new Date());
           timeline.transition().duration(50).attr("x1", xPos).attr("x2", xPos);
@@ -810,7 +824,7 @@ const BrushChart = ({
   return (
     <div
       id={`chart-${id}`}
-      className="chartDiv relative w-full h-[450px] flex-1 flex items-center justify-center flex-col rounded-xl bg-theme-950 border border-accentPink-700/50 shadow-inner overflow-hidden"
+      className={`h-[${height}px] min-h-[300px] chartDiv relative w-full flex-1 flex items-center justify-center flex-col rounded-xl bg-theme-950 border border-accentPink-700/50 shadow-inner overflow-hidden`}
     >
       {isLoading && <Loading />}
       {isError && <ErrorMessage error={error} errorHandler={() => refetch()} />}

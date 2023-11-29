@@ -7,6 +7,8 @@ import { IUkMapData, useUkGspMapData } from "@/hooks/useUkGspMap";
 import {
   ENERGY_TYPE,
   ENERGY_TYPE_ICON,
+  QueryAgileResults,
+  QuerySingleAgileGSPResult,
   QuerySingleTariffPlanResult,
   Single_tariff,
   Single_tariff_gsp_record,
@@ -15,7 +17,6 @@ import {
   priceCap,
   standingCap,
 } from "@/data/source";
-import useTariffQuery from "@/hooks/useTariffQuery";
 import { addSign, calculateChangePercentage, evenRound } from "@/utils/helpers";
 import {
   axisRight,
@@ -34,20 +35,23 @@ import {
 
 import { EnergyIcon } from "./EnergyIcon";
 import ErrorMessage from "./ErrorMessage";
+import useAgileTariffQuery from "@/hooks/useAgileTariffQuery";
 
-interface IMapChart {
+interface IMapChartAgile {
   tariff: string;
   type: keyof typeof ENERGY_TYPE;
   rate?: keyof Single_tariff_gsp_record["direct_debit_monthly"];
   gsp: string;
+  currentPeriod: string;
 }
 
-const MapChart = ({
+const MapChartAgile = ({
   tariff,
   type,
   rate = "standard_unit_rate_inc_vat",
   gsp,
-}: IMapChart) => {
+  currentPeriod,
+}: IMapChartAgile) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const mapData = useUkGspMapData();
 
@@ -56,14 +60,13 @@ const MapChart = ({
 
   if (typeof document !== "undefined") {
     width =
-      document.querySelector(".pricePaneAgile")?.getBoundingClientRect().width ??
-      width;
+      document.querySelector(".pricePaneAgile")?.getBoundingClientRect()
+        .width ?? width;
   }
 
   const { isLoading, isError, isSuccess, refetch, data, error } =
-    useTariffQuery<QuerySingleTariffPlanResult>({
+    useAgileTariffQuery<QuerySingleAgileGSPResult>({
       tariff,
-      type,
     });
 
   let path = geoPath();
@@ -80,36 +83,38 @@ const MapChart = ({
     const svg = select(svgRef.current);
     const tooltip = svg.select(".tooltipContainer");
     const defs = svg.append("defs");
+    const dataAgile = data.map((gspData) => ({
+      gsp: gspData.gsp,
+      result: gspData.results.find((result) => {
+        return (
+          new Date(result.valid_from) <= new Date(currentPeriod) &&
+          new Date(result.valid_to) >= new Date(currentPeriod)
+        );
+      }),
+    }));
 
-    if (rate === "standard_unit_rate_inc_vat") {
-      const validDate = new Date(
-        data[0].tariffs_active_at as string
-      ).toLocaleDateString();
-      const updateDate =
-        validDate === new Date().toLocaleDateString()
-          ? `Today (${validDate})`
-          : validDate ===
-            new Date(
-              new Date().setDate(new Date().getDate() - 1)
-            ).toLocaleDateString()
-          ? `Yesterday (${validDate})`
-          : `Updated at ${validDate}`;
+    if (
+      rate === "standard_unit_rate_inc_vat" &&
+      dataAgile[0].result?.valid_from &&
+      dataAgile[0].result?.valid_from
+    ) {
+      const updateDate = `${new Date(
+        dataAgile[0].result.valid_from
+      ).toLocaleDateString()} ${new Date(
+        dataAgile[0].result.valid_from
+      ).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      })} - ${new Date(dataAgile[0].result.valid_to).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      })}`;
       svg.select(".info").text(updateDate);
     }
-    if (rate === "standing_charge_inc_vat") {
-      const ofgemCap = `Average SVT Cap: ${standingCap[type]}p`;
-      svg.select(".info").text(ofgemCap);
-    }
 
-    const tariffTypeKey =
-      `single_register_${ENERGY_TYPE[type]}_tariffs` as keyof QuerySingleTariffPlanResult;
-    const singleTariffByGsp = (data[0]?.[tariffTypeKey] ?? []) as Single_tariff;
-    const allValues = Object.values(
-      singleTariffByGsp
-    ) as Single_tariff_gsp_record[];
-    let valueExtent = extent(allValues, (d) => d["direct_debit_monthly"][rate]);
+    let valueExtent = extent(dataAgile, (d) => d.result?.value_inc_vat);
     if (!valueExtent[0] && !valueExtent[1]) {
-      valueExtent = [0, TRACKER[0].cap.E];
+      valueExtent = [0, 100];
     }
     const colorScale = scaleSequential(
       interpolate("#FFFFFF", "#ce2cb9")
@@ -159,9 +164,16 @@ const MapChart = ({
       .attr("fill", "#FFFFFF80");
 
     const getPrice = (gsp: gsp) =>
-      evenRound(singleTariffByGsp[gsp]?.["direct_debit_monthly"]?.[rate], 2) +
-        "p" ?? "--";
-
+      evenRound(
+        dataAgile.find((d) => d.gsp === gsp)?.result?.value_inc_vat ?? 0,
+        2,
+        true
+      ) + "p" ?? "--";
+    const getPriceValue = (gsp: gsp) =>
+      evenRound(
+        dataAgile.find((d) => d.gsp === gsp)?.result?.value_inc_vat ?? 0,
+        2
+      );
     svg
       .select(".districtGroup")
       .selectAll("path")
@@ -252,13 +264,7 @@ const MapChart = ({
         })
         .attr("text-anchor", "middle")
         .attr("fill", (d) => {
-          const value =
-            evenRound(
-              singleTariffByGsp[d?.properties?.Name as gsp]?.[
-                "direct_debit_monthly"
-              ]?.[rate],
-              2
-            ) ?? 100;
+          const value = getPriceValue(d?.properties?.Name);
           return colorScale(value);
         })
         .attr("font-size", "14")
@@ -297,7 +303,7 @@ const MapChart = ({
       });
 
     svg.call(zoomBehavior);
-  }, [mapData, data, type, path, height, gsp, rate, width]);
+  }, [mapData, data, type, path, height, gsp, rate, width, currentPeriod]);
 
   return (
     <div className="mapDiv relative h-[450px] flex-1 flex items-center justify-center flex-col rounded-xl bg-black/30 border border-accentPink-700/50 shadow-inner overflow-hidden">
@@ -379,4 +385,4 @@ const MapChart = ({
   );
 };
 
-export default MapChart;
+export default MapChartAgile;

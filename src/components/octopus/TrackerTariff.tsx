@@ -17,12 +17,14 @@ import PricePane from "./PricePane";
 import Remark from "./Remark";
 import TariffSelect from "./TariffSelect";
 import MapChart from "@/components/octopus/MapChart";
+import { WindowResizeContext } from "@/context/windowResize";
 
 const TrackerTariff = () => {
   const [tariff, setTariff] = useState(TRACKER[0].code);
   const {
     value: { gsp },
   } = useContext(UserContext);
+  const { height, width } = useContext(WindowResizeContext);
 
   return (
     <div className="lg:col-[content] my-4">
@@ -177,11 +179,11 @@ const TrackerTariff = () => {
               Why do the unit rates different depending on where I live?
             </AccordionTrigger>
             <AccordionContent>
-              That is because Octopus need to pay different amount of
-              operational costs (for maintaining and using the transmission
-              network) to deliver energy to the users. This cost is passed onto
-              the end users in order to keep the Tracker price as low as
-              possible.
+              That is because Octopus need to pay a different amount of
+              operational cost (for maintaining and using the transmission
+              network) to deliver energy to the users of different locations.
+              This cost is passed onto the end users in order to keep the
+              Tracker price as low as possible.
             </AccordionContent>
           </AccordionItem>
         </Accordion>

@@ -90,72 +90,76 @@ const PricePane = ({ tariff, type, gsp, setCurrentPeriod }: IPricePane) => {
   );
 
   return (
-    <div
-      className="relative flex-1 flex flex-col gap-8 max-h-[300px] min-h-[300px] rounded-xl p-4 bg-theme-950 border border-accentPink-800/60 shadow-inner bg-gradient-to-br from-transparent via-theme-800/20 to-purple-600/30 bg-cover"
-      style={{
-        backgroundImage: `linear-gradient(0deg, rgba(0,3,35,0.5) 30% , rgba(0,3,35,0.8) 70%, rgba(0,4,51,1) 90% ),url(${
-          isNight ? backgroundNight.src : backgroundDay.src
-        })`,
-      }}
-    >
-      {isLoading && <Loading />}
-      {isError && <ErrorMessage error={error} errorHandler={() => refetch()} />}
-      {isSuccess && (
-        <>
-          <EnergyIcon type={type} />
-          <div className="flex-1">
-            <Timer setCurrentPeriod={setCurrentPeriod} />
-          </div>
+    <div className="pricePaneAgile relative flex-1">
+      <div
+        className="flex flex-col gap-8 max-h-[300px] min-h-[300px] rounded-xl p-4 bg-theme-950 border border-accentPink-800/60 shadow-inner bg-gradient-to-br from-transparent via-theme-800/20 to-purple-600/30 bg-cover"
+        style={{
+          backgroundImage: `linear-gradient(0deg, rgba(0,3,35,0.5) 30% , rgba(0,3,35,0.8) 70%, rgba(0,4,51,1) 90% ),url(${
+            isNight ? backgroundNight.src : backgroundDay.src
+          })`,
+        }}
+      >
+        {isLoading && <Loading />}
+        {isError && (
+          <ErrorMessage error={error} errorHandler={() => refetch()} />
+        )}
+        {isSuccess && (
+          <>
+            <EnergyIcon type={type} />
+            <div className="flex-1">
+              <Timer setCurrentPeriod={setCurrentPeriod} />
+            </div>
 
-          <div className="flex flex-col justify-between items-start gap-4">
-            <div>
-              <Badge label="NOW" variant="secondary" />
-              <div className="font-digit text-4xl text-white flex flex-row items-end justify-start gap-1">
-                <div>{priceNowDisplay}</div>
-                <div className="flex">
-                  {typeof priceChangeNow === "number" && (
-                    <Comparison
-                      change={priceChangeNow}
-                      compare="today average"
-                    />
-                  )}
-                  {typeof priceNowVsCap === "number" && (
-                    <Comparison change={priceNowVsCap} compare="SVT cap">
-                      <Remark variant="badge">
-                        The{" "}
-                        <a
-                          href="https://www.ofgem.gov.uk/energy-price-cap"
-                          target="_blank"
-                        >
-                          Ofgem Price Cap for standard variable tariff (SVT)
-                        </a>{" "}
-                        is currently{" "}
-                        <strong className="text-bold">
-                          {`${priceCap[type]}p`}
-                        </strong>{" "}
-                        (from 1 October to 31 December 2023). Please note that
-                        the Ofgem caps are not applicable to Agile tariffs which
-                        have a 100p cap.
-                      </Remark>
-                    </Comparison>
-                  )}
+            <div className="flex flex-col justify-between items-start gap-4">
+              <div>
+                <Badge label="NOW" variant="secondary" />
+                <div className="font-digit text-6xl text-white flex flex-row items-end justify-start gap-1">
+                  <div>{priceNowDisplay}</div>
+                  <div className="flex">
+                    {typeof priceChangeNow === "number" && (
+                      <Comparison
+                        change={priceChangeNow}
+                        compare="today average"
+                      />
+                    )}
+                    {typeof priceNowVsCap === "number" && (
+                      <Comparison change={priceNowVsCap} compare="SVT cap">
+                        <Remark variant="badge">
+                          The{" "}
+                          <a
+                            href="https://www.ofgem.gov.uk/energy-price-cap"
+                            target="_blank"
+                          >
+                            Ofgem Price Cap for standard variable tariff (SVT)
+                          </a>{" "}
+                          is currently{" "}
+                          <strong className="text-bold">
+                            {`${priceCap[type]}p`}
+                          </strong>{" "}
+                          (from 1 October to 31 December 2023). Please note that
+                          the Ofgem caps are not applicable to Agile tariffs
+                          which have a 100p cap.
+                        </Remark>
+                      </Comparison>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="opacity-80">
+                <Badge label="NEXT 1/2 hr" variant="secondary" />
+                <div className="font-digit text-4xl text-white flex flex-row items-end justify-start gap-1">
+                  <div>{priceNextDisplay}</div>
+                  <div className="flex">
+                    {typeof priceChangeNext === "number" && (
+                      <Comparison change={priceChangeNext} compare="now" />
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
-            <div className="opacity-80">
-              <Badge label="NEXT 1/2 hr" variant="secondary" />
-              <div className="font-digit text-4xl text-white flex flex-row items-end justify-start gap-1">
-                <div>{priceNextDisplay}</div>
-                <div className="flex">
-                  {typeof priceChangeNext === "number" && (
-                    <Comparison change={priceChangeNext} compare="now" />
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </>
-      )}
+          </>
+        )}
+      </div>
     </div>
   );
 };

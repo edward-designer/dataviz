@@ -44,14 +44,19 @@ import { useEffect } from "react";
 import FormattedPrice from "./FormattedPrice";
 import HalfHourlyChart from "./HalfHourlyChart";
 
+import octopusIcon from "../../../public/lottie/octopus.json";
+import Lottie from "lottie-react";
+
 const PricePane = ({
   tariff,
   type,
   gsp,
+  date = new Date().toDateString(),
 }: {
   tariff: string;
   type: "E";
   gsp: string;
+  date?: string;
 }) => {
   const { isLoading, isError, isSuccess, refetch, data, error } =
     useTariffQuery<QueryTariffResult>({
@@ -59,40 +64,45 @@ const PricePane = ({
       type,
       gsp,
     });
-
+  let isToday = new Date(date).toDateString() === new Date().toDateString();
   const results = data?.[0]?.results ?? [];
 
-  const priceNowIndex = results.findIndex((data) => {
-    const now = new Date();
-    return new Date(data.valid_from) < now && new Date(data.valid_to) > now;
-  });
-  const todayRates = results.filter((data) => {
-    const todayStart = new Date();
-    todayStart.setHours(0, 0, 0, 0);
-    const todayEnd = new Date();
-    todayEnd.setHours(23, 59, 59, 999);
+  if (Number.isNaN(new Date(date))) {
+    date = new Date().toDateString();
+    isToday = true;
+  }
+
+  const thisDayRates = results.filter((data) => {
+    const thisDayStart = new Date(date);
+    thisDayStart.setHours(0, 0, 0, 0);
+    const thisDayEnd = new Date(date);
+    thisDayEnd.setHours(23, 59, 59, 999);
     return (
-      new Date(data.valid_from) >= todayStart &&
-      new Date(data.valid_from) <= todayEnd
+      new Date(data.valid_from) >= thisDayStart &&
+      new Date(data.valid_from) <= thisDayEnd
     );
   });
-  const yesterdayRates = results.filter((data) => {
-    const yesterdayStart = new Date(
+
+  const previousDayRates = results.filter((data) => {
+    const previousDayStart = new Date(
       new Date().setDate(new Date().getDate() - 1)
     );
-    yesterdayStart.setHours(0, 0, 0, 0);
-    const yesterdayEnd = new Date(new Date().setDate(new Date().getDate() - 1));
-    yesterdayEnd.setHours(23, 59, 59, 999);
+    previousDayStart.setHours(0, 0, 0, 0);
+    const previousDayEnd = new Date(
+      new Date().setDate(new Date().getDate() - 1)
+    );
+    previousDayEnd.setHours(23, 59, 59, 999);
     return (
-      new Date(data.valid_from) >= yesterdayStart &&
-      new Date(data.valid_from) <= yesterdayEnd
+      new Date(data.valid_from) >= previousDayStart &&
+      new Date(data.valid_from) <= previousDayEnd
     );
   });
-  const priceAverage = mean(todayRates, (d) => d.value_inc_vat) ?? 0;
-  const yesterdayPriceAverage =
-    mean(yesterdayRates, (d) => d.value_inc_vat) ?? 0;
-  const min = minIndex(todayRates, (d) => d.value_inc_vat);
-  const max = maxIndex(todayRates, (d) => d.value_inc_vat);
+
+  const priceAverage = mean(thisDayRates, (d) => d.value_inc_vat) ?? 0;
+  const previousDayPriceAverage =
+    mean(previousDayRates, (d) => d.value_inc_vat) ?? 0;
+  const min = minIndex(thisDayRates, (d) => d.value_inc_vat);
+  const max = maxIndex(thisDayRates, (d) => d.value_inc_vat);
 
   return (
     <div
@@ -103,67 +113,80 @@ const PricePane = ({
     >
       {isLoading && <Loading />}
       {isError && <ErrorMessage error={error} errorHandler={() => refetch()} />}
-      {isSuccess && (
-        <>
-          <div className="flex flex-1 flex-row justify-between gap-4 max-h-full overflow-hidden">
-            <HalfHourlyChart
-              rates={todayRates}
-              min={min}
-              max={max}
-              priceAverage={priceAverage}
-            />
-            <div className="flex flex-col justify-between divide-y [&>div]:border-accentBlue-900">
-              <div>
-                <Badge
-                  label="Lowest"
-                  icon={<TbPigMoney className="stroke-accentBlue-500" />}
-                  variant="secondary"
-                />
-                <div className="font-digit text-4xl text-white flex flex-col items-end justify-start">
-                  <FormattedPrice price={todayRates[min].value_inc_vat} />
-                  <div className="text-xs">{`@ ${formatLocaleTimePeriod(
-                    todayRates[min].valid_from,
-                    todayRates[min].valid_to
-                  )}`}</div>
+      {isSuccess &&
+        (thisDayRates.length > 0 ? (
+          <>
+            <div className="flex flex-1 flex-row justify-between gap-4 max-h-full overflow-hidden">
+              <HalfHourlyChart
+                rates={thisDayRates}
+                min={min}
+                max={max}
+                priceAverage={priceAverage}
+                showTicker={isToday}
+              />
+              <div className="flex flex-col justify-between divide-y [&>div]:border-accentBlue-900">
+                <div>
+                  <Badge
+                    label="Lowest"
+                    icon={<TbPigMoney className="stroke-accentBlue-500" />}
+                    variant="secondary"
+                  />
+                  <div className="font-digit text-4xl text-white flex flex-col items-end justify-start">
+                    <FormattedPrice price={thisDayRates[min].value_inc_vat} />
+                    <div className="text-xs">{`@ ${formatLocaleTimePeriod(
+                      thisDayRates[min].valid_from,
+                      thisDayRates[min].valid_to
+                    )}`}</div>
+                  </div>
                 </div>
-              </div>
-              <div>
-                <Badge
-                  label="Highest"
-                  icon={<PiSealWarningBold className="fill-accentPink-500" />}
-                  variant="secondary"
-                />
-                <div className="font-digit text-4xl text-white flex flex-col items-end justify-start">
-                  <FormattedPrice price={todayRates[max].value_inc_vat} />
-                  <div className="text-xs">{`@ ${formatLocaleTimePeriod(
-                    todayRates[max].valid_from,
-                    todayRates[max].valid_to
-                  )}`}</div>
+                <div>
+                  <Badge
+                    label="Highest"
+                    icon={<PiSealWarningBold className="fill-accentPink-500" />}
+                    variant="secondary"
+                  />
+                  <div className="font-digit text-4xl text-white flex flex-col items-end justify-start">
+                    <FormattedPrice price={thisDayRates[max].value_inc_vat} />
+                    <div className="text-xs">{`@ ${formatLocaleTimePeriod(
+                      thisDayRates[max].valid_from,
+                      thisDayRates[max].valid_to
+                    )}`}</div>
+                  </div>
                 </div>
-              </div>
-              <div>
-                <Badge
-                  label="Average"
-                  icon={<LiaBalanceScaleSolid />}
-                  variant="secondary"
-                />
-                <div className="font-digit text-4xl text-white flex flex-col items-end justify-start">
-                  <FormattedPrice price={priceAverage} />
-                  <div className="text-xs">
-                    <Comparison
-                      change={evenRound(
-                        priceAverage - yesterdayPriceAverage,
-                        2
-                      )}
-                      compare="yesterday"
-                    />
+                <div>
+                  <Badge
+                    label="Average"
+                    icon={<LiaBalanceScaleSolid />}
+                    variant="secondary"
+                  />
+                  <div className="font-digit text-4xl text-white flex flex-col items-end justify-start">
+                    <FormattedPrice price={priceAverage} />
+                    <div className="text-xs">
+                      <Comparison
+                        change={evenRound(
+                          priceAverage - previousDayPriceAverage,
+                          2
+                        )}
+                        compare="previous day"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
+          </>
+        ) : (
+          <div className="flex-1 flex h-full items-center justify-center flex-col gap-2">
+            <Lottie
+              animationData={octopusIcon}
+              aria-hidden={true}
+              className="w-16 h-16"
+            />
+            <span className="text-sm font-light">
+              Octo is working hard to get data ready at around 4pm.
+            </span>
           </div>
-        </>
-      )}
+        ))}
     </div>
   );
 };

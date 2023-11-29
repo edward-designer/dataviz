@@ -1,19 +1,19 @@
+import { TariffResult } from "@/data/source";
 import {
-  interpolateRgbBasis,
-  scaleBand,
-  scaleLinear,
-  scaleSequential,
+    interpolateRgbBasis,
+    scaleLinear,
+    scaleSequential
 } from "d3";
+import { PointerEvent, useEffect, useRef, useState } from "react";
 import { formatLocaleTimePeriod } from "../../utils/helpers";
 import FormattedPrice from "./FormattedPrice";
-import { PointerEvent, WheelEvent, useEffect, useRef, useState } from "react";
-import { TariffResult } from "@/data/source";
 
 export interface IHalfHourlyChart {
   rates: TariffResult[];
   min: number;
   max: number;
   priceAverage: number;
+  showTicker?: boolean;
 }
 
 const HalfHourlyChart = ({
@@ -21,10 +21,12 @@ const HalfHourlyChart = ({
   min,
   max,
   priceAverage,
+  showTicker = true,
 }: IHalfHourlyChart) => {
   const currentPeriodRef = useRef<null | HTMLLIElement>(null);
   const scrollContainerRef = useRef<null | HTMLDivElement>(null);
   const listContainerRef = useRef<null | HTMLOListElement>(null);
+  const currentPeriodIndicatorRef = useRef<null | HTMLDivElement>(null);
   const timeLineContainerRef = useRef<null | HTMLDivElement>(null);
   const [scrollProperty, setScrollProperty] = useState({
     isScrolling: false,
@@ -32,7 +34,8 @@ const HalfHourlyChart = ({
   });
 
   useEffect(() => {
-    if (!scrollContainerRef.current || !currentPeriodRef.current) return;
+    if (!scrollContainerRef.current || !currentPeriodRef.current || !showTicker)
+      return;
     scrollContainerRef.current.scroll({
       top: currentPeriodRef.current.offsetTop - 100,
       left: 0,
@@ -42,9 +45,11 @@ const HalfHourlyChart = ({
 
   useEffect(() => {
     if (
+      !showTicker ||
       !listContainerRef.current ||
       !currentPeriodRef.current ||
       !timeLineContainerRef.current ||
+      !currentPeriodIndicatorRef.current ||
       reversedRates.length === 0 ||
       reversedRates.length % 2 !== 0
     )
@@ -67,8 +72,25 @@ const HalfHourlyChart = ({
         `top:${timeLineTop}px`
       );
     };
-    setTimelinePosition();
-    const timeId = window.setInterval(setTimelinePosition, 1000);
+    const setCurrentPeriodIndicatorPosition = () => {
+      if (!currentPeriodIndicatorRef.current || !currentPeriodRef.current)
+        return;
+
+      const listHeight =
+        currentPeriodRef.current.getBoundingClientRect().height;
+      const currentIndex = reversedRates.findIndex((data) => {
+        const now = new Date();
+        return new Date(data.valid_from) < now && new Date(data.valid_to) > now;
+      });
+
+      currentPeriodIndicatorRef.current.setAttribute(
+        "style",
+        `top:${currentIndex * listHeight}px`
+      );
+      setTimelinePosition();
+    };
+    setCurrentPeriodIndicatorPosition();
+    const timeId = window.setInterval(setCurrentPeriodIndicatorPosition, 1000);
     return () => window.clearInterval(timeId);
   }, []);
 
@@ -90,12 +112,20 @@ const HalfHourlyChart = ({
       className="relative flex-1 flex overflow-y-scroll"
       ref={scrollContainerRef}
     >
-      <div
-        className="border-t border-accentPink-700 w-full absolute top-0 left-0 z-50"
-        ref={timeLineContainerRef}
-      >
-        <div className="relative -top-2 h-0 w-0 border-t-8 border-l-8 border-b-8 border-solid border-t-transparent border-b-transparent border-l-accentPink-700" />
-      </div>
+      {showTicker && (
+        <>
+          <div
+            className="border-t border-accentPink-700 w-full absolute top-0 left-0 z-50"
+            ref={timeLineContainerRef}
+          >
+            <div className="relative -top-2 h-0 w-0 border-t-8 border-l-8 border-b-8 border-solid border-t-transparent border-b-transparent border-l-accentPink-700" />
+          </div>
+          <div
+            ref={currentPeriodIndicatorRef}
+            className="absolute w-full h-[56px] border-2 border-accentBlue-200 top-0 left-0"
+          ></div>
+        </>
+      )}
       <ol
         ref={listContainerRef}
         className="flex-1 font-digit max-h-[100%] flex flex-col"
@@ -136,11 +166,7 @@ const HalfHourlyChart = ({
           [...rates].reverse().map((rate, ind) => (
             <li
               key={ind}
-              className={`flex items-center select-none ${
-                ind === priceNowIndex
-                  ? "shadow-[0_-1px_7px_rgba(20,0,30,0.5),_0_1px_7px_rgba(20,0,30,0.7)] z-40"
-                  : ""
-              }`}
+              className={`flex items-center select-none`}
               style={{}}
               ref={ind === priceNowIndex ? currentPeriodRef : null}
             >

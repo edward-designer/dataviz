@@ -189,6 +189,22 @@ export interface QuerySingleTariffPlanResult {
   single_register_electricity_tariffs: Single_tariff;
   single_register_gas_tariffs: Single_tariff;
 }
+export interface QuerySingleAgileResult {
+  payment_method: null | string;
+  valid_from: string;
+  valid_to: string;
+  value_exc_vat: number;
+  value_inc_vat: number;
+}
+export interface QuerySingleAgileGSPResult {
+  count: number;
+  dataStamp: string;
+  gsp: gsp;
+  next: null | string;
+  previous: null | string;
+  results: QuerySingleAgileResult[];
+}
+export type QueryAgileResults = QuerySingleAgileGSPResult[];
 
 export type ApiTariffType = keyof typeof ENERGY_TYPE;
 export type TariffType = ApiTariffType | "EG";
@@ -196,23 +212,23 @@ export type TVariant = "default" | "badge";
 
 export const FETCH_ERROR = "Sorry. Cannot fetch data. Please try again.";
 
-export type gsp =
-  | "_A"
-  | "_B"
-  | "_C"
-  | "_D"
-  | "_E"
-  | "_F"
-  | "_G"
-  | "_H"
-  | "_I"
-  | "_J"
-  | "_K"
-  | "_L"
-  | "_M"
-  | "_N"
-  | "_O"
-  | "_P";
+export const GSP = [
+  "_A",
+  "_B",
+  "_C",
+  "_D",
+  "_E",
+  "_F",
+  "_G",
+  "_H",
+  "_J",
+  "_K",
+  "_L",
+  "_M",
+  "_N",
+  "_P",
+] as const;
+export type gsp = (typeof GSP)[number];
 
 export interface QueryProducts {
   count: number;
@@ -245,3 +261,5 @@ export interface LinkResult {
   method: "GET";
   rel: "self";
 }
+
+export type DurationType = "month" | "week" | "day" | "2-days";

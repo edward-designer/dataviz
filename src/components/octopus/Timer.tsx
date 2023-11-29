@@ -10,7 +10,7 @@ interface ITimer {
   setCurrentPeriod: Dispatch<SetStateAction<string>>;
 }
 const Timer = ({ setCurrentPeriod }: ITimer) => {
-  const [time, setTime] = useState(new Date().toLocaleTimeString());
+  const [time, setTime] = useState(new Date().toUTCString());
   const timerId = useRef<number | undefined>();
 
   useEffect(() => {
@@ -27,7 +27,7 @@ const Timer = ({ setCurrentPeriod }: ITimer) => {
     return () => window.clearInterval(timerId.current);
   }, [setCurrentPeriod]);
 
-  return <div className="font-display text-7xl font-extralight">{time}</div>;
+  return <div className="font-display text-4xl font-extralight">{time}</div>;
 };
 
 export default Timer;
