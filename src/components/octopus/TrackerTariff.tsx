@@ -24,7 +24,7 @@ const TrackerTariff = () => {
   const {
     value: { gsp },
   } = useContext(UserContext);
-  const { height, width } = useContext(WindowResizeContext);
+  useContext(WindowResizeContext);
 
   return (
     <div className="lg:col-[content] my-4">

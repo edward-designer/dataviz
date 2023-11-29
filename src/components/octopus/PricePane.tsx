@@ -88,7 +88,7 @@ const PricePane = ({
   );
 
   return (
-    <div className="relative flex-1 ">
+    <div className="pricePane relative flex-1 ">
       <div
         className="flex flex-col gap-8 p-4 min-h-[250px] md:min-h-[300px] rounded-xl bg-theme-950 border border-accentPink-800/60 shadow-inner bg-gradient-to-br from-transparent via-theme-800/20 to-purple-600/30 bg-cover"
         style={{

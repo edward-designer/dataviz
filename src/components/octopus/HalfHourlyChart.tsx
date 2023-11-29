@@ -51,21 +51,12 @@ const HalfHourlyChart = ({
     )
       return;
     const listHeight = listContainerRef.current?.scrollHeight ?? 0;
-    const setTimelinePosition = () => {
+    const setTimelinePosition = (currentIndex: number, listHeight: number) => {
       if (!timeLineContainerRef.current) return;
-      const endTimeLastPeriod = new Date();
-      const lastHourOnList = new Date(
-        reversedRates.at(-1)?.valid_from ?? ""
-      ).getHours();
-      endTimeLastPeriod.setHours(lastHourOnList, 59, 59, 999);
-      const portionOfDay =
-        1 -
-        (endTimeLastPeriod.valueOf() - new Date().valueOf()) /
-          (((60 * 60 * reversedRates.length) / 2) * 1000);
-      const timeLineTop = portionOfDay * listHeight;
+      const timeOffset = ((new Date().getMinutes() % 30) / 30) * listHeight;
       timeLineContainerRef.current.setAttribute(
         "style",
-        `top:${timeLineTop}px`
+        `top:${currentIndex * listHeight + timeOffset}px`
       );
     };
     const setCurrentPeriodIndicatorPosition = () => {
@@ -83,7 +74,7 @@ const HalfHourlyChart = ({
         "style",
         `top:${currentIndex * listHeight}px;height:${listHeight}px`
       );
-      setTimelinePosition();
+      setTimelinePosition(currentIndex, listHeight);
     };
     setCurrentPeriodIndicatorPosition();
     const timeId = window.setInterval(setCurrentPeriodIndicatorPosition, 1000);
@@ -118,7 +109,7 @@ const HalfHourlyChart = ({
           </div>
           <div
             ref={currentPeriodIndicatorRef}
-            className="absolute w-full h-[56px] border-2 border-accentBlue-200 top-0 left-0"
+            className="absolute w-full h-[56px] border-2 border-white top-0 left-0"
           ></div>
         </>
       )}

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import Loading from "../Loading";
 
@@ -54,14 +54,15 @@ const MapChartAgile = ({
 }: IMapChartAgile) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const mapData = useUkGspMapData();
+  const [selectedPeriod, setSelectedPeriod] = useState(currentPeriod);
 
   let width = 320;
   let height = 480;
 
   if (typeof document !== "undefined") {
     width =
-      document.querySelector(".pricePaneAgile")?.getBoundingClientRect()
-        .width ?? width;
+      document.querySelector(".pricePane")?.getBoundingClientRect().width ??
+      width;
   }
 
   const { isLoading, isError, isSuccess, refetch, data, error } =
@@ -77,6 +78,8 @@ const MapChartAgile = ({
     path = geoPath(projection);
   }
 
+  useEffect(() => setSelectedPeriod(currentPeriod), [currentPeriod]);
+  
   useEffect(() => {
     if (!svgRef.current || !mapData || !mapData?.districts || !data) return;
     let scale = 1;
@@ -264,7 +267,6 @@ const MapChartAgile = ({
           const value = getPriceValue(d?.properties?.Name, dataAgile);
           return colorScale(value);
         })
-        .attr("font-size", "14")
         .attr("font-weight", "bold")
         .style("pointer-events", "none");
     }

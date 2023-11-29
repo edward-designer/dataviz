@@ -28,7 +28,7 @@ const AgileTariff = () => {
   const {
     value: { gsp },
   } = useContext(UserContext);
-  const { height, width } = useContext(WindowResizeContext);
+  useContext(WindowResizeContext);
 
   const queryCapFn = (url: string) => async () => {
     const data: QueryProducts | undefined = await json(url);

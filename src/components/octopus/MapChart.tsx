@@ -56,8 +56,8 @@ const MapChart = ({
 
   if (typeof document !== "undefined") {
     width =
-      document.querySelector(".pricePaneAgile")?.getBoundingClientRect()
-        .width ?? width;
+      document.querySelector(".pricePane")?.getBoundingClientRect().width ??
+      width;
   }
 
   const { isLoading, isError, isSuccess, refetch, data, error } =
@@ -261,7 +261,6 @@ const MapChart = ({
             ) ?? 100;
           return colorScale(value);
         })
-        .attr("font-size", "14")
         .attr("font-weight", "bold")
         .style("pointer-events", "none");
     }
