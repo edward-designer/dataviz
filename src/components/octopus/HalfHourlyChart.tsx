@@ -48,10 +48,11 @@ const HalfHourlyChart = ({
     )
       return;
     const listHeight = listContainerRef.current?.scrollHeight ?? 0;
-    const timeAtNight = new Date();
-    timeAtNight.setHours(23, 59, 59, 999);
+
     const setTimelinePosition = () => {
       if (!timeLineContainerRef.current) return;
+      const timeAtNight = new Date();
+      timeAtNight.setHours(23, 59, 59, 999);
       const portionOfDay =
         1 -
         (timeAtNight.valueOf() - new Date().valueOf()) / (60 * 60 * 24 * 1000);

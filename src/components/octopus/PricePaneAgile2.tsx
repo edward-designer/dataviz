@@ -23,6 +23,7 @@ import useTariffQuery from "../../hooks/useTariffQuery";
 
 import {
   calculateChangePercentage,
+  evenRound,
   formatLocaleTimePeriod,
   isSameDate,
   isToday,
@@ -75,7 +76,21 @@ const PricePane = ({
       new Date(data.valid_from) <= todayEnd
     );
   });
+  const yesterdayRates = results.filter((data) => {
+    const yesterdayStart = new Date(
+      new Date().setDate(new Date().getDate() - 1)
+    );
+    yesterdayStart.setHours(0, 0, 0, 0);
+    const yesterdayEnd = new Date(new Date().setDate(new Date().getDate() - 1));
+    yesterdayEnd.setHours(23, 59, 59, 999);
+    return (
+      new Date(data.valid_from) >= yesterdayStart &&
+      new Date(data.valid_from) <= yesterdayEnd
+    );
+  });
   const priceAverage = mean(todayRates, (d) => d.value_inc_vat) ?? 0;
+  const yesterdayPriceAverage =
+    mean(yesterdayRates, (d) => d.value_inc_vat) ?? 0;
   const min = minIndex(todayRates, (d) => d.value_inc_vat);
   const max = maxIndex(todayRates, (d) => d.value_inc_vat);
 
@@ -134,6 +149,15 @@ const PricePane = ({
                 />
                 <div className="font-digit text-4xl text-white flex flex-col items-end justify-start">
                   <FormattedPrice price={priceAverage} />
+                  <div className="text-xs">
+                    <Comparison
+                      change={evenRound(
+                        priceAverage - yesterdayPriceAverage,
+                        2
+                      )}
+                      compare="yesterday"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
