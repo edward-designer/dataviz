@@ -44,18 +44,23 @@ const HalfHourlyChart = ({
     if (
       !listContainerRef.current ||
       !currentPeriodRef.current ||
-      !timeLineContainerRef.current
+      !timeLineContainerRef.current ||
+      reversedRates.length === 0 ||
+      reversedRates.length % 2 !== 0
     )
       return;
     const listHeight = listContainerRef.current?.scrollHeight ?? 0;
-
     const setTimelinePosition = () => {
       if (!timeLineContainerRef.current) return;
-      const timeAtNight = new Date();
-      timeAtNight.setHours(23, 59, 59, 999);
+      const endTimeLastPeriod = new Date();
+      const lastHourOnList = new Date(
+        reversedRates.at(-1)?.valid_from ?? ""
+      ).getHours();
+      endTimeLastPeriod.setHours(lastHourOnList, 59, 59, 999);
       const portionOfDay =
         1 -
-        (timeAtNight.valueOf() - new Date().valueOf()) / (60 * 60 * 24 * 1000);
+        (endTimeLastPeriod.valueOf() - new Date().valueOf()) /
+          (((60 * 60 * reversedRates.length) / 2) * 1000);
       const timeLineTop = portionOfDay * listHeight;
       timeLineContainerRef.current.setAttribute(
         "style",

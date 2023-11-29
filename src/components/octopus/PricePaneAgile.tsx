@@ -42,8 +42,8 @@ const PricePane = ({ tariff, type, gsp, setCurrentPeriod }: IPricePane) => {
       type,
       gsp,
     });
-
-  const isNight = new Date().getHours() >= 18 || new Date().getHours() <= 6;
+  const currentHour = new Date().getHours();
+  const isNight = currentHour >= 18 || currentHour <= 6;
 
   const results = data?.[0]?.results ?? [];
 
