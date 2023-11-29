@@ -352,9 +352,8 @@ const MapChartAgile = ({
                       ></text>
                       <text className="zoneCompare fill-white" x="10" y="90">
                         <tspan className="zoneCompareT1"></tspan>
-                        <tspan dx="40" className="zoneCompareT2" fontSize="8">
-                          {" "}
-                          vs SVT cap
+                        <tspan dy="14" className="zoneCompareT2" fontSize="8">
+                          *vs SVT cap
                         </tspan>
                       </text>
                     </g>
