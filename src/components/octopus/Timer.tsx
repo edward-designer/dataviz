@@ -10,7 +10,7 @@ interface ITimer {
   setCurrentPeriod: Dispatch<SetStateAction<string>>;
 }
 const Timer = ({ setCurrentPeriod }: ITimer) => {
-  const [time, setTime] = useState(new Date().toUTCString());
+  const [time, setTime] = useState(new Date().toLocaleTimeString());
   const timerId = useRef<number | undefined>();
 
   useEffect(() => {

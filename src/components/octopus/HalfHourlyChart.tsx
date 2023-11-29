@@ -1,9 +1,5 @@
 import { TariffResult } from "@/data/source";
-import {
-    interpolateRgbBasis,
-    scaleLinear,
-    scaleSequential
-} from "d3";
+import { interpolateRgbBasis, scaleLinear, scaleSequential } from "d3";
 import { PointerEvent, useEffect, useRef, useState } from "react";
 import { formatLocaleTimePeriod } from "../../utils/helpers";
 import FormattedPrice from "./FormattedPrice";
@@ -85,7 +81,7 @@ const HalfHourlyChart = ({
 
       currentPeriodIndicatorRef.current.setAttribute(
         "style",
-        `top:${currentIndex * listHeight}px`
+        `top:${currentIndex * listHeight}px;height:${listHeight}px`
       );
       setTimelinePosition();
     };
@@ -167,7 +163,6 @@ const HalfHourlyChart = ({
             <li
               key={ind}
               className={`flex items-center select-none`}
-              style={{}}
               ref={ind === priceNowIndex ? currentPeriodRef : null}
             >
               <span

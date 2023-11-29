@@ -55,7 +55,7 @@ const MapChartAgile = ({
   const svgRef = useRef<SVGSVGElement>(null);
   const mapData = useUkGspMapData();
 
-  let width = 500;
+  let width = 320;
   let height = 480;
 
   if (typeof document !== "undefined") {
@@ -163,17 +163,14 @@ const MapChartAgile = ({
       .attr("font-size", 10)
       .attr("fill", "#FFFFFF80");
 
-    const getPrice = (gsp: gsp) =>
+    const getPrice = (gsp: gsp, data: typeof dataAgile) =>
       evenRound(
-        dataAgile.find((d) => d.gsp === gsp)?.result?.value_inc_vat ?? 0,
+        data.find((d) => d.gsp === gsp)?.result?.value_inc_vat ?? 0,
         2,
         true
       ) + "p" ?? "--";
-    const getPriceValue = (gsp: gsp) =>
-      evenRound(
-        dataAgile.find((d) => d.gsp === gsp)?.result?.value_inc_vat ?? 0,
-        2
-      );
+    const getPriceValue = (gsp: gsp, data: typeof dataAgile) =>
+      evenRound(data.find((d) => d.gsp === gsp)?.result?.value_inc_vat ?? 0, 2);
     svg
       .select(".districtGroup")
       .selectAll("path")
@@ -225,14 +222,14 @@ const MapChartAgile = ({
         tooltip.select(".zoneName").text(select(this).attr("data-zoneName"));
         tooltip
           .select(".zonePrice")
-          .text(`${ENERGY_TYPE_ICON[type]} ${getPrice(gsp)}`);
+          .text(`${ENERGY_TYPE_ICON[type]} ${getPrice(gsp, dataAgile)}`);
         tooltip
           .select(".zoneCompareT1")
           .text(
             `🆚 ${addSign(
               Number(
                 calculateChangePercentage(
-                  parseFloat(getPrice(gsp)),
+                  parseFloat(getPrice(gsp, dataAgile)),
                   capToCompare
                 )
               )
@@ -257,14 +254,14 @@ const MapChartAgile = ({
         .selectAll("text")
         .data(mapData.districts.features)
         .join("text")
-        .text((d) => getPrice(d?.properties?.Name))
+        .text((d) => getPrice(d?.properties?.Name, dataAgile))
         .attr("transform", (d) => {
           const coords = path.centroid(d.geometry);
           return `translate(${coords[0]} ${coords[1]})`;
         })
         .attr("text-anchor", "middle")
         .attr("fill", (d) => {
-          const value = getPriceValue(d?.properties?.Name);
+          const value = getPriceValue(d?.properties?.Name, dataAgile);
           return colorScale(value);
         })
         .attr("font-size", "14")
@@ -355,7 +352,7 @@ const MapChartAgile = ({
                       ></text>
                       <text className="zoneCompare fill-white" x="10" y="90">
                         <tspan className="zoneCompareT1"></tspan>
-                        <tspan className="zoneCompareT2" fontSize="8">
+                        <tspan dx="40" className="zoneCompareT2" fontSize="8">
                           {" "}
                           vs SVT cap
                         </tspan>

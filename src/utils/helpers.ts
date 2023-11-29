@@ -17,7 +17,6 @@ export const fetchEachApi = async ({
   gsp?: gsp;
   url: string;
 }) => {
-  console.log(url);
   const response = await tryFetch(fetch(url, { cache: "no-store" }));
   if (!response.ok) throw new Error(FETCH_ERROR);
   const json = await response.json();

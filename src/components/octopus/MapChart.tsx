@@ -51,7 +51,7 @@ const MapChart = ({
   const svgRef = useRef<SVGSVGElement>(null);
   const mapData = useUkGspMapData();
 
-  let width = 500;
+  let width = 320;
   let height = 480;
 
   if (typeof document !== "undefined") {
