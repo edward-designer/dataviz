@@ -1,9 +1,11 @@
+import { WindowVisibilityContext } from "@/context/windowVisibility";
 import React, {
   useRef,
   useState,
   useEffect,
   Dispatch,
   SetStateAction,
+  useContext,
 } from "react";
 
 interface ITimer {
@@ -12,6 +14,7 @@ interface ITimer {
 const Timer = ({ setCurrentPeriod }: ITimer) => {
   const [time, setTime] = useState(new Date().toLocaleTimeString());
   const timerId = useRef<number | undefined>();
+  const { focus } = useContext(WindowVisibilityContext);
 
   useEffect(() => {
     timerId.current = window.setInterval(() => {
@@ -26,6 +29,11 @@ const Timer = ({ setCurrentPeriod }: ITimer) => {
     }, 1000);
     return () => window.clearInterval(timerId.current);
   }, [setCurrentPeriod]);
+  useEffect(() => {
+    if (!focus) return;
+    const now = new Date();
+    setCurrentPeriod(now.toUTCString());
+  }, [focus, setCurrentPeriod]);
 
   return <div className="font-display text-4xl font-extralight">{time}</div>;
 };
