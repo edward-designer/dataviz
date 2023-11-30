@@ -96,7 +96,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         >
           <Toast>
             <ReactQueryDevtools initialIsOpen={false} />
-            <div className="p-4 lg:p-0 lg:grid lg:grid-cols-[[fullwidth_start]_minmax(0,5%)_[breakout_start]_minmax(0,5%)_[content_start]_minmax(1000px,_1fr)_[content_end]_minmax(0,5%)_[breakout_end]_minmax(0,5%)_[fullwidth_end]]">
+            <div className="min-h-screen p-4 grid grid-rows-[100px_1fr] lg:py-0 lg:p-0 lg:grid-cols-[[fullwidth_start]_minmax(0,5%)_[breakout_start]_minmax(0,5%)_[content_start]_minmax(1000px,_1fr)_[content_end]_minmax(0,5%)_[breakout_end]_minmax(0,5%)_[fullwidth_end]]">
               <Header className="lg:col-[content]" />
               {children}
             </div>

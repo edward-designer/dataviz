@@ -1,3 +1,5 @@
+export type ENERGY_PLAN = "agile" | "tracker";
+
 export interface ITariffPlan {
   code: string;
   name: string;

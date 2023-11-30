@@ -25,7 +25,7 @@ import {
 import ErrorMessage from "./ErrorMessage";
 import { EnergyIcon } from "./EnergyIcon";
 import Timer from "./Timer";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 
 interface IPricePane {
   tariff: string;
@@ -34,6 +34,7 @@ interface IPricePane {
   setCurrentPeriod: Dispatch<SetStateAction<string>>;
 }
 const PricePane = ({ tariff, type, gsp, setCurrentPeriod }: IPricePane) => {
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const { isLoading, isError, isSuccess, refetch, data, error } =
     useTariffQuery<QueryTariffResult>({
       tariff,
@@ -87,15 +88,22 @@ const PricePane = ({ tariff, type, gsp, setCurrentPeriod }: IPricePane) => {
     note
   );
 
+  useEffect(
+    () =>
+      containerRef.current?.setAttribute(
+        "style",
+        `background-position: bottom; background-image: linear-gradient(0deg, rgba(0,3,35,0.5) 30% , rgba(0,3,35,0.8) 70%, rgba(0,4,51,1) 90% ),url(${
+          isNight ? "/images/Agile-Night.jpg" : "/images/Agile-Day.jpg"
+        })`
+      ),
+    [isNight]
+  );
+
   return (
     <div className="pricePane relative flex-1">
       <div
+        ref={containerRef}
         className="flex flex-col gap-8 max-h-[300px] min-h-[300px] rounded-xl p-4 bg-theme-950 border border-accentPink-800/60 shadow-inner bg-gradient-to-br from-transparent via-theme-800/20 to-purple-600/30 bg-cover"
-        style={{
-          backgroundImage: `linear-gradient(0deg, rgba(0,3,35,0.5) 30% , rgba(0,3,35,0.8) 70%, rgba(0,4,51,1) 90% ),url(${
-            isNight ? "/images/Agile-Night.jpg" : "/images/Agile-Day.jpg"
-          })`,
-        }}
       >
         {isLoading && <Loading />}
         {isError && (

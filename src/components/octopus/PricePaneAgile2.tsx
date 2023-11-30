@@ -128,12 +128,12 @@ const PricePane = ({
                 <div>
                   <Badge
                     label="Lowest"
-                    icon={<TbPigMoney className="stroke-accentBlue-500" />}
+                    icon={<TbPigMoney className="stroke-[#aaffdd]" />}
                     variant="secondary"
                   />
                   <div className="font-digit text-4xl text-white flex flex-col items-end justify-start">
                     <FormattedPrice price={thisDayRates[min].value_inc_vat} />
-                    <div className="text-xs">{`@ ${formatLocaleTimePeriod(
+                    <div className="text-xs -translate-y-1">{`@ ${formatLocaleTimePeriod(
                       thisDayRates[min].valid_from,
                       thisDayRates[min].valid_to
                     )}`}</div>
@@ -147,7 +147,7 @@ const PricePane = ({
                   />
                   <div className="font-digit text-4xl text-white flex flex-col items-end justify-start">
                     <FormattedPrice price={thisDayRates[max].value_inc_vat} />
-                    <div className="text-xs">{`@ ${formatLocaleTimePeriod(
+                    <div className="text-xs -translate-y-1">{`@ ${formatLocaleTimePeriod(
                       thisDayRates[max].valid_from,
                       thisDayRates[max].valid_to
                     )}`}</div>

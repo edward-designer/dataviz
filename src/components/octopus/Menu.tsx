@@ -18,7 +18,7 @@ const Menu = () => {
         onClick={() => setIsOpen((isOpen) => !isOpen)}
       >
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
-          <g xmlns="http://www.w3.org/2000/svg" fill="none" clip-path="url(#a)">
+          <g xmlns="http://www.w3.org/2000/svg" fill="none" clipPath="url(#a)">
             <path
               stroke="#fff"
               strokeLinecap="round"
@@ -62,7 +62,7 @@ const Menu = () => {
         </svg>
       </button>
       <div
-        className={`z-40 w-60 bg-theme-900/50 backdrop-blur-sm fixed top-0 right-0 transition-all h-full ${
+        className={`z-40 w-80 bg-theme-900/70 backdrop-blur-lg fixed top-0 right-0 transition-all h-full ${
           isOpen ? "translate-none" : "translate-x-full"
         }`}
       >

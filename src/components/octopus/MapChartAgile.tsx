@@ -66,7 +66,7 @@ const MapChartAgile = ({
       document.querySelector(".pricePane")?.getBoundingClientRect().width ??
       width;
   }
-  console.log(currentPeriod);
+
   const { isLoading, isError, isSuccess, refetch, data, error } =
     useAgileTariffQuery<QuerySingleAgileGSPResult>({
       tariff,
