@@ -1,8 +1,9 @@
 import { TariffResult } from "@/data/source";
 import { interpolateRgbBasis, scaleLinear, scaleSequential } from "d3";
-import { PointerEvent, useEffect, useRef, useState } from "react";
+import { PointerEvent, useContext, useEffect, useRef, useState } from "react";
 import { formatLocaleTimePeriod } from "../../utils/helpers";
 import FormattedPrice from "./FormattedPrice";
+import { WindowVisibilityContext } from "@/context/windowVisibility";
 
 export interface IHalfHourlyChart {
   rates: TariffResult[];
@@ -28,6 +29,7 @@ const HalfHourlyChart = ({
     isScrolling: false,
     originY: 0,
   });
+  const { focus } = useContext(WindowVisibilityContext);
 
   useEffect(() => {
     if (!scrollContainerRef.current || !currentPeriodRef.current || !showTicker)
@@ -37,7 +39,22 @@ const HalfHourlyChart = ({
       left: 0,
       behavior: "smooth",
     });
-  }, []);
+  }, [showTicker]);
+
+  useEffect(() => {
+    if (
+      !focus ||
+      !scrollContainerRef.current ||
+      !currentPeriodRef.current ||
+      !showTicker
+    )
+      return;
+    scrollContainerRef.current.scroll({
+      top: currentPeriodRef.current.offsetTop - 100,
+      left: 0,
+      behavior: "smooth",
+    });
+  }, [focus, showTicker]);
 
   useEffect(() => {
     if (

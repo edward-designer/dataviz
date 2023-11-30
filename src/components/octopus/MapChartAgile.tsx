@@ -64,7 +64,7 @@ const MapChartAgile = ({
       document.querySelector(".pricePane")?.getBoundingClientRect().width ??
       width;
   }
-
+  console.log(currentPeriod);
   const { isLoading, isError, isSuccess, refetch, data, error } =
     useAgileTariffQuery<QuerySingleAgileGSPResult>({
       tariff,
@@ -79,7 +79,7 @@ const MapChartAgile = ({
   }
 
   useEffect(() => setSelectedPeriod(currentPeriod), [currentPeriod]);
-  
+
   useEffect(() => {
     if (!svgRef.current || !mapData || !mapData?.districts || !data) return;
     let scale = 1;

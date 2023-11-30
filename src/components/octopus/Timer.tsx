@@ -21,7 +21,7 @@ const Timer = ({ setCurrentPeriod }: ITimer) => {
         now.getSeconds() <= 1 &&
         (now.getMinutes() === 30 || now.getMinutes() === 0)
       ) {
-        setCurrentPeriod(now.toLocaleString());
+        setCurrentPeriod(now.toUTCString());
       }
     }, 1000);
     return () => window.clearInterval(timerId.current);

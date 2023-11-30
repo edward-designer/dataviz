@@ -21,6 +21,7 @@ import { ITariffPlan, QueryProducts } from "@/data/source";
 import PricePaneAgile2 from "./PricePaneAgile2";
 import MapChartAgile from "./MapChartAgile";
 import { WindowResizeContext } from "@/context/windowResize";
+import { WindowVisibilityContext } from "@/context/windowVisibility";
 
 const AgileTariff = () => {
   const [tariff, setTariff] = useState("");
@@ -29,6 +30,7 @@ const AgileTariff = () => {
     value: { gsp },
   } = useContext(UserContext);
   useContext(WindowResizeContext);
+  useContext(WindowVisibilityContext);
 
   const queryCapFn = (url: string) => async () => {
     const data: QueryProducts | undefined = await json(url);
@@ -116,7 +118,7 @@ const AgileTariff = () => {
         </div>
       </section>
       <div className="flex-0 text-lg font-bold text-center translate-y-3 text-accentPink-600">
-        1-month unit rate graph
+        Changes over the past month
       </div>
       <section className="flex justify-center items-center gap-4 my-4">
         <BrushChart tariff={tariff} type="E" gsp={gsp} />

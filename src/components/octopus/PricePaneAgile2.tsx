@@ -182,7 +182,7 @@ const PricePane = ({
               aria-hidden={true}
               className="w-16 h-16"
             />
-            <span className="text-sm font-light">
+            <span className="text-sm font-light text-center">
               Octo is working hard to get data ready at around 4pm.
             </span>
           </div>

@@ -18,6 +18,7 @@ import Remark from "./Remark";
 import TariffSelect from "./TariffSelect";
 import MapChart from "@/components/octopus/MapChart";
 import { WindowResizeContext } from "@/context/windowResize";
+import { WindowVisibilityContext } from "@/context/windowVisibility";
 
 const TrackerTariff = () => {
   const [tariff, setTariff] = useState(TRACKER[0].code);
@@ -25,6 +26,7 @@ const TrackerTariff = () => {
     value: { gsp },
   } = useContext(UserContext);
   useContext(WindowResizeContext);
+  useContext(WindowVisibilityContext);
 
   return (
     <div className="lg:col-[content] my-4">

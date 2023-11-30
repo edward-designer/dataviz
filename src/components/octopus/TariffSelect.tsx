@@ -44,7 +44,6 @@ const TariffSelect = ({
             {source.map(({ code, name, currentPlan }) => (
               <SelectItem key={code} value={code}>
                 {name}
-                {currentPlan && <Badge label="CURRENT" />}
               </SelectItem>
             ))}
           </SelectGroup>
