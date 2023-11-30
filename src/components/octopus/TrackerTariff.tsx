@@ -51,7 +51,7 @@ const TrackerTariff = () => {
         <PricePane tariff={tariff} type="G" gsp={gsp} />
       </section>
       <div className="flex-0 text-lg font-bold text-center translate-y-3 text-accentPink-600">
-        Electricity and Gas Unit Rates Over Time
+        Changes over the past month
         <Remark variant="badge">
           The average price caps for standard variable tariff (SVT) shown here
           are for reference only. All Octopus tracker plans have different price
@@ -63,7 +63,7 @@ const TrackerTariff = () => {
         <BrushChart tariff={tariff} type="EG" gsp={gsp} />
       </section>
       <h2 className="flex-0 text-lg font-bold text-center translate-y-3 text-accentPink-600">
-        Regional Energy Unit Rates Map
+        Regional energy unit rates
         <Remark variant="badge">
           The unit rates for different parts of the UK is calcuated based on{" "}
           <a
@@ -82,7 +82,7 @@ const TrackerTariff = () => {
         <MapChart tariff={tariff} type="G" gsp={gsp} />
       </section>
       <h2 className="flex-0 text-lg font-bold text-center translate-y-3 text-accentPink-600">
-        Regional Standing Charges Map
+        Regional standing charges
         <Remark variant="badge">
           The standing charge is compared to the average standard variable
           tariff (SVT) cap of UK. Different regions have different caps as
@@ -156,12 +156,15 @@ const TrackerTariff = () => {
             <AccordionTrigger>
               What have the Ofgem price caps to do with Tracker?
             </AccordionTrigger>
-            <AccordionContent>
-              Nothing. Tracker plans have much higher price caps set by Octopus
-              than the Ofgem price caps as Tracker is a new energy contract not
-              protected by Ofgem. But the general trends of Ofgem price cap will
-              give a good idea of what the energy prices are going to change in
-              the near future.
+            <AccordionContent className="text-white/60">
+              Nothing.
+              <br />
+              <br />
+              Tracker plans have much higher price caps set by Octopus than the
+              Ofgem price caps as Tracker is a new energy contract not protected
+              by Ofgem caps. But the general trends of Ofgem price cap will give
+              you a good idea of where the energy prices are heading in the near
+              future.
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-0b" className="border-b-accentBlue-600/50">
@@ -169,7 +172,10 @@ const TrackerTariff = () => {
               I am currently on Octopus Agile/Go/flexible/fixed. Will I save
               more by switching to Tracker?
             </AccordionTrigger>
-            <AccordionContent>
+            <AccordionContent className="text-white/60">
+              It depends.
+              <br />
+              <br />
               The majority of users can save around 10% - 30%. The saving would
               depend on your energy use pattern and amount. But remember energy
               price can go up or down suddenly. Do keep your eyes on the trends
@@ -180,12 +186,13 @@ const TrackerTariff = () => {
             <AccordionTrigger>
               Why do the unit rates different depending on where I live?
             </AccordionTrigger>
-            <AccordionContent>
-              That is because Octopus need to pay a different amount of
+            <AccordionContent className="text-white/60">
+              That is because Octopus needs to pay a different amount of
               operational cost (for maintaining and using the transmission
               network) to deliver energy to the users of different locations.
               This cost is passed onto the end users in order to keep the
-              Tracker price as low as possible.
+              Tracker price as low as possible. This is also the normal
+              practices for energy companies.
             </AccordionContent>
           </AccordionItem>
         </Accordion>
@@ -193,21 +200,21 @@ const TrackerTariff = () => {
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="item-1a" className="border-b-accentBlue-600/50">
             <AccordionTrigger>
-              How do I sign up for the Octopus Tracker plan?
+              How long does it take to join the Octopus tracker plan?
             </AccordionTrigger>
-            <AccordionContent>
+            <AccordionContent className="text-white/60">
               For current Octopus clients with smart meters, it is officially
-              told to take around 2 weeks, though some managed to get response
-              from Octopus within a few hours of signing up and switch over
-              within a day or two. It will take longer if you are not currently
-              an Octopus client or do not have a smart meters.
+              told to take around 2 weeks, though some have managed to get a
+              response from Octopus within a few hours of signing up and switch
+              over within a day or two. It will take longer if you are not
+              currently an Octopus client or do not have a smart meters.
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-1b" className="border-b-accentBlue-600/50">
             <AccordionTrigger>
-              How long now it takes to join Octopus tracker plans?
+              How do I sign up for the Octopus Tracker plan?
             </AccordionTrigger>
-            <AccordionContent>
+            <AccordionContent className="text-white/60">
               Head over to the{" "}
               <a href="https://octopus.energy/smart/tracker/" target="_blank">
                 Octopus Tracker page
@@ -219,30 +226,32 @@ const TrackerTariff = () => {
             <AccordionTrigger>
               What if I do not have a smart meter?
             </AccordionTrigger>
-            <AccordionContent>
-              You can request to have a smart meter installed by Octopus when
-              you sign up at no costs to you. But the wait time is over 2 weeks
-              for the moment. Before installing the smart meter, you can choose
-              to use the standard tariff, such as Flexible Octopus, until your
-              smart meter is installed and running properly.
+            <AccordionContent className="text-white/60">
+              You can request to have a FREE smart meter installed by Octopus
+              when you sign up at no costs to you. But the wait time is over 2
+              weeks at the moment. Before installing the smart meter, you can
+              choose to use the standard tariff, such as Flexible Octopus, until
+              your smart meter is installed and running properly.
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-1d" className="border-b-accentBlue-600/50">
             <AccordionTrigger>
               I have submitted my application for over 2 weeks but still have
-              not hear from Octopus. What to do now?
+              not heard from Octopus. What to do now?
             </AccordionTrigger>
-            <AccordionContent>
-              Sending emails to support may not be the optimal way to chase in
-              this case. People have reflected that sending messages on X is by
-              far the most efficient way to get a response.
+            <AccordionContent className="text-white/60">
+              According to experiences of Octopus users, sending emails to
+              support may not be the optimal way to chase in this case. Sending
+              messages on X is by far the most efficient way to get a response
+              within a few hours. Seems they have dedicated advisers monitoring
+              social media messages.
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-1e" className="border-b-accentBlue-600/50">
             <AccordionTrigger>
               When is the best time to make the switch?
             </AccordionTrigger>
-            <AccordionContent>
+            <AccordionContent className="text-white/60">
               Spring is the best time of the year as you can immediately enjoy
               huge savings all over spring, summer and autumn months.
             </AccordionContent>
@@ -252,14 +261,17 @@ const TrackerTariff = () => {
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="item-2a" className="border-b-accentBlue-600/50">
             <AccordionTrigger>
-              Is there any penalties for leaving Tracker?
+              Are there any penalties for leaving Tracker?
             </AccordionTrigger>
-            <AccordionContent>
-              Absolutely NO. It will take around 2 weeks to switch over to any
-              other Octopus tariffs. During this time, you will still be charged
-              with the prevailing price. But if you switch away from Octopus,
-              you may be able to switch faster depending on the processing time
-              of your new energy provider.
+            <AccordionContent className="text-white/60">
+              Absolutely NO.
+              <br />
+              <br />
+              It will take around 2 weeks to switch over to any other Octopus
+              tariffs. During this time, you will still be charged the original
+              tariff. But if you switch away from Octopus, you may be able to
+              switch faster depending on the processing time of your new energy
+              provider.
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-2b" className="border-b-accentBlue-600/50">
@@ -267,7 +279,7 @@ const TrackerTariff = () => {
               Can I switch to flexible plan in winter when the unit rate is high
               and back to Tracker in spring?
             </AccordionTrigger>
-            <AccordionContent>
+            <AccordionContent className="text-white/60">
               Octopus has made it not possible to make such timely switches as
               Tracker quitters have to wait 9 months before being allowed to
               switch back to Tracker in order to save their admin costs. But the

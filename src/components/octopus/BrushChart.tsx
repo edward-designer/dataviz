@@ -600,7 +600,9 @@ const BrushChart = ({
       const tooltip = chart.select(".tooltip");
       const pointerInteractionArea = chart.select("g.pointerInteraction");
       /* Add clip */
-      pointerInteractionArea.attr("clip-path", `url(#clip-${id})`);
+      pointerInteractionArea
+        .attr("clip-path", `url(#clip-${id})`)
+        .attr("opacity", 0);
       /* Remove all visible elements in case on Zoom */
       tooltip.attr("opacity", "0");
 
@@ -699,6 +701,7 @@ const BrushChart = ({
           });
 
         // Indication line and dots
+        pointerInteractionArea.attr("opacity", 1);
         pointerInteractionArea
           .selectAll("circle")
           .data(pointValues)
@@ -763,7 +766,7 @@ const BrushChart = ({
       chart
         .select(".capEText")
         .text("electricity SVT price cap")
-        .attr("transform", "translate(-55 0)")
+        .attr("transform", "translate(0 0)")
         .attr("text-anchor", "end")
         .attr("alignment-basline", "baseline")
         .attr("font-size", "10")
@@ -771,12 +774,11 @@ const BrushChart = ({
         .attr("x", widgetWidth - padding.right - padding.left)
         .attr("y", fontSize);
       chart
-        .select(".capE")
-        .selectAll("line")
+        .select(".capELine")
         .attr("stroke", "#aa33cc99")
         .attr("stroke-width", 1)
         .attr("stroke-dasharray", "2 2")
-        .attr("x1", widgetWidth - padding.right - padding.left - 50)
+        .attr("x1", widgetWidth - padding.right - padding.left + 50)
         .attr("y1", fontSize / 2 + 5)
         .attr("x2", widgetWidth - padding.right - padding.left)
         .attr("y2", fontSize / 2 + 5);
@@ -785,7 +787,7 @@ const BrushChart = ({
       chart
         .select(".capGText")
         .text("gas SVT price cap")
-        .attr("transform", `translate(-55 ${fontSize})`)
+        .attr("transform", `translate(0 ${fontSize})`)
         .attr("text-anchor", "end")
         .attr("alignment-basline", "baseline")
         .attr("font-size", "10")
@@ -793,12 +795,11 @@ const BrushChart = ({
         .attr("x", widgetWidth - padding.right - padding.left)
         .attr("y", fontSize);
       chart
-        .select(".capG")
-        .selectAll("line")
+        .select(".capGLine")
         .attr("stroke", "#ff000080")
         .attr("stroke-width", 1)
         .attr("stroke-dasharray", "2 2")
-        .attr("x1", widgetWidth - padding.right - padding.left - 50)
+        .attr("x1", widgetWidth - padding.right - padding.left + 50)
         .attr("y1", (3 * fontSize) / 2 + 5)
         .attr("x2", widgetWidth - padding.right - padding.left)
         .attr("y2", (3 * fontSize) / 2 + 5);
@@ -846,21 +847,21 @@ const BrushChart = ({
               <rect x="0" y="0"></rect>
             </clipPath>
           </defs>
+          <g className="legend" transform="translate(0,10)">
+            <text className="capEText"></text>
+            <line className="capELine"></line>
+            <text className="capGText"></text>
+            <line className="capGLine"></line>
+          </g>
           <g className="chartContainer">
             <g className="grid" />
             <g className="xAxis" />
             <g className="yAxis" />
-            <g className="capE">
-              <text className="capEText"></text>
-              <line></line>
-            </g>
-            <g className="capG">
-              <text className="capGText"></text>
-              <line></line>
-            </g>
+            <g className="capE"></g>
+            <g className="capG"></g>
           </g>
           <g className="interactionContainer">
-            <g className="pointerInteraction" />
+            <g className="pointerInteraction" opacity="0" />
             <g className="payToUse" opacity="0">
               <rect
                 width="150"

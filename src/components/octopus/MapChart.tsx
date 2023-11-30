@@ -30,6 +30,8 @@ import {
   select,
   selectAll,
   zoom,
+  zoomIdentity,
+  zoomTransform,
 } from "d3";
 
 import { EnergyIcon } from "./EnergyIcon";
@@ -266,7 +268,7 @@ const MapChart = ({
     }
     updatePrice(mapData);
 
-    var zoomBehavior = zoom<SVGSVGElement, unknown>()
+    const zoomBehavior = zoom<SVGSVGElement, unknown>()
       .scaleExtent([1, 4])
       .translateExtent([
         [0, 0],
@@ -296,6 +298,16 @@ const MapChart = ({
       });
 
     svg.call(zoomBehavior);
+
+    // set zoom to original state at beginning and re-render
+    svg
+      .transition()
+      .duration(500)
+      .call(
+        zoomBehavior.transform,
+        zoomIdentity,
+        zoomTransform(svg.node()!).invert([width / 2, height / 2])
+      );
   }, [mapData, data, type, path, height, gsp, rate, width]);
 
   return (

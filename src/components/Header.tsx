@@ -4,6 +4,7 @@ import Image from "next/image";
 import UserInfo from "./octopus/UserInfo";
 
 import logo from "../../public/octoprice-light.svg";
+import Menu from "./octopus/Menu";
 
 const Header = ({
   className,
@@ -19,9 +20,12 @@ const Header = ({
           priority
           src={logo}
           alt="Octoprice logo"
-          className="w-40 h-auto"
+          className="w-40 h-auto "
         />
-        <UserInfo />
+        <div className="flex items-center gap-4">
+          <UserInfo />
+          <Menu />
+        </div>
       </header>
     </>
   );

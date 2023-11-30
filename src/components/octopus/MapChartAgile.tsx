@@ -31,6 +31,8 @@ import {
   select,
   selectAll,
   zoom,
+  zoomIdentity,
+  zoomTransform,
 } from "d3";
 
 import { EnergyIcon } from "./EnergyIcon";
@@ -302,6 +304,15 @@ const MapChartAgile = ({
       });
 
     svg.call(zoomBehavior);
+    // set zoom to original state at beginning and re-render
+    svg
+      .transition()
+      .duration(500)
+      .call(
+        zoomBehavior.transform,
+        zoomIdentity,
+        zoomTransform(svg.node()!).invert([width / 2, height / 2])
+      );
   }, [mapData, data, type, path, height, gsp, rate, width, currentPeriod]);
 
   return (

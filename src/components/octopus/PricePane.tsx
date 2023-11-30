@@ -128,13 +128,12 @@ const PricePane = ({
                         >
                           Ofgem Price Cap for standard variable tariff (SVT)
                         </a>{" "}
-                        is currently{" "}
+                        for this quarter is {" "}
                         <strong className="text-bold">
                           {`${priceCap[type]}p`}
                         </strong>{" "}
-                        (from 1 October to 31 December 2023). Please note that
-                        the Ofgem caps are not applicable to Tracker tariffs
-                        which have a much higher cap.
+                        . This cap is reviewed every quarter. Please note that the Ofgem caps are not applicable to
+                        Tracker tariffs which have a much higher cap.
                       </Remark>
                     </Comparison>
                   )}
