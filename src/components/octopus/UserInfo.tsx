@@ -12,7 +12,7 @@ import toast from "react-hot-toast";
 
 import { FETCH_ERROR } from "@/data/source";
 
-import { IValue, UserContext } from "@/context/user";
+import { IUserValue, UserContext } from "@/context/user";
 import Remark from "./Remark";
 import Button from "./Button";
 import InfoInput from "./InfoInput";
@@ -76,7 +76,7 @@ const UserInfo = () => {
     });
   };
 
-  const cancelHandler = (value: IValue) => {
+  const cancelHandler = (value: IUserValue) => {
     setPostcode(value.postcode);
     setOpen(false);
     setError({});
