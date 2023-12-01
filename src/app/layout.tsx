@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { ReactNode } from "react";
 import localFont from "next/font/local";
 
@@ -28,7 +28,19 @@ const font3 = localFont({
   variable: "--digital7-font",
 });
 
+export const viewport: Viewport = {
+  themeColor: "#ce2cb9",
+};
+
 export const metadata: Metadata = {
+  applicationName: "Octoprice",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Octoprice | helping UK to select the cheapest energy tariffs",
+    // startUpImage: [],
+  },
   title: {
     template: "%s | Octoprice",
     default: "Octoprice | helping UK to select the cheapest energy tariffs",
