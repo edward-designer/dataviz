@@ -62,7 +62,7 @@ const Menu = () => {
         </svg>
       </button>
       <div
-        className={`z-40 w-80 bg-theme-900/70 backdrop-blur-lg fixed top-0 right-0 transition-all h-full ${
+        className={`z-40 w-80 bg-black/60 backdrop-blur-lg fixed top-0 right-0 transition-all h-full ${
           isOpen ? "translate-none" : "translate-x-full"
         }`}
       >
@@ -75,7 +75,7 @@ const Menu = () => {
                 : "hover:text-accentPink-500"
             }`}
           >
-            Tracker
+            <span className="text-sm">Octopus</span> Tracker
           </Link>
           <Link
             href="/agile"
@@ -85,7 +85,17 @@ const Menu = () => {
                 : "hover:text-accentPink-500"
             }`}
           >
-            Agile
+            <span className="text-sm">Octopus</span> Agile
+          </Link>
+          <Link
+            href="/compare"
+            className={`block my-5  ${
+              pathname === "/compare"
+                ? "cursor-default text-accentBlue-900"
+                : "hover:text-accentPink-500"
+            }`}
+          >
+            Compare Plans
           </Link>
         </nav>
       </div>

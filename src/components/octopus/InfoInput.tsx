@@ -1,4 +1,4 @@
-import { useId } from "react";
+import { ReactNode, useId } from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import Button from "./Button";
@@ -13,6 +13,7 @@ interface IInfoInput {
   value: string;
   setValue: (value: string) => void;
   clearHandler: () => void;
+  remark?: ReactNode;
 }
 
 const InfoInput = ({
@@ -23,12 +24,16 @@ const InfoInput = ({
   value,
   setValue,
   clearHandler,
+  remark,
 }: IInfoInput) => {
   const id = useId();
 
   return (
     <div className="grid w-full items-center gap-1 mb-1">
-      <Label htmlFor={id}>{label}</Label>
+      <div className="flex flex-row">
+        <Label htmlFor={id}>{label}</Label>
+        {!!remark && remark}
+      </div>
       <div className="flex w-full">
         <Input
           type={type}

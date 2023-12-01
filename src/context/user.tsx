@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 
-export interface IValue {
+export interface IUserValue {
   postcode: string;
   gsp: string;
   apiKey: string;
@@ -22,20 +22,20 @@ const initialValue = {
     apiKey: "",
     accountNumber: "",
   },
-  setValue: (value: IValue) => {},
+  setValue: (value: IUserValue) => {},
 };
 
 export const UserContext = createContext(initialValue);
 
 export const UserContextProvider = ({ children }: PropsWithChildren) => {
-  const [value, setValue] = useState<IValue>(initialValue.value);
+  const [value, setValue] = useState<IUserValue>(initialValue.value);
 
   useEffect(() => {
     const storedValue = window.localStorage.getItem("octoprice");
     if (storedValue) setValue(JSON.parse(storedValue));
   }, []);
 
-  const handleSetValue = (value: IValue) => {
+  const handleSetValue = (value: IUserValue) => {
     window.localStorage.setItem("octoprice", JSON.stringify(value));
     setValue(value);
   };

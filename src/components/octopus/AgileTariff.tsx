@@ -69,7 +69,7 @@ const AgileTariff = () => {
           <Remark variant="badge">
             With Agile Octopus, you get access to half-hourly energy prices,
             tied to wholesale prices and updated daily. Outgoing Octopus Agile
-            rate pays you for all your exported energy based on the day-ahead
+            rate pays you for all your exported energy (e.g. output from solar panels) based on the day-ahead
             wholesale rate.
             <br />
             <br />
@@ -291,7 +291,7 @@ const AgileTariff = () => {
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="item-2a" className="border-b-accentBlue-600/50">
             <AccordionTrigger>
-              Are there any penalties for leaving Agile?
+              Are there any penalties or exit fees for leaving Agile?
             </AccordionTrigger>
             <AccordionContent className="text-white/60">
               Absolutely NO.
