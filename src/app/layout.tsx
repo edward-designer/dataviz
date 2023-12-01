@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
-    statusBarStyle: "default",
+    statusBarStyle: "black-translucent",
     title: "Octoprice",
     // startUpImage: [],
   },
@@ -100,7 +100,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <link rel="manifest" href="/site.webmanifest" />
         <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#db1899" />
         <meta name="msapplication-TileColor" content="#0c2549" />
-        <meta name="theme-color" content="#ffffff"></meta>
       </head>
       <html lang="en">
         <body
