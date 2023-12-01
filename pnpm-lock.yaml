@@ -28,7 +28,10 @@ dependencies:
     version: 2.1.0(leaflet@1.9.4)(react-dom@18.2.0)(react@18.2.0)
   '@splinetool/react-spline':
     specifier: ^2.2.6
-    version: 2.2.6(@splinetool/runtime@0.9.513)(react-dom@18.2.0)(react@18.2.0)
+    version: 2.2.6(@splinetool/runtime@0.9.516)(react-dom@18.2.0)(react@18.2.0)
+  '@splinetool/runtime':
+    specifier: ^0.9.516
+    version: 0.9.516
   '@tanstack/react-query':
     specifier: ^5.8.4
     version: 5.8.4(react-dom@18.2.0)(react@18.2.0)
@@ -1038,22 +1041,22 @@ packages:
     resolution: {integrity: sha512-6i/8UoL0P5y4leBIGzvkZdS85RDMG9y1ihZzmTZQ5LdHUYmZ7pKFoj8X0236s3lusPs1Fa5HTQUpwI+UfTcmeA==}
     dev: true
 
-  /@splinetool/react-spline@2.2.6(@splinetool/runtime@0.9.513)(react-dom@18.2.0)(react@18.2.0):
+  /@splinetool/react-spline@2.2.6(@splinetool/runtime@0.9.516)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-y9L2VEbnC6FNZZu8XMmWM9YTTTWal6kJVfP05Amf0QqDNzCSumKsJxZyGUODvuCmiAvy0PfIfEsiVKnSxvhsDw==}
     peerDependencies:
       '@splinetool/runtime': '*'
       react: '>=17.0.0'
       react-dom: '>=17.0.0'
     dependencies:
-      '@splinetool/runtime': 0.9.513
+      '@splinetool/runtime': 0.9.516
       lodash.debounce: 4.0.8
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       react-merge-refs: 2.1.1
     dev: false
 
-  /@splinetool/runtime@0.9.513:
-    resolution: {integrity: sha512-2czFXSziUfyqVBf6tgxO0fobmrZRJ5Nm+5/wL925FHyJY15EuRh36SPW4juWyGd+K368KXUQH0nuJ9Fih4lnag==}
+  /@splinetool/runtime@0.9.516:
+    resolution: {integrity: sha512-2WhfDwd9tid9SFBPwEHgfi4awF3S4QpzVorp3Ax6EDHwdA7wJQQX+VkC/3kNarZH8kHQP87cBvLRwCgPU1mSnw==}
     dependencies:
       on-change: 4.0.2
       semver-compare: 1.0.0

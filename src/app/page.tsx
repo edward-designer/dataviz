@@ -6,11 +6,14 @@ import EnergyPriceCard from "./EnergyPriceCard";
 const Home = () => {
   return (
     <div className="lg:col-[content] my-4 flex justify-start items-center relative z-0">
-      <div className="max-w-full w-full md:w-[75%] min-w-[300px] z-10 bg-black/20 mb-20">
-        <div className="pl-6 translate-y-3 text-sm font-extralight">
-          Cheapest Energy Price for {new Date().toLocaleDateString()}
+      <div className="max-w-full w-full md:w-[75%] min-w-[300px] z-10 mt-20 lg:mt-0 mb-20">
+        <div className="lg:pl-6 lg:translate-y-3 text-sm font-extralight">
+          Cheapest Energy Price{" "}
+          <span className="text-[8px]">
+            [Updated at {new Date().toLocaleString()}]
+          </span>
         </div>
-        <div className="flex gap-2 p-4 flex-col lg:flex-row flex-wrap">
+        <div className="flex gap-2 lg:p-4 flex-col lg:flex-row flex-wrap">
           <EnergyPriceCard type="E" plan="agile" />
           <EnergyPriceCard type="E" plan="tracker" />
           <EnergyPriceCard type="G" plan="tracker" />

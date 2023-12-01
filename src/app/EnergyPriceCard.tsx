@@ -95,7 +95,7 @@ const EnergyPriceCard = ({ type, plan }: IEnergyPriceCard) => {
     }
   }
   return (
-    <div className="relative flex flex-1 flex-col bg-black/50 p-4 min-w-[250px] min-h-[100px]">
+    <div className="relative flex flex-1 flex-col bg-black/50 p-4 min-w-[250px] min-h-[100px] backdrop-blur-sm lg:backdrop-blur-lg">
       {isLoading && <Loading />}
       {isError && <ErrorMessage error={error} errorHandler={() => refetch()} />}
       {isSuccess && (
@@ -152,7 +152,7 @@ const EnergyPriceCard = ({ type, plan }: IEnergyPriceCard) => {
             <Link href={`/${plan}`}>
               <span className="sr-only">more about Octopus {plan} plan</span>
               <BsArrowRightSquare
-                className={`w-12 h-12 fill-white/30 ${
+                className={`w-12 h-12 fill-white lg:fill-white/30 ${
                   plan === "tracker"
                     ? "hover:fill-accentPink-600"
                     : "hover:fill-accentBlue-600"
