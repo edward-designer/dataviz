@@ -41,14 +41,19 @@ function useCheapestTariffQuery<T>({
     day: 48,
   };
 
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const nextDay = new Date(new Date().setDate(new Date().getDate() + 1));
+  nextDay.setHours(0, 0, 0, 0);
+
   const query = useQuery<T[]>({
     enabled: !!tariff,
-    queryKey: ["getTariff", tariff, type, gsp, duration],
+    queryKey: ["getCheapestTariff", tariff, plan, type],
     queryFn: fetchApi(
-      plan === "tracker"
+      plan === `tracker`
         ? [
             {
-              tariffType: type,
+              tag: `${plan} - ${type}`,
               url: gsp
                 ? `https://api.octopus.energy/v1/products/${tariff}/${ENERGY_TYPE[type]}-tariffs/${type}-1R-${tariff}-${gsp}/standard-unit-rates/?page_size=${noOfRecords[duration]}`
                 : `https://api.octopus.energy/v1/products/${tariff}/`,
@@ -56,16 +61,17 @@ function useCheapestTariffQuery<T>({
           ]
         : GSP.map((code) => {
             return {
-              gsp: code,
+              tag: plan,
               url: `https://api.octopus.energy/v1/products/${tariff}/electricity-tariffs/E-1R-${tariff}-${code.replace(
                 "_",
                 ""
-              )}/standard-unit-rates/?page_size=96`,
+              )}/standard-unit-rates/?page_size=96&period_from=${today.toISOString()}&period_to=${nextDay.toISOString()}`,
             };
           })
     ),
   });
   return query;
 }
+// https://api.octopus.energy/v1/products/AGILE-FLEX-22-11-25/electricity-tariffs/E-1R-AGILE-FLEX-22-11-25-A/standard-unit-rates/
 
 export default useCheapestTariffQuery;

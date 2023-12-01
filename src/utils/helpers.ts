@@ -12,20 +12,24 @@ export const fetchEachApi = async ({
   tariffType,
   gsp,
   url,
+  tag,
 }: {
   tariffType?: ApiTariffType;
   gsp?: gsp;
   url: string;
+  tag?: string;
 }) => {
   const response = await tryFetch(fetch(url, { cache: "no-store" }));
   if (!response.ok) throw new Error(FETCH_ERROR);
   const json = await response.json();
   json.dataStamp = new Date().toLocaleDateString();
-  return { ...json, tariffType, gsp };
+  return { ...json, tariffType, gsp, tag };
 };
 
 export const fetchApi =
-  (urls: { tariffType?: ApiTariffType; url: string; gsp?: gsp }[]) =>
+  (
+    urls: { tariffType?: ApiTariffType; url: string; gsp?: gsp; tag?: string }[]
+  ) =>
   async () => {
     const allResponse = await tryFetch(
       Promise.all(
@@ -34,6 +38,7 @@ export const fetchApi =
             tariffType: url.tariffType,
             url: url.url,
             gsp: url.gsp,
+            tag: url.tag,
           })
         )
       )

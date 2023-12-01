@@ -4,7 +4,13 @@ import Badge from "@/components/octopus/Badge";
 import Comparison from "@/components/octopus/Comparison";
 import { EnergyIcon } from "@/components/octopus/EnergyIcon";
 import Remark from "@/components/octopus/Remark";
-import { ENERGY_PLAN, ENERGY_TYPE, TariffType, priceCap } from "@/data/source";
+import {
+  ENERGY_PLAN,
+  ENERGY_TYPE,
+  TariffType,
+  priceCap,
+  gsp,
+} from "@/data/source";
 import useCheapestTariffQuery from "@/hooks/useCheapestTariffQuery";
 import { evenRound } from "@/utils/helpers";
 import Link from "next/link";
@@ -18,22 +24,29 @@ export interface IEnergyPriceCard {
   type: Exclude<TariffType, "EG">;
   plan: ENERGY_PLAN;
 }
-
+type TariffRecord = {
+  direct_debit_monthly: {
+    standard_unit_rate_inc_vat: number;
+  };
+};
 type CheapestTariffResult =
   | {
-      single_register_electricity_tariffs: {
-        direct_debit_monthly: {
-          standard_unit_rate_inc_vat: number;
-        };
-      };
-    }[]
+      tag: "tracker - E";
+      single_register_electricity_tariffs: Record<gsp, TariffRecord>;
+    }
   | {
-      single_register_gas_tariffs: {
-        direct_debit_monthly: {
-          standard_unit_rate_inc_vat: number;
-        };
-      };
-    }[];
+      tag: "tracker - G";
+      single_register_gas_tariffs: Record<gsp, TariffRecord>;
+    }
+  | {
+      tag: "agile";
+      results: {
+        value_exc_vat: number;
+        value_inc_vat: number;
+        valid_from: string;
+        valid_to: string;
+      }[];
+    };
 
 const EnergyPriceCard = ({ type, plan }: IEnergyPriceCard) => {
   const { data, isLoading, isError, isSuccess, error, refetch } =
@@ -42,24 +55,43 @@ const EnergyPriceCard = ({ type, plan }: IEnergyPriceCard) => {
       type,
       duration: "month",
     });
-
   let cheapestRate: number = 0;
   if (isSuccess && data) {
     if (plan === "tracker") {
-      cheapestRate = evenRound(
-        min(
-          Object.values(
-            data[0][
-              `single_register_${ENERGY_TYPE[type]}_tariffs` as keyof CheapestTariffResult
-            ]
-          ),
-          (d) => d["direct_debit_monthly"]["standard_unit_rate_inc_vat"]
-        ),
-        2
-      );
+      const dataTracker = data[0];
+      if (dataTracker.tag === "tracker - G") {
+        const tariffRecords: TariffRecord[] = Object.values(
+          dataTracker["single_register_gas_tariffs"]
+        );
+        cheapestRate = evenRound(
+          min(
+            tariffRecords,
+            (d) => d["direct_debit_monthly"]["standard_unit_rate_inc_vat"]
+          ) ?? 0,
+          2
+        );
+      }
+      if (dataTracker.tag === "tracker - E") {
+        const tariffRecords: TariffRecord[] = Object.values(
+          dataTracker["single_register_electricity_tariffs"]
+        );
+        cheapestRate = evenRound(
+          min(
+            tariffRecords,
+            (d) => d["direct_debit_monthly"]["standard_unit_rate_inc_vat"]
+          ) ?? 0,
+          2
+        );
+      }
     }
     if (plan === "agile") {
-      console.log(data);
+      cheapestRate =
+        min(data, (d) => {
+          if (d.tag === "agile") {
+            return min(d.results, (d) => d.value_inc_vat);
+          }
+          return 0;
+        }) ?? 0;
     }
   }
   return (
@@ -72,15 +104,23 @@ const EnergyPriceCard = ({ type, plan }: IEnergyPriceCard) => {
           <div className="text-2xl font-extralight text-accentPink-500">
             <strong>{plan}</strong> {ENERGY_TYPE[type]}
           </div>
+          <div>
+            <Badge
+              label={`${
+                plan === "agile" ? "cheapest period" : "cheapest daily"
+              }`}
+            />
+          </div>
           <div className="font-digit text-6xl text-accentBlue-500 flex flex-col items-start gap-1">
             <div>
               {evenRound(cheapestRate, 2, true)}
               <span className="text-sm font-thin font-sans pl-1">p</span>
-              <Badge
-                label={`${
-                  plan === "agile" ? "daily cheapest period" : "all day"
-                }`}
-              />
+
+              <Remark variant="badge">
+                The unit rate shown here is the lowest rate around UK. The
+                actual unit rate depends on location and, in the case of Agile,
+                the time of day.
+              </Remark>
               <Comparison
                 change={evenRound(
                   ((cheapestRate - priceCap[type]) / priceCap[type]) * 100
@@ -105,8 +145,8 @@ const EnergyPriceCard = ({ type, plan }: IEnergyPriceCard) => {
             </div>
           </div>
           <div className="flex gap-2 items-center mt-2">
-            <Badge label="monthly cheapest" variant="secondary" />
-            -10p
+            <Badge label="normal rate:" variant="secondary" />
+            <span className="line-through">{`${priceCap[type]}p`}</span>
           </div>
           <div className="absolute right-4 bottom-4">
             <Link href={`/${plan}`}>
