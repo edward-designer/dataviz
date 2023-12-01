@@ -11,7 +11,6 @@ const Home = () => {
         <EnergyPriceCard type="E" plan="tracker" />
         <EnergyPriceCard type="G" plan="tracker" />
       </div>
-      <Octopus3d />
     </div>
   );
 };
