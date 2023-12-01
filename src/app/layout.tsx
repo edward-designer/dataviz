@@ -38,12 +38,12 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Octoprice | helping UK to select the cheapest energy tariffs",
+    title: "Octoprice",
     // startUpImage: [],
   },
   title: {
     template: "%s | Octoprice",
-    default: "Octoprice | helping UK to select the cheapest energy tariffs",
+    default: "Octoprice",
   },
   description:
     "A free app to help Octopus Energy users to save energy bills by comparing and switching to the best tariffs.",
