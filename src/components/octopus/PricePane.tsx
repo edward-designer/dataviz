@@ -6,6 +6,7 @@ import Comparison from "@/components/octopus/Comparison";
 import Remark from "./Remark";
 
 import {
+  ENERGY_TYPE,
   QueryTariffResult,
   TariffResult,
   TariffType,
@@ -25,6 +26,8 @@ import backgroundE from "../../../public/images/E.jpg";
 import backgroundG from "../../../public/images/G.jpg";
 import ErrorMessage from "./ErrorMessage";
 import { EnergyIcon } from "./EnergyIcon";
+import { useEffect, useRef } from "react";
+import toast from "react-hot-toast";
 
 const PricePane = ({
   tariff,
@@ -35,14 +38,15 @@ const PricePane = ({
   type: Exclude<TariffType, "EG">;
   gsp: string;
 }) => {
-  const { isLoading, isError, isSuccess, refetch, data, error } =
+  const { isLoading, isError, isSuccess, isRefetching, refetch, data, error } =
     useTariffQuery<QueryTariffResult>({
       tariff,
       type,
       gsp,
     });
-
+  const todayDate = new Date().toLocaleDateString();
   const results = data?.[0]?.results ?? [];
+  const initialMount = useRef(true);
 
   const priceTodayIndex = results.findIndex((data) =>
     isToday(new Date(data.valid_from))
@@ -78,17 +82,28 @@ const PricePane = ({
     results,
     type
   );
-  const [priceTomorrowDisplay, priceChangeTomorrow] = getPriceDisplay(
-    priceTodayIndex,
-    priceYesterdayIndex,
-    "tomorrow",
-    results,
-    type,
-    noPriceTomorrowMessage
-  );
+  const [priceTomorrowDisplay, priceChangeTomorrow, priceTomorrow] =
+    getPriceDisplay(
+      priceTodayIndex,
+      priceYesterdayIndex,
+      "tomorrow",
+      results,
+      type,
+      noPriceTomorrowMessage
+    );
+
+  useEffect(() => {
+    if (priceTomorrow !== "--" && !initialMount.current)
+      toast.success(
+        `Update: ${ENERGY_TYPE[type]} rate tomorrow is ${priceTomorrow}p (${
+          Number(priceChangeTomorrow) >= 0 ? "+" : ""
+        }${priceChangeTomorrow}%)`
+      );
+    initialMount.current = false;
+  }, [priceChangeTomorrow, priceTomorrow, type, todayDate]);
 
   return (
-    <div className="pricePane relative flex-1 ">
+    <div className="pricePane relative flex-1">
       <div
         className="flex flex-col gap-8 p-4 min-h-[250px] md:min-h-[300px] rounded-xl bg-theme-950 border border-accentPink-800/60 shadow-inner bg-gradient-to-br from-transparent via-theme-800/20 to-purple-600/30 bg-cover"
         style={{
@@ -97,7 +112,7 @@ const PricePane = ({
           })`,
         }}
       >
-        {isLoading && <Loading />}
+        {(isLoading || isRefetching) && <Loading />}
         {isError && (
           <ErrorMessage error={error} errorHandler={() => refetch()} />
         )}
@@ -106,7 +121,7 @@ const PricePane = ({
             <EnergyIcon type={type} />
             <div className="flex flex-1 self-start flex-col">
               <Badge
-                label={`Today - ${new Date().toLocaleDateString()}`}
+                label={`Today @ ${new Date().toLocaleString()}`}
                 variant="secondary"
               />
               <div className="font-digit text-6xl text-white flex flex-col items-start gap-1">
@@ -128,12 +143,13 @@ const PricePane = ({
                         >
                           Ofgem Price Cap for standard variable tariff (SVT)
                         </a>{" "}
-                        for this quarter is {" "}
+                        for this quarter is{" "}
                         <strong className="text-bold">
                           {`${priceCap[type]}p`}
                         </strong>{" "}
-                        . This cap is reviewed every quarter. Please note that the Ofgem caps are not applicable to
-                        Tracker tariffs which have a much higher cap.
+                        . This cap is reviewed every quarter. Please note that
+                        the Ofgem caps are not applicable to Tracker tariffs
+                        which have a much higher cap.
                       </Remark>
                     </Comparison>
                   )}
@@ -219,5 +235,5 @@ const getPriceDisplay = (
       );
   }
 
-  return [display, changeVsPrevDay] as const;
+  return [display, changeVsPrevDay, price] as const;
 };
