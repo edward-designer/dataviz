@@ -11,7 +11,7 @@ const Menu = () => {
   useEffect(() => setIsOpen(false), [pathname]);
 
   return (
-    <div className="relative">
+    <div>
       <button
         aria-label="menu"
         className={`w-8 h-8 z-50 ${isOpen ? "fixed right-4 top-4" : ""}`}
@@ -66,36 +66,48 @@ const Menu = () => {
           isOpen ? "translate-none" : "translate-x-full"
         }`}
       >
-        <nav className="text-4xl font-extralight p-4 pt-20">
+        <nav className="text-4xl font-extralight p-4 pt-20 flex justify-between flex-col h-full">
+          <div>
+            <Link
+              href="/tracker"
+              className={`block my-5 ${
+                pathname === "/tracker"
+                  ? "cursor-default text-accentBlue-900"
+                  : "hover:text-accentPink-500"
+              }`}
+            >
+              Tracker
+            </Link>
+            <Link
+              href="/agile"
+              className={`block my-5  ${
+                pathname === "/agile"
+                  ? "cursor-default text-accentBlue-900"
+                  : "hover:text-accentPink-500"
+              }`}
+            >
+              Agile
+            </Link>
+            <Link
+              href="/compare"
+              className={`block my-5  ${
+                pathname === "/compare"
+                  ? "cursor-default text-accentBlue-900"
+                  : "hover:text-accentPink-500"
+              }`}
+            >
+              Which?
+            </Link>
+          </div>
           <Link
-            href="/tracker"
-            className={`block my-5 ${
-              pathname === "/tracker"
+            href="/about"
+            className={`block my-5 text-sm  ${
+              pathname === "/about"
                 ? "cursor-default text-accentBlue-900"
                 : "hover:text-accentPink-500"
             }`}
           >
-            <span className="text-sm">Octopus</span> Tracker
-          </Link>
-          <Link
-            href="/agile"
-            className={`block my-5  ${
-              pathname === "/agile"
-                ? "cursor-default text-accentBlue-900"
-                : "hover:text-accentPink-500"
-            }`}
-          >
-            <span className="text-sm">Octopus</span> Agile
-          </Link>
-          <Link
-            href="/compare"
-            className={`block my-5  ${
-              pathname === "/compare"
-                ? "cursor-default text-accentBlue-900"
-                : "hover:text-accentPink-500"
-            }`}
-          >
-            Compare Plans
+            About
           </Link>
         </nav>
       </div>
