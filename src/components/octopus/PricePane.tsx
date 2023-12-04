@@ -94,10 +94,13 @@ const PricePane = ({
 
   useEffect(() => {
     if (priceTomorrow !== "--" && !initialMount.current)
-      toast.success(
+      toast(
         `Update: ${ENERGY_TYPE[type]} rate tomorrow is ${priceTomorrow}p (${
           Number(priceChangeTomorrow) >= 0 ? "+" : ""
-        }${priceChangeTomorrow}%)`
+        }${priceChangeTomorrow}%)`,
+        {
+          icon: Number(priceChangeTomorrow) >= 0 ? "🤨" : "🥳",
+        }
       );
     initialMount.current = false;
   }, [priceChangeTomorrow, priceTomorrow, type, todayDate]);

@@ -38,9 +38,8 @@ const About = () => {
           href="https://edward-designer.github.io/"
           target="_blank"
         >
-          I am Edward - frontend web developer and designer
+          I am Edward - frontend web developer and designer.
         </a>
-        .
       </p>
       <p>
         I am an Octopus energy user. I just love the intelligent tariffs and the
