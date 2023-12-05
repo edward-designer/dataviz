@@ -521,6 +521,7 @@ const BrushChart = ({
     function zoomed(event: D3ZoomEvent<SVGSVGElement, ZoomScale>) {
       if (zoomLevel !== event.transform.k) {
         chart.select("g.pointerInteraction").attr("opacity", 0);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         zoomLevel = event.transform.k;
       }
       const zxScale = event.transform.rescaleX(xScale);

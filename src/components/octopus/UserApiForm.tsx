@@ -82,7 +82,7 @@ const UserApiForm = ({ open, setOpen }: IUserApiForm) => {
             className="w-6 h-6 text-accentPink-600"
             aria-label="click to enter account information"
           />
-          Filling in
+          Fill in
         </div>
       </DialogTrigger>
       <DialogContent className="text-white">

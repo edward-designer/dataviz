@@ -18,21 +18,23 @@ const UserApi = () => {
 
   return (
     <div className="flex flex-col font-extralight text-lg">
-      <h1 className="text-accentBlue-400 font-display text-6xl mb-4">
-        Agile vs Tracker?
+      <h1 className="text-accentBlue-400 font-display text-6xl ">
+        Compare Tariffs
       </h1>
+      <h2 className="text-accentBlue-400 font-display text-2xl mb-4">
+        - Octopus Agile or Tracker or Variable?
+      </h2>
       {hasApiInfo ? (
         <UserApiResult />
       ) : (
         <>
           <p>
-            Wanna know which Ocotpus tariff brings you the most savings? You
-            will need:
+            Wanna know which Ocotpus tariff brings you the most savings?
+            Firstly, you will need to:
           </p>
           <ol className="list-decimal ml-5 flex flex-col gap-4 mt-4">
             <li>
-              having been an{" "}
-              <span className="text-3xl">Octopus user for a month</span>
+              be an <span className="text-3xl">Octopus user for a month</span>
               <Remark variant="badge">
                 The results will be more accurate if you have been a Octopus
                 user for over a year.

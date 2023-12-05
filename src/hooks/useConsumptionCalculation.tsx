@@ -1,5 +1,5 @@
 "use client";
-import { memo, useContext } from "react";
+import { memo, useContext, useState } from "react";
 import { UserContext } from "@/context/user";
 import { useQuery } from "@tanstack/react-query";
 import Loading from "@/components/Loading";
@@ -16,8 +16,6 @@ export type IConsumptionCalculator =
       toDate: string;
       type: "E";
       category: TariffCategory;
-      updateCost: (cost: number) => void;
-      cost: number;
     }
   | {
       MPRN: string;
@@ -27,13 +25,13 @@ export type IConsumptionCalculator =
       toDate: string;
       type: "G";
       category: TariffCategory;
-      updateCost: (cost: number) => void;
-      cost: number;
     };
 
-const ConsumptionCalculator = (inputs: IConsumptionCalculator) => {
+const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
   const { value } = useContext(UserContext);
-  const { tariff, fromDate, toDate, type, category, updateCost, cost } = inputs;
+
+  const { tariff, fromDate, toDate, type, category } = inputs;
+
   let deviceNumber = "",
     serialNo = "";
   if (inputs.type === "E") {
@@ -158,27 +156,22 @@ const ConsumptionCalculator = (inputs: IConsumptionCalculator) => {
       ) ?? [],
   };
 
-  if (isSuccess && isRateDataSuccess && isStandingChargeDataSuccess)
-    calculatePrice(
+  if (isSuccess && isRateDataSuccess && isStandingChargeDataSuccess) {
+    const calculatedCost = calculatePrice(
       category,
-      updateCost,
       consumptionData,
       flattenedRateData,
       standingChargeData
     );
-
-  return (
-    <div className="relative flex-1 border border-accentPink-500/30 min-h-[200px] lg:h-[300px] rounded-2xl flex flex-col justify-center items-center gap-2">
-      <Loading />
-    </div>
-  );
+    return { cost: calculatedCost };
+  }
+  return { cost: null };
 };
 
-export default memo(ConsumptionCalculator);
+export default useConsumptionCalculation;
 
 export const calculatePrice = (
   category: string,
-  updateCost: (cost: number) => void,
   consumptionData: {
     results: {
       consumption: number;
@@ -290,6 +283,5 @@ export const calculatePrice = (
     }
   }
   totalPrice = evenRound(totalPrice / 100, 2);
-  updateCost(totalPrice);
   return totalPrice;
 };
