@@ -17,9 +17,10 @@ import Remark from "./Remark";
 import Button from "./Button";
 import InfoInput from "./InfoInput";
 
-import { tryFetch } from "@/utils/helpers";
+import { getGsp, tryFetch } from "@/utils/helpers";
 
 import { IoLocationOutline } from "react-icons/io5";
+import UserApiForm from "./UserApiForm";
 
 export type ErrorType = Record<string, string>;
 
@@ -28,7 +29,7 @@ const UserInfo = () => {
 
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<Record<string, string>>({});
-  const [postcode, setPostcode] = useState(value.postcode);
+  const [postcode, setPostcode] = useState("");
 
   useEffect(() => {
     setPostcode(value.postcode);
@@ -40,40 +41,31 @@ const UserInfo = () => {
     const newError = { ...error };
     delete newError.postcode;
     setError(newError);
-    setValue({ ...value, postcode: "" });
+    setValue({ ...value, postcode: "", apiKey: "", accountNumber: "" });
   };
 
-  const submitHandler = () => {
+  const submitHandler = async () => {
     setError({});
-    const getGsp = async () => {
-      const response = await tryFetch(
-        fetch(
-          `https://api.octopus.energy/v1/industry/grid-supply-points/?postcode=${postcode}`
-        )
-      );
-      if (!response.ok) throw new Error(FETCH_ERROR);
-
-      const result = await response.json();
-      const gsp = result?.results?.[0]?.group_id;
-      if (!result.count || typeof gsp !== "string") {
+    try {
+      const gsp = await getGsp(postcode);
+      if (gsp) {
+        setValue({
+          ...value,
+          postcode: postcode.toUpperCase(),
+          gsp: gsp.replace("_", ""),
+        });
+        toast.success("Changes are saved.");
+        setOpen(false);
+      } else {
         toast.error("Sorry, something went wrong.");
         setError({
           ...error,
           postcode: "Please check your postcode and try again.",
         });
-        return false;
       }
-      setValue({
-        ...value,
-        postcode: postcode.toUpperCase(),
-        gsp: gsp.replace("_", ""),
-      });
-      toast.success("Changes are saved.");
-      return true;
-    };
-    getGsp().then((result) => {
-      if (result) setOpen(false);
-    });
+    } catch (error: unknown) {
+      if (error instanceof Error) throw new Error(error.message);
+    }
   };
 
   const cancelHandler = (value: IUserValue) => {
@@ -101,13 +93,18 @@ const UserInfo = () => {
         </DialogTrigger>
         <DialogContent className="text-white">
           <DialogHeader>
-            <DialogTitle className="text-2xl">My Info</DialogTitle>
+            <DialogTitle className="text-2xl">My Postcode</DialogTitle>
           </DialogHeader>
           <InfoInput
             label="postcode"
             type="text"
             placeHolder="Please enter your postcode"
             error={error}
+            notice={
+              value.accountNumber || value.apiKey
+                ? `By deleting the postcode, all other account info stored here will also be removed (don\'t worry, the info on your Octopus account will NOT be affected).`
+                : ""
+            }
             value={postcode}
             setValue={setPostcode}
             clearHandler={clearPostCodeHandler}

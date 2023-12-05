@@ -156,3 +156,19 @@ export const formatLocaleTime = (time: string) =>
 
 export const formatLocaleTimePeriod = (fromTime: string, toTime: string) =>
   `${formatLocaleTime(fromTime)} - ${formatLocaleTime(toTime)}`;
+
+export const getGsp = async (postcode: string): Promise<false | string> => {
+  const response = await tryFetch(
+    fetch(
+      `https://api.octopus.energy/v1/industry/grid-supply-points/?postcode=${postcode}`
+    )
+  );
+  if (!response.ok) throw new Error(FETCH_ERROR);
+
+  const result = await response.json();
+  const gsp = result?.results?.[0]?.group_id;
+  if (!result.count || typeof gsp !== "string") {
+    return false;
+  }
+  return gsp;
+};

@@ -1,17 +1,19 @@
 import { createContext, PropsWithChildren, useEffect, useState } from "react";
 
-const initialState = { focus: true };
+const initialState = { focus: true, hasChanged: false };
 
 export const WindowVisibilityContext = createContext(initialState);
 
 export const WindowVisibilityProvider = ({ children }: PropsWithChildren) => {
   const [isVisible, setIsVisible] = useState(initialState.focus);
+  const [hasChanged, setHasChanged] = useState(initialState.hasChanged);
 
   const handleVisibilitychange = (event: Event) => {
     if (document.visibilityState === "visible") {
       setIsVisible(true);
     } else {
       setIsVisible(false);
+      setHasChanged(true);
     }
   };
   useEffect(() => {
@@ -27,7 +29,7 @@ export const WindowVisibilityProvider = ({ children }: PropsWithChildren) => {
   }, []);
 
   return (
-    <WindowVisibilityContext.Provider value={{ focus: isVisible }}>
+    <WindowVisibilityContext.Provider value={{ focus: isVisible, hasChanged }}>
       {children}
     </WindowVisibilityContext.Provider>
   );

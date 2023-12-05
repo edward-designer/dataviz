@@ -14,6 +14,7 @@ interface IInfoInput {
   setValue: (value: string) => void;
   clearHandler: () => void;
   remark?: ReactNode;
+  notice?: string;
 }
 
 const InfoInput = ({
@@ -25,6 +26,7 @@ const InfoInput = ({
   setValue,
   clearHandler,
   remark,
+  notice,
 }: IInfoInput) => {
   const id = useId();
 
@@ -49,7 +51,10 @@ const InfoInput = ({
           </Button>
         )}
       </div>
-      {error?.[label] && <div className="text-red-800">{error[label]}</div>}
+      {notice && <div className="text-accentBlue-500 text-sm">{notice}</div>}
+      {error?.[label] && (
+        <div className="text-red-800 text-sm">{error[label]}</div>
+      )}
     </div>
   );
 };

@@ -265,3 +265,45 @@ export interface LinkResult {
 }
 
 export type DurationType = "month" | "week" | "day" | "2-days";
+
+export interface IUserApiResult {
+  number: string;
+  properties: IUserApiResultProperty[];
+}
+export interface IUserApiResultProperty {
+  address_line_1: string;
+  address_line_2: string;
+  address_line_3: string;
+  county: string;
+  electricity_meter_points: IMeterPointE[];
+  gas_meter_points: IMeterPointG[];
+  id: number;
+  moved_in_at: string;
+  moved_out_at: string;
+  postcode: string;
+  town: string;
+}
+export interface IMeterPointE {
+  agreements: {
+    tariff_code: string;
+    valid_from: string;
+    valid_to: string;
+  }[];
+  consumption_standard: number;
+  is_export: boolean;
+  meters: { registers: {}; serial_number: string }[];
+  mpan: string;
+  profile_class: number;
+}
+export interface IMeterPointG {
+  agreements: {
+    tariff_code: string;
+    valid_from: string;
+    valid_to: string;
+  }[];
+  consumption_standard: number;
+  meters: { registers: {}; serial_number: string }[];
+  mprn: string;
+}
+
+export type TariffCategory = "Agile" | "Tracker" | "SVT";

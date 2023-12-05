@@ -32,7 +32,8 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
 
   useEffect(() => {
     const storedValue = window.localStorage.getItem("octoprice");
-    if (storedValue) setValue(JSON.parse(storedValue));
+    if (storedValue && storedValue !== "undefined")
+      setValue(JSON.parse(storedValue));
   }, []);
 
   const handleSetValue = (value: IUserValue) => {

@@ -120,6 +120,7 @@ const BrushChart = ({
   const innerPadding = 10;
   const padding = { top: 40, bottom: 60, left: 60, right: 20 };
   const axisColor = "#63acb8";
+  let zoomLevel = 1;
 
   // Update chart to content width (for responsive layout)
   if (typeof document !== "undefined") {
@@ -518,6 +519,10 @@ const BrushChart = ({
       .on("zoom", zoomed);
 
     function zoomed(event: D3ZoomEvent<SVGSVGElement, ZoomScale>) {
+      if (zoomLevel !== event.transform.k) {
+        chart.select("g.pointerInteraction").attr("opacity", 0);
+        zoomLevel = event.transform.k;
+      }
       const zxScale = event.transform.rescaleX(xScale);
       pointerInteraction(zxScale, yScale);
       drawAxes(zxScale, yScale);
@@ -600,9 +605,7 @@ const BrushChart = ({
       const tooltip = chart.select(".tooltip");
       const pointerInteractionArea = chart.select("g.pointerInteraction");
       /* Add clip */
-      pointerInteractionArea
-        .attr("clip-path", `url(#clip-${id})`)
-        .attr("opacity", 0);
+      pointerInteractionArea.attr("clip-path", `url(#clip-${id})`);
       /* Remove all visible elements in case on Zoom */
       tooltip.attr("opacity", "0");
 

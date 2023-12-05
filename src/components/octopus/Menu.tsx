@@ -96,7 +96,7 @@ const Menu = () => {
                   : "hover:text-accentPink-500"
               }`}
             >
-              Which?
+              Compare Tariffs
             </Link>
           </div>
           <Link

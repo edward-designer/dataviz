@@ -26,8 +26,9 @@ import backgroundE from "../../../public/images/E.jpg";
 import backgroundG from "../../../public/images/G.jpg";
 import ErrorMessage from "./ErrorMessage";
 import { EnergyIcon } from "./EnergyIcon";
-import { useEffect, useRef } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
+import { WindowVisibilityContext } from "@/context/windowVisibility";
 
 const PricePane = ({
   tariff,
@@ -38,15 +39,17 @@ const PricePane = ({
   type: Exclude<TariffType, "EG">;
   gsp: string;
 }) => {
+  const [tomorrowRate, setTomorrowRate] = useState<string | number>("--");
   const { isLoading, isError, isSuccess, isRefetching, refetch, data, error } =
     useTariffQuery<QueryTariffResult>({
       tariff,
       type,
       gsp,
     });
+  const { hasChanged } = useContext(WindowVisibilityContext);
+
   const todayDate = new Date().toLocaleDateString();
   const results = data?.[0]?.results ?? [];
-  const initialMount = useRef(true);
 
   const priceTodayIndex = results.findIndex((data) =>
     isToday(new Date(data.valid_from))
@@ -93,7 +96,11 @@ const PricePane = ({
     );
 
   useEffect(() => {
-    if (priceTomorrow !== "--" && !initialMount.current)
+    if (
+      priceTomorrow !== "--" &&
+      hasChanged &&
+      priceTomorrow !== tomorrowRate
+    ) {
       toast(
         `Update: ${ENERGY_TYPE[type]} rate tomorrow is ${priceTomorrow}p (${
           Number(priceChangeTomorrow) >= 0 ? "+" : ""
@@ -102,7 +109,10 @@ const PricePane = ({
           icon: Number(priceChangeTomorrow) >= 0 ? "🤨" : "🥳",
         }
       );
-    initialMount.current = false;
+    }
+    setTomorrowRate(priceTomorrow);
+    // hasChanged not to initiate useEffect
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [priceChangeTomorrow, priceTomorrow, type, todayDate]);
 
   return (
