@@ -62,16 +62,20 @@ const TariffComparisionCard = ({
         <Loading />
       ) : (
         <>
-          <EnergyIcon type="E" />
+          <EnergyIcon type={type} />
           <Container>
-            <a href={`/${category.toLowerCase()}`}>
+            {category === "Agile" || category === "Tracker" ? (
+              <a href={`/${category.toLowerCase()}`} className="block">
+                <Badge label={`Octopus ${category}`} variant="primary" />
+              </a>
+            ) : (
               <Badge
                 label={`Octopus ${
                   category === "SVT" ? "Variable Tariff" : category
                 }`}
                 variant="primary"
               />
-            </a>
+            )}
           </Container>
           <Container>
             <div className="text-5xl">

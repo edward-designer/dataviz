@@ -18,7 +18,7 @@ const UserApi = () => {
 
   return (
     <div className="flex flex-col font-extralight text-lg">
-      <h1 className="text-accentBlue-400 font-display text-4xl lg:text-6xl ">
+      <h1 className="text-accentBlue-400 font-display text-4xl lg:text-6xl font-medium ">
         Compare Tariffs
       </h1>
       <h2 className="text-accentBlue-400 font-display text-lg lg:text-2xl mb-8">

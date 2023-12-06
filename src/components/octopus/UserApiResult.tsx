@@ -162,29 +162,21 @@ const UserApiResult = () => {
     <div className="flex gap-4 flex-col">
       {isLoading && <Loading />}
       {isError && <div>{error.message}</div>}
-
+      <div className="flex gap-2 items-center  flex-col-reverse md:flex-col lg:flex-row">
+        <div className="flex-grow">
+          The following analysis is based on your actual energy use pattern in
+          the past year, showing which tariff suits you best!
+          <Remark variant="badge">
+            The figures presented here are an approximation of your annul energy
+            costs. Approximations and assumptions are used in the calculations.
+            The actual costs may vary a lot depending on the previaling unit
+            rates and change of usage patterns. Remember, past results does not
+            guarantee future performance.
+          </Remark>
+        </div>
+      </div>
       {isSuccess && (
         <>
-          <div className="flex gap-2 items-center  flex-col-reverse md:flex-col lg:flex-row">
-            <div className="flex-grow">
-              The following comparision is based on your actual energy use
-              pattern in the past year to give an idea of which tariff suits you
-              most
-              <Remark variant="badge">
-                The figures presented here are an approximation of your annul
-                energy costs. Approximations and assumptions are used in the
-                calculations. The actual costs may vary a lot depending on the
-                previaling unit rates and change of usage patterns. Remember,
-                past results does not guarantee future performance.
-              </Remark>
-            </div>
-            <button
-              className="text-base flex-grow border leading-tight border-accentPink-500 rounded-lg px-4 py-2 whitespace-nowrap hover:bg-accentPink-800 mb-4 md:mb-0"
-              onClick={handleClick}
-            >
-              Clear My Info
-            </button>
-          </div>
           {MPAN && ESerialNo && (
             <>
               <h2 className="font-display text-accentPink-500 text-4xl flex items-center mt-4">
@@ -247,6 +239,12 @@ const UserApiResult = () => {
           )}
         </>
       )}
+      <button
+        className="text-base border leading-tight border-accentPink-500 rounded-lg px-4 py-2 whitespace-nowrap hover:bg-accentPink-800 my-8"
+        onClick={handleClick}
+      >
+        Clear My Info
+      </button>
     </div>
   );
 };
