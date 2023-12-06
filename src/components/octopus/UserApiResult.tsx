@@ -21,6 +21,7 @@ import { AiFillFire } from "react-icons/ai";
 import { BsLightningChargeFill } from "react-icons/bs";
 import { VscAdd } from "react-icons/vsc";
 import AddATariff from "./AddATariffToCompare";
+import { PiTrashSimpleLight } from "react-icons/pi";
 
 const UserApiResult = () => {
   const { value, setValue } = useContext(UserContext);
@@ -240,10 +241,11 @@ const UserApiResult = () => {
         </>
       )}
       <button
-        className="text-base border leading-tight border-accentPink-500 rounded-lg px-4 py-2 whitespace-nowrap hover:bg-accentPink-800 my-8"
+        className="text-base border leading-tight text-accentPink-500 border-accentPink-500 rounded-lg px-4 py-2 whitespace-nowrap hover:bg-accentPink-800 hover:text-white my-8 flex items-center justify-center gap-2"
         onClick={handleClick}
       >
-        Clear My Info
+        <PiTrashSimpleLight className="fill-accentPink-500 h-6 w-6" /> Clear My
+        Info
       </button>
     </div>
   );
