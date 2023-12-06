@@ -11,7 +11,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import Badge from "@/components/octopus/Badge";
 import { ITariffPlan } from "@/data/source";
 
 interface ITariffSelect {

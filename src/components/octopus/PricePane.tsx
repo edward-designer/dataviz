@@ -29,6 +29,7 @@ import { EnergyIcon } from "./EnergyIcon";
 import { useContext, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { WindowVisibilityContext } from "@/context/windowVisibility";
+import { TomorrowPriceContext } from "@/context/tomorrowPrice";
 
 const PricePane = ({
   tariff,
@@ -39,7 +40,6 @@ const PricePane = ({
   type: Exclude<TariffType, "EG">;
   gsp: string;
 }) => {
-  const [tomorrowRate, setTomorrowRate] = useState<string | number>("--");
   const { isLoading, isError, isSuccess, isRefetching, refetch, data, error } =
     useTariffQuery<QueryTariffResult>({
       tariff,
@@ -47,6 +47,10 @@ const PricePane = ({
       gsp,
     });
   const { hasChanged } = useContext(WindowVisibilityContext);
+  const {
+    tomorrowRates: { [type]: tomorrowRate },
+    setTomorrowRates,
+  } = useContext(TomorrowPriceContext);
 
   const todayDate = new Date().toLocaleDateString();
   const results = data?.[0]?.results ?? [];
@@ -110,7 +114,10 @@ const PricePane = ({
         }
       );
     }
-    setTomorrowRate(priceTomorrow);
+    setTomorrowRates((value) => ({
+      ...value,
+      [type]: priceTomorrow,
+    }));
     // hasChanged not to initiate useEffect
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [priceChangeTomorrow, priceTomorrow, type, todayDate]);

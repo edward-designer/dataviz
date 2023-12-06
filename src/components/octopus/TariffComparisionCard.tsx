@@ -4,28 +4,35 @@ import { EnergyIcon } from "./EnergyIcon";
 import Badge from "./Badge";
 import { evenRound } from "@/utils/helpers";
 import Loading from "../Loading";
-import { memo } from "react";
+import { memo, useEffect } from "react";
 import Comparison from "./Comparison";
+import { motion } from "framer-motion";
+import AnimatedDigits from "./AnimatedDigits";
+import Sparkles from "./Sparkles";
 
 interface ITariffComparisionCard {
-  MPAN: string;
-  ESerialNo: string;
+  deviceNumber: string;
+  serialNo: string;
   tariff: string;
   fromDate: string;
   toDate: string;
-  type?: "E";
+  type: Exclude<TariffType, "EG">;
   category: TariffCategory;
   compareTo: null | number;
+  setCost: (category: TariffCategory, cost: number) => void;
+  rank: number;
 }
 const TariffComparisionCard = ({
-  MPAN,
-  ESerialNo,
+  deviceNumber,
+  serialNo,
   tariff,
   fromDate,
   toDate,
-  type = "E",
+  type,
   category,
   compareTo,
+  setCost,
+  rank,
 }: ITariffComparisionCard) => {
   const { cost } = useConsumptionCalculation({
     tariff,
@@ -33,45 +40,57 @@ const TariffComparisionCard = ({
     toDate,
     type,
     category,
-    MPAN,
-    ESerialNo,
+    deviceNumber,
+    serialNo,
   });
 
+  useEffect(() => {
+    if (cost !== null) setCost(category, cost);
+  }, [category, cost, setCost]);
+
+  const Container = cost !== null && rank === 1 ? Sparkles : "div";
+
   return (
-    <div
-      className={`relative flex-1 border border-accentPink-500/30 first:border-accentPink-500 min-h-[200px] lg:h-[300px] rounded-2xl flex flex-col justify-center items-center gap-2 bg-cover bg-tops`}
-      style={{
-        order: evenRound(cost ?? 0, 0),
-        backgroundImage:
-          "linear-gradient(0deg, rgba(0,3,35,0.7) 30% , rgba(0,3,35,0.85) 70%, rgba(0,4,51,0.9) 90% ),url('/images/octopus-winner.jpg')",
-      }}
+    <motion.div
+      transition={{ delay: 1 }}
+      layoutId={`${type}-${category}`}
+      className={`relative flex-1 border border-accentPink-500/30 min-h-[200px] lg:h-[300px] rounded-2xl flex flex-col justify-center items-center gap-2 bg-cover bg-tops ${
+        cost !== null ? `first:border-accentPink-500 first:bg-tariffWinner` : ""
+      }`}
     >
       {cost === null ? (
         <Loading />
       ) : (
         <>
           <EnergyIcon type="E" />
-          <a href={`/${category.toLowerCase()}`}>
-            <Badge
-              label={`Octopus ${
-                category === "SVT" ? "Variable Tariff" : category
-              }`}
-              variant="primary"
-            />
-          </a>
-          <div className="text-5xl">
-            <span>£{evenRound(cost, 2, true)}</span>
-          </div>
+          <Container>
+            <a href={`/${category.toLowerCase()}`}>
+              <Badge
+                label={`Octopus ${
+                  category === "SVT" ? "Variable Tariff" : category
+                }`}
+                variant="primary"
+              />
+            </a>
+          </Container>
+          <Container>
+            <div className="text-5xl">
+              <span>
+                £<AnimatedDigits to={evenRound(cost, 2)} />
+              </span>
+            </div>
+          </Container>
           {category !== "SVT" ? (
             compareTo && (
               <div className="flex flex-row">
                 {compareTo - cost > 0 ? (
                   <span className="text-accentBlue-500">
-                    saves £{compareTo - cost}
+                    saves £
+                    <AnimatedDigits to={evenRound(compareTo - cost, 2)} />
                   </span>
                 ) : (
                   <span className="text-accentPink-500">
-                    £{compareTo - cost} more
+                    £<AnimatedDigits to={evenRound(compareTo - cost, 2)} /> more
                   </span>
                 )}
                 <Comparison
@@ -81,11 +100,13 @@ const TariffComparisionCard = ({
               </div>
             )
           ) : (
-            <div className="text-xs">~ Ofgem energy price cap</div>
+            <div className="text-xs">
+              the standard tariff protected by Energy Price Cap
+            </div>
           )}
         </>
       )}
-    </div>
+    </motion.div>
   );
 };
 

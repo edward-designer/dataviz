@@ -107,7 +107,7 @@ const EnergyPriceCard = ({ type, plan }: IEnergyPriceCard) => {
           <div>
             <Badge
               label={`${
-                plan === "agile" ? "cheapest period" : "cheapest daily"
+                plan === "agile" ? "cheapest 1/2hr slot" : "cheapest daily"
               }`}
             />
           </div>

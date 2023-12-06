@@ -16,6 +16,75 @@ export interface ITrackerTariffPlan extends ITariffPlan {
   };
 }
 
+/* https://guylipman.medium.com/accessing-your-octopus-smart-meter-data-3f3905ca8fec */
+export const GAS_MULTIPLIER_TO_KWH = 11.19;
+
+export interface ITariffToCompare {
+  tariff: string;
+  type: Exclude<TariffType, "EG">;
+  category: TariffCategory;
+  cost: number | null;
+}
+
+export const GTARIFFS: ITariffToCompare[] = [
+  {
+    tariff: "VAR-22-11-01",
+    type: "E",
+    category: "SVT",
+    cost: null,
+  },
+  {
+    tariff: "LOYAL-FIX-12M-23-11-23",
+    type: "E",
+    category: "Fixed",
+    cost: null,
+  },
+  {
+    tariff: "SILVER-FLEX-22-11-25",
+    type: "G",
+    category: "Tracker",
+    cost: null,
+  },
+];
+export const ETARIFFS: ITariffToCompare[] = [
+  {
+    tariff: "VAR-22-11-01",
+    type: "E",
+    category: "SVT",
+    cost: null,
+  },
+  {
+    tariff: "SILVER-FLEX-22-11-25",
+    type: "G",
+    category: "Tracker",
+    cost: null,
+  },
+  {
+    tariff: "AGILE-FLEX-22-11-25",
+    type: "E",
+    category: "Agile",
+    cost: null,
+  },
+  {
+    tariff: "LOYAL-FIX-12M-23-11-23",
+    type: "E",
+    category: "Fixed",
+    cost: null,
+  },
+  {
+    tariff: "COSY-22-12-08",
+    type: "E",
+    category: "Cosy",
+    cost: null,
+  },
+  {
+    tariff: "GO-VAR-22-10-14",
+    type: "E",
+    category: "Go",
+    cost: null,
+  },
+];
+
 export const TRACKER: ITrackerTariffPlan[] = [
   {
     code: "SILVER-FLEX-BB-23-02-08",
@@ -306,4 +375,10 @@ export interface IMeterPointG {
   mprn: string;
 }
 
-export type TariffCategory = "Agile" | "Tracker" | "SVT";
+export type TariffCategory =
+  | "Agile"
+  | "Tracker"
+  | "SVT"
+  | "Fixed"
+  | "Cosy"
+  | "Go";

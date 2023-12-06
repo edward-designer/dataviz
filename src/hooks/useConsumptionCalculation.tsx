@@ -5,47 +5,36 @@ import { useQuery } from "@tanstack/react-query";
 import Loading from "@/components/Loading";
 import { evenRound } from "@/utils/helpers";
 import useYearlyTariffQuery from "@/hooks/useYearlyTariffQuery";
-import { ENERGY_TYPE, TariffCategory } from "@/data/source";
+import {
+  ENERGY_TYPE,
+  GAS_MULTIPLIER_TO_KWH,
+  TariffCategory,
+  TariffType,
+} from "@/data/source";
 
-export type IConsumptionCalculator =
-  | {
-      MPAN: string;
-      ESerialNo: string;
-      tariff: string;
-      fromDate: string;
-      toDate: string;
-      type: "E";
-      category: TariffCategory;
-    }
-  | {
-      MPRN: string;
-      GSerialNo: string;
-      tariff: string;
-      fromDate: string;
-      toDate: string;
-      type: "G";
-      category: TariffCategory;
-    };
+export type IConsumptionCalculator = {
+  deviceNumber: string;
+  serialNo: string;
+  tariff: string;
+  fromDate: string;
+  toDate: string;
+  type: Exclude<TariffType, "EG">;
+  category: TariffCategory;
+};
 
 const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
   const { value } = useContext(UserContext);
 
-  const { tariff, fromDate, toDate, type, category } = inputs;
+  const { tariff, fromDate, toDate, type, category, deviceNumber, serialNo } =
+    inputs;
 
-  let deviceNumber = "",
-    serialNo = "";
-  if (inputs.type === "E") {
-    deviceNumber = inputs.MPAN;
-    serialNo = inputs.ESerialNo;
-  }
-  if (inputs.type === "G") {
-    deviceNumber = inputs.MPRN;
-    serialNo = inputs.GSerialNo;
-  }
   const groupBy = {
     Agile: "",
+    Go: "",
+    Cosy: "",
     Tracker: "&group_by=day",
     SVT: "&group_by=day",
+    Fixed: "&group_by=day",
   };
 
   //get readings
@@ -158,6 +147,7 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
 
   if (isSuccess && isRateDataSuccess && isStandingChargeDataSuccess) {
     const calculatedCost = calculatePrice(
+      type,
       category,
       consumptionData,
       flattenedRateData,
@@ -171,6 +161,7 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
 export default useConsumptionCalculation;
 
 export const calculatePrice = (
+  type: Exclude<TariffType, "EG">,
   category: string,
   consumptionData: {
     results: {
@@ -199,24 +190,50 @@ export const calculatePrice = (
   let totalPrice = 0;
   let rateDataOffset = 0; // since there are GAPS in the consumption data (possibly due to consumption data not synced to the server), we need to check if the consumption data matches the following rate period with the offset
   let currentDay = 0;
+  let currentRateIndex = 0;
+  const consumptionMultiplier = type === "G" ? GAS_MULTIPLIER_TO_KWH : 1;
   const filteredRateDataResults = rateData.results.filter(
     (d) => d.payment_method !== "NON_DIRECT_DEBIT"
   );
 
   for (let i = 0; i < consumptionData.results.length; i++) {
-    if (category === "SVT") {
+    if (category === "Fixed") {
+      const currentPeriodTariff = filteredRateDataResults[0];
+      totalPrice +=
+        (currentPeriodTariff?.value_inc_vat ?? 0) *
+        consumptionData.results[i].consumption *
+        consumptionMultiplier;
+    } else if (category === "SVT") {
       const currentPeriodTariff = filteredRateDataResults.find(
         (d) =>
           new Date(d.valid_from) <=
             new Date(consumptionData.results[i].interval_start) &&
-          (d.valid_to === null ||
-            new Date(d.valid_to) >=
-              new Date(consumptionData.results[i].interval_start))
+          (d.valid_to === null || new Date(d.valid_to)) >=
+            new Date(consumptionData.results[i].interval_start)
       );
 
       totalPrice +=
         (currentPeriodTariff?.value_inc_vat ?? 0) *
-        consumptionData.results[i].consumption;
+        consumptionData.results[i].consumption *
+        consumptionMultiplier;
+    } else if (category === "Go" || category === "Cosy") {
+      for (let j = currentRateIndex; j < filteredRateDataResults.length; j++) {
+        const currentRateEntry = filteredRateDataResults[j];
+        if (
+          new Date(currentRateEntry.valid_from) <=
+            new Date(consumptionData.results[i].interval_start) &&
+          (filteredRateDataResults[j].valid_to === null ||
+            new Date(currentRateEntry.valid_to)) >=
+            new Date(consumptionData.results[i].interval_start)
+        ) {
+          totalPrice +=
+            (currentRateEntry?.value_inc_vat ?? 0) *
+            consumptionData.results[i].consumption *
+            consumptionMultiplier;
+          break;
+        }
+        currentRateIndex++;
+      }
     } else {
       if (
         new Date(
@@ -226,9 +243,10 @@ export const calculatePrice = (
       ) {
         totalPrice +=
           filteredRateDataResults[i + rateDataOffset].value_inc_vat *
-          consumptionData.results[i].consumption;
+          consumptionData.results[i].consumption *
+          consumptionMultiplier;
       } else {
-        for (let j = 1; j < consumptionData.results.length - 1; j++) {
+        for (let j = 1; j < consumptionData.results.length; j++) {
           if (
             new Date(
               filteredRateDataResults[i + rateDataOffset + j]?.valid_from
@@ -237,7 +255,8 @@ export const calculatePrice = (
           ) {
             totalPrice +=
               filteredRateDataResults[i + rateDataOffset + j].value_inc_vat *
-              consumptionData.results[i].consumption;
+              consumptionData.results[i].consumption *
+              consumptionMultiplier;
             rateDataOffset += j;
             break;
           }
@@ -259,15 +278,20 @@ export const calculatePrice = (
         0,
         0
       );
-      const standingCharge =
-        standingChargeData.results
-          .filter((d) => d.payment_method !== "NON_DIRECT_DEBIT")
-          .find(
-            (d) =>
-              new Date(d.valid_from) <= new Date(currentDay) &&
-              (d.valid_to === null ||
-                new Date(d.valid_to) >= new Date(currentDay))
-          )?.value_inc_vat ?? 0;
+      let standingCharge = 0;
+      if (category === "Fixed") {
+        standingCharge = standingChargeData.results[0]?.value_inc_vat ?? 0;
+      } else {
+        standingCharge =
+          standingChargeData.results
+            .filter((d) => d.payment_method !== "NON_DIRECT_DEBIT")
+            .find(
+              (d) =>
+                new Date(d.valid_from) <= new Date(currentDay) &&
+                (d.valid_to === null ||
+                  new Date(d.valid_to) >= new Date(currentDay))
+            )?.value_inc_vat ?? 0;
+      }
       totalPrice += standingCharge;
     }
   }

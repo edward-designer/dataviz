@@ -99,15 +99,31 @@ module.exports = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: 0 },
         },
+        "come-in-out": {
+          "0%": {
+            transform: "scale(0)",
+          },
+          "50%": {
+            transform: "scale(1)",
+          },
+          "100%": {
+            transform: "scale(0)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "come-in-out": "come-in-out 700ms forwards",
       },
       fontFamily: {
         display: "var(--display-font)",
         digit: "var(--digits-font)",
         digital7: "var(--digital7-font)",
+      },
+      backgroundImage: {
+        tariffWinner:
+          "linear-gradient(0deg, rgba(0,3,35,0.7) 30% , rgba(0,3,35,0.85) 70%, rgba(0,4,51,0.9) 90% ),url('/images/octopus-winner.jpg')",
       },
     },
   },
