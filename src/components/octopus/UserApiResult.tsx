@@ -160,8 +160,12 @@ const UserApiResult = () => {
   );
 
   return (
-    <div className="flex gap-4 flex-col">
-      {isLoading && <Loading />}
+    <div className="flex gap-4 flex-col relative">
+      {isLoading && (
+        <div className=" min-h-screen">
+          <Loading />
+        </div>
+      )}
       {isError && <div>{error.message}</div>}
       <div className="flex gap-2 items-center  flex-col-reverse md:flex-col lg:flex-row">
         <div className="flex-grow">

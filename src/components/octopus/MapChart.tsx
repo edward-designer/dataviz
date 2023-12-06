@@ -82,7 +82,7 @@ const MapChart = ({
     const svg = select(svgRef.current);
     const tooltip = svg.select(".tooltipContainer");
     const defs = svg.append("defs");
-
+    console.log(data);
     if (rate === "standard_unit_rate_inc_vat") {
       const validDate = new Date(
         data[0].tariffs_active_at as string
@@ -160,10 +160,14 @@ const MapChart = ({
       .attr("font-size", 10)
       .attr("fill", "#FFFFFF80");
 
-    const getPrice = (gsp: gsp) =>
-      evenRound(singleTariffByGsp[gsp]?.["direct_debit_monthly"]?.[rate], 2) +
-        "p" ?? "--";
-
+    const getPrice = (gsp: gsp) => {
+      return singleTariffByGsp[gsp]?.["direct_debit_monthly"]?.[rate] === null
+        ? "--"
+        : evenRound(
+            singleTariffByGsp[gsp]?.["direct_debit_monthly"]?.[rate],
+            2
+          ) + "p";
+    };
     svg
       .select(".districtGroup")
       .selectAll("path")
@@ -219,14 +223,18 @@ const MapChart = ({
         tooltip
           .select(".zoneCompareT1")
           .text(
-            `🆚 ${addSign(
-              Number(
-                calculateChangePercentage(
-                  parseFloat(getPrice(gsp)),
-                  capToCompare
-                )
-              )
-            )}%`
+            `🆚 ${
+              getPrice(gsp) === "--"
+                ? "--"
+                : addSign(
+                    Number(
+                      calculateChangePercentage(
+                        parseFloat(getPrice(gsp)),
+                        capToCompare
+                      )
+                    )
+                  )
+            }%`
           );
       })
       .on("pointerleave", function (d) {
