@@ -15,7 +15,7 @@ export interface IUserValue {
   accountNumber: string;
 }
 
-const initialValue = {
+export const initialValue = {
   value: {
     postcode: "",
     gsp: "A",

@@ -123,7 +123,7 @@ module.exports = {
       },
       backgroundImage: {
         tariffWinner:
-          "linear-gradient(0deg, rgba(0,3,35,0.7) 30% , rgba(0,3,35,0.85) 70%, rgba(0,4,51,0.9) 90% ),url('/images/octopus-winner.jpg')",
+          "linear-gradient(0deg, rgba(0,3,35,0.7) 30% , rgba(0,3,35,0.85) 70%, rgba(0,4,51,0.9) 90% ),url('/images/octopus-rabtopus.jpg')",
       },
     },
   },

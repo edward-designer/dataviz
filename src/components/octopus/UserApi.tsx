@@ -21,7 +21,7 @@ const UserApi = () => {
       <h1 className="text-accentBlue-400 font-display text-4xl lg:text-6xl ">
         Compare Tariffs
       </h1>
-      <h2 className="text-accentBlue-400 font-display text-lg lg:text-2xl mb-4">
+      <h2 className="text-accentBlue-400 font-display text-lg lg:text-2xl mb-8">
         - Octopus Agile or Tracker or Variable?
       </h2>
       {hasApiInfo ? (
@@ -43,7 +43,7 @@ const UserApi = () => {
               </Remark>
             </li>
             <li>
-              <div className="inline-flex items-start lg:items-center gap-2 flex-col lg:flex-row">
+              <div className="inline-flex items-start lg:items-center gap-2 flex-col lg:flex-row ">
                 <UserApiForm open={open} setOpen={setOpen} />
                 <div>
                   your Octopus account information
