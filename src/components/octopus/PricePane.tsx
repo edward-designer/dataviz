@@ -17,6 +17,7 @@ import useTariffQuery from "../../hooks/useTariffQuery";
 
 import {
   calculateChangePercentage,
+  evenRound,
   isSameDate,
   isToday,
   priceAccessor,
@@ -249,7 +250,7 @@ const getPriceDisplay = (
     if (typeof price === "number")
       display = (
         <>
-          {price}
+          {evenRound(price, 2, true)}
           <span className="text-sm font-thin font-sans pl-1">p</span>
         </>
       );

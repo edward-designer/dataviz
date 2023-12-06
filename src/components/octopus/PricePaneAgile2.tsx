@@ -3,49 +3,23 @@
 import Loading from "@/components/Loading";
 import Badge from "@/components/octopus/Badge";
 import Comparison from "@/components/octopus/Comparison";
-import Remark from "./Remark";
-import {
-  extent,
-  maxIndex,
-  mean,
-  minIndex,
-  scaleDiverging,
-  scaleSqrt,
-} from "d3";
-import {
-  QueryTariffResult,
-  TariffResult,
-  TariffType,
-  priceCap,
-} from "@/data/source";
+import { QueryTariffResult } from "@/data/source";
+import { maxIndex, mean, minIndex } from "d3";
 
 import useTariffQuery from "../../hooks/useTariffQuery";
 
-import {
-  calculateChangePercentage,
-  evenRound,
-  formatLocaleTimePeriod,
-  isSameDate,
-  isToday,
-  priceAccessor,
-} from "../../utils/helpers";
+import { evenRound, formatLocaleTimePeriod } from "../../utils/helpers";
 
-import backgroundE from "../../../public/images/E.jpg";
 import ErrorMessage from "./ErrorMessage";
-import { EnergyIcon } from "./EnergyIcon";
-import Timer from "./Timer";
 
-import { BiArrowToBottom } from "react-icons/bi";
-import { BiArrowFromBottom } from "react-icons/bi";
 import { LiaBalanceScaleSolid } from "react-icons/lia";
-import { TbPigMoney } from "react-icons/tb";
 import { PiSealWarningBold } from "react-icons/pi";
-import { useEffect } from "react";
+import { TbPigMoney } from "react-icons/tb";
 import FormattedPrice from "./FormattedPrice";
 import HalfHourlyChart from "./HalfHourlyChart";
 
-import octopusIcon from "../../../public/lottie/octopus.json";
 import Lottie from "lottie-react";
+import octopusIcon from "../../../public/lottie/octopus.json";
 
 const PricePane = ({
   tariff,
@@ -85,11 +59,11 @@ const PricePane = ({
 
   const previousDayRates = results.filter((data) => {
     const previousDayStart = new Date(
-      new Date().setDate(new Date().getDate() - 1)
+      new Date(date).setDate(new Date(date).getDate() - 1)
     );
     previousDayStart.setHours(0, 0, 0, 0);
     const previousDayEnd = new Date(
-      new Date().setDate(new Date().getDate() - 1)
+      new Date(date).setDate(new Date(date).getDate() - 1)
     );
     previousDayEnd.setHours(23, 59, 59, 999);
     return (
