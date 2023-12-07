@@ -3,6 +3,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import Badge from "./Badge";
+
+import { LiaInfoCircleSolid } from "react-icons/lia";
+import { MdOutlineInstallMobile } from "react-icons/md";
 
 const Menu = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -68,6 +72,7 @@ const Menu = () => {
       >
         <nav className="text-4xl font-extralight p-4 pt-20 flex justify-between flex-col h-full">
           <div>
+            <span className="block my-2 border-t border-accentBlue-500/50"></span>
             <Link
               href="/tracker"
               className={`block my-5 ${
@@ -76,7 +81,7 @@ const Menu = () => {
                   : "hover:text-accentPink-500"
               }`}
             >
-              Tracker
+              Tracker <span className="text-lg">Price</span>
             </Link>
             <Link
               href="/agile"
@@ -86,7 +91,18 @@ const Menu = () => {
                   : "hover:text-accentPink-500"
               }`}
             >
-              Agile
+              Agile <span className="text-lg">Price</span>
+            </Link>
+            <span className="block my-2 border-t border-accentBlue-500/50"></span>
+            <Link
+              href="/savings"
+              className={`block my-5  ${
+                pathname === "/savings"
+                  ? "cursor-default text-accentBlue-900"
+                  : "hover:text-accentPink-500"
+              }`}
+            >
+              <Badge label="beta" /> <span className="text-lg">My</span> Savings
             </Link>
             <Link
               href="/compare"
@@ -96,19 +112,32 @@ const Menu = () => {
                   : "hover:text-accentPink-500"
               }`}
             >
-              Compare Tariffs
+              <Badge label="beta" /> Compare{" "}
+              <span className="text-lg">Tariffs</span>
             </Link>
           </div>
-          <Link
-            href="/about"
-            className={`block my-5 text-sm  ${
-              pathname === "/about"
-                ? "cursor-default text-accentBlue-900"
-                : "hover:text-accentPink-500"
-            }`}
-          >
-            About
-          </Link>
+          <div>
+            <Link
+              href="/install"
+              className={`flex items-center gap-1 my-3 text-base  ${
+                pathname === "/install"
+                  ? "cursor-default text-accentBlue-900"
+                  : "hover:text-accentPink-500"
+              }`}
+            >
+              <MdOutlineInstallMobile /> Install on Mobile
+            </Link>
+            <Link
+              href="/about"
+              className={`flex items-center gap-1 my-3 text-base  ${
+                pathname === "/about"
+                  ? "cursor-default text-accentBlue-900"
+                  : "hover:text-accentPink-500"
+              }`}
+            >
+              <LiaInfoCircleSolid /> About
+            </Link>
+          </div>
         </nav>
       </div>
     </div>

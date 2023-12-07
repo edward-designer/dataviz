@@ -1,5 +1,5 @@
 "use client";
-import { ReactNode } from "react";
+import { ReactNode, useContext, useEffect, useState } from "react";
 import {
   Popover,
   PopoverContent,
@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/popover";
 import { IoIosInformationCircleOutline } from "react-icons/io";
 import { TVariant } from "@/data/source";
+import { WindowVisibilityContext } from "@/context/windowVisibility";
 
 const Remark = ({
   children,
@@ -15,8 +16,15 @@ const Remark = ({
   children: ReactNode;
   variant?: TVariant;
 }) => {
+  const [open, setOpen] = useState(false);
+  const { focus } = useContext(WindowVisibilityContext);
+
+  useEffect(() => {
+    if (focus) setOpen(false);
+  }, [focus]);
+
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger>
         <IoIosInformationCircleOutline
           className={`${

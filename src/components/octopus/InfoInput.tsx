@@ -1,9 +1,10 @@
-import { ReactNode, useId } from "react";
+import { ChangeEvent, ReactNode, useId } from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import Button from "./Button";
 import { MdOutlineClear } from "react-icons/md";
 import { ErrorType } from "./UserInfo";
+import { capitalize } from "@/utils/helpers";
 
 interface IInfoInput {
   label: string;
@@ -11,8 +12,8 @@ interface IInfoInput {
   placeHolder: string;
   error: ErrorType;
   value: string;
-  setValue: (value: string) => void;
-  clearHandler: () => void;
+  setValue: ((value: string) => void) | null;
+  clearHandler: (() => void) | null;
   remark?: ReactNode;
   notice?: string;
 }
@@ -30,22 +31,31 @@ const InfoInput = ({
 }: IInfoInput) => {
   const id = useId();
 
+  const changeHandler =
+    setValue === null
+      ? null
+      : (e: ChangeEvent<HTMLInputElement>) => setValue(e.target.value);
+  const onChangeProps =
+    changeHandler === null ? {} : { onChange: changeHandler };
+
   return (
     <div className="grid w-full items-center gap-1 mb-1">
       <div className="flex flex-row">
-        <Label htmlFor={id}>{label}</Label>
+        <Label htmlFor={id}>{capitalize(label)}</Label>
         {!!remark && remark}
       </div>
       <div className="flex w-full">
         <Input
           type={type}
           id={id}
+          name={label}
           placeholder={placeHolder}
           value={value}
           className="flex-1"
-          onChange={(e) => setValue(e.target.value)}
+          disabled={!setValue}
+          {...onChangeProps}
         />
-        {value && (
+        {value && clearHandler && (
           <Button clickHandler={clearHandler}>
             <MdOutlineClear className="w-6 h-6 text-accentPink-800 hover:text-accentPink-600" />
           </Button>

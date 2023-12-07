@@ -39,7 +39,6 @@ const UserApiResult = () => {
       return tariffsEToCompare;
     });
   };
-  const handleClick = () => setValue(initialValue.value);
   const setECost = useCallback(
     (category: TariffCategory, cost: number) =>
       setTariffsEToCompare((value) =>
@@ -167,21 +166,21 @@ const UserApiResult = () => {
         </div>
       )}
       {isError && <div>{error.message}</div>}
-      <div className="flex gap-2 items-center  flex-col-reverse md:flex-col lg:flex-row">
-        <div className="flex-grow">
-          The following analysis is based on your actual energy use pattern in
-          the past year, showing which tariff suits you best!
-          <Remark variant="badge">
-            The figures presented here are an approximation of your annul energy
-            costs. Approximations and assumptions are used in the calculations.
-            The actual costs may vary a lot depending on the previaling unit
-            rates and change of usage patterns. Remember, past results does not
-            guarantee future performance.
-          </Remark>
-        </div>
-      </div>
       {isSuccess && (
         <>
+          <div className="flex gap-2 items-center  flex-col-reverse md:flex-col lg:flex-row">
+            <div className="flex-grow">
+              The following analysis is based on your actual energy use pattern
+              in the past year, showing which tariff suits you best!
+              <Remark variant="badge">
+                The figures presented here are an approximation of your annul
+                energy costs. Approximations and assumptions are used in the
+                calculations. The actual costs may vary a lot depending on the
+                previaling unit rates and change of usage patterns. Remember,
+                past results does not guarantee future performance.
+              </Remark>
+            </div>
+          </div>
           {MPAN && ESerialNo && (
             <>
               <h2 className="font-display text-accentPink-500 text-4xl flex items-center mt-4">
@@ -244,13 +243,6 @@ const UserApiResult = () => {
           )}
         </>
       )}
-      <button
-        className="text-base border leading-tight text-accentPink-500 border-accentPink-500 rounded-lg px-4 py-2 whitespace-nowrap hover:bg-accentPink-800 hover:text-white my-8 flex items-center justify-center gap-2"
-        onClick={handleClick}
-      >
-        <PiTrashSimpleLight className="fill-accentPink-500 h-6 w-6" /> Clear My
-        Info
-      </button>
     </div>
   );
 };

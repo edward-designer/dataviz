@@ -187,3 +187,6 @@ export const range = (start: number, end?: number, step: number = 1) => {
   }
   return output;
 };
+
+export const capitalize = (word: string) =>
+  word.replace(new RegExp(/^[a-z]{1}/), (match) => match.toUpperCase());

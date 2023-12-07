@@ -18,6 +18,7 @@ import Remark from "./Remark";
 import { getGsp } from "@/utils/helpers";
 
 import { IoLocationOutline } from "react-icons/io5";
+import UserApiForm from "./UserApiForm";
 
 export type ErrorType = Record<string, string>;
 
@@ -78,6 +79,9 @@ const UserInfo = () => {
     setOpen(state);
   };
 
+  if (value.apiKey && value.accountNumber)
+    return <UserApiForm open={open} setOpen={setOpen} />;
+
   return (
     <div className="flex">
       <Dialog open={open} onOpenChange={handleDialogOpenChange}>
@@ -97,11 +101,6 @@ const UserInfo = () => {
             type="text"
             placeHolder="Please enter your postcode"
             error={error}
-            notice={
-              value.accountNumber || value.apiKey
-                ? `By deleting the postcode, all other account info stored here will also be removed (don\'t worry, the info on your Octopus account will NOT be affected).`
-                : ""
-            }
             value={postcode}
             setValue={setPostcode}
             clearHandler={clearPostCodeHandler}
