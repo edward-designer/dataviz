@@ -51,7 +51,7 @@ const TrackerTariff = () => {
         <PricePane tariff={tariff} type="G" gsp={gsp} />
       </section>
       <div className="flex-0 text-lg font-bold text-center translate-y-3 text-accentPink-600">
-        Changes over the past month
+        Changes over the past year
         <Remark variant="badge">
           The average price caps for standard variable tariff (SVT) shown here
           are for reference only. All Octopus tracker plans have different price
@@ -111,7 +111,7 @@ const TrackerTariff = () => {
         />
       </section>
       <h2 className="flex-0 text-lg font-bold text-center translate-y-3 text-accentPink-600">
-        Comparision of Octopus Tracker Plans
+        Comparision of Octopus Tracker Tariffs
       </h2>
       <section className="flex justify-center items-center gap-4 my-4 flex-col bg-black/30 rounded-xl p-4 lg:p-10">
         <p className="text-sm">

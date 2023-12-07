@@ -8,6 +8,8 @@ import Remark from "./Remark";
 import UserApiForm from "./UserApiForm";
 import UserApiResult from "./UserApiResult";
 
+import { ImGift } from "react-icons/im";
+
 export type ErrorType = Record<string, string>;
 
 const UserApi = () => {
@@ -29,8 +31,8 @@ const UserApi = () => {
       ) : (
         <>
           <p>
-            Wanna know which Ocotpus tariff brings you the most savings?
-            Firstly, you will need to:
+            Wanna know which Ocotpus tariff brings you the most savings? You
+            will need to:
           </p>
           <ol className="list-decimal ml-5 flex flex-col gap-4 mt-4">
             <li>
@@ -39,8 +41,23 @@ const UserApi = () => {
                 The results will be more accurate if you have been a Octopus
                 user for over a year.
                 <br />- if you are not a current Octopus Energy user, you can
-                switch now and wait for a month to use this service
+                switch now and wait for a month to use this service.
               </Remark>
+              <br />-{" "}
+              <strong className="text-accentPink-500">
+                Not an Octopus user?
+              </strong>{" "}
+              No worries, you can get{" "}
+              <ImGift className="inline-block -translate-y-1 w-8 h-8 px-1" />
+              <strong>£50 credit</strong> by signing up thru our{" "}
+              <a
+                href="https://share.octopus.energy/sky-heron-134"
+                target="_blank"
+                className="underline text-accentPink-500 hover:no-underline"
+              >
+                exclusive link
+              </a>
+              !
             </li>
             <li>
               <div className="inline-flex items-start lg:items-center gap-2 flex-col lg:flex-row ">
