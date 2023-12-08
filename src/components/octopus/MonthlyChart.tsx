@@ -25,10 +25,9 @@ import MonthlyChartBar from "./MonthlyChartBar";
 export interface IMonthlyChart {
   cost: { [x: string]: number }[];
   costSVT: { [x: string]: number }[];
-  priceAverage: number;
 }
 
-const MonthlyChart = ({ cost, costSVT, priceAverage }: IMonthlyChart) => {
+const MonthlyChart = ({ cost, costSVT }: IMonthlyChart) => {
   const scrollContainerRef = useRef<null | HTMLDivElement>(null);
 
   const valueAccessor = (d: { [x: string]: number }) => Object.values(d)[0];

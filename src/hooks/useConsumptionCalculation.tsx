@@ -242,7 +242,7 @@ export const calculateMonthlyPrices = (
       totalStandingCharge += monthlyStandingCharge;
       const monthlyCostPlusStandingChargeInPound: number =
         evenRound(totalPrice / 100, 2) +
-        evenRound(monthlyStandingCharge / 100, 2) -
+        evenRound(totalStandingCharge / 100, 2) -
         monthlyPricesInPound.reduce((acc, cur) => {
           return acc + Object.values(cur)[0];
         }, 0);
@@ -360,7 +360,7 @@ export const calculateMonthlyPrices = (
   totalStandingCharge += monthlyStandingCharge;
   const monthlyCostPlusStandingChargeInPound: number =
     evenRound(totalPrice / 100, 2) +
-    evenRound(monthlyStandingCharge / 100, 2) -
+    evenRound(totalStandingCharge / 100, 2) -
     monthlyPricesInPound.reduce((acc, cur) => {
       return acc + Object.values(cur)[0];
     }, 0);
@@ -368,7 +368,7 @@ export const calculateMonthlyPrices = (
     [currentMonth]: evenRound(monthlyCostPlusStandingChargeInPound, 2),
   });
 
-  totalStandingCharge = evenRound(totalStandingCharge / 100, 2);
+  totalStandingCharge = evenRound(totalStandingCharge, 2);
   return {
     cost: monthlyPricesInPound,
     totalUnit,

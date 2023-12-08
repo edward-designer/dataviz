@@ -56,6 +56,8 @@ const SavingsChart = ({
       results: "monthly",
     });
 
+  console.log(cost, totalUnit, totalPrice, totalStandingCharge);
+
   const {
     cost: costSVT,
     totalPrice: totalPriceSVT,
@@ -80,16 +82,8 @@ const SavingsChart = ({
     return "Not available";
   }
 
-  const [lastMonthCost, ...prevMonthCost] = cost;
-  const [lastMonthCostSVT, ...prevMonthCostSVT] = costSVT;
-
   const valueAccessor = (d: { [x: string]: number }) => Object.values(d)[0];
   const periodAccessor = (d: { [x: string]: number }) => Object.keys(d)[0];
-
-  const priceAverage = mean(prevMonthCost, (d) => valueAccessor(d) ?? 0) ?? 0;
-
-  const priceAverageSVT =
-    mean(prevMonthCostSVT, (d) => valueAccessor(d) ?? 0) ?? 0;
 
   const totalSVT = (totalPriceSVT + totalStandingChargeSVT) / 100;
   const totalCost = (totalPrice + totalStandingCharge) / 100;
@@ -109,11 +103,7 @@ const SavingsChart = ({
       {cost.length > 0 ? (
         <>
           <div className="flex flex-1 flex-col md:flex-row justify-between gap-4 max-h-full overflow-hidden">
-            <MonthlyChart
-              cost={cost}
-              costSVT={costSVT}
-              priceAverage={priceAverage}
-            />
+            <MonthlyChart cost={cost} costSVT={costSVT} />
             <div className="flex flex-col justify-between divide-y [&>div]:border-accentBlue-900 gap-1">
               <div className="flex flex-wrap justify-between items-start md:block text-[#85cbf9] bg-theme-900/30">
                 <Badge
