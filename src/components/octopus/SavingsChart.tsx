@@ -1,11 +1,14 @@
 "use client";
 
+import Image from "next/image";
+
 import Badge from "@/components/octopus/Badge";
 import Comparison from "@/components/octopus/Comparison";
 import { ENERGY_TYPE, SVT_ETARIFF, TariffCategory } from "@/data/source";
 
 import { toBlob, toJpeg } from "html-to-image";
 import { saveAs } from "file-saver";
+import html2canvas from "html2canvas";
 
 import { evenRound } from "../../utils/helpers";
 
@@ -18,14 +21,15 @@ import MonthlyChart from "./MonthlyChart";
 import { LiaBalanceScaleSolid } from "react-icons/lia";
 import { TbMoneybag, TbPigMoney } from "react-icons/tb";
 
-import Image from "next/image";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import logo from "../../../public/octoprice-light.svg";
 
 import { RxShare2 } from "react-icons/rx";
 import { PiDownloadSimple } from "react-icons/pi";
 import { BsLightningChargeFill } from "react-icons/bs";
 import { AiFillFire } from "react-icons/ai";
+
+import Canvas from "./Canvas";
 
 const SavingsChart = ({
   tariff,
@@ -133,18 +137,10 @@ const SavingsChart = ({
   const handleDownload = async () => {
     if (!imageRef.current) return;
 
-    const fontCss = `@font-face {
-  font-family: 'Advent Pro';
-  font-style: normal;
-  font-weight: 100;
-  src: url(https://fonts.gstatic.com/s/adventpro/v23/V8mVoQfxVT4Dvddr_yOwrzaFxV7JtdQgFqXdUC4nMm4JHs1r.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}`;
-
-    const blob = await toBlob(imageRef.current, {
-      preferredFontFormat: "ttf",
-      fontEmbedCSS: fontCss,
-    });
+    /*const blob = await toBlob(imageRef.current, {});
+    const blob = canvasRef.current?.toBlob(function (blob) {
+      link.href = URL.createObjectURL(blob);
+    }, "image/png");
     try {
       if (blob) {
         if (window !== undefined && "saveAs" in window && window.saveAs) {
@@ -157,8 +153,44 @@ const SavingsChart = ({
       }
     } catch (err) {
       throw new Error("Sorry, cannot be downloaded at the moment.");
-    }
+    }*/
+    const canvas = await html2canvas(imageRef.current);
+    const image = canvas.toBlob((blob) => {
+      try {
+        if (blob) {
+          if (window !== undefined && "saveAs" in window && window.saveAs) {
+            window.saveAs(blob, `octoprice-${ENERGY_TYPE[type]}-saving.png`);
+          } else {
+            saveAs(blob, `octoprice-${ENERGY_TYPE[type]}-saving.png`);
+          }
+        } else {
+          throw new Error("Sorry, cannot be downloaded at the moment.");
+        }
+      } catch (err) {
+        throw new Error("Sorry, cannot be downloaded at the moment.");
+      }
+    });
   };
+
+  /* const draw = (context: CanvasRenderingContext2D) => {
+    const img = new Image();
+    img.src = "http://localhost:3000/images/octoprice-bg.jpg";
+
+    img.onload = () => {
+      context.drawImage(img, 0, 0);
+      context.beginPath();
+      context.moveTo(30, 96);
+      context.lineTo(70, 66);
+      context.lineTo(103, 76);
+      context.lineTo(170, 15);
+      context.stroke();
+    };
+    context.fillStyle = "rgb(200, 0, 0)";
+    context.fillRect(10, 10, 50, 50);
+
+    context.fillStyle = "rgba(0, 0, 200, 0.5)";
+    context.fillRect(30, 30, 50, 50);
+  }; */
 
   return (
     <>
@@ -243,8 +275,6 @@ const SavingsChart = ({
               </div>
             </div>
             <div className="flex justify-center">
-              <canvas ref={canvasRef} width="300" height="300"></canvas>
-
               <div
                 ref={imageRef}
                 className={`w-[300px] h-[300px] lg:w-[600px] lg:h-[600px] bg-theme-950 rounded-2xl`}
@@ -254,7 +284,7 @@ const SavingsChart = ({
                     type === "E"
                       ? "bg-[url(/images/octoprice-bg.jpg)]"
                       : "bg-[url(/images/octoprice-bg-gas.jpg)]"
-                  } relative rounded-2xl border border-accentPink-500 font-display p-2 px-4 aspect-square w-[300px] h-[300px] bg-cover lg:scale-[2] lg:mb-[300px] origin-top-left`}
+                  } relative font-display rounded-2xl border border-accentPink-500 p-2 px-4 aspect-square w-[300px] h-[300px] bg-cover lg:scale-[2] lg:mb-[300px] origin-top-left`}
                 >
                   <span className="absolute left-2 top-2">
                     {type === "E" && (
@@ -269,25 +299,27 @@ const SavingsChart = ({
                     alt="Octoprice logo"
                     className="absolute top-2 right-2 w-20 h-auto "
                   />
-                  <span className="block pt-16 text-accentPink-500 text-2xl m-0 p-0 leading-[1em]">
+                  <span className="block pt-16 text-accentPink-500 text-2xl m-0 p-0 absolute">
                     Octopus
                   </span>
-                  <span className="block text-white text-5xl m-0 p-0 leading-[0.5em]">
+                  <span className="block text-white text-5xl m-0 p-0 absolute top-[85px]">
                     saves
                     <span className="text-2xl text-accentBlue-500"> me</span>
                   </span>
-                  <span className="block font-bold text-white text-8xl m-0 p-0 leading-[0.8em] ml-4 -translate-y-1">
-                    <span className="text-3xl font-sans">£</span>
-                    {evenRound(totalSaving, 0)}
+                  <span className="text-3xl font-sans absolute top-[175px]">
+                    £
                   </span>
-                  <span className="block text-white text-xl m-0 p-0 -translate-y-3">
+                  <span className="block font-bold text-white text-8xl m-0 p-0 ml-4 absolute top-[160px] leading-4">
+                    {evenRound(totalSaving, 0)}ab
+                  </span>
+                  <span className="block text-white text-xl m-0 p-0  absolute top-[200px]">
                     in{" "}
                     <span className="text-accentPink-500 text-3xl font-bold">
                       {ENERGY_TYPE[type]}
                     </span>{" "}
                     bill
                   </span>
-                  <span className="block text-accentBlue-500 text-base m-0 p-0 -translate-y-5">
+                  <span className="block text-accentBlue-500 text-base m-0 p-0  absolute top-[235px]">
                     @{" "}
                     {`${periodAccessor(
                       cost[cost.length - 1]

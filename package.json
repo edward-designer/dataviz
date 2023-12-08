@@ -29,6 +29,7 @@
     "framer-motion": "^10.16.14",
     "geojson": "^0.5.0",
     "html-to-image": "^1.11.11",
+    "html2canvas": "^1.4.1",
     "leaflet": "^1.9.4",
     "lottie-react": "^2.4.0",
     "lucide-react": "^0.292.0",
