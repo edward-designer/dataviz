@@ -282,7 +282,7 @@ const SavingsChart = ({
                   />
 
                   <span className="block pt-16 text-accentPink-500 text-2xl m-0 p-0 absolute -top-[10px]">
-                    Have
+                    <span className="font-sans font-thin">🎉 I have</span>
                   </span>
                   <span className="shifted-text block text-white text-5xl m-0 p-0 absolute top-[65px]">
                     saved
@@ -293,17 +293,17 @@ const SavingsChart = ({
                   <span className="shifted-text block font-bold text-white text-8xl ml-6 absolute top-[95px] leading-none">
                     {evenRound(totalSaving, 0)}
                   </span>
-                  <span className="block text-white text-xl m-0 p-0 absolute top-[180px]">
+                  <span className="block text-white text-xl m-0 p-0 absolute top-[180px] font-sans font-thin">
                     in{" "}
-                    <span className="text-accentPink-500 text-3xl font-bold">
+                    <span className="text-accentPink-500 text-3xl font-display font-bold">
                       {ENERGY_TYPE[type]}
                     </span>{" "}
                     bill
                   </span>
-                  <span className="block text-accentBlue-500 text-base m-0 p-0  absolute top-[210px]">
+                  <span className="block text-accentBlue-500 text-base m-0 p-0 font-sans font-thin absolute top-[210px]">
                     since {`${periodAccessor(cost[cost.length - 1])}`}
                   </span>
-                  <span className="absolute font-sans bottom-2 right-2 text-xs">
+                  <span className="absolute font-sans bottom-1 right-2 text-[10px]">
                     https://octopriceuk.vercel.app
                   </span>
                 </div>
