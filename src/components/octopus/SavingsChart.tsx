@@ -21,7 +21,6 @@ import { TbMoneybag, TbPigMoney } from "react-icons/tb";
 import Image from "next/image";
 import { useRef } from "react";
 import logo from "../../../public/octoprice-light.svg";
-import { EnergyIcon } from "./EnergyIcon";
 
 import { RxShare2 } from "react-icons/rx";
 import { PiDownloadSimple } from "react-icons/pi";
@@ -46,6 +45,7 @@ const SavingsChart = ({
   serialNo: string;
 }) => {
   const imageRef = useRef<HTMLDivElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const today = new Date();
   today.setHours(23, 59, 59, 999);
@@ -132,7 +132,19 @@ const SavingsChart = ({
 
   const handleDownload = async () => {
     if (!imageRef.current) return;
-    const blob = await toBlob(imageRef.current);
+
+    const fontCss = `@font-face {
+  font-family: 'Advent Pro';
+  font-style: normal;
+  font-weight: 100;
+  src: url(https://fonts.gstatic.com/s/adventpro/v23/V8mVoQfxVT4Dvddr_yOwrzaFxV7JtdQgFqXdUC4nMm4JHs1r.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}`;
+
+    const blob = await toBlob(imageRef.current, {
+      preferredFontFormat: "ttf",
+      fontEmbedCSS: fontCss,
+    });
     try {
       if (blob) {
         if (window !== undefined && "saveAs" in window && window.saveAs) {
@@ -231,9 +243,11 @@ const SavingsChart = ({
               </div>
             </div>
             <div className="flex justify-center">
+              <canvas ref={canvasRef} width="300" height="300"></canvas>
+
               <div
                 ref={imageRef}
-                className={`w-[300px] h-[300px] lg:w-[600px] lg:h-[600px] bg-theme-950`}
+                className={`w-[300px] h-[300px] lg:w-[600px] lg:h-[600px] bg-theme-950 rounded-2xl`}
               >
                 <div
                   className={`${

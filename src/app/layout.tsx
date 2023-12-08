@@ -12,7 +12,11 @@ import { Advent_Pro, Roboto } from "next/font/google";
 
 import "./globals.css";
 
-const font = Advent_Pro({ subsets: ["latin"], variable: "--display-font" });
+const font = Advent_Pro({
+  weight: ["100", "400", "700"],
+  subsets: ["latin"],
+  variable: "--display-font",
+});
 const font2 = Roboto({
   weight: "100",
   subsets: ["latin"],
