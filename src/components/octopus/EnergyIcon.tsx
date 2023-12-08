@@ -4,9 +4,19 @@ import Lottie from "lottie-react";
 import electricityIcon from "../../../public/lottie/electricity.json";
 import gasIcon from "../../../public/lottie/gas.json";
 
-export const EnergyIcon = ({ type }: { type: Exclude<TariffType, "EG"> }) => {
+export const EnergyIcon = ({
+  type,
+  position = "right",
+}: {
+  type: Exclude<TariffType, "EG">;
+  position?: "left" | "right";
+}) => {
   return (
-    <div className="absolute top-4 right-0 flex flex-col items-end">
+    <div
+      className={`absolute top-2 ${
+        position === "right" ? `right-0` : `left-0`
+      }`}
+    >
       <Lottie
         animationData={type === "G" ? gasIcon : electricityIcon}
         loop={2}
