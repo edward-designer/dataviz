@@ -233,14 +233,14 @@ const SavingsChart = ({
             <div className="flex justify-center">
               <div
                 ref={imageRef}
-                className="w-[300px] h-[300px] lg:w-[600px] lg:h-[600px]"
+                className={`w-[300px] h-[300px] lg:w-[600px] lg:h-[600px] bg-theme-950`}
               >
                 <div
-                  className={`relative rounded-2xl border border-accentPink-500 font-display p-2 px-4 aspect-square w-[300px] h-[300px] bg-cover lg:scale-[2] lg:mb-[300px] origin-top-left ${
+                  className={`${
                     type === "E"
                       ? "bg-[url(/images/octoprice-bg.jpg)]"
                       : "bg-[url(/images/octoprice-bg-gas.jpg)]"
-                  }`}
+                  } relative rounded-2xl border border-accentPink-500 font-display p-2 px-4 aspect-square w-[300px] h-[300px] bg-cover lg:scale-[2] lg:mb-[300px] origin-top-left`}
                 >
                   <span className="absolute left-2 top-2">
                     {type === "E" && (
