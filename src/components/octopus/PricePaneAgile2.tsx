@@ -103,7 +103,7 @@ const PricePane = ({
                   <Badge
                     label="Lowest"
                     icon={<TbPigMoney className="stroke-[#aaffdd]" />}
-                    variant="secondary"
+                    variant="item"
                   />
                   <div className="font-digit text-4xl text-white flex flex-col items-end justify-start">
                     <FormattedPrice price={thisDayRates[min].value_inc_vat} />
@@ -117,7 +117,7 @@ const PricePane = ({
                   <Badge
                     label="Highest"
                     icon={<PiSealWarningBold className="fill-accentPink-500" />}
-                    variant="secondary"
+                    variant="item"
                   />
                   <div className="font-digit text-4xl text-white flex flex-col items-end justify-start">
                     <FormattedPrice price={thisDayRates[max].value_inc_vat} />
@@ -131,7 +131,7 @@ const PricePane = ({
                   <Badge
                     label="Average"
                     icon={<LiaBalanceScaleSolid />}
-                    variant="secondary"
+                    variant="item"
                   />
                   <div className="font-digit text-4xl text-white flex flex-col items-end justify-start">
                     <FormattedPrice price={priceAverage} />

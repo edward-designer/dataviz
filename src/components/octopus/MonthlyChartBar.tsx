@@ -82,7 +82,7 @@ const MonthlyChartBar = ({
               </span>
             </span>
           </TooltipTrigger>
-          <TooltipContent className="bg-theme-900 text-base">
+          <TooltipContent className="bg-theme-900 text-base font-sans">
             <div className="flex items-center gap-1">
               <TbMoneybag />
               Current: £{monthlycostCurrent}

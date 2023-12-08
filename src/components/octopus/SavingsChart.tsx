@@ -154,7 +154,19 @@ const SavingsChart = ({
     } catch (err) {
       throw new Error("Sorry, cannot be downloaded at the moment.");
     }*/
-    const canvas = await html2canvas(imageRef.current);
+    const canvas = await html2canvas(
+      imageRef.current, // html I am converting to canvas
+      {
+        // options
+        onclone: (el) => {
+          const elementsWithShiftedDownwardText: NodeListOf<HTMLElement> =
+            el.querySelectorAll(".shifted-text");
+          elementsWithShiftedDownwardText.forEach((element) => {
+            element.style.transform = "translateY(-25%)";
+          });
+        },
+      }
+    );
     const image = canvas.toBlob((blob) => {
       try {
         if (blob) {
@@ -209,7 +221,7 @@ const SavingsChart = ({
                   <Badge
                     label="Total Saving"
                     icon={<TbPigMoney className="stroke-[#85cbf9]" />}
-                    variant="secondary"
+                    variant="item"
                   />
                   <div className="font-digit text-4xl flex flex-col items-end justify-start">
                     <FormattedPrice price={totalSaving} value="pound" />
@@ -229,7 +241,7 @@ const SavingsChart = ({
                   <Badge
                     label="Average Unit Rate"
                     icon={<LiaBalanceScaleSolid className="fill-[#aaffdd]" />}
-                    variant="secondary"
+                    variant="item"
                   />
                   <div className="font-digit text-4xl flex flex-col items-end justify-start">
                     <FormattedPrice price={unitRateAverage} value="pence" />
@@ -250,7 +262,7 @@ const SavingsChart = ({
                   <Badge
                     label="Total Charge"
                     icon={<TbMoneybag className="stroke-white" />}
-                    variant="secondary"
+                    variant="item"
                   />
                   <div className="font-digit text-4xl flex flex-col items-end justify-start">
                     <FormattedPrice price={totalCost} value="pound" />
@@ -263,7 +275,7 @@ const SavingsChart = ({
                   <Badge
                     label="Total SVT Charge"
                     icon={<TbMoneybag className="stroke-accentPink-500" />}
-                    variant="secondary"
+                    variant="item"
                   />
                   <div className="font-digit text-4xl flex flex-col items-end justify-start">
                     <FormattedPrice price={totalSVT} value="pound" />
@@ -277,14 +289,14 @@ const SavingsChart = ({
             <div className="flex justify-center">
               <div
                 ref={imageRef}
-                className={`w-[300px] h-[300px] lg:w-[600px] lg:h-[600px] bg-theme-950 rounded-2xl`}
+                className={`w-[300px] h-[300px] lg:w-[600px] lg:h-[600px] bg-accentPink-500`}
               >
                 <div
                   className={`${
                     type === "E"
                       ? "bg-[url(/images/octoprice-bg.jpg)]"
                       : "bg-[url(/images/octoprice-bg-gas.jpg)]"
-                  } relative font-display rounded-2xl border border-accentPink-500 p-2 px-4 aspect-square w-[300px] h-[300px] bg-cover lg:scale-[2] lg:mb-[300px] origin-top-left`}
+                  } relative font-display rounded-2xl border-2 border-accentPink-500 p-2 px-4 aspect-square w-[300px] h-[300px] bg-cover lg:scale-[2] lg:mb-[300px] origin-top-left`}
                 >
                   <span className="absolute left-2 top-2">
                     {type === "E" && (
@@ -297,22 +309,22 @@ const SavingsChart = ({
                   <Image
                     src={logo}
                     alt="Octoprice logo"
-                    className="absolute top-2 right-2 w-20 h-auto "
+                    className="absolute top-2 right-2 w-[100px] h-[23px]"
                   />
                   <span className="block pt-16 text-accentPink-500 text-2xl m-0 p-0 absolute">
                     Octopus
                   </span>
-                  <span className="block text-white text-5xl m-0 p-0 absolute top-[85px]">
+                  <span className="shifted-text block text-white text-5xl m-0 p-0 absolute top-[85px]">
                     saves
                     <span className="text-2xl text-accentBlue-500"> me</span>
                   </span>
                   <span className="text-3xl font-sans absolute top-[175px]">
                     £
                   </span>
-                  <span className="block font-bold text-white text-8xl ml-4 absolute top-[160px] leading-4 ">
+                  <span className="shifted-text block font-bold text-white text-8xl ml-4 absolute top-[120px] leading-none">
                     {evenRound(totalSaving, 0)}
                   </span>
-                  <span className="block text-white text-xl m-0 p-0  absolute top-[200px]">
+                  <span className="block text-white text-xl m-0 p-0 absolute top-[200px]">
                     in{" "}
                     <span className="text-accentPink-500 text-3xl font-bold">
                       {ENERGY_TYPE[type]}
