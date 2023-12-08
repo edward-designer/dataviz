@@ -309,8 +309,8 @@ const SavingsChart = ({
                   <span className="text-3xl font-sans absolute top-[175px]">
                     £
                   </span>
-                  <span className="block font-bold text-white text-8xl m-0 p-0 ml-4 absolute top-[160px] leading-4">
-                    {evenRound(totalSaving, 0)}ab
+                  <span className="block font-bold text-white text-8xl ml-4 absolute top-[160px] leading-4 ">
+                    {evenRound(totalSaving, 0)}
                   </span>
                   <span className="block text-white text-xl m-0 p-0  absolute top-[200px]">
                     in{" "}
