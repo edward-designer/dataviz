@@ -45,7 +45,7 @@ const TariffComparisionCard = ({
   });
 
   useEffect(() => {
-    if (cost !== null) setCost(category, cost);
+    if (cost !== null && typeof cost === "number") setCost(category, cost);
   }, [category, cost, setCost]);
 
   const Container = cost !== null && rank === 1 ? Sparkles : "div";
@@ -60,7 +60,7 @@ const TariffComparisionCard = ({
     >
       {cost === null ? (
         <Loading />
-      ) : (
+      ) : typeof cost === "number" ? (
         <>
           <EnergyIcon type={type} />
           <Container>
@@ -109,6 +109,11 @@ const TariffComparisionCard = ({
             </div>
           )}
         </>
+      ) : (
+        <div>
+          Sorry, we are experience some technical errors at the moment. Please
+          try again later.
+        </div>
       )}
     </motion.div>
   );
