@@ -117,6 +117,24 @@ const SavingsCalculation = () => {
       </NotCurrentlySupported>
     );
   }
+
+  // shows a max of 1 year data
+  let EfromDate = "";
+  if (typeof currentEContract !== "undefined") {
+    EfromDate =
+      new Date(currentEContract.valid_from) < new Date(oneYearEarlier)
+        ? oneYearEarlier
+        : currentEContract.valid_from;
+  }
+
+  let GfromDate = "";
+  if (typeof currentGContract !== "undefined") {
+    GfromDate =
+      new Date(currentGContract.valid_from) < new Date(oneYearEarlier)
+        ? oneYearEarlier
+        : currentGContract.valid_from;
+  }
+
   return (
     <div className="flex gap-4 flex-col relative">
       {isLoading && (
@@ -130,7 +148,7 @@ const SavingsCalculation = () => {
           <div className="flex gap-2 items-center  flex-col-reverse md:flex-col lg:flex-row">
             <div className="flex-grow">
               The figures are in! Get thrilled to learn how much you have saved!
-              <Remark variant="badge">
+              <Remark>
                 Approximations and assumptions are used in the calculations. The
                 actual savings are likely to differ slightly because of missing
                 data and rounding.
@@ -150,7 +168,7 @@ const SavingsCalculation = () => {
               />
               <SavingsChart
                 tariff={currentETariff}
-                fromDate={currentEContract.valid_from}
+                fromDate={EfromDate}
                 gsp={value.gsp}
                 type="E"
                 compareTo="SVT"
@@ -172,7 +190,7 @@ const SavingsCalculation = () => {
               />
               <SavingsChart
                 tariff={currentGTariff}
-                fromDate={currentGContract.valid_from}
+                fromDate={GfromDate}
                 gsp={value.gsp}
                 type="G"
                 compareTo="SVT"

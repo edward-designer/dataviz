@@ -64,7 +64,7 @@ const Install = () => {
             <strong className="text-accentBlue-500">
               Share
               <RxShare2 className="inline-block px-1 w-8 h-8" />
-              <Remark variant="badge">
+              <Remark>
                 <div className=" max-h-[300px] overflow-y-auto m-0 p-0">
                   In Google Chrome:
                   <Image
@@ -87,7 +87,7 @@ const Install = () => {
             <strong className="text-accentBlue-500">
               Add to Home Screen
               <VscDiffAdded className="inline-block px-1 w-8 h-8" />
-              <Remark variant="badge">
+              <Remark>
                 <div className=" max-h-[300px] overflow-y-auto m-0 p-0">
                   Add to Home Screen button:
                   <Image
@@ -101,7 +101,7 @@ const Install = () => {
           </li>
           <li>
             Tap <strong className="text-accentBlue-500">Add</strong>
-            <Remark variant="badge">
+            <Remark>
               <div className=" max-h-[300px] overflow-y-auto m-0 p-0">
                 Add the App:
                 <Image

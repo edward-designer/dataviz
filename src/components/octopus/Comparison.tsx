@@ -2,6 +2,7 @@ import { IoMdTrendingDown } from "react-icons/io";
 import { IoMdTrendingUp } from "react-icons/io";
 import { CgMathEqual } from "react-icons/cg";
 import { ReactNode } from "react";
+import { evenRound } from "@/utils/helpers";
 
 const Comparison = ({
   change,
@@ -32,7 +33,7 @@ const Comparison = ({
           }`}
         />
         {change > 0 ? "+" : ""}
-        {change}%
+        {evenRound(change, 1)}%
       </span>
       <span className=" text-slate-300 text-xs flex leading-[1]">
         vs {compare} {children}

@@ -6,12 +6,12 @@ import {
   scaleLinear,
   scaleSequential,
 } from "d3";
+
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { PointerEvent, useContext, useEffect, useRef, useState } from "react";
 import { evenRound, formatLocaleTimePeriod } from "../../utils/helpers";
 import FormattedPrice from "./FormattedPrice";
@@ -20,6 +20,7 @@ import { WindowVisibilityContext } from "@/context/windowVisibility";
 import { TbPigMoney } from "react-icons/tb";
 import { HiOutlineCurrencyPound } from "react-icons/hi2";
 import { TooltipArrow } from "@radix-ui/react-tooltip";
+import MonthlyChartBar from "./MonthlyChartBar";
 
 export interface IMonthlyChart {
   cost: { [x: string]: number }[];
@@ -56,72 +57,17 @@ const MonthlyChart = ({ cost, costSVT, priceAverage }: IMonthlyChart) => {
               const monthlycostSVT = valueAccessor(costSVT[ind]);
               const monthlycostCurrent = valueAccessor(monthlyCost);
               const saving = monthlycostSVT - monthlycostCurrent;
-
-              return (
-                <li
-                  key={ind}
-                  className={`relative flex items-center select-none`}
-                >
-                  <span
-                    className={`z-20 delay-500 animate-chart-grow absolute left-0 border-r border-dashed border-accentPink-500 h-full bg-accentPink-950/30n pointer-events-none`}
-                    style={
-                      {
-                        "--chart-grow-width": `${xScale(monthlycostSVT)}%`,
-                      } as React.CSSProperties
-                    }
-                  ></span>
-
-                  <TooltipProvider delayDuration={0}>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <span
-                          className="animate-chart-grow relative text-base font-light text-theme-950 p-2 overflow-visible hover:shadow-[0_10px_30px_-15px_rgba(0,0,0,0.6),0_-4px_6px_-4px_rgb(0,0,0,0.3)] hover:z-10"
-                          style={
-                            {
-                              "--chart-grow-width": `${xScale(
-                                monthlycostCurrent
-                              )}%`,
-                              background: colorScale(saving),
-                            } as React.CSSProperties
-                          }
-                        >
-                          <span className="flex sm:items-center flex-col sm:flex-row overflow-visible ">
-                            <span
-                              className={`whitespace-nowrap sm:whitespace-normal block leading-tight min-w-20 sm:w-14 shrink-0 text-white mix-blend-difference md:mix-blend-normal md:text-black`}
-                            >
-                              {periodAccessor(monthlyCost)}
-                            </span>
-                            <span
-                              className={`flex leading-tight w-18 text-3xl md:text-4xl items-center text-white mix-blend-difference md:mix-blend-normal md:text-black`}
-                            >
-                              <HiOutlineCurrencyPound className="hidden lg:block w-6 h-6 stroke-accentBlue-500" />
-                              <FormattedPrice price={saving} value="pound" />
-                            </span>
-                          </span>
-                        </span>
-                      </TooltipTrigger>
-                      <TooltipContent className="bg-theme-900">
-                        <p>
-                          Charge: £{monthlycostCurrent}
-                          <br />
-                          <span className="text-accentPink-500">
-                            SVT: £{monthlycostSVT}
-                          </span>
-                          <br />
-                          <strong className="text-accentBlue-500 border-theme-700 border-t mt-1 pt-1 inline-block font-bold">
-                            Saves: £{evenRound(saving, 2)}{" "}
-                          </strong>
-                          <span className="text-[8px] text-accentBlue-500">
-                            {" "}
-                            (vs SVT)
-                          </span>
-                        </p>
-                        <TooltipArrow className="fill-theme-900" />
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </li>
-              );
+              const chartBarProps = {
+                saving,
+                monthlycostCurrent,
+                monthlycostSVT,
+                widthSVT: xScale(monthlycostSVT),
+                widthCurrent: xScale(monthlycostCurrent),
+                color: colorScale(saving),
+                period: periodAccessor(monthlyCost),
+                ind
+              };
+              return <MonthlyChartBar key={ind} {...chartBarProps} />;
             })}
         </ol>
       </div>

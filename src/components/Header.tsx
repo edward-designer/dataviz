@@ -14,7 +14,7 @@ const Header = ({
   return (
     <>
       <header
-        className={`flex gap-4 justify-between items-center ${className} py-4 z-10`}
+        className={`flex gap-4 justify-between items-center ${className} py-4 z-50`}
         {...props}
       >
         <Link href="/">

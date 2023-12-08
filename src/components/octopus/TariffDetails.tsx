@@ -18,10 +18,14 @@ const TariffDetails = ({ tariff_code, valid_from, type }: ITariffDetails) => {
 
   return (
     <div className="bg-theme-900/40 p-2">
-      <span className="inline-block w-[100px]">Tariff:</span>
+      <span className="inline-block w-[90px] text-white/70 text-sm">
+        Tariff:
+      </span>
       {isSuccess ? data[0]?.display_name ?? tariff_code : tariff_code}
       <br />
-      <span className="inline-block w-[100px]">Start Date:</span>
+      <span className="inline-block w-[90px] text-white/70  text-sm">
+        Date joined:
+      </span>
       {new Date(valid_from).toLocaleDateString()}
     </div>
   );

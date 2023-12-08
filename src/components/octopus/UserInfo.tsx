@@ -83,7 +83,7 @@ const UserInfo = () => {
     return <UserApiForm open={open} setOpen={setOpen} />;
 
   return (
-    <div className="flex">
+    <div className="flex items-center justify-center">
       <Dialog open={open} onOpenChange={handleDialogOpenChange}>
         <DialogTrigger className="text-accentPink-600 flex">
           <IoLocationOutline
@@ -94,7 +94,15 @@ const UserInfo = () => {
         </DialogTrigger>
         <DialogContent className="text-white">
           <DialogHeader>
-            <DialogTitle className="text-2xl">My Postcode</DialogTitle>
+            <DialogTitle className="text-2xl">
+              My Postcode{" "}
+              {value.postcode === "" && (
+                <Remark>
+                  Please enter your postcode to get the accurate figures as unit
+                  rates are set slightly different depending on locations.
+                </Remark>
+              )}
+            </DialogTitle>
           </DialogHeader>
           <InfoInput
             label="postcode"
@@ -125,13 +133,6 @@ const UserInfo = () => {
           </p>
         </DialogContent>
       </Dialog>
-
-      {value.postcode === "" && (
-        <Remark variant="badge">
-          Unit rates are set slightly different depending on locations. Please
-          enter your postcode to get the accurate figures.
-        </Remark>
-      )}
     </div>
   );
 };

@@ -160,7 +160,7 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
 
   if (isSuccess && isRateDataSuccess && isStandingChargeDataSuccess) {
     if (results === "monthly") {
-      const calculatedCost = calculateMonthlyPrices(
+      const results = calculateMonthlyPrices(
         type,
         category,
         toISODate,
@@ -168,9 +168,9 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
         flattenedRateData,
         standingChargeData
       );
-      return { cost: calculatedCost };
+      return results;
     } else {
-      const calculatedCost = calculatePrice(
+      const results = calculatePrice(
         type,
         category,
         toISODate,
@@ -178,10 +178,10 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
         flattenedRateData,
         standingChargeData
       );
-      return { cost: calculatedCost };
+      return results;
     }
   }
-  return { cost: null };
+  return { cost: null, totalUnit: 0, totalPrice: 0, totalStandingCharge: 0 };
 };
 
 export default useConsumptionCalculation;
@@ -214,8 +214,11 @@ export const calculateMonthlyPrices = (
     }[];
   }
 ) => {
-  let monthlyPrices = [];
+  let monthlyPricesInPound = [];
   let totalPrice = 0;
+  let monthlyStandingCharge = 0;
+  let totalStandingCharge = 0;
+  let totalUnit = 0;
   let rateDataOffset = 0; // since there are GAPS in the consumption data (possibly due to consumption data not synced to the server), we need to check if the consumption data matches the following rate period with the offset
   let currentDay = 0;
   let currentMonth = new Intl.DateTimeFormat("en-GB", {
@@ -236,19 +239,25 @@ export const calculateMonthlyPrices = (
       }).format(new Date(consumptionData.results[i].interval_start)) !==
       currentMonth
     ) {
-      const monthlyCost: number =
-        evenRound(totalPrice / 100, 2) -
-        monthlyPrices.reduce((acc, cur) => {
+      totalStandingCharge += monthlyStandingCharge;
+      const monthlyCostPlusStandingChargeInPound: number =
+        evenRound(totalPrice / 100, 2) +
+        evenRound(monthlyStandingCharge / 100, 2) -
+        monthlyPricesInPound.reduce((acc, cur) => {
           return acc + Object.values(cur)[0];
         }, 0);
-      monthlyPrices.push({
-        [currentMonth]: evenRound(monthlyCost, 2),
+      monthlyPricesInPound.push({
+        [currentMonth]: evenRound(monthlyCostPlusStandingChargeInPound, 2),
       });
       currentMonth = new Intl.DateTimeFormat("en-GB", {
         month: "short",
         year: "2-digit",
       }).format(new Date(consumptionData.results[i].interval_start));
+      monthlyStandingCharge = 0;
     }
+
+    totalUnit += consumptionData.results[i].consumption * consumptionMultiplier;
+
     if (category === "Fixed") {
       const currentPeriodTariff = filteredRateDataResults[0];
       totalPrice +=
@@ -263,7 +272,6 @@ export const calculateMonthlyPrices = (
           (d.valid_to === null || new Date(d.valid_to)) >=
             new Date(consumptionData.results[i].interval_start)
       );
-
       totalPrice +=
         (currentPeriodTariff?.value_inc_vat ?? 0) *
         consumptionData.results[i].consumption *
@@ -344,18 +352,29 @@ export const calculateMonthlyPrices = (
                   new Date(d.valid_to) >= new Date(currentDay))
             )?.value_inc_vat ?? 0;
       }
-      totalPrice += standingCharge;
+      monthlyStandingCharge += standingCharge;
     }
   }
-  const monthlyCost: number =
-    evenRound(totalPrice / 100, 2) -
-    monthlyPrices.reduce((acc, cur) => {
+
+  // add the last month data
+  totalStandingCharge += monthlyStandingCharge;
+  const monthlyCostPlusStandingChargeInPound: number =
+    evenRound(totalPrice / 100, 2) +
+    evenRound(monthlyStandingCharge / 100, 2) -
+    monthlyPricesInPound.reduce((acc, cur) => {
       return acc + Object.values(cur)[0];
     }, 0);
-  monthlyPrices.push({
-    [currentMonth]: evenRound(monthlyCost, 2),
+  monthlyPricesInPound.push({
+    [currentMonth]: evenRound(monthlyCostPlusStandingChargeInPound, 2),
   });
-  return monthlyPrices;
+
+  totalStandingCharge = evenRound(totalStandingCharge / 100, 2);
+  return {
+    cost: monthlyPricesInPound,
+    totalUnit,
+    totalPrice,
+    totalStandingCharge,
+  };
 };
 
 export const calculatePrice = (
@@ -387,6 +406,8 @@ export const calculatePrice = (
   }
 ) => {
   let totalPrice = 0;
+  let totalUnit = 0;
+  let totalStandingCharge = 0;
   let rateDataOffset = 0; // since there are GAPS in the consumption data (possibly due to consumption data not synced to the server), we need to check if the consumption data matches the following rate period with the offset
   let currentDay = 0;
   let currentRateIndex = 0;
@@ -396,6 +417,8 @@ export const calculatePrice = (
   );
 
   for (let i = 0; i < consumptionData.results.length; i++) {
+    totalUnit += consumptionData.results[i].consumption * consumptionMultiplier;
+
     if (category === "Fixed") {
       const currentPeriodTariff = filteredRateDataResults[0];
       totalPrice +=
@@ -491,7 +514,7 @@ export const calculatePrice = (
                   new Date(d.valid_to) >= new Date(currentDay))
             )?.value_inc_vat ?? 0;
       }
-      totalPrice += standingCharge;
+      totalStandingCharge += standingCharge;
     }
   }
 
@@ -499,12 +522,22 @@ export const calculatePrice = (
   if (category === "Agile") {
     if (consumptionData.results.length < 365 * 48) {
       totalPrice = (totalPrice * 365 * 48) / consumptionData.results.length;
+      totalStandingCharge =
+        (totalStandingCharge * 365 * 48) / consumptionData.results.length;
     }
   } else {
     if (consumptionData.results.length < 365) {
       totalPrice = (totalPrice * 365) / consumptionData.results.length;
+      totalStandingCharge =
+        (totalStandingCharge * 365) / consumptionData.results.length;
     }
   }
   totalPrice = evenRound(totalPrice / 100, 2);
-  return totalPrice;
+  totalStandingCharge = evenRound(totalStandingCharge / 100, 2);
+  return {
+    cost: totalPrice + totalStandingCharge,
+    totalUnit,
+    totalPrice,
+    totalStandingCharge,
+  };
 };

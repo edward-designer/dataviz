@@ -52,7 +52,7 @@ const TrackerTariff = () => {
       </section>
       <div className="flex-0 text-lg font-bold text-center translate-y-3 text-accentPink-600">
         Changes over the past year
-        <Remark variant="badge">
+        <Remark>
           The average price caps for standard variable tariff (SVT) shown here
           are for reference only. All Octopus tracker plans have different price
           caps set at the time of joining the plan. Please scroll down to view
@@ -64,7 +64,7 @@ const TrackerTariff = () => {
       </section>
       <h2 className="flex-0 text-lg font-bold text-center translate-y-3 text-accentPink-600">
         Regional energy unit rates
-        <Remark variant="badge">
+        <Remark>
           The unit rates for different parts of the UK is calcuated based on{" "}
           <a
             href="https://octopus.energy/tracker-faqs//#formula"
