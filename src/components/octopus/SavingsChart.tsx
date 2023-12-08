@@ -22,7 +22,7 @@ import { LiaBalanceScaleSolid } from "react-icons/lia";
 import { TbMoneybag, TbPigMoney } from "react-icons/tb";
 
 import { useEffect, useRef } from "react";
-import logo from "../../../public/octoprice-light.svg";
+import logo from "../../../public/octoprice-sm.svg";
 
 import { RxShare2 } from "react-icons/rx";
 import { PiDownloadSimple } from "react-icons/pi";
@@ -107,53 +107,52 @@ const SavingsChart = ({
 
   const handleShare = async () => {
     if (!imageRef.current || !canShare) return;
-    const newFile = await toBlob(imageRef.current);
-    let data = {};
-    if (newFile)
-      data = {
-        files: [
-          new File([newFile], "octoprice.png", {
-            type: newFile.type,
-          }),
-        ],
-        title: `Octopus ${ENERGY_TYPE[type]} Bill Savings`,
-        text: `Octopus saves me £${evenRound(
-          totalSaving,
-          0
-        )} from ${periodAccessor(cost[cost.length - 1])} - ${periodAccessor(
-          cost[0]
-        )}`,
-      };
-    try {
-      if (!navigator.canShare(data)) {
-        throw new Error("Sorry, cannot share at the moment.");
+
+    const canvas = await html2canvas(
+      imageRef.current, // html I am converting to canvas
+      {
+        // options
+        onclone: (el) => {
+          const elementsWithShiftedDownwardText: NodeListOf<HTMLElement> =
+            el.querySelectorAll(".shifted-text");
+          elementsWithShiftedDownwardText.forEach((element) => {
+            element.style.transform = "translateY(-25%)";
+          });
+        },
       }
-      await navigator.share(data);
-    } catch (err) {
-      throw new Error("Sorry, cannot share at the moment.");
-    }
+    );
+    const image = canvas.toBlob(async (blob) => {
+      let data = {};
+      if (blob) {
+        data = {
+          files: [
+            new File([blob], "octoprice.png", {
+              type: blob.type,
+            }),
+          ],
+          title: `Octopus ${ENERGY_TYPE[type]} Bill Savings`,
+          text: `Octopus saves me £${evenRound(
+            totalSaving,
+            0
+          )} from ${periodAccessor(cost[cost.length - 1])} - ${periodAccessor(
+            cost[0]
+          )}`,
+        };
+        try {
+          if (!navigator.canShare(data)) {
+            throw new Error("Sorry, cannot share at the moment.");
+          }
+          await navigator.share(data);
+        } catch (err) {
+          throw new Error("Sorry, cannot share at the moment.");
+        }
+      }
+    });
   };
 
   const handleDownload = async () => {
     if (!imageRef.current) return;
 
-    /*const blob = await toBlob(imageRef.current, {});
-    const blob = canvasRef.current?.toBlob(function (blob) {
-      link.href = URL.createObjectURL(blob);
-    }, "image/png");
-    try {
-      if (blob) {
-        if (window !== undefined && "saveAs" in window && window.saveAs) {
-          window.saveAs(blob, `octoprice-${ENERGY_TYPE[type]}-saving.png`);
-        } else {
-          saveAs(blob, `octoprice-${ENERGY_TYPE[type]}-saving.png`);
-        }
-      } else {
-        throw new Error("Sorry, cannot be downloaded at the moment.");
-      }
-    } catch (err) {
-      throw new Error("Sorry, cannot be downloaded at the moment.");
-    }*/
     const canvas = await html2canvas(
       imageRef.current, // html I am converting to canvas
       {
@@ -296,7 +295,7 @@ const SavingsChart = ({
                     type === "E"
                       ? "bg-[url(/images/octoprice-bg.jpg)]"
                       : "bg-[url(/images/octoprice-bg-gas.jpg)]"
-                  } relative font-display rounded-2xl border-2 border-accentPink-500 p-2 px-4 aspect-square w-[300px] h-[300px] bg-cover lg:scale-[2] lg:mb-[300px] origin-top-left`}
+                  } relative font-display font-medium rounded-3xl border-[5px] border-accentPink-500 p-2 px-4 aspect-square w-[300px] h-[300px] bg-cover lg:scale-[2] lg:mb-[300px] origin-top-left`}
                 >
                   <span className="absolute left-2 top-2">
                     {type === "E" && (
@@ -311,31 +310,27 @@ const SavingsChart = ({
                     alt="Octoprice logo"
                     className="absolute top-2 right-2 w-[100px] h-[23px]"
                   />
-                  <span className="block pt-16 text-accentPink-500 text-2xl m-0 p-0 absolute">
-                    Octopus
+                  <span className="block pt-16 text-accentPink-500 text-2xl m-0 p-0 absolute -top-[10px]">
+                    Have
                   </span>
-                  <span className="shifted-text block text-white text-5xl m-0 p-0 absolute top-[85px]">
-                    saves
-                    <span className="text-2xl text-accentBlue-500"> me</span>
+                  <span className="shifted-text block text-white text-5xl m-0 p-0 absolute top-[65px]">
+                    saved
                   </span>
-                  <span className="text-3xl font-sans absolute top-[175px]">
+                  <span className="text-3xl font-sans absolute top-[105px]">
                     £
                   </span>
-                  <span className="shifted-text block font-bold text-white text-8xl ml-4 absolute top-[120px] leading-none">
+                  <span className="shifted-text block font-bold text-white text-8xl ml-6 absolute top-[95px] leading-none">
                     {evenRound(totalSaving, 0)}
                   </span>
-                  <span className="block text-white text-xl m-0 p-0 absolute top-[200px]">
+                  <span className="block text-white text-xl m-0 p-0 absolute top-[180px]">
                     in{" "}
                     <span className="text-accentPink-500 text-3xl font-bold">
                       {ENERGY_TYPE[type]}
                     </span>{" "}
                     bill
                   </span>
-                  <span className="block text-accentBlue-500 text-base m-0 p-0  absolute top-[235px]">
-                    @{" "}
-                    {`${periodAccessor(
-                      cost[cost.length - 1]
-                    )} - ${periodAccessor(cost[0])}`}
+                  <span className="block text-accentBlue-500 text-base m-0 p-0  absolute top-[210px]">
+                    since {`${periodAccessor(cost[cost.length - 1])}`}
                   </span>
                   <span className="absolute font-sans bottom-2 right-2 text-xs">
                     https://octopriceuk.vercel.app

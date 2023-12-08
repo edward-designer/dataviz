@@ -82,7 +82,7 @@ const MapChart = ({
     const svg = select(svgRef.current);
     const tooltip = svg.select(".tooltipContainer");
     const defs = svg.append("defs");
-    console.log(data);
+
     if (rate === "standard_unit_rate_inc_vat") {
       const validDate = new Date(
         data[0].tariffs_active_at as string
