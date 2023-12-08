@@ -69,14 +69,14 @@ const MonthlyChartBar = ({
             >
               <span className="flex sm:items-center flex-col sm:flex-row overflow-visible ">
                 <span
-                  className={`text-sm md:text-base whitespace-nowrap sm:whitespace-normal block leading-tight min-w-20 sm:w-14 shrink-0 text-white mix-blend-difference md:mix-blend-normal md:text-black`}
+                  className={`text-xs md:text-base whitespace-nowrap sm:whitespace-normal block leading-tight min-w-20 sm:w-14 shrink-0 text-white mix-blend-difference md:mix-blend-normal md:text-black`}
                 >
                   {period}
                 </span>
                 <span
-                  className={`flex leading-tight w-18 text-2xl md:text-4xl items-center text-white mix-blend-difference md:mix-blend-normal md:text-black`}
+                  className={`flex leading-tight w-18 font-bold text-xl md:font-extralight md:text-4xl items-center text-white mix-blend-difference md:mix-blend-normal md:text-black`}
                 >
-                  <HiOutlineCurrencyPound className="hidden lg:block w-6 h-6 stroke-accentBlue-500" />
+                  <TbPigMoney className="stroke-white w-4 h-4 md:w-6 md:h-6 flex-shrink-0" />
                   <FormattedPrice price={saving} value="pound" />
                 </span>
               </span>
@@ -85,7 +85,7 @@ const MonthlyChartBar = ({
           <TooltipContent className="bg-theme-900 text-base">
             <div className="flex items-center gap-1">
               <TbMoneybag />
-              Charge: £{monthlycostCurrent}
+              Current: £{monthlycostCurrent}
             </div>
             <div className="flex items-center gap-1 text-accentPink-500">
               <TbMoneybag />
@@ -93,7 +93,7 @@ const MonthlyChartBar = ({
             </div>
             <div className="flex items-center gap-1 text-[#85cbf9] border-theme-700 border-t mt-1 pt-1 font-bold">
               <TbPigMoney />
-              Saves: £{evenRound(saving, 2)}{" "}
+              Saving: £{evenRound(saving, 2)}{" "}
             </div>
             <TooltipArrow className="fill-theme-900" />
           </TooltipContent>

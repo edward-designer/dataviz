@@ -65,15 +65,21 @@ const MonthlyChart = ({ cost, costSVT, priceAverage }: IMonthlyChart) => {
                 widthCurrent: xScale(monthlycostCurrent),
                 color: colorScale(saving),
                 period: periodAccessor(monthlyCost),
-                ind
+                ind,
               };
               return <MonthlyChartBar key={ind} {...chartBarProps} />;
             })}
         </ol>
       </div>
-      <div className="text-xs mt-4">
-        <span className="inline-block w-8 border-t border-dashed border-accentPink-500 -translate-y-1"></span>{" "}
-        Standard Variable Tariff (SVT)
+      <div className="text-xs mt-4 flex flex-wrap gap-x-4">
+        <span className="inline-block">
+          <span className="inline-block w-8 h-2 bg-[#aaffdd]"></span> Current
+          Tariff
+        </span>
+        <span className="inline-block">
+          <span className="inline-block w-8 border-t border-dashed border-accentPink-500 -translate-y-1"></span>{" "}
+          Standard Variable Tariff (SVT)
+        </span>
       </div>
     </div>
   );

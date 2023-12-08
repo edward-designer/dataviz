@@ -119,7 +119,7 @@ const HalfHourlyChart = ({
       {showTicker && (
         <>
           <div
-            className="border-t border-accentPink-700 w-full absolute top-0 left-0 z-50"
+            className="border-t border-accentPink-700 w-full absolute top-0 left-0 z-20"
             ref={timeLineContainerRef}
           >
             <div className="relative -top-2 h-0 w-0 border-t-8 border-l-8 border-b-8 border-solid border-t-transparent border-b-transparent border-l-accentPink-700" />

@@ -145,7 +145,7 @@ const SavingsCalculation = () => {
       {isError && <div>{error.message}</div>}
       {isSuccess && (
         <>
-          <div className="flex gap-2 items-center  flex-col-reverse md:flex-col lg:flex-row">
+          <div className="flex gap-2 md:flex-col lg:flex-row">
             <div className="flex-grow">
               The figures are in! Get thrilled to learn how much you have saved!
               <Remark>

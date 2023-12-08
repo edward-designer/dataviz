@@ -29,7 +29,7 @@ const Remark = ({
         <IoIosInformationCircleOutline
           className={`${
             variant === "badge"
-              ? "w-6 h-6 -translate-y-2 md:translate-y-0 ml-2 md:w-4 md:h-4 md:ml-1 md:-mt-[2px]"
+              ? "w-6 h-6 -translate-y-1 md:translate-y-0 ml-1 md:w-4 md:h-4 md:-mt-[2px]"
               : "w-6 h-6 ml-2 translate-y-1"
           } text-accentBlue-500/90`}
           aria-hidden={true}
