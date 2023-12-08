@@ -25,7 +25,8 @@ import { EnergyIcon } from "./EnergyIcon";
 
 import { RxShare2 } from "react-icons/rx";
 import { PiDownloadSimple } from "react-icons/pi";
-
+import { BsLightningChargeFill } from "react-icons/bs";
+import { AiFillFire } from "react-icons/ai";
 
 const SavingsChart = ({
   tariff,
@@ -241,7 +242,14 @@ const SavingsChart = ({
                       : "bg-[url(/images/octoprice-bg-gas.jpg)]"
                   }`}
                 >
-                  <EnergyIcon type={type} position="left" />
+                  <span className="absolute left-2 top-2">
+                    {type === "E" && (
+                      <BsLightningChargeFill className="fill-accentBlue-500/50 w-8 h-8" />
+                    )}
+                    {type === "G" && (
+                      <AiFillFire className="fill-accentPink-500/50 w-8 h-8" />
+                    )}
+                  </span>
                   <Image
                     src={logo}
                     alt="Octoprice logo"

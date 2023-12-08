@@ -19,7 +19,7 @@ const SavingsContainer = () => {
         My Savings
       </h1>
       <h2 className="text-accentBlue-400 font-display text-lg lg:text-2xl mb-8">
-        - How much did I save last year?
+        - How much did You save last year?
       </h2>
       {hasApiInfo ? <SavingsCalculation /> : <UserApi />}
     </div>
