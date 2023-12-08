@@ -20,13 +20,22 @@ export type IConsumptionCalculator = {
   toDate: string;
   type: Exclude<TariffType, "EG">;
   category: TariffCategory;
+  results?: "monthly" | "yearly";
 };
 
 const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
   const { value } = useContext(UserContext);
 
-  const { tariff, fromDate, toDate, type, category, deviceNumber, serialNo } =
-    inputs;
+  const {
+    tariff,
+    fromDate,
+    toDate,
+    type,
+    category,
+    deviceNumber,
+    serialNo,
+    results = "yearly",
+  } = inputs;
 
   const groupBy = {
     Agile: "",
@@ -37,12 +46,14 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
     Fixed: "&group_by=day",
   };
 
+  const fromISODate = new Date(fromDate).toISOString();
+  const toISODate = new Date(toDate).toISOString();
   //get readings
   const queryFn = async () => {
     try {
       // page_size 25000 is a year's data
       const response = await fetch(
-        `https://api.octopus.energy/v1/${ENERGY_TYPE[type]}-meter-points/${deviceNumber}/meters/${serialNo}/consumption/?period_from=${fromDate}&period_to=${toDate}&page_size=25000${groupBy[category]}`,
+        `https://api.octopus.energy/v1/${ENERGY_TYPE[type]}-meter-points/${deviceNumber}/meters/${serialNo}/consumption/?period_from=${fromISODate}&period_to=${toISODate}&page_size=25000${groupBy[category]}`,
         {
           method: "GET",
           headers: {
@@ -63,7 +74,7 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
   const queryFnStandingChargeData = async () => {
     try {
       const response = await fetch(
-        `https://api.octopus.energy/v1/products/${tariff}/${ENERGY_TYPE[type]}-tariffs/${type}-1R-${tariff}-${value.gsp}/standing-charges/?page_size=1500&period_from=${fromDate}&period_to=${toDate}`
+        `https://api.octopus.energy/v1/products/${tariff}/${ENERGY_TYPE[type]}-tariffs/${type}-1R-${tariff}-${value.gsp}/standing-charges/?page_size=1500&period_from=${fromISODate}&period_to=${toISODate}`
       );
       if (!response.ok) throw new Error("Sorry the request was unsuccessful");
       return response.json();
@@ -79,12 +90,7 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
     isSuccess,
     isLoading,
   } = useQuery({
-    queryKey: [
-      deviceNumber,
-      serialNo,
-      new Date().toLocaleDateString(),
-      category,
-    ],
+    queryKey: [deviceNumber, serialNo, category, fromISODate, toISODate],
     queryFn,
     enabled: !!deviceNumber && !!serialNo && !!category,
   });
@@ -104,8 +110,8 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
     tariff,
     type,
     gsp: value.gsp,
-    fromDate,
-    toDate,
+    fromDate: fromISODate,
+    toDate: toISODate,
     category,
     enabled: !!deviceNumber && !!serialNo && !!category,
   });
@@ -122,7 +128,14 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
       payment_method: null | string;
     }[];
   }>({
-    queryKey: ["getStandingCharge", tariff, type, value.gsp],
+    queryKey: [
+      "getStandingCharge",
+      tariff,
+      type,
+      value.gsp,
+      fromISODate,
+      toISODate,
+    ],
     queryFn: queryFnStandingChargeData,
     enabled: !!value.gsp && !!deviceNumber && !!serialNo && !!category,
   });
@@ -146,23 +159,209 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
   };
 
   if (isSuccess && isRateDataSuccess && isStandingChargeDataSuccess) {
-    const calculatedCost = calculatePrice(
-      type,
-      category,
-      consumptionData,
-      flattenedRateData,
-      standingChargeData
-    );
-    return { cost: calculatedCost };
+    if (results === "monthly") {
+      const calculatedCost = calculateMonthlyPrices(
+        type,
+        category,
+        toISODate,
+        consumptionData,
+        flattenedRateData,
+        standingChargeData
+      );
+      return { cost: calculatedCost };
+    } else {
+      const calculatedCost = calculatePrice(
+        type,
+        category,
+        toISODate,
+        consumptionData,
+        flattenedRateData,
+        standingChargeData
+      );
+      return { cost: calculatedCost };
+    }
   }
   return { cost: null };
 };
 
 export default useConsumptionCalculation;
 
+export const calculateMonthlyPrices = (
+  type: Exclude<TariffType, "EG">,
+  category: string,
+  toDate: string,
+  consumptionData: {
+    results: {
+      consumption: number;
+      interval_start: string;
+      interval_end: string;
+    }[];
+  },
+  rateData: {
+    results: {
+      value_inc_vat: number;
+      valid_from: string;
+      valid_to: string;
+      payment_method: null | string;
+    }[];
+  },
+  standingChargeData: {
+    results: {
+      value_inc_vat: number;
+      valid_from: string;
+      valid_to: null | string;
+      payment_method: null | string;
+    }[];
+  }
+) => {
+  let monthlyPrices = [];
+  let totalPrice = 0;
+  let rateDataOffset = 0; // since there are GAPS in the consumption data (possibly due to consumption data not synced to the server), we need to check if the consumption data matches the following rate period with the offset
+  let currentDay = 0;
+  let currentMonth = new Intl.DateTimeFormat("en-GB", {
+    year: "2-digit",
+    month: "short",
+  }).format(new Date(toDate));
+  let currentRateIndex = 0;
+  const consumptionMultiplier = type === "G" ? GAS_MULTIPLIER_TO_KWH : 1;
+  const filteredRateDataResults = rateData.results.filter(
+    (d) => d.payment_method !== "NON_DIRECT_DEBIT"
+  );
+
+  for (let i = 0; i < consumptionData.results.length; i++) {
+    if (
+      new Intl.DateTimeFormat("en-GB", {
+        year: "2-digit",
+        month: "short",
+      }).format(new Date(consumptionData.results[i].interval_start)) !==
+      currentMonth
+    ) {
+      const monthlyCost: number =
+        evenRound(totalPrice / 100, 2) -
+        monthlyPrices.reduce((acc, cur) => {
+          return acc + Object.values(cur)[0];
+        }, 0);
+      monthlyPrices.push({
+        [currentMonth]: evenRound(monthlyCost, 2),
+      });
+      currentMonth = new Intl.DateTimeFormat("en-GB", {
+        month: "short",
+        year: "2-digit",
+      }).format(new Date(consumptionData.results[i].interval_start));
+    }
+    if (category === "Fixed") {
+      const currentPeriodTariff = filteredRateDataResults[0];
+      totalPrice +=
+        (currentPeriodTariff?.value_inc_vat ?? 0) *
+        consumptionData.results[i].consumption *
+        consumptionMultiplier;
+    } else if (category === "SVT") {
+      const currentPeriodTariff = filteredRateDataResults.find(
+        (d) =>
+          new Date(d.valid_from) <=
+            new Date(consumptionData.results[i].interval_start) &&
+          (d.valid_to === null || new Date(d.valid_to)) >=
+            new Date(consumptionData.results[i].interval_start)
+      );
+
+      totalPrice +=
+        (currentPeriodTariff?.value_inc_vat ?? 0) *
+        consumptionData.results[i].consumption *
+        consumptionMultiplier;
+    } else if (category === "Go" || category === "Cosy") {
+      for (let j = currentRateIndex; j < filteredRateDataResults.length; j++) {
+        const currentRateEntry = filteredRateDataResults[j];
+        if (
+          new Date(currentRateEntry.valid_from) <=
+            new Date(consumptionData.results[i].interval_start) &&
+          (filteredRateDataResults[j].valid_to === null ||
+            new Date(currentRateEntry.valid_to)) >=
+            new Date(consumptionData.results[i].interval_start)
+        ) {
+          totalPrice +=
+            (currentRateEntry?.value_inc_vat ?? 0) *
+            consumptionData.results[i].consumption *
+            consumptionMultiplier;
+          break;
+        }
+        currentRateIndex++;
+      }
+    } else {
+      if (
+        new Date(
+          filteredRateDataResults[i + rateDataOffset]?.valid_from
+        ).valueOf() ===
+        new Date(consumptionData.results[i].interval_start).valueOf()
+      ) {
+        totalPrice +=
+          filteredRateDataResults[i + rateDataOffset].value_inc_vat *
+          consumptionData.results[i].consumption *
+          consumptionMultiplier;
+      } else {
+        for (let j = 1; j < consumptionData.results.length; j++) {
+          if (
+            new Date(
+              filteredRateDataResults[i + rateDataOffset + j]?.valid_from
+            ).valueOf() ===
+            new Date(consumptionData.results[i].interval_start).valueOf()
+          ) {
+            totalPrice +=
+              filteredRateDataResults[i + rateDataOffset + j].value_inc_vat *
+              consumptionData.results[i].consumption *
+              consumptionMultiplier;
+            rateDataOffset += j;
+            break;
+          }
+        }
+      }
+    }
+
+    if (
+      new Date(consumptionData.results[i].interval_start).setHours(
+        0,
+        0,
+        0,
+        0
+      ) !== currentDay
+    ) {
+      currentDay = new Date(consumptionData.results[i].interval_start).setHours(
+        0,
+        0,
+        0,
+        0
+      );
+      let standingCharge = 0;
+      if (category === "Fixed") {
+        standingCharge = standingChargeData.results[0]?.value_inc_vat ?? 0;
+      } else {
+        standingCharge =
+          standingChargeData.results
+            .filter((d) => d.payment_method !== "NON_DIRECT_DEBIT")
+            .find(
+              (d) =>
+                new Date(d.valid_from) <= new Date(currentDay) &&
+                (d.valid_to === null ||
+                  new Date(d.valid_to) >= new Date(currentDay))
+            )?.value_inc_vat ?? 0;
+      }
+      totalPrice += standingCharge;
+    }
+  }
+  const monthlyCost: number =
+    evenRound(totalPrice / 100, 2) -
+    monthlyPrices.reduce((acc, cur) => {
+      return acc + Object.values(cur)[0];
+    }, 0);
+  monthlyPrices.push({
+    [currentMonth]: evenRound(monthlyCost, 2),
+  });
+  return monthlyPrices;
+};
+
 export const calculatePrice = (
   type: Exclude<TariffType, "EG">,
   category: string,
+  toDate: string,
   consumptionData: {
     results: {
       consumption: number;

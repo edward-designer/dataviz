@@ -15,9 +15,13 @@ import InfoInput from "./InfoInput";
 import { GrStatusGood } from "react-icons/gr";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
 import Image from "next/image";
-import { IUserApiForm } from "./UserApi";
 import { IoLocationOutline } from "react-icons/io5";
 import { PiTrashSimpleLight } from "react-icons/pi";
+
+export interface IUserApiForm {
+  open: boolean;
+  setOpen: (value: boolean) => void;
+}
 
 const UserApiForm = ({ open, setOpen }: IUserApiForm) => {
   const { value, setValue } = useContext(UserContext);

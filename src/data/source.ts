@@ -84,6 +84,10 @@ export const ETARIFFS: ITariffToCompare[] = [
     cost: null,
   },
 ];
+export const SVT_ETARIFF =
+  ETARIFFS.find((tariff) => tariff.category === "SVT")?.tariff ?? "";
+export const SVT_GTARIFF =
+  GTARIFFS.find((tariff) => tariff.category === "SVT")?.tariff ?? "";
 
 export const TRACKER: ITrackerTariffPlan[] = [
   {

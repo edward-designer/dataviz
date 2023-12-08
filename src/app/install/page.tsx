@@ -13,7 +13,7 @@ import Remark from "@/components/octopus/Remark";
 export const metadata: Metadata = {
   title: "Install App | Octoprice",
   description:
-    "Octoprice App can be installed on mobile devices. Please follow the instructions.",
+    "Octoprice App can be installed on mobile devices for best experiences.",
   keywords: ["Octopus Energy", "App Download", "App Installation"],
   authors: [
     { name: "Edward Chung", url: "https://edward-designer.github.io/" },
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Install App | Octoprice",
     description:
-      "Octoprice App can be installed on mobile devices. Please follow the instructions.",
+      "Octoprice App can be installed on mobile devices for best experiences.",
     url: "https://octopriceuk.vercel.app/install",
     siteName: "Octoprice App",
     images: [
@@ -40,11 +40,11 @@ const Install = () => {
   return (
     <div className="lg:col-[content] my-4 flex flex-col gap-6 text-lg">
       <h1 className="text-accentBlue-400 font-display text-6xl">
-        Install Octoprice App
+        Install Octoprice
       </h1>
       <p>
-        Ocotoprice can also be installed as a standalone app on most mobile
-        devices for best experiences. Simply follow the steps:
+        Octoprice App can be installed as an app on most mobile devices for best
+        experiences.
       </p>
       <div className="flex flex-wrap flex-col md:flex-row md:justify-between justify-center items-center md:items-start gap-4">
         <ol className="list-decimal ml-6 [&>*]:py-2">
@@ -89,6 +89,7 @@ const Install = () => {
               <VscDiffAdded className="inline-block px-1 w-8 h-8" />
               <Remark variant="badge">
                 <div className=" max-h-[300px] overflow-y-auto m-0 p-0">
+                  Add to Home Screen button:
                   <Image
                     src={appShareAddHome}
                     alt="add to Home Screen button"
@@ -102,6 +103,7 @@ const Install = () => {
             Tap <strong className="text-accentBlue-500">Add</strong>
             <Remark variant="badge">
               <div className=" max-h-[300px] overflow-y-auto m-0 p-0">
+                Add the App:
                 <Image
                   src={appShareAdd}
                   alt="confirm to add to Home Screen button"

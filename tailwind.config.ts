@@ -110,11 +110,16 @@ module.exports = {
             transform: "scale(0)",
           },
         },
+        "chart-grow": {
+          from: { width: 0 },
+          to: { width: "var(--chart-grow-width,0)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "come-in-out": "come-in-out 700ms forwards",
+        "chart-grow": "chart-grow 1s ease-out forwards",
       },
       fontFamily: {
         display: "var(--display-font)",

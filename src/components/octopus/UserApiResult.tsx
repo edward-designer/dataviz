@@ -1,14 +1,12 @@
 "use client";
 
 import Loading from "@/components/Loading";
-import { UserContext, initialValue } from "@/context/user";
+import { UserContext } from "@/context/user";
 import {
   ETARIFFS,
   GTARIFFS,
-  ITariffToCompare,
   IUserApiResult,
   TariffCategory,
-  TariffType,
 } from "@/data/source";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useContext, useState } from "react";
@@ -19,9 +17,7 @@ import TariffComparisionCardsContainer from "./TariffComparisionCardsContainer";
 
 import { AiFillFire } from "react-icons/ai";
 import { BsLightningChargeFill } from "react-icons/bs";
-import { VscAdd } from "react-icons/vsc";
 import AddATariff from "./AddATariffToCompare";
-import { PiTrashSimpleLight } from "react-icons/pi";
 
 const UserApiResult = () => {
   const { value, setValue } = useContext(UserContext);
@@ -80,7 +76,9 @@ const UserApiResult = () => {
       return response.json();
     } catch (err: unknown) {
       if (err instanceof Error)
-        throw new Error(`Sorry, we have an error: ${err.message}`);
+        throw new Error(
+          `Sorry, we have an error with your info: ${err.message}. Please check if your info are correct.`
+        );
       throw new Error("Sorry, the request was unsuccessful");
     }
   };
@@ -96,7 +94,6 @@ const UserApiResult = () => {
     data?.properties[0].electricity_meter_points[0].meters[0].serial_number ??
     "";
 
-  // pending GAS data
   const MPRN = data?.properties[0].gas_meter_points[0].mprn;
   const GSerialNo =
     data?.properties[0].gas_meter_points[0].meters[0].serial_number;
@@ -173,11 +170,11 @@ const UserApiResult = () => {
               The following analysis is based on your actual energy use pattern
               in the past year, showing which tariff suits you best!
               <Remark variant="badge">
-                The figures presented here are an approximation of your annul
+                The figures presented here are an approximation of your annual
                 energy costs. Approximations and assumptions are used in the
                 calculations. The actual costs may vary a lot depending on the
-                previaling unit rates and change of usage patterns. Remember,
-                past results does not guarantee future performance.
+                previaling unit rates and change of energy usage patterns.
+                Remember, past results does not guarantee future performance.
               </Remark>
             </div>
           </div>

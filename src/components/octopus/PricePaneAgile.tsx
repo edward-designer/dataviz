@@ -3,29 +3,22 @@
 import Loading from "@/components/Loading";
 import Badge from "@/components/octopus/Badge";
 import Comparison from "@/components/octopus/Comparison";
-import Remark from "./Remark";
+import { QueryTariffResult, TariffResult, priceCap } from "@/data/source";
 import { mean } from "d3";
-import {
-  QueryTariffResult,
-  TariffResult,
-  TariffType,
-  priceCap,
-} from "@/data/source";
+import Remark from "./Remark";
 
 import useTariffQuery from "../../hooks/useTariffQuery";
 
 import {
   calculateChangePercentage,
   evenRound,
-  isSameDate,
-  isToday,
   priceAccessor,
 } from "../../utils/helpers";
 
-import ErrorMessage from "./ErrorMessage";
-import { EnergyIcon } from "./EnergyIcon";
-import Timer from "./Timer";
 import { Dispatch, SetStateAction, useEffect, useRef } from "react";
+import { EnergyIcon } from "./EnergyIcon";
+import ErrorMessage from "./ErrorMessage";
+import Timer from "./Timer";
 
 interface IPricePane {
   tariff: string;

@@ -1,4 +1,4 @@
-import UserApi from "@/components/octopus/UserApi";
+import CompareTariffs from "@/components/octopus/CompareTariffs";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
 const Compare = () => {
   return (
     <div className="lg:col-[content] my-4">
-      <UserApi />
+      <CompareTariffs />
     </div>
   );
 };
