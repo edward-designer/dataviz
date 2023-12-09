@@ -29,6 +29,7 @@ const UserApiForm = ({ open, setOpen }: IUserApiForm) => {
   const [error, setError] = useState<Record<string, string>>({});
   const [apiKey, setApiKey] = useState("");
   const [accountNumber, setAccountNumber] = useState("");
+  const [gasConversionFactor, setGasConversionFactor] = useState<number>(11.1);
 
   useEffect(() => {
     setApiKey(value.apiKey);
@@ -38,22 +39,32 @@ const UserApiForm = ({ open, setOpen }: IUserApiForm) => {
     setAccountNumber(value.accountNumber);
   }, [value.accountNumber]);
 
+  useEffect(() => {
+    setGasConversionFactor(value.gasConversionFactor);
+  }, [value.gasConversionFactor]);
+
   const hasApiInfo = !!(value.apiKey && value.accountNumber);
 
   const ButtonIcon = hasApiInfo ? GrStatusGood : HiOutlinePencilSquare;
 
-  const clearValueHandler = (
+  function clearValueHandler(
     name: string,
     key: keyof IUserValue,
     callback: (value: string) => void
-  ) => {
+  ): void;
+  function clearValueHandler(
+    name: string,
+    key: keyof IUserValue,
+    callback: (value: number) => void
+  ): void;
+  function clearValueHandler(name: any, key: any, callback: any): any {
     toast.success(`${name} cleared.`);
     callback("");
     const newError = { ...error };
     delete newError[key];
     setError(newError);
     setValue({ ...value, [key]: "" });
-  };
+  }
   const handleClearAll = () => {
     setValue(initialValue.value);
     toast.success("All information cleared.");
@@ -66,6 +77,7 @@ const UserApiForm = ({ open, setOpen }: IUserApiForm) => {
       ...value,
       apiKey,
       accountNumber,
+      gasConversionFactor,
     });
     toast.success("Changes are saved.");
     setOpen(false);
@@ -74,6 +86,7 @@ const UserApiForm = ({ open, setOpen }: IUserApiForm) => {
   const cancelHandler = (value: IUserValue) => {
     setApiKey(value.apiKey);
     setAccountNumber(value.accountNumber);
+    setGasConversionFactor(value.gasConversionFactor);
     setOpen(false);
     setError({});
   };
@@ -186,15 +199,46 @@ const UserApiForm = ({ open, setOpen }: IUserApiForm) => {
           }
         />
         <InfoInput
-          label="Postcode"
-          type="text"
-          placeHolder="Please enter your postcode"
+          label="Gas Conversion Factor"
+          type="number"
+          placeHolder="The usual gas conversion factor is around 11.1"
           error={error}
-          notice="The postcode will be automatically updated when the above info is submitted."
-          value={value.postcode}
-          setValue={null}
-          clearHandler={null}
+          value={gasConversionFactor}
+          setValue={setGasConversionFactor}
+          clearHandler={() =>
+            clearValueHandler(
+              "Gas Conversion Factor",
+              "gasConversionFactor",
+              setGasConversionFactor
+            )
+          }
+          remark={
+            <Remark variant="badge">
+              If you find your gas cost figures here deviate a lot from your
+              bills, try to change it into the number &quot;1&quot; or try to
+              find out your current gas conversion factor from your bill:
+              <Image
+                className="block mt-2"
+                src="/images/gas-factor.jpg"
+                width={320}
+                height={401}
+                alt="get your gas conversion figure"
+              />
+            </Remark>
+          }
         />
+        <div className="border-t border-b border-white/30 border-dotted pt-4 pb-2">
+          <InfoInput
+            label="Postcode"
+            type="text"
+            placeHolder="Please enter your postcode"
+            error={error}
+            notice="The postcode will be automatically updated when the above info is submitted."
+            value={value.postcode}
+            setValue={null}
+            clearHandler={null}
+          />
+        </div>
         <div className="flex gap-2 flex-wrap justify-between">
           <div className="flex gap-2">
             <Button

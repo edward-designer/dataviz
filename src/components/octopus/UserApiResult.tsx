@@ -174,7 +174,7 @@ const UserApiResult = () => {
                 energy costs. Approximations and assumptions are used in the
                 calculations. The actual costs may vary a lot depending on the
                 previaling unit rates and change of energy usage patterns.
-                Remember, past results does not guarantee future performance.
+                Remember, past results do not guarantee future performance.
               </Remark>
             </div>
           </div>

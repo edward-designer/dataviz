@@ -13,7 +13,7 @@ const Badge = ({
 }) => {
   return (
     <span
-      className={` text-white/60 rounded-md align-middle 
+      className={` text-white/80 rounded-md align-middle font-normal 
       ${
         variant === "primary"
           ? "bg-accentPink-500 text-2xl px-4 py-0 font-display "

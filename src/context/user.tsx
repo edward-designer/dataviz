@@ -13,6 +13,7 @@ export interface IUserValue {
   gsp: string;
   apiKey: string;
   accountNumber: string;
+  gasConversionFactor: number;
 }
 
 export const initialValue = {
@@ -21,6 +22,7 @@ export const initialValue = {
     gsp: "A",
     apiKey: "",
     accountNumber: "",
+    gasConversionFactor: 11.1,
   },
   setValue: (value: IUserValue) => {},
 };

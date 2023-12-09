@@ -11,6 +11,7 @@ import {
   TariffCategory,
   TariffType,
 } from "@/data/source";
+import { Value } from "@radix-ui/react-select";
 
 export type IConsumptionCalculator = {
   deviceNumber: string;
@@ -163,6 +164,7 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
       const results = calculateMonthlyPrices(
         type,
         category,
+        value.gasConversionFactor,
         toISODate,
         consumptionData,
         flattenedRateData,
@@ -173,7 +175,7 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
       const results = calculatePrice(
         type,
         category,
-        toISODate,
+        value.gasConversionFactor,
         consumptionData,
         flattenedRateData,
         standingChargeData
@@ -189,6 +191,7 @@ export default useConsumptionCalculation;
 export const calculateMonthlyPrices = (
   type: Exclude<TariffType, "EG">,
   category: string,
+  gasConversionFactor: number,
   toDate: string,
   consumptionData: {
     results: {
@@ -226,7 +229,7 @@ export const calculateMonthlyPrices = (
     month: "short",
   }).format(new Date(toDate));
   let currentRateIndex = 0;
-  const consumptionMultiplier = type === "G" ? GAS_MULTIPLIER_TO_KWH : 1;
+  const consumptionMultiplier = type === "G" ? gasConversionFactor : 1;
   const filteredRateDataResults = rateData.results.filter(
     (d) => d.payment_method !== "NON_DIRECT_DEBIT"
   );
@@ -380,7 +383,7 @@ export const calculateMonthlyPrices = (
 export const calculatePrice = (
   type: Exclude<TariffType, "EG">,
   category: string,
-  toDate: string,
+  gasConversionFactor: number,
   consumptionData: {
     results: {
       consumption: number;
@@ -411,7 +414,7 @@ export const calculatePrice = (
   let rateDataOffset = 0; // since there are GAPS in the consumption data (possibly due to consumption data not synced to the server), we need to check if the consumption data matches the following rate period with the offset
   let currentDay = 0;
   let currentRateIndex = 0;
-  const consumptionMultiplier = type === "G" ? GAS_MULTIPLIER_TO_KWH : 1;
+  const consumptionMultiplier = type === "G" ? gasConversionFactor : 1;
   const filteredRateDataResults = rateData.results.filter(
     (d) => d.payment_method !== "NON_DIRECT_DEBIT"
   );

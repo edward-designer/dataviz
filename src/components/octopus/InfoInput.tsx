@@ -6,17 +6,29 @@ import { MdOutlineClear } from "react-icons/md";
 import { ErrorType } from "./UserInfo";
 import { capitalize } from "@/utils/helpers";
 
-interface IInfoInput {
-  label: string;
-  type: HTMLInputElement["type"];
-  placeHolder: string;
-  error: ErrorType;
-  value: string;
-  setValue: ((value: string) => void) | null;
-  clearHandler: (() => void) | null;
-  remark?: ReactNode;
-  notice?: string;
-}
+type IInfoInput =
+  | {
+      label: string;
+      type: "text";
+      placeHolder: string;
+      error: ErrorType;
+      value: string;
+      setValue: ((value: string) => void) | null;
+      clearHandler: (() => void) | null;
+      remark?: ReactNode;
+      notice?: string;
+    }
+  | {
+      label: string;
+      type: "number";
+      placeHolder: string;
+      error: ErrorType;
+      value: number;
+      setValue: ((value: number) => void) | null;
+      clearHandler: (() => void) | null;
+      remark?: ReactNode;
+      notice?: string;
+    };
 
 const InfoInput = ({
   label,
@@ -31,10 +43,17 @@ const InfoInput = ({
 }: IInfoInput) => {
   const id = useId();
 
-  const changeHandler =
-    setValue === null
-      ? null
-      : (e: ChangeEvent<HTMLInputElement>) => setValue(e.target.value);
+  let changeHandler = null;
+
+  if (type === "text" && setValue !== null) {
+    changeHandler = (e: ChangeEvent<HTMLInputElement>) =>
+      setValue(e.target.value);
+  }
+  if (type === "number" && setValue !== null) {
+    changeHandler = (e: ChangeEvent<HTMLInputElement>) =>
+      setValue(Number(e.target.value));
+  }
+
   const onChangeProps =
     changeHandler === null ? {} : { onChange: changeHandler };
 

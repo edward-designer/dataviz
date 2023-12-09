@@ -26,8 +26,8 @@ import { RxShare2 } from "react-icons/rx";
 import { PiDownloadSimple } from "react-icons/pi";
 import { BsLightningChargeFill } from "react-icons/bs";
 import { AiFillFire } from "react-icons/ai";
-
-import Canvas from "./Canvas";
+import { PiQuestion } from "react-icons/pi";
+import Remark from "./Remark";
 
 const SavingsChart = ({
   tariff,
@@ -87,7 +87,7 @@ const SavingsChart = ({
     typeof cost === "number" ||
     typeof costSVT === "number"
   ) {
-    return "Not available";
+    return;
   }
 
   const valueAccessor = (d: { [x: string]: number }) => Object.values(d)[0];
@@ -285,7 +285,7 @@ const SavingsChart = ({
                     <span className="font-sans font-thin">🎉 I have</span>
                   </span>
                   <span className="shifted-text block text-white text-5xl m-0 p-0 absolute top-[65px]">
-                    saved
+                    saved*
                   </span>
                   <span className="text-3xl font-sans absolute top-[105px]">
                     £
@@ -300,11 +300,14 @@ const SavingsChart = ({
                     </span>{" "}
                     bill
                   </span>
-                  <span className="block text-accentBlue-500 text-base m-0 p-0 font-sans font-thin absolute top-[210px]">
+                  <span className="block text-accentBlue-500 text-base m-0 p-0 font-sans font-thin absolute top-[209px]">
                     since {`${periodAccessor(cost[cost.length - 1])}`}
                   </span>
                   <span className="absolute font-sans bottom-1 right-2 text-[10px]">
                     https://octopriceuk.vercel.app
+                  </span>
+                  <span className="absolute font-sans font-light top-[225px] text-[8px]">
+                    *vs standard variable tariff
                   </span>
                 </div>
               </div>
@@ -323,6 +326,26 @@ const SavingsChart = ({
                 </>
               )}
             </button>
+            <div className="text-white/50 text-xs flex items-center gap-1">
+              <PiQuestion className="fill-accentBlue-500" />
+              The above results are different from my Octopus bill?
+              <Remark variant="badge">
+                As we cannot get your bills directly from Octopus, we have
+                applied pproximations and assumptions in the calculations.
+                Reasons for the differences may be missing data, rounding or, in
+                the case of gas, the conversion of reading of gas volume to kWh
+                (the unit used in our daily quote).{" "}
+                <strong>Gas cost calculation is very complex.</strong> The unit
+                of readings from smart meters differ depending on the generation
+                of meter (i.e. SMETS1 meters have the consumption data
+                pre-converted to kWh while SMETS2 meters transfer consumption
+                data in the raw cubic meters which has to be converted to kWh
+                based on a sophisticated formula.). If the calculated costs here
+                deviate a lot from your actual charges on your bill, please
+                click on your postcode on the top of the page to change the{" "}
+                <strong>Gas Conversion Factor</strong>.
+              </Remark>
+            </div>
           </>
         ) : (
           <div className="flex-1 flex h-full items-center justify-center flex-col gap-2">
