@@ -214,9 +214,8 @@ const UserApiForm = ({ open, setOpen }: IUserApiForm) => {
           }
           remark={
             <Remark variant="badge">
-              If you find your gas cost figures here deviate a lot from your
-              bills, try to change it into the number &quot;1&quot; or try to
-              find out your current gas conversion factor from your bill:
+              Try changing to &quot;1&quot; or find out your gas conversion
+              factor from your bill:
               <Image
                 className="block mt-2"
                 src="/images/gas-factor.jpg"
