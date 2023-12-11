@@ -35,7 +35,7 @@ const Comparison = ({
         {change > 0 ? "+" : ""}
         {evenRound(change, 1)}%
       </span>
-      <span className=" text-slate-300 text-xs flex leading-[1]">
+      <span className=" text-slate-300 font-sans font-extralight text-xs flex leading-[1]">
         vs {compare} {children}
       </span>
     </div>

@@ -40,7 +40,8 @@ const UserApiForm = ({ open, setOpen }: IUserApiForm) => {
   }, [value.accountNumber]);
 
   useEffect(() => {
-    setGasConversionFactor(value.gasConversionFactor);
+    if (value.gasConversionFactor)
+      setGasConversionFactor(value.gasConversionFactor);
   }, [value.gasConversionFactor]);
 
   const hasApiInfo = !!(value.apiKey && value.accountNumber);

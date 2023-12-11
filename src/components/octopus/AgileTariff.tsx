@@ -69,8 +69,8 @@ const AgileTariff = () => {
           <Remark variant="badge">
             With Agile Octopus, you get access to half-hourly energy prices,
             tied to wholesale prices and updated daily. Outgoing Octopus Agile
-            rate pays you for all your exported energy (e.g. output from solar panels) based on the day-ahead
-            wholesale rate.
+            rate pays you for all your exported energy (e.g. output from solar
+            panels) based on the day-ahead wholesale rate.
             <br />
             <br />
             Kindly note that the market index used to calculate unit rates is
@@ -157,8 +157,8 @@ const AgileTariff = () => {
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="item-0a" className="border-b-accentBlue-600/50">
             <AccordionTrigger>
-              I can only see the prices for electricity. Is there an Agile plan
-              for gas?
+              I can only see the prices for electricity. Is there an Agile
+              tariff for gas?
             </AccordionTrigger>
             <AccordionContent className="text-white/60">
               Regrettably NO.
@@ -184,7 +184,7 @@ const AgileTariff = () => {
               Nothing.
               <br />
               <br />
-              Agile plans have a much higher price cap of 100p per unit set by
+              Agile tariffs have a much higher price cap of 100p per unit set by
               Octopus than the Ofgem price caps as Agile is a new energy
               contract not protected by Ofgem caps. But the general trends of
               Ofgem price cap will give you a good idea of where the energy
@@ -229,7 +229,7 @@ const AgileTariff = () => {
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="item-1a" className="border-b-accentBlue-600/50">
             <AccordionTrigger>
-              How long does it take to join the Octopus Agile plan?
+              How long does it take to join the Octopus Agile tariff?
             </AccordionTrigger>
             <AccordionContent className="text-white/60">
               For current Octopus clients with smart meters, it is officially
@@ -241,7 +241,7 @@ const AgileTariff = () => {
           </AccordionItem>
           <AccordionItem value="item-1b" className="border-b-accentBlue-600/50">
             <AccordionTrigger>
-              How do I sign up for the Octopus Agile plan?
+              How do I sign up for the Octopus Agile tariff?
             </AccordionTrigger>
             <AccordionContent className="text-white/60">
               Head over to the{" "}

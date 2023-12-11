@@ -3,7 +3,13 @@
 import Loading from "@/components/Loading";
 import Badge from "@/components/octopus/Badge";
 import Comparison from "@/components/octopus/Comparison";
-import { QueryTariffResult, TariffResult, priceCap } from "@/data/source";
+import {
+  CapsTSVResult,
+  QueryTariffResult,
+  TariffResult,
+  TariffType,
+  gsp,
+} from "@/data/source";
 import { mean } from "d3";
 import Remark from "./Remark";
 
@@ -19,6 +25,7 @@ import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { EnergyIcon } from "./EnergyIcon";
 import ErrorMessage from "./ErrorMessage";
 import Timer from "./Timer";
+import useCurrentLocationPriceCapQuery from "@/hooks/useCurrentLocationPriceCapQuery";
 
 interface IPricePane {
   tariff: string;
@@ -54,32 +61,38 @@ const PricePane = ({ tariff, type, gsp, setCurrentPeriod }: IPricePane) => {
     );
   });
   const priceAverage = mean(todayRates, (d) => d.value_inc_vat) ?? 0;
+  const caps = useCurrentLocationPriceCapQuery({
+    gsp: `_${gsp}` as gsp,
+  });
 
   const note =
     "The rates from 11pm today till tomorrow are usually available at 4.00pm. Please revisit this page later to get the updates.";
 
-  const [priceNowDisplay, priceChangeNow] = getPriceDisplay(
+  const [priceNowDisplay, priceChangeNow] = getPriceDisplay({
     priceNowIndex,
     priceAverage,
-    "now",
-    results,
-    type
-  );
-  const [_, priceNowVsCap] = getPriceDisplay(
-    priceNowIndex,
-    priceAverage,
-    "nowVsPriceCap",
-    results,
-    type
-  );
-  const [priceNextDisplay, priceChangeNext] = getPriceDisplay(
-    priceNowIndex,
-    priceAverage,
-    "next",
+    priceCap: caps,
+    priceDisplayDate: "now",
     results,
     type,
-    note
-  );
+  });
+  const [_, priceNowVsCap] = getPriceDisplay({
+    priceNowIndex,
+    priceAverage,
+    priceCap: caps,
+    priceDisplayDate: "nowVsPriceCap",
+    results,
+    type,
+  });
+  const [priceNextDisplay, priceChangeNext] = getPriceDisplay({
+    priceNowIndex,
+    priceAverage,
+    priceCap: caps,
+    priceDisplayDate: "next",
+    results,
+    type,
+    message: note,
+  });
 
   useEffect(
     () =>
@@ -133,7 +146,7 @@ const PricePane = ({ tariff, type, gsp, setCurrentPeriod }: IPricePane) => {
                           </a>{" "}
                           for this quarter is{" "}
                           <strong className="text-bold">
-                            {`${priceCap[type]}p`}
+                            {`${caps?.[type]}p`}
                           </strong>{" "}
                           . This cap is reviewed every quarter. Please note that
                           the Ofgem caps are not applicable to Agile tariffs
@@ -165,14 +178,25 @@ const PricePane = ({ tariff, type, gsp, setCurrentPeriod }: IPricePane) => {
 
 export default PricePane;
 
-const getPriceDisplay = (
-  priceNowIndex: number | undefined,
-  priceAverage: number,
-  priceDisplayDate: "now" | "next" | "nowVsPriceCap",
-  results: TariffResult[],
-  type: keyof typeof priceCap,
-  message = "Sorry, the price is currently unavailable, please check back later."
-) => {
+interface IGetPriceDisplay {
+  priceNowIndex: number | undefined;
+  priceAverage: number;
+  priceDisplayDate: "now" | "next" | "nowVsPriceCap";
+  priceCap: CapsTSVResult;
+  results: TariffResult[];
+  type: Exclude<TariffType, "EG">;
+  message?: string;
+}
+
+const getPriceDisplay = ({
+  priceNowIndex,
+  priceAverage,
+  priceDisplayDate,
+  priceCap,
+  results,
+  type,
+  message = "Sorry, the price is currently unavailable, please check back later.",
+}: IGetPriceDisplay) => {
   let display = (
     <>
       --
@@ -191,7 +215,7 @@ const getPriceDisplay = (
     const comparePriceMap = {
       now: priceAverage,
       next: priceAccessor(results, priceNowIndex),
-      nowVsPriceCap: priceCap[type],
+      nowVsPriceCap: Number(priceCap?.[type]),
     };
     const indexToAccess = indexToAccessMap[priceDisplayDate];
 

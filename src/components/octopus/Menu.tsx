@@ -93,6 +93,16 @@ const Menu = () => {
             >
               Agile <span className="text-lg">Price</span>
             </Link>
+            <Link
+              href="/variable"
+              className={`block my-5  ${
+                pathname === "/variable"
+                  ? "cursor-default text-accentBlue-900"
+                  : "hover:text-accentPink-500"
+              }`}
+            >
+              Variable <span className="text-lg">(SVT) Price</span>
+            </Link>
             <span className="block my-2 border-t border-accentBlue-500/50"></span>
             <Link
               href="/savings"

@@ -147,11 +147,15 @@ const SavingsCalculation = () => {
         <>
           <div className="flex gap-2 md:flex-col lg:flex-row">
             <div className="flex-grow">
-              The figures are in! Get thrilled to learn how much you have saved!
+              The following chart(s) give you an overview of how much you have
+              saved in the period after you have switched to your current tariff
+              for up to 1 year.
               <Remark>
                 Approximations and assumptions are used in the calculations. The
                 actual savings are likely to differ slightly because of missing
-                data and rounding.
+                data and rounding. Also, please note the figures for the latest
+                month is not complete (only up to a few days earlier) as it
+                takes time for your data to be updated.
               </Remark>
             </div>
           </div>

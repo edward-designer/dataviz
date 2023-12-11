@@ -58,7 +58,7 @@ const MonthlyChartBar = ({
             onBlur={() => setOpen(false)}
           >
             <span
-              className={`animate-chart-grow w-0 relative text-base font-light text-theme-950 p-2 overflow-visible hover:shadow-[0_10px_30px_-15px_rgba(0,0,0,0.6),0_-4px_6px_-4px_rgb(0,0,0,0.3)] hover:z-10`}
+              className={`animate-chart-grow w-0 relative text-base font-normal text-theme-950 p-2 overflow-visible hover:shadow-[0_10px_30px_-15px_rgba(0,0,0,0.6),0_-4px_6px_-4px_rgb(0,0,0,0.3)] hover:z-10`}
               style={
                 {
                   "--chart-grow-width": `${widthCurrent}%`,
@@ -69,7 +69,7 @@ const MonthlyChartBar = ({
             >
               <span className="flex sm:items-center flex-col sm:flex-row overflow-visible ">
                 <span
-                  className={`text-xs md:text-base whitespace-nowrap sm:whitespace-normal block leading-tight min-w-20 sm:w-14 shrink-0 text-white mix-blend-difference md:mix-blend-normal md:text-black`}
+                  className={`text-xs md:text-base font-bold whitespace-nowrap sm:whitespace-normal block leading-tight min-w-20 sm:w-14 shrink-0 text-white mix-blend-difference md:mix-blend-normal md:text-black`}
                 >
                   {period}
                 </span>
@@ -85,11 +85,11 @@ const MonthlyChartBar = ({
           <TooltipContent className="bg-theme-900 text-base font-sans">
             <div className="flex items-center gap-1">
               <TbMoneybag />
-              Current: £{monthlycostCurrent}
+              Current: £{evenRound(monthlycostCurrent, 2, true)}
             </div>
             <div className="flex items-center gap-1 text-accentPink-500">
               <TbMoneybag />
-              SVT: £{monthlycostSVT}
+              SVT: £{evenRound(monthlycostSVT, 2, true)}
             </div>
             <div className="flex items-center gap-1 text-[#85cbf9] border-theme-700 border-t mt-1 pt-1 font-bold">
               <TbPigMoney />

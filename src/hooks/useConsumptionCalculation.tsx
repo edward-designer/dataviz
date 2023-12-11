@@ -183,7 +183,13 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
       return results;
     }
   }
-  return { cost: null, totalUnit: 0, totalPrice: 0, totalStandingCharge: 0 };
+  return {
+    cost: null,
+    totalUnit: 0,
+    totalPrice: 0,
+    totalStandingCharge: 0,
+    isLoading: isLoading || isRateDataLoading,
+  };
 };
 
 export default useConsumptionCalculation;
@@ -377,6 +383,7 @@ export const calculateMonthlyPrices = (
     totalUnit,
     totalPrice,
     totalStandingCharge,
+    isLoading: false,
   };
 };
 
@@ -542,5 +549,6 @@ export const calculatePrice = (
     totalUnit,
     totalPrice,
     totalStandingCharge,
+    isLoading: false,
   };
 };

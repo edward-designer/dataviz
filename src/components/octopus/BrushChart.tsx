@@ -73,6 +73,7 @@ import {
 import Loading from "@/components/Loading";
 import ErrorMessage from "./ErrorMessage";
 import { useQuery } from "@tanstack/react-query";
+import usePriceCapQuery from "@/hooks/usePriceCapQuery";
 
 const BrushChart = ({
   tariff,
@@ -99,16 +100,7 @@ const BrushChart = ({
       duration,
     });
 
-  const queryCapFn = (url: string) => async () => {
-    const capsTsv = await tsv(url, (d) => d as CapsTSVResult);
-    return capsTsv;
-  };
-  const caps = useQuery({
-    queryKey: ["getCaps", tariff, type],
-    queryFn: queryCapFn(
-      "https://gist.githubusercontent.com/edward-designer/232d54ace5006183d873e9eebcf82da2/raw/42772cf5ed5b3e87f1d3d4a4cdc2dd12accd67ed/energy_price_caps.tsv"
-    ),
-  });
+  const caps = usePriceCapQuery({});
 
   const isAgile = tariff.includes("AGILE");
 

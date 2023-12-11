@@ -49,25 +49,20 @@ const PricePane = ({
       type,
       gsp,
     });
-  const { hasChanged } = useContext(WindowVisibilityContext);
-  const {
-    tomorrowRates: { [type]: tomorrowRate },
-    setTomorrowRates,
-  } = useContext(TomorrowPriceContext);
 
-  const todayDate = new Date().toLocaleDateString();
-  const results = data?.[0]?.results ?? [];
+  const today = new Date();
+  const todayDate = today.toLocaleDateString();
+  const results =
+    data?.[0]?.results.filter(
+      (result) => result.payment_method === "DIRECT_DEBIT"
+    ) ?? [];
 
-  const priceTodayIndex = results.findIndex((data) =>
-    isToday(new Date(data.valid_from))
+  const priceTodayIndex = results.findIndex(
+    (data) =>
+      new Date(data.valid_from) <= today && new Date(data.valid_to) >= today
   );
-  const priceYesterdayIndex = results.findIndex((data) =>
-    isSameDate(
-      new Date(new Date().setDate(new Date().getDate() - 1)),
-      new Date(data.valid_from)
-    )
-  );
-
+  const priceNextPeriodIndex =
+    priceTodayIndex - 1 >= 0 ? priceTodayIndex - 1 : null;
   const caps = useCurrentLocationPriceCapQuery({
     gsp: `_${gsp}` as gsp,
   });
@@ -75,17 +70,8 @@ const PricePane = ({
   const noPriceTomorrowMessage =
     "The rate of tomorrow is usually available between 11.00am and 6.00pm. Please revisit this page later to get the updates.";
 
-  const [priceYesterdayDisplay] = getPriceDisplay({
+  const [priceTodayDisplay, __, priceToday] = getPriceDisplay({
     priceTodayIndex,
-    priceYesterdayIndex,
-    priceDisplayDate: "yesterday",
-    priceCap: caps,
-    results,
-    type,
-  });
-  const [priceTodayDisplay, priceChangeToday] = getPriceDisplay({
-    priceTodayIndex,
-    priceYesterdayIndex,
     priceDisplayDate: "today",
     priceCap: caps,
     results,
@@ -93,45 +79,19 @@ const PricePane = ({
   });
   const [_, priceChangeTodayVsPriceCap] = getPriceDisplay({
     priceTodayIndex,
-    priceYesterdayIndex,
     priceDisplayDate: "todayVsPriceCap",
     priceCap: caps,
     results,
     type,
   });
-  const [priceTomorrowDisplay, priceChangeTomorrow, priceTomorrow] =
-    getPriceDisplay({
-      priceTodayIndex,
-      priceYesterdayIndex,
-      priceDisplayDate: "tomorrow",
-      priceCap: caps,
-      results,
-      type,
-      message: noPriceTomorrowMessage,
-    });
-
-  useEffect(() => {
-    if (
-      priceTomorrow !== "--" &&
-      hasChanged &&
-      priceTomorrow !== tomorrowRate
-    ) {
-      toast(
-        `Update: ${ENERGY_TYPE[type]} rate tomorrow is ${priceTomorrow}p (${
-          Number(priceChangeTomorrow) >= 0 ? "+" : ""
-        }${priceChangeTomorrow}%)`,
-        {
-          icon: Number(priceChangeTomorrow) >= 0 ? "🤨" : "🥳",
-        }
-      );
-    }
-    setTomorrowRates((value) => ({
-      ...value,
-      [type]: priceTomorrow,
-    }));
-    // hasChanged not to initiate useEffect
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [priceChangeTomorrow, priceTomorrow, type, todayDate]);
+  const [priceChangeNextPeriod] = getPriceDisplay({
+    priceTodayIndex,
+    priceDisplayDate: "tomorrow",
+    priceCap: caps,
+    results,
+    type,
+    message: noPriceTomorrowMessage,
+  });
 
   return (
     <div className="pricePane relative flex-1">
@@ -158,9 +118,6 @@ const PricePane = ({
               <div className="font-digit text-6xl text-white flex flex-col items-start gap-1">
                 <div>{priceTodayDisplay}</div>
                 <div className="flex">
-                  {typeof priceChangeToday === "number" && (
-                    <Comparison change={priceChangeToday} compare="yesterday" />
-                  )}
                   {typeof priceChangeTodayVsPriceCap === "number" && (
                     <Comparison
                       change={priceChangeTodayVsPriceCap}
@@ -176,7 +133,7 @@ const PricePane = ({
                         </a>{" "}
                         for this quarter is{" "}
                         <strong className="text-bold">
-                          {`${caps[type]}p`}
+                          {`${evenRound(Number(caps?.[type]), 2)}p`}
                         </strong>{" "}
                         . This cap is reviewed every quarter. Please note that
                         the Ofgem caps are not applicable to Tracker tariffs
@@ -189,21 +146,36 @@ const PricePane = ({
             </div>
             <div className="flex justify-between items-start">
               <div className="flex justify-center items-start flex-col">
-                <Badge label="Yesterday" variant="secondary" />
+                <Badge label="Current price cap" variant="secondary" />
                 <div className="font-digit font-thin text-center text-3xl text-white flex justify-center items-end">
-                  {priceYesterdayDisplay}
+                  {`${evenRound(Number(caps[type]), 2)}p`}
                 </div>
               </div>
-
-              <div className="flex justify-center items-start flex-col">
-                <Badge label="Tomorrow" variant="secondary" />
-                <div className="font-digit text-center text-3xl text-white flex justify-center items-end">
-                  {priceTomorrowDisplay}
-                  {typeof priceChangeTomorrow === "number" && (
-                    <Comparison change={priceChangeTomorrow} compare="today" />
-                  )}
+              {priceNextPeriodIndex !== null && (
+                <div className="flex justify-center items-start flex-col">
+                  <Badge
+                    label={`From ${new Date(
+                      results[priceNextPeriodIndex].valid_from
+                    ).toLocaleDateString()}`}
+                    variant="secondary"
+                  />
+                  <div className="font-digit text-center text-3xl text-white flex justify-center items-end">
+                    {`${evenRound(
+                      Number(results[priceNextPeriodIndex].value_inc_vat),
+                      2
+                    )}p`}
+                    <Comparison
+                      change={
+                        ((Number(results[priceNextPeriodIndex].value_inc_vat) -
+                          Number(priceToday)) /
+                          Number(results[priceNextPeriodIndex].value_inc_vat)) *
+                        100
+                      }
+                      compare="today"
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </>
         )}
@@ -216,8 +188,7 @@ export default PricePane;
 
 interface IGetPriceDisplay {
   priceTodayIndex: number | undefined;
-  priceYesterdayIndex: number | undefined;
-  priceDisplayDate: "today" | "yesterday" | "tomorrow" | "todayVsPriceCap";
+  priceDisplayDate: "today" | "tomorrow" | "todayVsPriceCap";
   priceCap: CapsTSVResult;
   results: TariffResult[];
   type: Exclude<TariffType, "EG">;
@@ -226,7 +197,6 @@ interface IGetPriceDisplay {
 
 const getPriceDisplay = ({
   priceTodayIndex,
-  priceYesterdayIndex,
   priceDisplayDate,
   priceCap,
   results,
@@ -243,20 +213,14 @@ const getPriceDisplay = ({
   let price: string | number = "--";
   let priceToCompare: string | number = "--";
 
-  if (
-    priceTodayIndex !== undefined &&
-    priceYesterdayIndex !== undefined &&
-    priceYesterdayIndex !== 0
-  ) {
+  if (priceTodayIndex !== undefined) {
     const indexToAccessMap = {
-      yesterday: priceYesterdayIndex,
       today: priceTodayIndex,
       tomorrow: priceTodayIndex - 1,
       todayVsPriceCap: priceTodayIndex,
     };
     const comparePriceMap = {
-      yesterday: null,
-      today: priceAccessor(results, priceYesterdayIndex),
+      today: null,
       tomorrow: priceAccessor(results, priceTodayIndex),
       todayVsPriceCap: Number(priceCap?.[type] ?? 0),
     };

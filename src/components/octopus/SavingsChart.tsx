@@ -28,6 +28,7 @@ import { BsLightningChargeFill } from "react-icons/bs";
 import { AiFillFire } from "react-icons/ai";
 import { PiQuestion } from "react-icons/pi";
 import Remark from "./Remark";
+import Loading from "../Loading";
 
 const SavingsChart = ({
   tariff,
@@ -54,7 +55,7 @@ const SavingsChart = ({
   const toDate = today.toISOString();
   const category = "Tracker";
 
-  const { cost, totalUnit, totalPrice, totalStandingCharge } =
+  const { cost, totalUnit, totalPrice, totalStandingCharge, isLoading } =
     useConsumptionCalculation({
       tariff,
       fromDate,
@@ -80,6 +81,13 @@ const SavingsChart = ({
     serialNo,
     results: "monthly",
   });
+
+  if (isLoading)
+    return (
+      <div className="relative min-h-[300px]">
+        <Loading />
+      </div>
+    );
 
   if (
     cost === null ||
@@ -229,7 +237,7 @@ const SavingsChart = ({
                 </div>
                 <div className="flex flex-wrap justify-between items-start md:block text-white">
                   <Badge
-                    label="Total Charge"
+                    label="Total Cost"
                     icon={<TbMoneybag className="stroke-white" />}
                     variant="item"
                   />
@@ -242,7 +250,7 @@ const SavingsChart = ({
                 </div>
                 <div className="flex flex-wrap justify-between items-start md:block text-accentPink-500">
                   <Badge
-                    label="Total SVT Charge"
+                    label="Total SVT Cost"
                     icon={<TbMoneybag className="stroke-accentPink-500" />}
                     variant="item"
                   />
@@ -255,87 +263,92 @@ const SavingsChart = ({
                 </div>
               </div>
             </div>
-            <div className="flex justify-center">
-              <div
-                ref={imageRef}
-                className={`w-[300px] h-[300px] lg:w-[600px] lg:h-[600px] bg-accentPink-500`}
-              >
-                <div
-                  className={`${
-                    type === "E"
-                      ? "bg-[url(/images/octoprice-bg.jpg)]"
-                      : "bg-[url(/images/octoprice-bg-gas.jpg)]"
-                  } relative font-display font-medium rounded-3xl border-[5px] border-accentPink-500 p-2 px-4 aspect-square w-[300px] h-[300px] bg-cover lg:scale-[2] lg:mb-[300px] origin-top-left`}
-                >
-                  <span className="absolute left-2 top-2">
-                    {type === "E" && (
-                      <BsLightningChargeFill className="fill-accentBlue-500/50 w-8 h-8" />
-                    )}
-                    {type === "G" && (
-                      <AiFillFire className="fill-accentPink-500/50 w-8 h-8" />
-                    )}
-                  </span>
-                  <img
-                    alt="Octoprice logo"
-                    src="/octoprice-sm.svg"
-                    className="absolute top-2 right-2 w-[83px] h-[20px]"
-                  />
+            {totalSaving > 0 && (
+              <>
+                <div className="flex justify-center">
+                  <div
+                    ref={imageRef}
+                    className={`w-[300px] h-[300px] lg:w-[600px] lg:h-[600px] bg-accentPink-500`}
+                  >
+                    <div
+                      className={`${
+                        type === "E"
+                          ? "bg-[url(/images/octoprice-bg.jpg)]"
+                          : "bg-[url(/images/octoprice-bg-gas.jpg)]"
+                      } relative font-display font-medium rounded-3xl border-[5px] border-accentPink-500 p-2 px-4 aspect-square w-[300px] h-[300px] bg-cover lg:scale-[2] lg:mb-[300px] origin-top-left`}
+                    >
+                      <span className="absolute left-2 top-2">
+                        {type === "E" && (
+                          <BsLightningChargeFill className="fill-accentBlue-500/50 w-8 h-8" />
+                        )}
+                        {type === "G" && (
+                          <AiFillFire className="fill-accentPink-500/50 w-8 h-8" />
+                        )}
+                      </span>
+                      <img
+                        alt="Octoprice logo"
+                        src="/octoprice-sm.svg"
+                        className="absolute top-2 right-2 w-[83px] h-[20px]"
+                      />
 
-                  <span className="block pt-16 text-accentPink-500 text-2xl m-0 p-0 absolute -top-[10px]">
-                    <span className="font-sans font-thin">🎉 I have</span>
-                  </span>
-                  <span className="shifted-text block text-white text-5xl m-0 p-0 absolute top-[65px]">
-                    saved*
-                  </span>
-                  <span className="text-3xl font-sans absolute top-[105px]">
-                    £
-                  </span>
-                  <span className="shifted-text block font-bold text-white text-8xl ml-6 absolute top-[95px] leading-none">
-                    {evenRound(totalSaving, 0)}
-                  </span>
-                  <span className="block text-white text-xl m-0 p-0 absolute top-[180px] font-sans font-thin">
-                    in{" "}
-                    <span className="text-accentPink-500 text-3xl font-display font-bold">
-                      {ENERGY_TYPE[type]}
-                    </span>{" "}
-                    bill
-                  </span>
-                  <span className="block text-accentBlue-500 text-base m-0 p-0 font-sans font-thin absolute top-[209px]">
-                    since {`${periodAccessor(cost[cost.length - 1])}`}
-                  </span>
-                  <span className="absolute font-sans bottom-1 right-2 text-[10px]">
-                    https://octopriceuk.vercel.app
-                  </span>
-                  <span className="absolute font-sans font-light top-[225px] text-[8px]">
-                    *vs standard variable tariff
-                  </span>
+                      <span className="block pt-16 text-accentPink-500 text-2xl m-0 p-0 absolute -top-[10px]">
+                        <span className="font-sans font-thin">🎉 I have</span>
+                      </span>
+                      <span className="shifted-text block text-white text-5xl m-0 p-0 absolute top-[65px]">
+                        saved*
+                      </span>
+                      <span className="text-3xl font-sans absolute top-[105px]">
+                        £
+                      </span>
+                      <span className="shifted-text block font-bold text-white text-8xl ml-6 absolute top-[95px] leading-none">
+                        {evenRound(totalSaving, 0)}
+                      </span>
+                      <span className="block text-white text-xl m-0 p-0 absolute top-[180px] font-sans font-thin">
+                        in{" "}
+                        <span className="text-accentPink-500 text-3xl font-display font-bold">
+                          {ENERGY_TYPE[type]}
+                        </span>{" "}
+                        bill
+                      </span>
+                      <span className="block text-accentBlue-500 text-base m-0 p-0 font-sans font-thin absolute top-[209px]">
+                        since {`${periodAccessor(cost[cost.length - 1])}`}
+                      </span>
+                      <span className="absolute font-sans bottom-1 right-2 text-[10px]">
+                        https://octopriceuk.vercel.app
+                      </span>
+                      <span className="absolute font-sans font-light top-[225px] text-[8px]">
+                        *vs standard variable tariff
+                      </span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-            <button
-              className="-translate-y-4 self-center flex justify-center items-center gap-2 border border-accentBlue-500 p-2 px-6 text-accentBlue-500 rounded-xl hover:bg-accentBlue-800 hover:text-white"
-              onClick={canShare ? handleShare : handleDownload}
-            >
-              {canShare ? (
-                <>
-                  <RxShare2 /> Share
-                </>
-              ) : (
-                <>
-                  <PiDownloadSimple /> Download
-                </>
-              )}
-            </button>
-            <div className="text-white/50 text-xs flex items-center gap-1">
+                <button
+                  className="-translate-y-4 self-center flex justify-center items-center gap-2 border border-accentBlue-500 p-2 px-6 text-accentBlue-500 rounded-xl hover:bg-accentBlue-800 hover:text-white"
+                  onClick={canShare ? handleShare : handleDownload}
+                >
+                  {canShare ? (
+                    <>
+                      <RxShare2 /> Share
+                    </>
+                  ) : (
+                    <>
+                      <PiDownloadSimple /> Download
+                    </>
+                  )}
+                </button>
+              </>
+            )}
+
+            <div className="text-white/80 text-sm flex items-center gap-1">
               <PiQuestion className="fill-accentBlue-500" />
-              The above results are different from my Octopus bill?
+              Why the above results are different from my Octopus bills?
               <Remark variant="badge">
                 As we cannot get your bills directly from Octopus, we have
                 applied pproximations and assumptions in the calculations.
                 Reasons for the differences may be missing data, rounding or, in
                 the case of gas, the conversion of reading of gas volume to kWh
-                (the unit used in our daily quote).{" "}
-                <strong>Gas cost calculation is very complex.</strong> The unit
+                (the unit used in our daily quote) because
+                <strong>gas cost calculation is very complex.</strong> The unit
                 of readings from smart meters differ depending on the generation
                 of meter (i.e. SMETS1 meters have the consumption data
                 pre-converted to kWh while SMETS2 meters transfer consumption

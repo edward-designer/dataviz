@@ -17,7 +17,7 @@ const CompareTariffs = () => {
       <h1 className="text-accentBlue-400 font-display text-4xl lg:text-6xl font-medium ">
         Compare Tariffs
       </h1>
-      <h2 className="text-accentBlue-400 font-display text-lg lg:text-2xl mb-8">
+      <h2 className="text-accentBlue-400 font-display font-medium text-lg lg:text-2xl mb-8">
         - Octopus Agile or Tracker or Variable?
       </h2>
       {hasApiInfo ? <UserApiResult /> : <UserApi />}

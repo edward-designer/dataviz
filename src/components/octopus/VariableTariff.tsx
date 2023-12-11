@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useContext, useState } from "react";
+import { ReactNode, useContext, useEffect, useState } from "react";
 
 import {
   Accordion,
@@ -9,7 +9,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
-import { TRACKER } from "@/data/source";
+import { CURRENT_VARIABLE_CODE, TRACKER } from "@/data/source";
 
 import { UserContext } from "@/context/user";
 import BrushChart from "./BrushChart";
@@ -19,36 +19,42 @@ import TariffSelect from "./TariffSelect";
 import MapChart from "@/components/octopus/MapChart";
 import { WindowResizeContext } from "@/context/windowResize";
 import { WindowVisibilityContext } from "@/context/windowVisibility";
+import PricePaneVariable from "./PricePaneVariable";
+import useGetTariffCode from "@/hooks/useGetTariffCode";
 
-const TrackerTariff = () => {
-  const [tariff, setTariff] = useState(TRACKER[0].code);
+const VariableTariff = () => {
+  const [tariff, setTariff] = useState(CURRENT_VARIABLE_CODE);
   const {
     value: { gsp },
   } = useContext(UserContext);
+  const { data, isLoading, isSuccess, isError } = useGetTariffCode({});
   useContext(WindowResizeContext);
   useContext(WindowVisibilityContext);
+
+  useEffect(() => {
+    if (isSuccess && data?.code) {
+      setTariff(data.code);
+    }
+  }, [data?.code, isSuccess]);
 
   return (
     <div className="lg:col-[content] my-4">
       <section className="my-4">
-        <TariffSelect
-          tariff={tariff}
-          setTariff={setTariff}
-          type="Octopus Tracker Plan"
-          source={TRACKER}
-        >
-          <Remark variant="badge">
-            Octopus has been offereing different Tracker tariffs over the years.
-            The currently available plan is marked with the &quot;current&quot;
-            label. These plans differ mainly in the maximum chargable rates.
-            Please scroll down to see the comparision between different Tracker
-            plans. All unit rates inclusive of VAT.
-          </Remark>
-        </TariffSelect>
+        <div className="flex items-center justify-center font-display">
+          <div className="h-14 rounded-md px-3 py-2 ring-offset-background focus:outline-none [&amp;>h1>span]:line-clamp-1 [&amp;>span]:line-clamp-1 w-auto max-w-full text-[clamp(20px,7vw,80px)] text-accentBlue-400 flex items-center justify-center">
+            <h1 className="overflow-hidden [&amp;>*]:whitespace-pre  [&amp;>*]:text-ellipsis  [&amp;>*]:overflow-hidden  [&amp;>*]:block! [&amp;>*]:max-w-full">
+              <span>Octopus Variable</span>
+            </h1>
+            <Remark variant="badge">
+              Octopus is offering variable tariff at a price that is discounted
+              from the Ofgem energy price caps. All unit rates inclusive of VAT.
+            </Remark>
+          </div>
+        </div>
       </section>
       <section className="flex flex-col sm:flex-row items-stretch sm:justify-center sm:items-center gap-4 my-4">
-        <PricePane tariff={tariff} type="E" gsp={gsp} />
-        <PricePane tariff={tariff} type="G" gsp={gsp} />
+        <PricePaneVariable tariff={tariff} type="E" gsp={gsp} />
+        <PricePaneVariable tariff={tariff} type="G" gsp={gsp} />
       </section>
       <div className="flex-0 text-lg font-bold text-center translate-y-3 text-accentPink-600">
         Changes over time
@@ -110,76 +116,42 @@ const TrackerTariff = () => {
           rate="standing_charge_inc_vat"
         />
       </section>
+
       <h2 className="flex-0 text-lg font-bold text-center translate-y-3 text-accentPink-600">
-        Comparision of Octopus Tracker Tariffs
+        Octopus Variable Tariff FAQ
       </h2>
       <section className="flex justify-center items-center gap-4 my-4 flex-col bg-black/30 rounded-xl p-4 lg:p-10">
-        <p className="text-sm">
-          Octopus Tracker gives the most transparent energy pricing in the UK.
-          Every day, Octopus update the price of energy based on an
-          independently published wholesale market price. The unit rate is
-          capped according to the following table (inclusive of VAT):
-        </p>
-        <table cellPadding={1}>
-          <thead>
-            <tr>
-              <th className="w-1/4">Tracker Plan</th>
-              <th className="w-1/4">Electricity Cap / kWh</th>
-              <th className="w-1/4">Gas Cap / kWh</th>
-            </tr>
-          </thead>
-          <tbody>
-            {TRACKER.map((plan) => (
-              <tr
-                key={plan.code}
-                className={`${
-                  tariff === plan.code
-                    ? "border-2 border-accentPink-500 bg-black/50"
-                    : "border-b border-b-accentBlue-950"
-                }`}
-              >
-                <td className="p-2">{plan.name}</td>
-                <td className="text-center">{plan.cap.E}</td>
-                <td className="text-center">{plan.cap.G}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
-      <h2 className="flex-0 text-lg font-bold text-center translate-y-3 text-accentPink-600">
-        Octopus Tracker Tariff FAQ
-      </h2>
-      <section className="flex justify-center items-center gap-4 my-4 flex-col bg-black/30 rounded-xl p-4 lg:p-10">
-        <h3 className="font-bold text-accentBlue-700">About Octopus Tracker</h3>
+        <h3 className="font-bold text-accentBlue-700">
+          About Octopus Variable
+        </h3>
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="item-0a" className="border-b-accentBlue-600/50">
             <AccordionTrigger>
-              What have the Ofgem price caps to do with Tracker?
+              What have the Ofgem price caps to do with Variable?
             </AccordionTrigger>
             <AccordionContent className="text-white/60">
-              Nothing.
-              <br />
-              <br />
-              Tracker tariffs have much higher price caps set by Octopus than
-              the Ofgem price caps as Tracker is a new energy contract not
-              protected by Ofgem caps. But the general trends of Ofgem price cap
-              will give you a good idea of where the energy prices are heading
-              in the near future.
+              Octopus variable tariff is restricted by Ofgem price caps. But,
+              the good news is that Octopus endeavors to set the price lower
+              than the maximum allowed, often in the order of 10% less.
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-0b" className="border-b-accentBlue-600/50">
             <AccordionTrigger>
-              I am currently on Octopus Agile/Go/flexible/fixed. Will I save
-              more by switching to Tracker?
+              I am currently on Octopus Agile/Tracker/Go/fixed. Will I save more
+              by switching to Variable?
             </AccordionTrigger>
             <AccordionContent className="text-white/60">
-              It depends.
+              Not likely.
               <br />
               <br />
-              The majority of users can save around 10% - 30%. The saving would
-              depend on your energy use pattern and amount. But remember energy
-              price can go up or down suddenly. Do keep your eyes on the trends
-              and take action if deemded appropriate.
+              In most cases, the majority of users can save around 10% - 30%
+              with Octopus Tracker or Agile. But in extreme times, as the caps
+              of Tracker and Agile are way highly than the Ofgem caps, Tracker
+              and Agile users will be exposed to the risk of getting charged for
+              up to 100p for each unit of electricity and 30p for gas. But, this
+              is highly unlikely. And Tracker and Agile users can switch back
+              any time they want to Variable without penalties should the
+              extremely high rates continue for a prolonged period of time.
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-0c" className="border-b-accentBlue-600/50">
@@ -191,33 +163,33 @@ const TrackerTariff = () => {
               operational cost (for maintaining and using the transmission
               network) to deliver energy to the users of different locations.
               This cost is passed onto the end users in order to keep the
-              Tracker price as low as possible. This is also the normal
+              Variable price as low as possible. This is also the normal
               practices for energy companies.
             </AccordionContent>
           </AccordionItem>
         </Accordion>
-        <h3 className="font-bold text-accentBlue-700 mt-6">Joining Tracker</h3>
+        <h3 className="font-bold text-accentBlue-700 mt-6">Joining Variable</h3>
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="item-1a" className="border-b-accentBlue-600/50">
             <AccordionTrigger>
-              How long does it take to join the Octopus Tracker Tariff?
+              How long does it take to join the Octopus Variable tariff?
             </AccordionTrigger>
             <AccordionContent className="text-white/60">
-              For current Octopus clients with smart meters, it is officially
-              told to take around 2 weeks, though some have managed to get a
-              response from Octopus within a few hours of signing up and switch
-              over within a day or two. It will take longer if you are not
-              currently an Octopus client or do not have a smart meters.
+              For current Octopus clients, it is officially told to take around
+              2 weeks, though some have managed to get a response from Octopus
+              within a few hours of signing up and switch over within a day or
+              two. It will take longer if you are not currently an Octopus
+              client.
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-1b" className="border-b-accentBlue-600/50">
             <AccordionTrigger>
-              How do I sign up for the Octopus Tracker tariff?
+              How do I sign up for the Octopus Variable tariff?
             </AccordionTrigger>
             <AccordionContent className="text-white/60">
               Head over to the{" "}
-              <a href="https://octopus.energy/smart/tracker/" target="_blank">
-                Octopus Tracker page
+              <a href="https://octopus.energy/tariffs/" target="_blank">
+                Octopus Variable page
               </a>{" "}
               and sign up there.
             </AccordionContent>
@@ -227,11 +199,9 @@ const TrackerTariff = () => {
               What if I do not have a smart meter?
             </AccordionTrigger>
             <AccordionContent className="text-white/60">
-              You can request to have a FREE smart meter installed by Octopus
-              when you sign up at no costs to you. But the wait time is over 2
-              weeks at the moment. Before installing the smart meter, you can
-              choose to use the standard tariff, such as Flexible Octopus, until
-              your smart meter is installed and running properly.
+              A smart meter is NOT required for the Octopus Variable. But, you
+              can request to have a FREE smart meter installed by Octopus when
+              you sign up at no costs to you.
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-1d" className="border-b-accentBlue-600/50">
@@ -247,46 +217,18 @@ const TrackerTariff = () => {
               social media messages.
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value="item-1e" className="border-b-accentBlue-600/50">
-            <AccordionTrigger>
-              When is the best time to make the switch?
-            </AccordionTrigger>
-            <AccordionContent className="text-white/60">
-              Spring is the best time of the year as you can immediately enjoy
-              huge savings all over spring, summer and autumn months.
-            </AccordionContent>
-          </AccordionItem>
         </Accordion>
-        <h3 className="font-bold text-accentBlue-700 mt-6">Quitting Tracker</h3>
+        <h3 className="font-bold text-accentBlue-700 mt-6">
+          Quitting Variable
+        </h3>
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="item-2a" className="border-b-accentBlue-600/50">
             <AccordionTrigger>
-              Are there any penalties for leaving Tracker?
+              Are there any penalties for leaving Variable?
             </AccordionTrigger>
             <AccordionContent className="text-white/60">
-              Absolutely NO.
-              <br />
-              <br />
-              It will take around 2 weeks to switch over to any other Octopus
-              tariffs. During this time, you will still be charged the original
-              tariff. But if you switch away from Octopus, you may be able to
-              switch faster depending on the processing time of your new energy
-              provider.
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem value="item-2b" className="border-b-accentBlue-600/50">
-            <AccordionTrigger>
-              Can I switch to flexible plan in winter when the unit rate is high
-              and back to Tracker in spring?
-            </AccordionTrigger>
-            <AccordionContent className="text-white/60">
-              Octopus has made it not possible to make such timely switches as
-              Tracker quitters have to wait 9 months before being allowed to
-              switch back to Tracker in order to save their admin costs. But the
-              idea of Tracker is that you can save more during summer months
-              which can be used to offset some more expensive rates in winter.
-              Sticking with Tracker throughout the year is almost certainly
-              cheaper than with Ofgem protected plans.
+              Absolutely NO. You can switch out to other energy providers or
+              other Octopus Energy tariffs anytime you like.
             </AccordionContent>
           </AccordionItem>
         </Accordion>
@@ -295,4 +237,4 @@ const TrackerTariff = () => {
   );
 };
 
-export default TrackerTariff;
+export default VariableTariff;

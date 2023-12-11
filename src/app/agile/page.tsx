@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Octopus Agile Tariff Unit Rates for Today and Tomorrow | Octoprice",
   description:
     "Get the latest unit rates for gas and electicity on the Octopus Agile Tariff, with graphs showing the price trends and price differences all over UK.",
-  keywords: ["Octopus Energy", "Agile", "Electricity Tariff", "Gas Tariffy"],
+  keywords: ["Octopus Energy", "Agile", "Electricity Tariff", "Gas Tariff"],
   authors: [
     { name: "Edward Chung", url: "https://edward-designer.github.io/" },
   ],

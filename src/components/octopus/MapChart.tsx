@@ -10,10 +10,9 @@ import {
   QuerySingleTariffPlanResult,
   Single_tariff,
   Single_tariff_gsp_record,
+  Single_tariff_gsp_record_charge_type,
   TRACKER,
   gsp,
-  priceCap,
-  standingCap,
 } from "@/data/source";
 import useTariffQuery from "@/hooks/useTariffQuery";
 import { addSign, calculateChangePercentage, evenRound } from "@/utils/helpers";
@@ -36,11 +35,12 @@ import {
 
 import { EnergyIcon } from "./EnergyIcon";
 import ErrorMessage from "./ErrorMessage";
+import usePriceCapQuery from "@/hooks/usePriceCapQuery";
 
 interface IMapChart {
   tariff: string;
   type: keyof typeof ENERGY_TYPE;
-  rate?: keyof Single_tariff_gsp_record["direct_debit_monthly"];
+  rate?: Single_tariff_gsp_record_charge_type;
   gsp: string;
 }
 
@@ -68,6 +68,8 @@ const MapChart = ({
       type,
     });
 
+  const caps = usePriceCapQuery({});
+
   let path = geoPath();
   if (mapData?.districts) {
     const projection = geoIdentity()
@@ -77,11 +79,27 @@ const MapChart = ({
   }
 
   useEffect(() => {
-    if (!svgRef.current || !mapData || !mapData?.districts || !data) return;
+    if (
+      !svgRef.current ||
+      !mapData ||
+      !mapData?.districts ||
+      !data ||
+      !caps.data
+    )
+      return;
     let scale = 1;
     const svg = select(svgRef.current);
     const tooltip = svg.select(".tooltipContainer");
     const defs = svg.append("defs");
+
+    const getCapsRegionData = (gsp: string) =>
+      caps.data
+        ?.filter((row) => row.Region === `_${gsp}`)
+        .sort(
+          (a, b) => new Date(b.Date).valueOf() - new Date(a.Date).valueOf()
+        ) ?? [];
+    const getCapsCurrentRegionData = (gsp: string) =>
+      getCapsRegionData(gsp).find((d) => new Date(d.Date) <= new Date())!;
 
     if (rate === "standard_unit_rate_inc_vat") {
       const validDate = new Date(
@@ -99,7 +117,9 @@ const MapChart = ({
       svg.select(".info").text(updateDate);
     }
     if (rate === "standing_charge_inc_vat") {
-      const ofgemCap = `Average SVT Cap: ${standingCap[type]}p`;
+      const ofgemCap = `Your SVT Cap: ${
+        getCapsCurrentRegionData(gsp)[`${type}S`]
+      }p`;
       svg.select(".info").text(ofgemCap);
     }
 
@@ -109,7 +129,11 @@ const MapChart = ({
     const allValues = Object.values(
       singleTariffByGsp
     ) as Single_tariff_gsp_record[];
-    let valueExtent = extent(allValues, (d) => d["direct_debit_monthly"][rate]);
+    let valueExtent = extent(allValues, (d) => {
+      if ("direct_debit_monthly" in d) return d["direct_debit_monthly"][rate];
+      if ("varying" in d) return d["varying"][rate];
+      else [0, 0];
+    });
     if (!valueExtent[0] && !valueExtent[1]) {
       valueExtent = [0, TRACKER[0].cap.E];
     }
@@ -161,12 +185,23 @@ const MapChart = ({
       .attr("fill", "#FFFFFF80");
 
     const getPrice = (gsp: gsp) => {
-      return singleTariffByGsp[gsp]?.["direct_debit_monthly"]?.[rate] === null
-        ? "--"
-        : evenRound(
-            singleTariffByGsp[gsp]?.["direct_debit_monthly"]?.[rate],
-            2
-          ) + "p";
+      const tariffDetails = singleTariffByGsp[gsp];
+      if (tariffDetails) {
+        let key = "";
+        if ("direct_debit_monthly" in tariffDetails)
+          key = "direct_debit_monthly";
+        if ("varying" in tariffDetails) key = "varying";
+        if (key === "") return;
+
+        return tariffDetails[key as keyof Single_tariff_gsp_record][rate] ===
+          null
+          ? "--"
+          : evenRound(
+              tariffDetails[key as keyof Single_tariff_gsp_record][rate],
+              2
+            ) + "p";
+      }
+      return;
     };
     svg
       .select(".districtGroup")
@@ -186,8 +221,10 @@ const MapChart = ({
         const gsp = select(this).attr("data-zone") as gsp;
         const capToCompare =
           rate === "standard_unit_rate_inc_vat"
-            ? priceCap[type]
-            : standingCap[type];
+            ? parseFloat(getCapsCurrentRegionData(gsp.replace("_", ""))[type])
+            : parseFloat(
+                getCapsCurrentRegionData(gsp.replace("_", ""))[`${type}S`]
+              );
         // Tooltip position
         const tooltipPosition = svgRef.current
           ?.querySelector(".tooltip")
@@ -229,7 +266,7 @@ const MapChart = ({
                 : addSign(
                     Number(
                       calculateChangePercentage(
-                        parseFloat(getPrice(gsp)),
+                        parseFloat(getPrice(gsp) ?? "--"),
                         capToCompare
                       )
                     )
@@ -255,20 +292,27 @@ const MapChart = ({
         .selectAll("text")
         .data(mapData.districts.features)
         .join("text")
-        .text((d) => getPrice(d?.properties?.Name))
+        .text((d) => getPrice(d?.properties?.Name) ?? "--")
         .attr("transform", (d) => {
           const coords = path.centroid(d.geometry);
           return `translate(${coords[0]} ${coords[1]})`;
         })
         .attr("text-anchor", "middle")
         .attr("fill", (d) => {
-          const value =
-            evenRound(
+          const tariffDetails = singleTariffByGsp[d?.properties?.Name as gsp];
+          let value = 100;
+          if (tariffDetails) {
+            let key = "";
+            if ("direct_debit_monthly" in tariffDetails)
+              key = "direct_debit_monthly";
+            if ("varying" in tariffDetails) key = "varying";
+            value = evenRound(
               singleTariffByGsp[d?.properties?.Name as gsp]?.[
-                "direct_debit_monthly"
+                key as keyof Single_tariff_gsp_record
               ]?.[rate],
               2
-            ) ?? 100;
+            );
+          }
           return colorScale(value);
         })
         .attr("font-weight", "bold")
@@ -316,7 +360,7 @@ const MapChart = ({
         zoomIdentity,
         zoomTransform(svg.node()!).invert([width / 2, height / 2])
       );
-  }, [mapData, data, type, path, height, gsp, rate, width]);
+  }, [mapData, data, type, path, height, gsp, rate, width, caps.data]);
 
   return (
     <div className="mapDiv relative h-[450px] flex-1 flex items-center justify-center flex-col rounded-xl bg-black/30 border border-accentPink-700/50 shadow-inner overflow-hidden">

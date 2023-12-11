@@ -19,6 +19,8 @@ export interface ITrackerTariffPlan extends ITariffPlan {
 /* https://guylipman.medium.com/accessing-your-octopus-smart-meter-data-3f3905ca8fec */
 export const GAS_MULTIPLIER_TO_KWH = 11.19;
 
+export const CURRENT_VARIABLE_CODE = "VAR-22-11-01";
+
 export interface ITariffToCompare {
   tariff: string;
   type: Exclude<TariffType, "EG">;
@@ -155,67 +157,6 @@ export const TRACKER: ITrackerTariffPlan[] = [
   },
 ];
 
-export const priceCaps = {
-  "2023-10-01": {
-    period: {
-      from: "2023-10-01",
-      to: "2023-12-31",
-    },
-    cap: {
-      E: 27.35,
-      G: 6.89,
-    },
-  },
-  "2024-01-01": {
-    period: {
-      from: "2024-01-01",
-      to: "2024-03-31",
-    },
-    cap: {
-      E: 28.62,
-      G: 7.42,
-    },
-  },
-};
-
-export const standingCaps = {
-  "2023-10-01": {
-    period: {
-      from: "2023-10-01",
-      to: "2023-12-31",
-    },
-    cap: {
-      E: 53.37,
-      G: 29.62,
-    },
-  },
-  "2024-01-01": {
-    period: {
-      from: "2024-01-01",
-      to: "2024-03-31",
-    },
-    cap: {
-      E: 53.35,
-      G: 29.6,
-    },
-  },
-};
-
-const getCurrentCap = <T extends typeof priceCaps>(
-  caps: T
-): { E: number; G: number } => {
-  const today = new Date();
-  const dateThresholds = Object.keys(caps);
-  dateThresholds.sort((a, b) => new Date(b).valueOf() - new Date(a).valueOf());
-  const currentPeriod = dateThresholds.filter(
-    (date) => today.valueOf() - new Date(date).valueOf() >= 0
-  )?.[0] as unknown as keyof typeof priceCaps;
-  return caps[currentPeriod].cap ?? { E: null, G: null };
-};
-
-export const priceCap = getCurrentCap(priceCaps);
-export const standingCap = getCurrentCap(standingCaps);
-
 export type CapsTSVResult = {
   Region: string;
   Date: string;
@@ -252,13 +193,24 @@ export interface QueryTariffResult {
 
 export type Single_tariff = Record<gsp, Single_tariff_gsp_record>;
 
-export interface Single_tariff_gsp_record {
-  direct_debit_monthly: {
-    standard_unit_rate_inc_vat: number;
-    standing_charge_inc_vat: number;
-  };
-}
+export type Single_tariff_gsp_record =
+  | {
+      direct_debit_monthly: {
+        standard_unit_rate_inc_vat: number;
+        standing_charge_inc_vat: number;
+      };
+    }
+  | {
+      varying: {
+        standard_unit_rate_inc_vat: number;
+        standing_charge_inc_vat: number;
+      };
+    };
 
+export type Single_tariff_gsp_record_charge_type =
+  | "standard_unit_rate_inc_vat"
+  | "standing_charge_inc_vat";
+  
 export interface QuerySingleTariffPlanResult {
   tariffs_active_at: string;
   single_register_electricity_tariffs: Single_tariff;

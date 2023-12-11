@@ -7,15 +7,9 @@ import { IUkMapData, useUkGspMapData } from "@/hooks/useUkGspMap";
 import {
   ENERGY_TYPE,
   ENERGY_TYPE_ICON,
-  QueryAgileResults,
   QuerySingleAgileGSPResult,
-  QuerySingleTariffPlanResult,
-  Single_tariff,
   Single_tariff_gsp_record,
-  TRACKER,
   gsp,
-  priceCap,
-  standingCap,
 } from "@/data/source";
 import { addSign, calculateChangePercentage, evenRound } from "@/utils/helpers";
 import {
@@ -25,7 +19,6 @@ import {
   geoPath,
   interpolate,
   pointer,
-  scaleLinear,
   scalePoint,
   scaleSequential,
   select,
@@ -35,9 +28,10 @@ import {
   zoomTransform,
 } from "d3";
 
+import useAgileTariffQuery from "@/hooks/useAgileTariffQuery";
 import { EnergyIcon } from "./EnergyIcon";
 import ErrorMessage from "./ErrorMessage";
-import useAgileTariffQuery from "@/hooks/useAgileTariffQuery";
+import usePriceCapQuery from "@/hooks/usePriceCapQuery";
 
 interface IMapChartAgile {
   tariff: string;
@@ -80,6 +74,8 @@ const MapChartAgile = ({
     path = geoPath(projection);
   }
 
+  const caps = usePriceCapQuery({});
+
   useEffect(() => setSelectedPeriod(currentPeriod), [currentPeriod]);
 
   useEffect(() => {
@@ -97,6 +93,15 @@ const MapChartAgile = ({
         );
       }),
     }));
+
+    const getCapsRegionData = (gsp: string) =>
+      caps.data
+        ?.filter((row) => row.Region === `_${gsp}`)
+        .sort(
+          (a, b) => new Date(b.Date).valueOf() - new Date(a.Date).valueOf()
+        ) ?? [];
+    const getCapsCurrentRegionData = (gsp: string) =>
+      getCapsRegionData(gsp).find((d) => new Date(d.Date) <= new Date())!;
 
     if (
       rate === "standard_unit_rate_inc_vat" &&
@@ -194,8 +199,10 @@ const MapChartAgile = ({
         const gsp = select(this).attr("data-zone") as gsp;
         const capToCompare =
           rate === "standard_unit_rate_inc_vat"
-            ? priceCap[type]
-            : standingCap[type];
+            ? parseFloat(getCapsCurrentRegionData(gsp.replace("_", ""))[type])
+            : parseFloat(
+                getCapsCurrentRegionData(gsp.replace("_", ""))[`${type}S`]
+              );
         // Tooltip position
         const tooltipPosition = svgRef.current
           ?.querySelector(".tooltip")
@@ -313,7 +320,18 @@ const MapChartAgile = ({
         zoomIdentity,
         zoomTransform(svg.node()!).invert([width / 2, height / 2])
       );
-  }, [mapData, data, type, path, height, gsp, rate, width, currentPeriod]);
+  }, [
+    mapData,
+    data,
+    type,
+    path,
+    height,
+    gsp,
+    rate,
+    width,
+    currentPeriod,
+    caps.data,
+  ]);
 
   return (
     <div className="mapDiv relative h-[450px] flex-1 flex items-center justify-center flex-col rounded-xl bg-black/30 border border-accentPink-700/50 shadow-inner overflow-hidden">
