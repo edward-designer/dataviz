@@ -1,17 +1,19 @@
 "use client";
-import { memo, useContext, useState } from "react";
 import { UserContext } from "@/context/user";
-import { useQuery } from "@tanstack/react-query";
-import Loading from "@/components/Loading";
-import { evenRound } from "@/utils/helpers";
-import useYearlyTariffQuery from "@/hooks/useYearlyTariffQuery";
 import {
+  CapsTSVResult,
   ENERGY_TYPE,
-  GAS_MULTIPLIER_TO_KWH,
   TariffCategory,
   TariffType,
+  gsp,
 } from "@/data/source";
-import { Value } from "@radix-ui/react-select";
+import useYearlyTariffQuery from "@/hooks/useYearlyTariffQuery";
+import { evenRound } from "@/utils/helpers";
+import { useQuery } from "@tanstack/react-query";
+import { useContext } from "react";
+import useCurrentLocationPriceCapQuery from "./useCurrentLocationPriceCapQuery";
+import usePriceCapQuery from "./usePriceCapQuery";
+import { DSVParsedArray } from "d3";
 
 export type IConsumptionCalculator = {
   deviceNumber: string;
@@ -86,6 +88,8 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
     }
   };
 
+  const caps = usePriceCapQuery({ gsp: `_${value.gsp}` as gsp });
+
   const {
     data: consumptionData,
     isSuccess,
@@ -159,13 +163,19 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
       ) ?? [],
   };
 
-  if (isSuccess && isRateDataSuccess && isStandingChargeDataSuccess) {
+  if (
+    isSuccess &&
+    isRateDataSuccess &&
+    isStandingChargeDataSuccess &&
+    caps.data
+  ) {
     if (results === "monthly") {
       const results = calculateMonthlyPrices(
         type,
         category,
         value.gasConversionFactor,
         toISODate,
+        caps.data.filter((d) => d.Region === `_${value.gsp}`),
         consumptionData,
         flattenedRateData,
         standingChargeData
@@ -176,6 +186,7 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
         type,
         category,
         value.gasConversionFactor,
+        caps.data,
         consumptionData,
         flattenedRateData,
         standingChargeData
@@ -199,6 +210,7 @@ export const calculateMonthlyPrices = (
   category: string,
   gasConversionFactor: number,
   toDate: string,
+  caps: CapsTSVResult[],
   consumptionData: {
     results: {
       consumption: number;
@@ -281,8 +293,18 @@ export const calculateMonthlyPrices = (
           (d.valid_to === null || new Date(d.valid_to)) >=
             new Date(consumptionData.results[i].interval_start)
       );
+      const currentPeriodTariffCap = caps.find(
+        (cap) =>
+          new Date(consumptionData.results[i].interval_start) >=
+          new Date(cap.Date)
+      );
+      const currentUnitRate =
+        (currentPeriodTariff?.value_inc_vat ?? 0) >
+        Number(currentPeriodTariffCap?.[type] ?? 0)
+          ? Number(currentPeriodTariffCap?.[type] ?? 0)
+          : currentPeriodTariff?.value_inc_vat ?? 0;
       totalPrice +=
-        (currentPeriodTariff?.value_inc_vat ?? 0) *
+        currentUnitRate *
         consumptionData.results[i].consumption *
         consumptionMultiplier;
     } else if (category === "Go" || category === "Cosy") {
@@ -391,6 +413,7 @@ export const calculatePrice = (
   type: Exclude<TariffType, "EG">,
   category: string,
   gasConversionFactor: number,
+  caps: CapsTSVResult[],
   consumptionData: {
     results: {
       consumption: number;
@@ -443,9 +466,18 @@ export const calculatePrice = (
           (d.valid_to === null || new Date(d.valid_to)) >=
             new Date(consumptionData.results[i].interval_start)
       );
-
+      const currentPeriodTariffCap = caps.find(
+        (cap) =>
+          new Date(consumptionData.results[i].interval_start) >=
+          new Date(cap.Date)
+      );
+      const currentUnitRate =
+        (currentPeriodTariff?.value_inc_vat ?? 0) >
+        Number(currentPeriodTariffCap?.[type] ?? 0)
+          ? Number(currentPeriodTariffCap?.[type] ?? 0)
+          : currentPeriodTariff?.value_inc_vat ?? 0;
       totalPrice +=
-        (currentPeriodTariff?.value_inc_vat ?? 0) *
+        currentUnitRate *
         consumptionData.results[i].consumption *
         consumptionMultiplier;
     } else if (category === "Go" || category === "Cosy") {
