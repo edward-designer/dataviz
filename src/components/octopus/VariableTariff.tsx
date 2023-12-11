@@ -47,7 +47,9 @@ const VariableTariff = () => {
             </h1>
             <Remark variant="badge">
               Octopus is offering variable tariff at a price that is protected
-              by the Ofgem energy price caps. All unit rates inclusive of VAT.
+              by the Ofgem energy price caps and a standing charge which is 4%
+              lower than the cap (lowest among energy suppliers in the UK). All
+              unit rates inclusive of VAT.
             </Remark>
           </div>
         </div>
@@ -58,6 +60,11 @@ const VariableTariff = () => {
       </section>
       <div className="flex-0 text-lg font-bold text-center translate-y-3 text-accentPink-600">
         Changes over time
+        <Remark variant="badge">
+          During the period when the variable unit rate is higher than the Ofgem
+          energy cap, the difference is to be offset by the Government Energy
+          Price Guarantee scheme.
+        </Remark>
       </div>
       <section className="flex justify-center items-center gap-4 my-4">
         <BrushChart tariff={tariff} type="EG" gsp={gsp} />

@@ -9,6 +9,7 @@ import {
   ENERGY_TYPE_ICON,
   QuerySingleAgileGSPResult,
   Single_tariff_gsp_record,
+  Single_tariff_gsp_record_charge_type,
   gsp,
 } from "@/data/source";
 import { addSign, calculateChangePercentage, evenRound } from "@/utils/helpers";
@@ -36,7 +37,7 @@ import usePriceCapQuery from "@/hooks/usePriceCapQuery";
 interface IMapChartAgile {
   tariff: string;
   type: keyof typeof ENERGY_TYPE;
-  rate?: keyof Single_tariff_gsp_record["direct_debit_monthly"];
+  rate?: Single_tariff_gsp_record_charge_type;
   gsp: string;
   currentPeriod: string;
 }
