@@ -114,7 +114,7 @@ const PricePane = ({
     if (
       priceTomorrow !== "--" &&
       hasChanged &&
-      priceTomorrow !== tomorrowRate
+      new Date().toISOString() !== tomorrowRate
     ) {
       toast(
         `Update: ${ENERGY_TYPE[type]} rate tomorrow is ${priceTomorrow}p (${
@@ -127,7 +127,7 @@ const PricePane = ({
     }
     setTomorrowRates((value) => ({
       ...value,
-      [type]: priceTomorrow,
+      [type]: new Date().toISOString(),
     }));
     // hasChanged not to initiate useEffect
     // eslint-disable-next-line react-hooks/exhaustive-deps

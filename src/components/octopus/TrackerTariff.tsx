@@ -11,7 +11,7 @@ import {
 
 import { TRACKER } from "@/data/source";
 
-import { IUserValue, UserContext } from "@/context/user";
+import { UserContext } from "@/context/user";
 import BrushChart from "./BrushChart";
 import PricePane from "./PricePane";
 import Remark from "./Remark";

@@ -1,8 +1,8 @@
 import { createContext, PropsWithChildren, useState } from "react";
 
 interface ITomorrowPriceValues {
-  E: number | null;
-  G: number | null;
+  E: string | null;
+  G: string | null;
 }
 
 const initialValues: ITomorrowPriceValues = {
