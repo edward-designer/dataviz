@@ -193,7 +193,7 @@ const SavingsChart = ({
           <>
             <div className="flex flex-1 flex-col md:flex-row justify-between gap-4 max-h-full overflow-hidden">
               <MonthlyChart cost={cost} costSVT={costSVT} />
-              <div className="flex flex-col justify-between divide-y [&>div]:border-accentBlue-900 gap-1">
+              <div className="flex flex-col font-normal justify-between divide-y [&>div]:border-accentBlue-900 gap-1">
                 <div className="flex flex-wrap justify-between items-start md:block text-[#85cbf9] bg-theme-900/30">
                   <Badge
                     label="Total Saving"
@@ -206,7 +206,7 @@ const SavingsChart = ({
                       <Comparison
                         change={evenRound(
                           ((totalCost - totalSVT) / totalSVT) * 100,
-                          2
+                          0
                         )}
                         compare="Variable Tariff"
                       />
@@ -228,7 +228,7 @@ const SavingsChart = ({
                           ((unitRateAverage - unitRateAverageSVT) /
                             unitRateAverageSVT) *
                             100,
-                          2
+                          0
                         )}
                         compare="Variable Tariff"
                       />

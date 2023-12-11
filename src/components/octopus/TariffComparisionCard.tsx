@@ -86,7 +86,7 @@ const TariffComparisionCard = ({
           </Container>
           {category !== "SVT" ? (
             compareTo && (
-              <div className="flex flex-row">
+              <div className="flex flex-row font-normal">
                 {compareTo - cost > 0 ? (
                   <span className="text-accentBlue-500">
                     saves £
