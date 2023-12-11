@@ -101,7 +101,7 @@ const EnergyPriceCard = ({ type, plan }: IEnergyPriceCard) => {
     <div className="relative flex flex-1 flex-col bg-black/50 p-4 min-w-[250px] min-h-[100px] backdrop-blur-sm lg:backdrop-blur-lg">
       {isLoading && <Loading />}
       {isError && <ErrorMessage error={error} errorHandler={() => refetch()} />}
-      {isSuccess && (
+      {isSuccess && caps && (
         <>
           <EnergyIcon type={type} />
           <div className="text-2xl font-extralight text-accentPink-500">

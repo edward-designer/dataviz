@@ -241,7 +241,7 @@ const SavingsChart = ({
                     icon={<TbMoneybag className="stroke-white" />}
                     variant="item"
                   />
-                  <div className="font-digit text-4xl flex flex-col items-end justify-start">
+                  <div className="font-digit text-4xl flex flex-col items-end justify-start font-medium">
                     <FormattedPrice price={totalCost} value="pound" />
                     <div className="text-xs -translate-y-1">{`@ ${periodAccessor(
                       cost[cost.length - 1]
