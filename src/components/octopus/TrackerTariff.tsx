@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useContext, useState } from "react";
+import { ReactNode, useContext, useEffect, useState } from "react";
 
 import {
   Accordion,
@@ -11,7 +11,7 @@ import {
 
 import { TRACKER } from "@/data/source";
 
-import { UserContext } from "@/context/user";
+import { IUserValue, UserContext } from "@/context/user";
 import BrushChart from "./BrushChart";
 import PricePane from "./PricePane";
 import Remark from "./Remark";
@@ -22,27 +22,34 @@ import { WindowVisibilityContext } from "@/context/windowVisibility";
 
 const TrackerTariff = () => {
   const [tariff, setTariff] = useState(TRACKER[0].code);
-  const {
-    value: { gsp },
-  } = useContext(UserContext);
+  const { value, setValue } = useContext(UserContext);
+  const { gsp, trackerCode } = value;
   useContext(WindowResizeContext);
   useContext(WindowVisibilityContext);
+
+  useEffect(() => {
+    if (trackerCode) setTariff(trackerCode);
+  }, [trackerCode]);
+
+  const handleSelect = (selectValue: string) => {
+    setTariff(selectValue);
+    setValue({ ...value, trackerCode: selectValue });
+  };
 
   return (
     <div className="lg:col-[content] my-4">
       <section className="my-4">
         <TariffSelect
           tariff={tariff}
-          setTariff={setTariff}
+          setTariff={handleSelect}
           type="Octopus Tracker Plan"
           source={TRACKER}
         >
           <Remark variant="badge">
             Octopus has been offereing different Tracker tariffs over the years.
-            The currently available plan is marked with the &quot;current&quot;
-            label. These plans differ mainly in the maximum chargable rates.
-            Please scroll down to see the comparision between different Tracker
-            plans. All unit rates inclusive of VAT.
+            These plans differ in the rate calcuation formulae and/or maximum
+            chargable rates. Please scroll down to see the comparision between
+            different Tracker plans. All unit rates inclusive of VAT.
           </Remark>
         </TariffSelect>
       </section>

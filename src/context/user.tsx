@@ -14,6 +14,7 @@ export interface IUserValue {
   apiKey: string;
   accountNumber: string;
   gasConversionFactor: number;
+  trackerCode: string;
 }
 
 export const initialValue = {
@@ -23,6 +24,7 @@ export const initialValue = {
     apiKey: "",
     accountNumber: "",
     gasConversionFactor: 11.1,
+    trackerCode: "",
   },
   setValue: (value: IUserValue) => {},
 };

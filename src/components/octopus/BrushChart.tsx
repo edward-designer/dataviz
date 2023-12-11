@@ -205,6 +205,9 @@ const BrushChart = ({
     if (isVariable) {
       xExtent[0] = new Date(xExtent[0]!.setMonth(xExtent[0]?.getMonth()! + 3));
       xExtent[1] = new Date(xExtent[1]!.setMonth(xExtent[1]?.getMonth()! + 3));
+    } else if (!isAgile) {
+      xExtent[0] = new Date(xExtent[0]!.setDate(xExtent[0]?.getDate()! + 1));
+      xExtent[1] = new Date(xExtent[1]!.setDate(xExtent[1]?.getDate()! + 1));
     }
     assertExtentNotUndefined<Date>(xExtent);
     const xScale = scaleTime()
