@@ -152,10 +152,10 @@ const SavingsCalculation = () => {
               for up to 1 year.
               <Remark>
                 Approximations and assumptions are used in the calculations. The
-                actual savings are likely to differ slightly because of missing
-                data and rounding. Also, please note the figures for the latest
-                month is not complete (only up to a few days earlier) as it
-                takes time for your data to be updated.
+                actual savings are likely to differ because of missing data and
+                rounding. Also, please note the figures for the latest month is
+                not complete (only up to a few days earlier) as it takes time
+                for your data to be updated.
               </Remark>
             </div>
           </div>

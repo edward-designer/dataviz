@@ -31,18 +31,18 @@ export interface ITariffToCompare {
 export const GTARIFFS: ITariffToCompare[] = [
   {
     tariff: "VAR-22-11-01",
-    type: "E",
+    type: "G",
     category: "SVT",
     cost: null,
   },
   {
     tariff: "LOYAL-FIX-12M-23-11-23",
-    type: "E",
+    type: "G",
     category: "Fixed",
     cost: null,
   },
   {
-    tariff: "SILVER-23-12-06",
+    tariff: "SILVER-FLEX-BB-23-02-08",
     type: "G",
     category: "Tracker",
     cost: null,
@@ -56,8 +56,8 @@ export const ETARIFFS: ITariffToCompare[] = [
     cost: null,
   },
   {
-    tariff: "SILVER-23-12-06",
-    type: "G",
+    tariff: "SILVER-FLEX-BB-23-02-08",
+    type: "E",
     category: "Tracker",
     cost: null,
   },

@@ -576,6 +576,14 @@ export const calculatePrice = (
   }
   totalPrice = evenRound(totalPrice / 100, 2);
   totalStandingCharge = evenRound(totalStandingCharge / 100, 2);
+
+  /* temporarily increase price for tracker since 11/12/2023 price increase */
+  if (category === "Tracker") {
+    totalPrice = totalPrice * 1.05;
+    if (type === "E") totalStandingCharge = totalStandingCharge * 1.15;
+    if (type === "G") totalStandingCharge = totalStandingCharge * 1.02;
+  }
+
   return {
     cost: totalPrice + totalStandingCharge,
     totalUnit,
