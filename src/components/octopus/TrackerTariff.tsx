@@ -73,8 +73,8 @@ const TrackerTariff = () => {
             a set of formulae
           </a>
           . The prices shown here are usually updated at around 9:30am each day.
-          Comparision is made to the average cap of standard variable tariff
-          (SVT) of UK.
+          Comparision is made to the caps of standard variable tariff (SVT) of
+          UK.
         </Remark>
       </h2>
       <section className="flex flex-col sm:flex-row items-stretch sm:justify-center sm:items-center gap-4 my-4">
@@ -84,9 +84,8 @@ const TrackerTariff = () => {
       <h2 className="flex-0 text-lg font-bold text-center translate-y-3 text-accentPink-600">
         Regional standing charges
         <Remark variant="badge">
-          The standing charge is compared to the average standard variable
-          tariff (SVT) cap of UK. Different regions have different caps as
-          detailed in this{" "}
+          The standing charge is compared to the standard variable tariff (SVT)
+          caps of UK. Different regions have different caps as detailed in this{" "}
           <a
             href="https://www.ofgem.gov.uk/information-consumers/energy-advice-households/get-energy-price-cap-standing-charges-and-unit-rates-region"
             target="_blank"
@@ -157,14 +156,13 @@ const TrackerTariff = () => {
               What have the Ofgem price caps to do with Tracker?
             </AccordionTrigger>
             <AccordionContent className="text-white/60">
-              Nothing.
+              From 11 Dec 2023, Tracker tariff is a fixed tariff which is NOT
+              protected by Ofgem energy caps.
               <br />
               <br />
-              Tracker tariffs have much higher price caps set by Octopus than
-              the Ofgem price caps as Tracker is a new energy contract not
-              protected by Ofgem caps. But the general trends of Ofgem price cap
-              will give you a good idea of where the energy prices are heading
-              in the near future.
+              Tracker tariffs have much higher price caps set by Octopus. But
+              the general trends of Ofgem price cap will give you a good idea of
+              where the energy prices are heading in the near future.
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-0b" className="border-b-accentBlue-600/50">

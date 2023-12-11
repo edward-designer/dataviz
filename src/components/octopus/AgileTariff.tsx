@@ -181,14 +181,18 @@ const AgileTariff = () => {
               What have the Ofgem price caps to do with Agile?
             </AccordionTrigger>
             <AccordionContent className="text-white/60">
-              Nothing.
+              {/*Nothing.
               <br />
               <br />
               Agile tariffs have a much higher price cap of 100p per unit set by
               Octopus than the Ofgem price caps as Agile is a new energy
               contract not protected by Ofgem caps. But the general trends of
               Ofgem price cap will give you a good idea of where the energy
-              prices are heading in the near future.
+              prices are heading in the near future.*/}
+              Agile tariffs are variable tariffs protected by Ofgem energy caps.
+              However, the capped amount is to be re-calculated for the overall
+              cost of energy each month rather than limiting the maximum unit
+              rate for any individual period.
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-0c" className="border-b-accentBlue-600/50">

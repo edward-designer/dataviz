@@ -92,6 +92,15 @@ export const SVT_GTARIFF =
   GTARIFFS.find((tariff) => tariff.category === "SVT")?.tariff ?? "";
 
 export const TRACKER: ITrackerTariffPlan[] = [
+  /*{
+    code: "SILVER-23-12-11",
+    name: "Tracker December 2023 v1",
+    currentPlan: false,
+    cap: {
+      E: 100,
+      G: 30,
+    },
+  },*/
   {
     code: "SILVER-FLEX-BB-23-02-08",
     name: "Tracker February 2023 v1",
@@ -210,7 +219,7 @@ export type Single_tariff_gsp_record =
 export type Single_tariff_gsp_record_charge_type =
   | "standard_unit_rate_inc_vat"
   | "standing_charge_inc_vat";
-  
+
 export interface QuerySingleTariffPlanResult {
   tariffs_active_at: string;
   single_register_electricity_tariffs: Single_tariff;

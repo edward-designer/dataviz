@@ -4,13 +4,7 @@ import Badge from "@/components/octopus/Badge";
 import Comparison from "@/components/octopus/Comparison";
 import { EnergyIcon } from "@/components/octopus/EnergyIcon";
 import Remark from "@/components/octopus/Remark";
-import {
-  ENERGY_PLAN,
-  ENERGY_TYPE,
-  TariffType,
-  priceCap,
-  gsp,
-} from "@/data/source";
+import { ENERGY_PLAN, ENERGY_TYPE, TariffType, gsp } from "@/data/source";
 import useCheapestTariffQuery from "@/hooks/useCheapestTariffQuery";
 import { evenRound } from "@/utils/helpers";
 import Link from "next/link";
@@ -19,6 +13,9 @@ import { BsArrowRightSquare } from "react-icons/bs";
 import ErrorMessage from "@/components/octopus/ErrorMessage";
 import Loading from "@/components/Loading";
 import { min } from "d3";
+import useCurrentLocationPriceCapQuery from "@/hooks/useCurrentLocationPriceCapQuery";
+import { UserContext } from "@/context/user";
+import { useContext } from "react";
 
 export interface IEnergyPriceCard {
   type: Exclude<TariffType, "EG">;
@@ -49,12 +46,18 @@ type CheapestTariffResult =
     };
 
 const EnergyPriceCard = ({ type, plan }: IEnergyPriceCard) => {
+  const {
+    value: { gsp },
+  } = useContext(UserContext);
   const { data, isLoading, isError, isSuccess, error, refetch } =
     useCheapestTariffQuery<CheapestTariffResult>({
       plan,
       type,
       duration: "month",
     });
+
+  const caps = useCurrentLocationPriceCapQuery({ gsp: `_${gsp}` as gsp });
+
   let cheapestRate: number = 0;
   if (isSuccess && data) {
     if (plan === "tracker") {
@@ -123,7 +126,8 @@ const EnergyPriceCard = ({ type, plan }: IEnergyPriceCard) => {
               </Remark>
               <Comparison
                 change={evenRound(
-                  ((cheapestRate - priceCap[type]) / priceCap[type]) * 100
+                  ((cheapestRate - Number(caps[type])) / Number(caps[type])) *
+                    100
                 )}
                 compare="SVT cap"
               >
@@ -136,7 +140,10 @@ const EnergyPriceCard = ({ type, plan }: IEnergyPriceCard) => {
                     Ofgem Price Cap for standard variable tariff (SVT)
                   </a>{" "}
                   for this quarter is{" "}
-                  <strong className="text-bold">{`${priceCap[type]}p`}</strong>{" "}
+                  <strong className="text-bold">{`${evenRound(
+                    Number(caps[type]),
+                    2
+                  )}p`}</strong>{" "}
                   . This cap is reviewed every quarter. Please note that the
                   Ofgem caps are not applicable to Tracker tariffs which have a
                   much higher cap.
@@ -146,7 +153,10 @@ const EnergyPriceCard = ({ type, plan }: IEnergyPriceCard) => {
           </div>
           <div className="flex gap-2 items-center mt-2">
             <Badge label="normal rate:" variant="secondary" />
-            <span className="line-through">{`${priceCap[type]}p`}</span>
+            <span className="line-through">{`${evenRound(
+              Number(caps[type]),
+              2
+            )}p`}</span>
           </div>
           <div className="absolute right-4 bottom-4">
             <Link href={`/${plan}`}>

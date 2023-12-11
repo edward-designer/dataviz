@@ -46,8 +46,8 @@ const VariableTariff = () => {
               <span>Octopus Variable</span>
             </h1>
             <Remark variant="badge">
-              Octopus is offering variable tariff at a price that is discounted
-              from the Ofgem energy price caps. All unit rates inclusive of VAT.
+              Octopus is offering variable tariff at a price that is protected
+              by the Ofgem energy price caps. All unit rates inclusive of VAT.
             </Remark>
           </div>
         </div>
@@ -58,12 +58,6 @@ const VariableTariff = () => {
       </section>
       <div className="flex-0 text-lg font-bold text-center translate-y-3 text-accentPink-600">
         Changes over time
-        <Remark>
-          The price caps for standard variable tariff (SVT) shown here are for
-          reference only. All Octopus tracker plans have different price caps
-          set at the time of joining the plan. Please scroll down to view the
-          price caps.
-        </Remark>
       </div>
       <section className="flex justify-center items-center gap-4 my-4">
         <BrushChart tariff={tariff} type="EG" gsp={gsp} />
@@ -79,8 +73,8 @@ const VariableTariff = () => {
             a set of formulae
           </a>
           . The prices shown here are usually updated at around 9:30am each day.
-          Comparision is made to the average cap of standard variable tariff
-          (SVT) of UK.
+          Comparision is made to the cap of standard variable tariff (SVT) of
+          UK.
         </Remark>
       </h2>
       <section className="flex flex-col sm:flex-row items-stretch sm:justify-center sm:items-center gap-4 my-4">
@@ -90,9 +84,8 @@ const VariableTariff = () => {
       <h2 className="flex-0 text-lg font-bold text-center translate-y-3 text-accentPink-600">
         Regional standing charges
         <Remark variant="badge">
-          The standing charge is compared to the average standard variable
-          tariff (SVT) cap of UK. Different regions have different caps as
-          detailed in this{" "}
+          The standing charge is compared to the standard variable tariff (SVT)
+          cap of UK. Different regions have different caps as detailed in this{" "}
           <a
             href="https://www.ofgem.gov.uk/information-consumers/energy-advice-households/get-energy-price-cap-standing-charges-and-unit-rates-region"
             target="_blank"

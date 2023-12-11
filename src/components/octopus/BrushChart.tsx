@@ -2,61 +2,43 @@
 import { useEffect, useId, useRef } from "react";
 
 import {
-  select,
-  axisBottom,
-  extent,
-  max,
-  min,
-  scaleLinear,
-  scaleTime,
-  axisLeft,
-  line,
-  easeLinear,
-  brushX,
-  D3BrushEvent,
-  Selection,
-  Line,
   BaseType,
-  pointer,
+  D3ZoomEvent,
+  ScaleLinear,
+  ScaleTime,
+  Selection,
+  ZoomScale,
+  area,
+  axisBottom,
+  axisLeft,
+  axisRight,
   bisector,
   curveStepAfter,
   curveStepBefore,
-  axisRight,
-  timeFormat,
-  timeMonth,
-  utcSecond,
-  utcDay,
-  utcHour,
-  utcMinute,
-  utcMonth,
-  utcWeek,
-  utcYear,
-  utcFormat,
-  timeFormatDefaultLocale,
-  D3ZoomEvent,
-  ZoomScale,
-  zoom,
-  ScaleTime,
-  ScaleLinear,
+  easeLinear,
+  extent,
+  line,
+  max,
+  min,
+  pointer,
+  scaleLinear,
+  scaleTime,
+  select,
   timeDay,
+  timeMonth,
   timeWeek,
   timeYear,
-  tsv,
-  area,
+  utcFormat,
+  zoom,
 } from "d3";
-import toast from "react-hot-toast";
 
 import {
-  TariffType,
-  TariffResult,
-  ENERGY_TYPE,
-  ENERGY_TYPE_ICON,
-  priceCap,
-  QueryTariffResult,
-  ApiTariffType,
-  FETCH_ERROR,
   CapsTSVResult,
   DurationType,
+  ENERGY_TYPE_ICON,
+  QueryTariffResult,
+  TariffResult,
+  TariffType,
 } from "@/data/source";
 
 import useTariffQuery from "../../hooks/useTariffQuery";
@@ -64,16 +46,12 @@ import useTariffQuery from "../../hooks/useTariffQuery";
 import {
   assertExtentNotUndefined,
   evenRound,
-  fetchApi,
-  fetchEachApi,
   selectOrAppend,
-  tryFetch,
 } from "../../utils/helpers";
 
 import Loading from "@/components/Loading";
-import ErrorMessage from "./ErrorMessage";
-import { useQuery } from "@tanstack/react-query";
 import usePriceCapQuery from "@/hooks/usePriceCapQuery";
+import ErrorMessage from "./ErrorMessage";
 
 const BrushChart = ({
   tariff,
@@ -92,17 +70,24 @@ const BrushChart = ({
   const timeIdRef = useRef<number | undefined>(undefined);
   const id = useId();
 
-  const { isLoading, isError, isSuccess, refetch, data, error } =
-    useTariffQuery<QueryTariffResult>({
-      tariff,
-      type,
-      gsp,
-      duration,
-    });
+  const {
+    isLoading,
+    isError,
+    isSuccess,
+    refetch,
+    data: rawData,
+    error,
+  } = useTariffQuery<QueryTariffResult>({
+    tariff,
+    type,
+    gsp,
+    duration,
+  });
 
   const caps = usePriceCapQuery({});
 
   const isAgile = tariff.includes("AGILE");
+  const isVariable = tariff.includes("VAR-");
 
   // Specify chart properties (dimensions and colors)
   let widgetWidth = 1000;
@@ -122,10 +107,37 @@ const BrushChart = ({
   }
 
   useEffect(() => {
-    if (!data || !svgRef || !svgRef.current) return;
+    if (!rawData || !svgRef || !svgRef.current) return;
     // ↓↓↓ when svgRef.current and data are ready //
-
     select(svgRef.current);
+
+    const data = rawData.map((dataset) => ({
+      ...dataset,
+      results: dataset.results.filter(
+        (result) => result.payment_method !== "NON_DIRECT_DEBIT"
+      ),
+    }));
+    // hack: add first with object valid_to to array
+    if (isVariable) {
+      data.forEach((dataset, ind) => {
+        const valid_from = new Date(
+          new Date(data[ind].results.at(-1)?.valid_from ?? "").setMonth(
+            new Date(data[ind].results.at(-1)?.valid_from ?? "").getMonth() - 3
+          )
+        ).toISOString();
+        const valid_to = new Date(
+          data[ind].results.at(-1)?.valid_from ?? ""
+        ).toISOString();
+
+        data[ind].results.push({
+          payment_method: "DIRECT_DEBIT",
+          valid_from,
+          valid_to,
+          value_exc_vat: data[ind].results.at(-1)?.value_exc_vat ?? 0,
+          value_inc_vat: data[ind].results.at(-1)?.value_inc_vat ?? 0,
+        });
+      });
+    }
 
     const lineCharts: Selection<
       BaseType | SVGPathElement,
@@ -190,6 +202,10 @@ const BrushChart = ({
         .flat(),
       (d) => d
     );
+    if (isVariable) {
+      xExtent[0] = new Date(xExtent[0]!.setMonth(xExtent[0]?.getMonth()! + 3));
+      xExtent[1] = new Date(xExtent[1]!.setMonth(xExtent[1]?.getMonth()! + 3));
+    }
     assertExtentNotUndefined<Date>(xExtent);
     const xScale = scaleTime()
       .domain(xExtent)
@@ -286,7 +302,16 @@ const BrushChart = ({
       yScale: ScaleLinear<number, number, never>
     ) =>
       line<TariffResult>()
-        .x((d) => xScale(new Date(d.valid_to)))
+        .x((d) =>
+          xScale(
+            new Date(
+              d.valid_to ??
+                new Date(
+                  new Date().setMonth(new Date().getMonth() + 3)
+                ).toISOString()
+            )
+          )
+        )
         .y((d) => yScale(d.value_inc_vat))
         .curve(curveStepAfter);
 
@@ -306,7 +331,6 @@ const BrushChart = ({
       ).attr("clip-path", `url(#clip-${id})`);
       if (typeof lineGraph === "string")
         throw new Error("Selection is not a string");
-
       const line = lineGraph
         .selectAll("path")
         .data(data)
@@ -602,14 +626,16 @@ const BrushChart = ({
       /* Remove all visible elements in case on Zoom */
       tooltip.attr("opacity", "0");
 
+      const oneYearFromNow = new Date(
+        new Date().setFullYear(new Date().getFullYear() + 1)
+      );
       /* Pointer move */
       chart.on("pointermove", function (e: PointerEvent) {
         const coordinates = pointer(e);
         const pointerX = coordinates[0] - padding.left;
         const xValue = xScale.invert(pointerX);
-
         const bisectDate = bisector(
-          (d: TariffResult) => new Date(d.valid_to)
+          (d: TariffResult) => new Date(d.valid_to ?? oneYearFromNow)
         ).left;
         // NOTE:bisector requires ASCENDING order!!
         const index =
@@ -618,11 +644,11 @@ const BrushChart = ({
           bisectDate(
             [...data[0].results].sort(
               (a, b) =>
-                new Date(a.valid_to).getTime() - new Date(b.valid_to).getTime()
+                new Date(a.valid_to ?? oneYearFromNow).getTime() -
+                new Date(b.valid_to ?? oneYearFromNow).getTime()
             ),
             xValue
           );
-
         const pointValues = isAgile
           ? [
               [
@@ -631,6 +657,14 @@ const BrushChart = ({
                 ENERGY_TYPE_ICON[data[0].tariffType],
               ] as const,
             ]
+          : isVariable
+          ? data?.map((set) => {
+              return [
+                pointerX,
+                set.results[index]?.value_inc_vat ?? "--",
+                ENERGY_TYPE_ICON[set.tariffType],
+              ] as const;
+            })
           : data?.map((set) => {
               return [
                 pointerX,
@@ -732,7 +766,11 @@ const BrushChart = ({
 
     if (type.includes("E")) {
       const lineChart = drawLine(
-        [data[0].results],
+        [
+          data[0].results.filter(
+            (d) => d.payment_method !== "NON_DIRECT_DEBIT"
+          ),
+        ],
         "electricity",
         xScale,
         yScale,
@@ -743,7 +781,11 @@ const BrushChart = ({
     }
     if (type.includes("G")) {
       const lineChart2 = drawLine(
-        [data[1].results],
+        [
+          data[1].results.filter(
+            (d) => d.payment_method !== "NON_DIRECT_DEBIT"
+          ),
+        ],
         "gas",
         xScale,
         yScale,
@@ -803,7 +845,7 @@ const BrushChart = ({
     chart.call(zoomBehavior);
   }, [
     caps.data,
-    data,
+    rawData,
     gsp,
     id,
     isAgile,
