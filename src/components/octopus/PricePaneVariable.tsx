@@ -7,7 +7,6 @@ import Remark from "./Remark";
 
 import {
   CapsTSVResult,
-  ENERGY_TYPE,
   QueryTariffResult,
   TariffResult,
   TariffType,
@@ -19,20 +18,14 @@ import useTariffQuery from "../../hooks/useTariffQuery";
 import {
   calculateChangePercentage,
   evenRound,
-  isSameDate,
-  isToday,
   priceAccessor,
 } from "../../utils/helpers";
 
+import useCurrentLocationPriceCapQuery from "@/hooks/useCurrentLocationPriceCapQuery";
 import backgroundE from "../../../public/images/E.jpg";
 import backgroundG from "../../../public/images/G.jpg";
-import ErrorMessage from "./ErrorMessage";
 import { EnergyIcon } from "./EnergyIcon";
-import { useContext, useEffect, useRef, useState } from "react";
-import toast from "react-hot-toast";
-import { WindowVisibilityContext } from "@/context/windowVisibility";
-import { TomorrowPriceContext } from "@/context/lastShownDates";
-import useCurrentLocationPriceCapQuery from "@/hooks/useCurrentLocationPriceCapQuery";
+import ErrorMessage from "./ErrorMessage";
 
 const PricePane = ({
   tariff,
