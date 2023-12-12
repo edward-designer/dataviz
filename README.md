@@ -1,65 +1,46 @@
 # Octoprice - User-friendly Dashboard for Octopus Energy Users
 
-![Octoprice App](https://github.com/edward-designer/dataviz/assets/25171685/de5f7997-4f72-4f52-b8b6-9704aa6744e5)
+![Octoprice App](https://github.com/edward-designer/dataviz/assets/25171685/88870a9b-54f0-4e86-a4fb-fa811a136926)
 
 ## Why Octoprice
 
-Obviously, I need to apply for web development jobs and I need CVs and cover letters. A lot of them. There are currently no solutions on the market that fulfuill the following criteria:
+I am a happy Octopus Energy user, but:
 
-- absolute privacy - I want to store my personal data only on my computer
-- no vendor lock up - I want to own my data in an easily accessible format
-- developer friendly - I want to be able to edit the CVs and cover letters on the web interface as well as my favourite IDE VScode and markdown
-- free - I need to make lots of CVs and I don't want to pay anything
+- it is not easy to get the energy rates from Octopus app or website
+- some 3rd party websites are not user-friendly / visually pleasant
+- there is no fast and convenient way to see how much I have saved or whether I will be better off with alternative tariffs
+
+That's why I decided to create the Octoprice App.
 
 ## Features
 
-- just need to clone from github repo, install dependencies and run dev/production server locally
-- create unlimited variations of CV + Cover Letters fast and easy with the familiar markdown syntax
-- check your CV and cover letters for matching keywords from the job advertisements
-- download CV / cover letters as text-selectable PDF files readable by applicant tracking system (ATS)
-- all data are stored and organized on your computer as markdown files only, no database needed
-- can be personalized with favorite color schemes, optionally hacking the PDF styles for a complete personalized look
-- a simple job application tracker to visualize your job hunting journey
+- get the latest unit rates details for different intelligent tariffs (in pratical the half-hourly rates for Agile) with sensible comparisions for informed decision / choice
+- get historical and geographical unit rates
+  ![tracker](https://github.com/edward-designer/dataviz/assets/25171685/5f55670a-3cb5-421f-9bae-946b55eb05b0)
+  ![agile](https://github.com/edward-designer/dataviz/assets/25171685/68b2614a-5ebc-41ee-a847-2ab50d0e7f16)
 
-## To run CVizard locally:
+- calculate and visualize how much I have saved using the current tariff
+  ![savings](https://github.com/edward-designer/dataviz/assets/25171685/de66259a-41a4-430a-811b-a985448f5038)
 
-1 Clone this repository
-
-```
-  git clone https://github.com/edward-designer/cvizard
-```
-
-2 Install dependencies
-
-```
-  npm install
-```
-
-3 Run the dev server
-
-```
-  npm run dev
-```
-
-4 Start creating your CVs and cover letters, all files are stored in **`/src/cv directory`**
-5 If you would like to implement your own designs, head to **`/src/components/common/PDFContent.tsx`**. Refer to the comments there for making styling changes (both React-PDF and React-PDF-HTML are dependent packages).
+- compare different tariffs based on actual annual energy consumption
+  ![compare](https://github.com/edward-designer/dataviz/assets/25171685/921f61b9-a5d8-4305-9bed-db87f46eb2e2)
+- dynamically generated images of amount of money saved for sharing to social media
+- display results in an user-friendly and intuitive way, even on mobile screens
 
 ## Tech Stacks
 
 - NextJS
   - a framework for both frontend and backend api development
   - SSR for faster response
-  - better SEO for the homepage
-  - making use of the [ts-nextjs-tailwind-starter](https://theodorusclarence.com/blog/one-stop-starter) by Theodorus Clarence
-- Typescript - for type-checking to reduce bugs
+  - SEO for different pages (meta/open graph/image)
+- Typescript - for static type-checking to reduce bugs during development
 - TailwindCSS - fast styling and better CSS rendering performance
-- MUI - for icons only
-- Jest/React Testing Library for automated testing
-- TDD for keyword functions
-- Figma - for [logo and UI design](https://www.figma.com/file/bYF7ORx4A9K71xMye006fZ/CVizard?node-id=107%3A72534&t=baIFEMjvq12BDlxY-1)
+- D3 - for data visualization
+- Figma - for [logo and UI design](https://www.figma.com/file/fRlu7OsCH1vubhSukEXJWD/Octoprice?type=design&node-id=0%3A1&mode=design&t=ECSUyyVG1180wBPf-1)
 - CI/CD for automated testing/linting/prettier/type checking using github actions
+- Spline for 3d modelling and rendering
 
 ## Todo
 
-- implement several design templates for users to choose from
-- Cypress for end-to-end testing the user journey
+- improve accessibility
+- turn into a real iOS/Andriod app with system notifications and widgets
