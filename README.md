@@ -17,7 +17,7 @@ That's why I decided to create the Octoprice App.
 - get the latest unit rates details for different intelligent tariffs (in pratical the half-hourly rates for Agile) with sensible comparisions for informed decision / choice
 - get historical and geographical unit rates
 
-  ![tracker](https://github.com/edward-designer/dataviz/assets/25171685/5f55670a-3cb5-421f-9bae-946b55eb05b0)
+  ![tracker](https://github.com/edward-designer/dataviz/assets/25171685/1c89d76c-e93c-44d9-9451-bcd6e9d32b00)
   ![agile](https://github.com/edward-designer/dataviz/assets/25171685/68b2614a-5ebc-41ee-a847-2ab50d0e7f16)
 
 - calculate and visualize how much I have saved using the current tariff
@@ -27,7 +27,7 @@ That's why I decided to create the Octoprice App.
 - compare different tariffs based on actual annual energy consumption
   
   ![compare](https://github.com/edward-designer/dataviz/assets/25171685/921f61b9-a5d8-4305-9bed-db87f46eb2e2)
-  
+
 - dynamically generated images of amount of money saved for sharing to social media
 - display results in an user-friendly and intuitive way, even on mobile screens
 
