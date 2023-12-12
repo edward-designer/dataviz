@@ -219,15 +219,18 @@ const UserApiForm = ({ open, setOpen }: IUserApiForm) => {
           }
           remark={
             <Remark variant="badge">
-              Try changing to &quot;1&quot; or find out your gas conversion
-              factor from your bill:
+              Calculating actual gas costs is very complex as we cannot get all
+              the required info from Octopus. If you find the calculated costs
+              are off by a lot, pleasee find out your gas conversion factor from
+              your bills:
               <Image
-                className="block mt-2"
+                className="block my-2"
                 src="/images/gas-factor.jpg"
                 width={320}
                 height={401}
                 alt="get your gas conversion figure"
               />
+              Or try changing this value to &quot;1&quot; to see if that would fit.
             </Remark>
           }
         />

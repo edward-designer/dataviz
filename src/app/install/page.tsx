@@ -65,20 +65,18 @@ const Install = () => {
               Share
               <RxShare2 className="inline-block px-1 w-8 h-8" />
               <Remark>
-                <div className=" max-h-[300px] overflow-y-auto m-0 p-0">
-                  In Google Chrome:
-                  <Image
-                    src={appShareChrome}
-                    alt="the share button on Google Chrome"
-                    className="w-full block py-4 mb-4 border-b border-accentBlue-900"
-                  />
-                  In mobile Safari:
-                  <Image
-                    src={appShareSafari}
-                    alt="the share button on mobile Safari"
-                    className="w-full block py-4"
-                  />
-                </div>
+                In Google Chrome:
+                <Image
+                  src={appShareChrome}
+                  alt="the share button on Google Chrome"
+                  className="w-full block py-4 mb-4 border-b border-accentBlue-900"
+                />
+                In mobile Safari:
+                <Image
+                  src={appShareSafari}
+                  alt="the share button on mobile Safari"
+                  className="w-full block py-4"
+                />
               </Remark>
             </strong>
           </li>
@@ -88,28 +86,24 @@ const Install = () => {
               Add to Home Screen
               <VscDiffAdded className="inline-block px-1 w-8 h-8" />
               <Remark>
-                <div className=" max-h-[300px] overflow-y-auto m-0 p-0">
-                  Add to Home Screen button:
-                  <Image
-                    src={appShareAddHome}
-                    alt="add to Home Screen button"
-                    className="w-full block py-4 mb-4"
-                  />
-                </div>
+                Add to Home Screen button:
+                <Image
+                  src={appShareAddHome}
+                  alt="add to Home Screen button"
+                  className="w-full block py-4 mb-4"
+                />
               </Remark>
             </strong>
           </li>
           <li>
             Tap <strong className="text-accentBlue-500">Add</strong>
             <Remark>
-              <div className=" max-h-[300px] overflow-y-auto m-0 p-0">
-                Add the App:
-                <Image
-                  src={appShareAdd}
-                  alt="confirm to add to Home Screen button"
-                  className="w-full block py-4 mb-4"
-                />
-              </div>
+              Add the App:
+              <Image
+                src={appShareAdd}
+                alt="confirm to add to Home Screen button"
+                className="w-full block py-4 mb-4"
+              />
             </Remark>{" "}
             to install Octoprice on your mobile
           </li>

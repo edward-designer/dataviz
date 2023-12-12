@@ -93,7 +93,7 @@ const InfoInput = ({
             if (inputs.length > 1) {
               const currentInd = [...inputs].indexOf(e.currentTarget);
               if (currentInd === inputs.length - 1) {
-                inputs[0].blur();
+                inputs[currentInd].blur();
                 return;
               }
               inputs[currentInd + 1].focus();
