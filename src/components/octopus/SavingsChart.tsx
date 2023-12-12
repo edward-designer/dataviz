@@ -54,17 +54,23 @@ const SavingsChart = ({
   const toDate = today.toISOString();
   const category = "Tracker";
 
-  const { cost, totalUnit, totalPrice, totalStandingCharge, isLoading, lastDate } =
-    useConsumptionCalculation({
-      tariff,
-      fromDate,
-      toDate,
-      type,
-      category,
-      deviceNumber,
-      serialNo,
-      results: "monthly",
-    });
+  const {
+    cost,
+    totalUnit,
+    totalPrice,
+    totalStandingCharge,
+    isLoading,
+    lastDate,
+  } = useConsumptionCalculation({
+    tariff,
+    fromDate,
+    toDate,
+    type,
+    category,
+    deviceNumber,
+    serialNo,
+    results: "monthly",
+  });
 
   const {
     cost: costSVT,
@@ -188,7 +194,7 @@ const SavingsChart = ({
           backgroundImage: `linear-gradient(0deg, rgba(0,3,35,0.7) 30% , rgba(0,3,35,0.9) 70%, rgba(0,4,51,1) 100% )`,
         }}
       >
-        {cost.length > 0 && costSVT.length ? (
+        {cost.length > 1 && costSVT.length ? (
           <>
             <div className="flex flex-1 flex-col md:flex-row justify-between gap-4 max-h-full overflow-hidden">
               <MonthlyChart cost={cost} costSVT={costSVT} lastDate={lastDate} />

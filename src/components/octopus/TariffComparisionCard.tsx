@@ -45,10 +45,12 @@ const TariffComparisionCard = ({
   });
 
   useEffect(() => {
+    if (Number.isNaN(cost)) return;
     if (cost !== null && typeof cost === "number") setCost(category, cost);
   }, [category, cost, setCost]);
 
-  const Container = cost !== null && rank === 1 ? Sparkles : "div";
+  const Container =
+    cost !== null && !Number.isNaN(cost) && rank === 1 ? Sparkles : "div";
 
   return (
     <motion.div
@@ -60,7 +62,7 @@ const TariffComparisionCard = ({
     >
       {cost === null ? (
         <Loading />
-      ) : typeof cost === "number" ? (
+      ) : typeof cost === "number" && !Number.isNaN(cost) ? (
         <>
           <EnergyIcon type={type} />
           <Container>
@@ -110,8 +112,8 @@ const TariffComparisionCard = ({
           )}
         </>
       ) : (
-        <div>
-          Sorry, we are experience some technical errors at the moment. Please
+        <div className="text-center text-sm">
+          Sorry, we are experiencing some technical errors at the moment. Please
           try again later.
         </div>
       )}

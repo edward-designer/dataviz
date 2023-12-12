@@ -40,7 +40,7 @@ const MonthlyChart = ({ cost, costSVT, lastDate }: IMonthlyChart) => {
     <div className="flex flex-col flex-1">
       <div className="relative flex-1 flex" ref={scrollContainerRef}>
         <ol className="flex-1 font-digit max-h-[100%] flex flex-col">
-          {cost.length > 0 &&
+          {cost.length > 1 ? (
             cost.map((monthlyCost, ind) => {
               const monthlycostSVT = valueAccessor(costSVT[ind]);
               const monthlycostCurrent = valueAccessor(monthlyCost);
@@ -57,7 +57,10 @@ const MonthlyChart = ({ cost, costSVT, lastDate }: IMonthlyChart) => {
                 lastDate,
               };
               return <MonthlyChartBar key={ind} {...chartBarProps} />;
-            })}
+            })
+          ) : (
+            <div>Sorry temporarily unavailable. Please check back later.</div>
+          )}
         </ol>
       </div>
       <div className="text-xs mt-4 flex flex-wrap gap-x-4">
