@@ -208,6 +208,7 @@ const UserApiForm = ({ open, setOpen }: IUserApiForm) => {
           error={error}
           value={gasConversionFactor}
           setValue={setGasConversionFactor}
+          enterKeyHint="done"
           clearHandler={() =>
             clearValueHandler(
               "Gas Conversion Factor",

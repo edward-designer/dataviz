@@ -1,4 +1,4 @@
-import { ChangeEvent, ReactNode, useId } from "react";
+import { ChangeEvent, InputHTMLAttributes, ReactNode, useId } from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import Button from "./Button";
@@ -17,6 +17,7 @@ type IInfoInput =
       clearHandler: (() => void) | null;
       remark?: ReactNode;
       notice?: string;
+      enterKeyHint?: InputHTMLAttributes<HTMLInputElement>["enterKeyHint"];
     }
   | {
       label: string;
@@ -28,6 +29,7 @@ type IInfoInput =
       clearHandler: (() => void) | null;
       remark?: ReactNode;
       notice?: string;
+      enterKeyHint?: InputHTMLAttributes<HTMLInputElement>["enterKeyHint"];
     };
 
 const InfoInput = ({
@@ -40,6 +42,7 @@ const InfoInput = ({
   clearHandler,
   remark,
   notice,
+  enterKeyHint = "next",
 }: IInfoInput) => {
   const id = useId();
 
@@ -72,6 +75,7 @@ const InfoInput = ({
           value={value}
           className="flex-1"
           disabled={!setValue}
+          enterKeyHint={enterKeyHint}
           {...onChangeProps}
         />
         {value && clearHandler && (
