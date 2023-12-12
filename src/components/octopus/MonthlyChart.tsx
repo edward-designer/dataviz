@@ -33,7 +33,7 @@ const MonthlyChart = ({ cost, costSVT, lastDate }: IMonthlyChart) => {
     .domain([0, valueAccessor(costSVT[maxSVT]) ?? 0])
     .range([10, width]);
   const colorScale = scaleSequential(
-    interpolateRgbBasis(["#aaffdd", "#3377FF"])
+    interpolateRgbBasis(["#aafbc7", "#64c2f1"])
   ).domain([valueAccessor(cost[min]) ?? 0, valueAccessor(cost[max]) ?? 0]);
 
   return (
@@ -51,7 +51,7 @@ const MonthlyChart = ({ cost, costSVT, lastDate }: IMonthlyChart) => {
                 monthlycostSVT,
                 widthSVT: xScale(monthlycostSVT),
                 widthCurrent: xScale(monthlycostCurrent),
-                color: colorScale(saving),
+                color: colorScale(monthlycostCurrent),
                 period: periodAccessor(monthlyCost),
                 ind,
                 lastDate,
