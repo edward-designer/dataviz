@@ -90,7 +90,7 @@ const TrackerTariff = () => {
       </section>
       <h2 className="flex-0 text-lg font-bold text-center translate-y-3 text-accentPink-600">
         Regional standing charges
-        <Remark variant="badge">
+        <Remark>
           The standing charge is compared to the standard variable tariff (SVT)
           caps of UK. Different regions have different caps as detailed in this{" "}
           <a

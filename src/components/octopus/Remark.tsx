@@ -36,7 +36,7 @@ const Remark = ({
         />
         <span className="sr-only">Remarks:</span>
       </PopoverTrigger>
-      <PopoverContent className={`border-0 bg-theme-900/80 text-base`}>
+      <PopoverContent className={`border-0 bg-theme-900/95 text-base`}>
         {children}
       </PopoverContent>
     </Popover>

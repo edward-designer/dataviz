@@ -24,21 +24,23 @@ const UserApi = () => {
         <li>
           be an <span className="text-3xl">Octopus user for a month</span>
           <Remark>
-            The results will be more accurate if you have been a Octopus user
+            The results will be more accurate if you have been an Octopus user
             for over a year - if you are not a current Octopus Energy user, you
             can switch now and wait for a month to use this service.
+            <span className="inline-block mt-3 text-sm border-t border-b border-dotted py-2 my-2 leading-6">
+              Not an Octopus user? No worries, you can get{" "}
+              <ImGift className="inline-block -translate-y-1 w-6 h-6 px-1 fill-accentBlue-500" />
+              <strong>£50 credit</strong> by{" "}
+              <a
+                href="https://share.octopus.energy/sky-heron-134"
+                target="_blank"
+                className="inline-block underline text-accentPink-500 hover:no-underline"
+              >
+                signing up thru our exclusive link
+              </a>
+              {" "}!
+            </span>
           </Remark>
-          <span className="inline-block mt-3 leading-tight text-sm">- Not an Octopus user? No worries, you can get{" "}
-          <ImGift className="inline-block -translate-y-1 w-6 h-6 px-1" />
-          <strong>£50 credit</strong> by{" "}
-          <a
-            href="https://share.octopus.energy/sky-heron-134"
-            target="_blank"
-            className="inline-block underline text-accentPink-500 hover:no-underline"
-          >
-            signing up thru our exclusive link
-          </a>
-          !</span>
         </li>
         <li>
           <div className="inline-flex items-start lg:items-center gap-2 flex-col lg:flex-row ">

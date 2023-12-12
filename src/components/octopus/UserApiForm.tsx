@@ -102,18 +102,20 @@ const UserApiForm = ({ open, setOpen }: IUserApiForm) => {
   return (
     <Dialog open={open} onOpenChange={handleDialogOpenChange}>
       {hasApiInfo ? (
-        <DialogTrigger className="text-accentPink-600 flex">
+        <DialogTrigger className="text-accentPink-600 flex group ">
           <IoLocationOutline
-            className="w-6 h-6 text-accentPink-600"
+            className="w-6 h-6 text-accentPink-600 group-hover:text-accentPink-300"
             aria-label="click to enter postcode"
           />
-          {value.postcode}
+          <span className="group-hover:text-accentPink-300">
+            {value.postcode}
+          </span>
         </DialogTrigger>
       ) : (
-        <DialogTrigger className="text-accentPink-600 inline-flex">
-          <div className="flex gap-2 border border-accentPink-600 py-2 px-8 rounded-xl">
+        <DialogTrigger className="text-accentPink-600 inline-flex group">
+          <div className="flex gap-2 border border-accentPink-600 py-2 px-8 rounded-xl group-hover:bg-accentPink-900 group-hover:text-accentPink-300">
             <ButtonIcon
-              className="w-6 h-6 text-accentPink-600"
+              className="w-6 h-6 text-accentPink-600 group-hover:text-accentPink-300"
               aria-label="click to enter account information"
             />
             Fill in
@@ -227,18 +229,6 @@ const UserApiForm = ({ open, setOpen }: IUserApiForm) => {
             </Remark>
           }
         />
-        <div className="border-t border-b border-white/30 border-dotted pt-4 pb-2">
-          <InfoInput
-            label="Postcode"
-            type="text"
-            placeHolder="Please enter your postcode"
-            error={error}
-            notice="The postcode will be automatically updated when the above info is submitted."
-            value={value.postcode}
-            setValue={null}
-            clearHandler={null}
-          />
-        </div>
         <div className="flex gap-2 flex-wrap justify-between">
           <div className="flex gap-2">
             <Button
@@ -255,11 +245,11 @@ const UserApiForm = ({ open, setOpen }: IUserApiForm) => {
             </Button>
           </div>
           <button
-            className="text-base border leading-tight text-accentPink-500 border-accentPink-500 rounded-lg px-4 py-2 whitespace-nowrap hover:bg-accentPink-800 hover:text-white flex items-center justify-center gap-2"
+            className="group hover:bg-accentPink-900 text-base border leading-tight text-accentPink-500 border-accentPink-500 rounded-lg px-4 py-2 whitespace-nowrap flex items-center justify-center gap-2"
             onClick={handleClearAll}
           >
-            <PiTrashSimpleLight className="fill-accentPink-500 h-6 w-6" /> Clear
-            All
+            <PiTrashSimpleLight className="fill-accentPink-500 h-6 w-6 group-hover:fill-accentPink-300" />{" "}
+            <span className=" group-hover:text-accentPink-300">Clear All</span>
           </button>
         </div>
 
