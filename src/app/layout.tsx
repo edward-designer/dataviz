@@ -34,6 +34,9 @@ const font3 = localFont({
 
 export const viewport: Viewport = {
   themeColor: "#ce2cb9",
+  initialScale: 1,
+  width: "device-width",
+  maximumScale: 1,
 };
 
 export const metadata: Metadata = {
