@@ -128,112 +128,110 @@ const UserApiForm = ({ open, setOpen }: IUserApiForm) => {
             My Octopus Account Info
           </DialogTitle>
         </DialogHeader>
-        <form>
-          <InfoInput
-            label="Account Number"
-            type="text"
-            placeHolder="Please enter your account number"
-            error={error}
-            value={accountNumber}
-            setValue={setAccountNumber}
-            clearHandler={() =>
-              clearValueHandler(
-                "Account Number",
-                "accountNumber",
-                setAccountNumber
-              )
-            }
-            remark={
-              <Remark variant="badge">
-                The account number can be obtained by logging in your Octopus
-                account through{" "}
-                <a
-                  className="underline text-accentPink-500"
-                  href="https://octopus.energy/dashboard/"
-                  target="_blank"
-                >
-                  this link to the Octopus dashboard
-                </a>
-                . It is the number under your user name with the format
-                [A-AAAA1111].
-                <a href="https://octopus.energy/dashboard/" target="_blank">
-                  <Image
-                    className="block mt-2"
-                    src="/images/octopus-accountNumber.jpg"
-                    width={300}
-                    height={368}
-                    alt="showing how to get account number"
-                  />
-                </a>
-              </Remark>
-            }
-          />
-          <InfoInput
-            label="API Key"
-            type="text"
-            placeHolder="Please enter your API Key"
-            error={error}
-            value={apiKey}
-            setValue={setApiKey}
-            clearHandler={() =>
-              clearValueHandler("API Key", "apiKey", setApiKey)
-            }
-            remark={
-              <Remark variant="badge">
-                Get your{" "}
-                <a
-                  className="underline text-accentPink-500"
-                  href="https://octopus.energy/dashboard/new/accounts/personal-details/api-access"
-                  target="_blank"
-                >
-                  API key here
-                </a>
-                . It is in the format [sk_live_XXXXXXXX111111111].
-                <a
-                  href="https://octopus.energy/dashboard/new/accounts/personal-details/api-access"
-                  target="_blank"
-                >
-                  <Image
-                    className="block mt-2"
-                    src="/images/octopus-apiKey2.jpg"
-                    width={300}
-                    height={368}
-                    alt="showing how to get account number"
-                  />
-                </a>
-              </Remark>
-            }
-          />
-          <InfoInput
-            label="Gas Conversion Factor"
-            type="number"
-            placeHolder="The usual gas conversion factor is around 11.1"
-            error={error}
-            value={gasConversionFactor}
-            setValue={setGasConversionFactor}
-            enterKeyHint="done"
-            clearHandler={() =>
-              clearValueHandler(
-                "Gas Conversion Factor",
-                "gasConversionFactor",
-                setGasConversionFactor
-              )
-            }
-            remark={
-              <Remark variant="badge">
-                Try changing to &quot;1&quot; or find out your gas conversion
-                factor from your bill:
+
+        <InfoInput
+          label="Account Number"
+          type="text"
+          placeHolder="Please enter your account number"
+          error={error}
+          value={accountNumber}
+          setValue={setAccountNumber}
+          clearHandler={() =>
+            clearValueHandler(
+              "Account Number",
+              "accountNumber",
+              setAccountNumber
+            )
+          }
+          remark={
+            <Remark variant="badge">
+              The account number can be obtained by logging in your Octopus
+              account through{" "}
+              <a
+                className="underline text-accentPink-500"
+                href="https://octopus.energy/dashboard/"
+                target="_blank"
+              >
+                this link to the Octopus dashboard
+              </a>
+              . It is the number under your user name with the format
+              [A-AAAA1111].
+              <a href="https://octopus.energy/dashboard/" target="_blank">
                 <Image
                   className="block mt-2"
-                  src="/images/gas-factor.jpg"
-                  width={320}
-                  height={401}
-                  alt="get your gas conversion figure"
+                  src="/images/octopus-accountNumber.jpg"
+                  width={300}
+                  height={368}
+                  alt="showing how to get account number"
                 />
-              </Remark>
-            }
-          />
-        </form>
+              </a>
+            </Remark>
+          }
+        />
+        <InfoInput
+          label="API Key"
+          type="text"
+          placeHolder="Please enter your API Key"
+          error={error}
+          value={apiKey}
+          setValue={setApiKey}
+          clearHandler={() => clearValueHandler("API Key", "apiKey", setApiKey)}
+          remark={
+            <Remark variant="badge">
+              Get your{" "}
+              <a
+                className="underline text-accentPink-500"
+                href="https://octopus.energy/dashboard/new/accounts/personal-details/api-access"
+                target="_blank"
+              >
+                API key here
+              </a>
+              . It is in the format [sk_live_XXXXXXXX111111111].
+              <a
+                href="https://octopus.energy/dashboard/new/accounts/personal-details/api-access"
+                target="_blank"
+              >
+                <Image
+                  className="block mt-2"
+                  src="/images/octopus-apiKey2.jpg"
+                  width={300}
+                  height={368}
+                  alt="showing how to get account number"
+                />
+              </a>
+            </Remark>
+          }
+        />
+        <InfoInput
+          label="Gas Conversion Factor"
+          type="number"
+          placeHolder="The usual gas conversion factor is around 11.1"
+          error={error}
+          value={gasConversionFactor}
+          setValue={setGasConversionFactor}
+          enterKeyHint="done"
+          clearHandler={() =>
+            clearValueHandler(
+              "Gas Conversion Factor",
+              "gasConversionFactor",
+              setGasConversionFactor
+            )
+          }
+          remark={
+            <Remark variant="badge">
+              Try changing to &quot;1&quot; or find out your gas conversion
+              factor from your bill:
+              <Image
+                className="block mt-2"
+                src="/images/gas-factor.jpg"
+                width={320}
+                height={401}
+                alt="get your gas conversion figure"
+              />
+            </Remark>
+          }
+        />
+
         <div className="flex gap-2 flex-wrap justify-between">
           <div className="flex gap-2">
             <Button

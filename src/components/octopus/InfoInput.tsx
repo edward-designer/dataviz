@@ -1,4 +1,10 @@
-import { ChangeEvent, InputHTMLAttributes, ReactNode, useId } from "react";
+import {
+  ChangeEvent,
+  InputHTMLAttributes,
+  ReactNode,
+  useId,
+  KeyboardEvent,
+} from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import Button from "./Button";
@@ -77,6 +83,22 @@ const InfoInput = ({
           disabled={!setValue}
           enterKeyHint={enterKeyHint}
           {...onChangeProps}
+          onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
+            if (e.key !== "Enter") return;
+            const inputs = document.querySelectorAll("input");
+            if (inputs.length === 1) {
+              inputs[0].blur();
+              return;
+            }
+            if (inputs.length > 1) {
+              const currentInd = [...inputs].indexOf(e.currentTarget);
+              if (currentInd === inputs.length - 1) {
+                inputs[0].blur();
+                return;
+              }
+              inputs[currentInd + 1].focus();
+            }
+          }}
         />
         {value && clearHandler && (
           <Button clickHandler={clearHandler}>
