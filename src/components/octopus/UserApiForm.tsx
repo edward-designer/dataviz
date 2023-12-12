@@ -219,18 +219,17 @@ const UserApiForm = ({ open, setOpen }: IUserApiForm) => {
           }
           remark={
             <Remark variant="badge">
-              Calculating actual gas costs is very complex as we cannot get all
-              the required info from Octopus. If you find the calculated costs
-              are off by a lot, pleasee find out your gas conversion factor from
-              your bills:
-              <Image
-                className="block my-2"
-                src="/images/gas-factor.jpg"
-                width={320}
-                height={401}
-                alt="get your gas conversion figure"
-              />
-              Or try changing this value to &quot;1&quot; to see if that would fit.
+              Calculating actual gas costs is very complex. If you find the
+              calculation is off by a lot, please find out{" "}
+              <a
+                href="/images/gas-factor.jpg"
+                target="_blank"
+                className="underline hover:no-underline text-accentPink-500"
+              >
+                your gas conversion factor from your bills
+              </a>
+              . Or try changing this value to &quot;1&quot; to see if that would
+              fit.
             </Remark>
           }
         />
