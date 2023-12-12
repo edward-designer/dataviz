@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { UserContextProvider } from "@/context/user";
 import { WindowResizeProvider } from "@/context/windowResize";
 import { WindowVisibilityProvider } from "@/context/windowVisibility";
-import { TomorrowPriceProvider } from "@/context/tomorrowPrice";
+import { LastShownProvider } from "@/context/lastShownDates";
 
 const Providers = ({ children }) => {
   const [queryClient] = useState(() => new QueryClient());
@@ -15,11 +15,11 @@ const Providers = ({ children }) => {
     <WindowVisibilityProvider>
       <WindowResizeProvider>
         <UserContextProvider>
-          <TomorrowPriceProvider>
+          <LastShownProvider>
             <QueryClientProvider client={queryClient}>
               {children}
             </QueryClientProvider>
-          </TomorrowPriceProvider>
+          </LastShownProvider>
         </UserContextProvider>
       </WindowResizeProvider>
     </WindowVisibilityProvider>

@@ -31,7 +31,7 @@ import { EnergyIcon } from "./EnergyIcon";
 import { useContext, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { WindowVisibilityContext } from "@/context/windowVisibility";
-import { TomorrowPriceContext } from "@/context/tomorrowPrice";
+import { TomorrowPriceContext } from "@/context/lastShownDates";
 import useCurrentLocationPriceCapQuery from "@/hooks/useCurrentLocationPriceCapQuery";
 
 const PricePane = ({

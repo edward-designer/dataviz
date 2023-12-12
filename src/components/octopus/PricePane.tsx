@@ -31,7 +31,7 @@ import { EnergyIcon } from "./EnergyIcon";
 import { useContext, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { WindowVisibilityContext } from "@/context/windowVisibility";
-import { TomorrowPriceContext } from "@/context/tomorrowPrice";
+import { LastShownContext } from "@/context/lastShownDates";
 import useCurrentLocationPriceCapQuery from "@/hooks/useCurrentLocationPriceCapQuery";
 
 const PricePane = ({
@@ -49,11 +49,10 @@ const PricePane = ({
       type,
       gsp,
     });
-  const { hasChanged } = useContext(WindowVisibilityContext);
   const {
-    tomorrowRates: { [type]: tomorrowRate },
-    setTomorrowRates,
-  } = useContext(TomorrowPriceContext);
+    lastShownDate: { [type]: lastShownDate },
+    setLastShownDate,
+  } = useContext(LastShownContext);
 
   const todayDate = new Date().toLocaleDateString();
   const results = data?.[0]?.results ?? [];
@@ -113,8 +112,7 @@ const PricePane = ({
   useEffect(() => {
     if (
       priceTomorrow !== "--" &&
-      hasChanged &&
-      new Date().toISOString() !== tomorrowRate
+      new Date().toLocaleDateString() !== lastShownDate
     ) {
       toast(
         `Update: ${ENERGY_TYPE[type]} rate tomorrow is ${priceTomorrow}p (${
@@ -124,14 +122,19 @@ const PricePane = ({
           icon: Number(priceChangeTomorrow) >= 0 ? "🤨" : "🥳",
         }
       );
+      setLastShownDate((value) => ({
+        ...value,
+        [type]: new Date().toLocaleDateString(),
+      }));
     }
-    setTomorrowRates((value) => ({
-      ...value,
-      [type]: new Date().toISOString(),
-    }));
-    // hasChanged not to initiate useEffect
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [priceChangeTomorrow, priceTomorrow, type, todayDate]);
+  }, [
+    priceChangeTomorrow,
+    priceTomorrow,
+    type,
+    todayDate,
+    lastShownDate,
+    setLastShownDate,
+  ]);
 
   return (
     <div className="pricePane relative flex-1">
