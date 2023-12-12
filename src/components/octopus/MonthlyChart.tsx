@@ -1,4 +1,3 @@
-import { TariffResult } from "@/data/source";
 import {
   interpolateRgbBasis,
   maxIndex,
@@ -7,27 +6,17 @@ import {
   scaleSequential,
 } from "d3";
 
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { PointerEvent, useContext, useEffect, useRef, useState } from "react";
-import { evenRound, formatLocaleTimePeriod } from "../../utils/helpers";
-import FormattedPrice from "./FormattedPrice";
-import { WindowVisibilityContext } from "@/context/windowVisibility";
+import { useRef } from "react";
 
-import { TbPigMoney } from "react-icons/tb";
-import { HiOutlineCurrencyPound } from "react-icons/hi2";
-import { TooltipArrow } from "@radix-ui/react-tooltip";
 import MonthlyChartBar from "./MonthlyChartBar";
 
 export interface IMonthlyChart {
   cost: { [x: string]: number }[];
   costSVT: { [x: string]: number }[];
+  lastDate: null | string;
 }
 
-const MonthlyChart = ({ cost, costSVT }: IMonthlyChart) => {
+const MonthlyChart = ({ cost, costSVT, lastDate }: IMonthlyChart) => {
   const scrollContainerRef = useRef<null | HTMLDivElement>(null);
 
   const valueAccessor = (d: { [x: string]: number }) => Object.values(d)[0];
@@ -65,6 +54,7 @@ const MonthlyChart = ({ cost, costSVT }: IMonthlyChart) => {
                 color: colorScale(saving),
                 period: periodAccessor(monthlyCost),
                 ind,
+                lastDate,
               };
               return <MonthlyChartBar key={ind} {...chartBarProps} />;
             })}

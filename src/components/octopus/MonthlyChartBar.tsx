@@ -23,6 +23,7 @@ interface IMonthlyChartBar {
   monthlycostCurrent: number;
   monthlycostSVT: number;
   ind: number;
+  lastDate: null | string;
 }
 
 const MonthlyChartBar = ({
@@ -34,6 +35,7 @@ const MonthlyChartBar = ({
   monthlycostCurrent,
   monthlycostSVT,
   ind,
+  lastDate,
 }: IMonthlyChartBar) => {
   const [open, setOpen] = useState(false);
 
@@ -83,6 +85,11 @@ const MonthlyChartBar = ({
             </span>
           </TooltipTrigger>
           <TooltipContent className="bg-theme-900 text-base font-sans">
+            {ind === 0 && lastDate && (
+              <div className="text-xs font-sans text-theme-300 mb-1">
+                (latest reading: {new Date(lastDate).toLocaleString()})
+              </div>
+            )}
             <div className="flex items-center gap-1">
               <TbMoneybag />
               Current: £{evenRound(monthlycostCurrent, 2, true)}

@@ -48,14 +48,13 @@ const SavingsChart = ({
   serialNo: string;
 }) => {
   const imageRef = useRef<HTMLDivElement | null>(null);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const today = new Date();
   today.setHours(23, 59, 59, 999);
   const toDate = today.toISOString();
   const category = "Tracker";
 
-  const { cost, totalUnit, totalPrice, totalStandingCharge, isLoading } =
+  const { cost, totalUnit, totalPrice, totalStandingCharge, isLoading, lastDate } =
     useConsumptionCalculation({
       tariff,
       fromDate,
@@ -192,7 +191,7 @@ const SavingsChart = ({
         {cost.length > 0 && costSVT.length ? (
           <>
             <div className="flex flex-1 flex-col md:flex-row justify-between gap-4 max-h-full overflow-hidden">
-              <MonthlyChart cost={cost} costSVT={costSVT} />
+              <MonthlyChart cost={cost} costSVT={costSVT} lastDate={lastDate} />
               <div className="flex flex-col font-normal justify-between divide-y [&>div]:border-accentBlue-900 gap-1">
                 <div className="flex flex-wrap justify-between items-start md:block text-[#85cbf9] bg-theme-900/30">
                   <Badge
@@ -243,7 +242,7 @@ const SavingsChart = ({
                   />
                   <div className="font-digit text-4xl flex flex-col items-end justify-start font-medium">
                     <FormattedPrice price={totalCost} value="pound" />
-                    <div className="text-xs -translate-y-1">{`@ ${periodAccessor(
+                    <div className="text-xs font-sans font-light -translate-y-1">{`@ ${periodAccessor(
                       cost[cost.length - 1]
                     )} - ${periodAccessor(cost[0])}`}</div>
                   </div>
@@ -256,7 +255,7 @@ const SavingsChart = ({
                   />
                   <div className="font-digit text-4xl flex flex-col items-end justify-start">
                     <FormattedPrice price={totalSVT} value="pound" />
-                    <div className="text-xs -translate-y-1">{`@ ${periodAccessor(
+                    <div className="text-xs font-sans font-light -translate-y-1">{`@ ${periodAccessor(
                       cost[cost.length - 1]
                     )} - ${periodAccessor(cost[0])}`}</div>
                   </div>
@@ -340,11 +339,11 @@ const SavingsChart = ({
             )}
 
             <div className="text-white/80 text-sm flex items-center gap-1">
-              <PiQuestion className="fill-accentBlue-500" />
+              <PiQuestion className="fill-accentPink-500 w-6 h-6" />
               Why the above results are different from my Octopus bills?
               <Remark variant="badge">
                 As we cannot get your bills directly from Octopus, we have
-                applied pproximations and assumptions in the calculations.
+                applied approximations and assumptions in the calculations.
                 Reasons for the differences may be missing data, rounding or, in
                 the case of gas, the conversion of reading of gas volume to kWh
                 (the unit used in our daily quote) because

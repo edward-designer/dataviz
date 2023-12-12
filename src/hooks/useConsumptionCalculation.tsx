@@ -11,9 +11,7 @@ import useYearlyTariffQuery from "@/hooks/useYearlyTariffQuery";
 import { evenRound } from "@/utils/helpers";
 import { useQuery } from "@tanstack/react-query";
 import { useContext } from "react";
-import useCurrentLocationPriceCapQuery from "./useCurrentLocationPriceCapQuery";
 import usePriceCapQuery from "./usePriceCapQuery";
-import { DSVParsedArray } from "d3";
 
 export type IConsumptionCalculator = {
   deviceNumber: string;
@@ -200,6 +198,7 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
     totalPrice: 0,
     totalStandingCharge: 0,
     isLoading: isLoading || isRateDataLoading,
+    lastDate: null,
   };
 };
 
@@ -406,6 +405,7 @@ export const calculateMonthlyPrices = (
     totalPrice,
     totalStandingCharge,
     isLoading: false,
+    lastDate: consumptionData.results[0].interval_end,
   };
 };
 
@@ -590,5 +590,6 @@ export const calculatePrice = (
     totalPrice,
     totalStandingCharge,
     isLoading: false,
+    lastDate: null,
   };
 };
