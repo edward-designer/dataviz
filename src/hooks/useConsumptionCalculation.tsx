@@ -387,15 +387,20 @@ export const calculateMonthlyPrices = (
       if (category === "Fixed") {
         standingCharge = standingChargeData.results[0]?.value_inc_vat ?? 0;
       } else {
-        standingCharge =
-          standingChargeData.results
-            .filter((d) => d.payment_method !== "NON_DIRECT_DEBIT")
-            .find(
-              (d) =>
-                new Date(d.valid_from) <= new Date(currentDay) &&
-                (d.valid_to === null ||
-                  new Date(d.valid_to) >= new Date(currentDay))
-            )?.value_inc_vat ?? 0;
+        // for newer tariffs with starting date earlier than consumption date
+        if (standingChargeData.results.length === 1) {
+          standingCharge = standingChargeData.results[0]?.value_inc_vat ?? 0;
+        } else {
+          standingCharge =
+            standingChargeData.results
+              .filter((d) => d.payment_method !== "NON_DIRECT_DEBIT")
+              .find(
+                (d) =>
+                  new Date(d.valid_from) <= new Date(currentDay) &&
+                  (d.valid_to === null ||
+                    new Date(d.valid_to) >= new Date(currentDay))
+              )?.value_inc_vat ?? 0;
+        }
       }
       monthlyStandingCharge += standingCharge;
     }
@@ -575,15 +580,20 @@ export const calculatePrice = (
       if (category === "Fixed") {
         standingCharge = standingChargeData.results[0]?.value_inc_vat ?? 0;
       } else {
-        standingCharge =
-          standingChargeData.results
-            .filter((d) => d.payment_method !== "NON_DIRECT_DEBIT")
-            .find(
-              (d) =>
-                new Date(d.valid_from) <= new Date(currentDay) &&
-                (d.valid_to === null ||
-                  new Date(d.valid_to) >= new Date(currentDay))
-            )?.value_inc_vat ?? 0;
+        // for newer tariffs with starting date earlier than consumption date
+        if (standingChargeData.results.length === 1) {
+          standingCharge = standingChargeData.results[0]?.value_inc_vat ?? 0;
+        } else {
+          standingCharge =
+            standingChargeData.results
+              .filter((d) => d.payment_method !== "NON_DIRECT_DEBIT")
+              .find(
+                (d) =>
+                  new Date(d.valid_from) <= new Date(currentDay) &&
+                  (d.valid_to === null ||
+                    new Date(d.valid_to) >= new Date(currentDay))
+              )?.value_inc_vat ?? 0;
+        }
       }
       totalStandingCharge += standingCharge;
     }
@@ -611,6 +621,9 @@ export const calculatePrice = (
     totalPrice = totalPrice * 1.05;
     if (type === "E") totalStandingCharge = totalStandingCharge * 1.15;
     if (type === "G") totalStandingCharge = totalStandingCharge * 1.02;
+  }
+  if (category === "Agile") {
+    if (type === "E") totalStandingCharge = totalStandingCharge * 1.15;
   }
 
   return {
