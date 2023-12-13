@@ -129,7 +129,7 @@ const TrackerTariff = () => {
         <table cellPadding={1}>
           <thead>
             <tr>
-              <th className="w-1/4">Tracker Plan</th>
+              <th className="w-1/4">Tracker Tariff</th>
               <th className="w-1/4">Electricity Cap / kWh</th>
               <th className="w-1/4">Gas Cap / kWh</th>
             </tr>

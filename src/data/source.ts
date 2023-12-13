@@ -94,7 +94,7 @@ export const SVT_GTARIFF =
 export const AGILE: ITrackerTariffPlan[] = [
   {
     code: "AGILE-23-12-06",
-    name: "Agile Octopus December 2023 v1",
+    name: "Agile Octopus Dec 2023 v1",
     currentPlan: true,
     cap: {
       E: 100,
@@ -103,7 +103,7 @@ export const AGILE: ITrackerTariffPlan[] = [
   },
   {
     code: "AGILE-FLEX-22-11-25",
-    name: "Agile Octopus November 2022 v1",
+    name: "Agile Octopus Nov 2022 v1",
     currentPlan: false,
     cap: {
       E: 100,
@@ -112,7 +112,7 @@ export const AGILE: ITrackerTariffPlan[] = [
   },
   {
     code: "AGILE-OUTGOING-19-05-13",
-    name: "Agile Outgoing Octopus May 2019",
+    name: "Agile Outgoing Octopus",
     currentPlan: true,
     cap: {
       E: 100,
