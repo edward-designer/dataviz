@@ -56,6 +56,8 @@ const HalfHourlyChart = ({
     });
   }, [focus, showTicker]);
 
+  const reversedRates = [...rates].reverse();
+
   useEffect(() => {
     if (
       !showTicker ||
@@ -96,21 +98,23 @@ const HalfHourlyChart = ({
     setCurrentPeriodIndicatorPosition();
     const timeId = window.setInterval(setCurrentPeriodIndicatorPosition, 1000);
     return () => window.clearInterval(timeId);
-  }, []);
+  }, [reversedRates, showTicker]);
 
   const width = 100;
   const xScale = scaleLinear()
-    .domain([0, rates[max]?.value_inc_vat ?? 0])
-    .range([50, width]);
+    .domain([
+      Math.min(rates[min]?.value_inc_vat ?? 0, -10),
+      rates[max]?.value_inc_vat ?? 0,
+    ])
+    .range([0, width]);
   const colorScale = scaleSequential(
     interpolateRgbBasis(["#aaffdd", "#3377bb", "#aa33cc"])
   ).domain([rates[min]?.value_inc_vat ?? 0, rates[max]?.value_inc_vat ?? 0]);
-  const reversedRates = [...rates].reverse();
+
   const priceNowIndex = reversedRates.findIndex((data) => {
     const now = new Date();
     return new Date(data.valid_from) < now && new Date(data.valid_to) > now;
   });
-
   return (
     <div
       className="relative flex-1 flex overflow-y-scroll"
@@ -167,7 +171,7 @@ const HalfHourlyChart = ({
         }}
       >
         {reversedRates.length > 0 &&
-          [...rates].reverse().map((rate, ind) => (
+          reversedRates.map((rate, ind) => (
             <li
               key={ind}
               className={`flex items-center select-none`}
@@ -182,12 +186,20 @@ const HalfHourlyChart = ({
               >
                 <span className="flex sm:items-center flex-col sm:flex-row overflow-visible ">
                   <span
-                    className={`whitespace-nowrap sm:whitespace-normal block leading-tight min-w-18 sm:w-12 shrink-0`}
+                    className={`whitespace-nowrap sm:whitespace-normal block leading-tight min-w-18 sm:w-10 shrink-0 ${
+                      rate.value_inc_vat < (rates[max]?.value_inc_vat ?? 0) / 3
+                        ? "text-white mix-blend-difference"
+                        : "text-black"
+                    }`}
                   >
                     {formatLocaleTimePeriod(rate.valid_from, rate.valid_to)}
                   </span>
                   <span
-                    className={`block leading-tight w-18 text-3xl md:text-4xl`}
+                    className={`block leading-tight w-18 text-3xl md:text-4xl ${
+                      rate.value_inc_vat < (rates[max]?.value_inc_vat ?? 0) / 3
+                        ? "text-white mix-blend-difference"
+                        : "text-black"
+                    }`}
                   >
                     <FormattedPrice price={rate.value_inc_vat} />
                   </span>
