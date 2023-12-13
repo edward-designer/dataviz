@@ -333,17 +333,19 @@ export const calculateMonthlyPrices = (
         }
         currentRateIndex++;
       }
-    } else {
+    } else if (category === "Tracker" || category === "Agile") {
+      // Agile or Tracker
+      const currentResultStartDateTimestamp = new Date(
+        consumptionDataResults[i].interval_start
+      ).valueOf();
+      const currentRateStartDateTimestamp = new Date(
+        filteredRateDataResults[i + rateDataOffset]?.valid_from
+      ).valueOf();
       /* check the same start time OR difference of 1 hour in daylight saving time */
       if (
-        new Date(
-          filteredRateDataResults[i + rateDataOffset]?.valid_from
-        ).valueOf() ===
-          new Date(consumptionDataResults[i].interval_start).valueOf() ||
-        new Date(
-          filteredRateDataResults[i + rateDataOffset]?.valid_from
-        ).valueOf() ===
-          new Date(consumptionDataResults[i].interval_start).valueOf() - 3600000
+        currentRateStartDateTimestamp === currentResultStartDateTimestamp ||
+        currentRateStartDateTimestamp ===
+          currentResultStartDateTimestamp - 3600000
       ) {
         totalPrice +=
           filteredRateDataResults[i + rateDataOffset].value_inc_vat *
@@ -354,8 +356,7 @@ export const calculateMonthlyPrices = (
           if (
             new Date(
               filteredRateDataResults[i + rateDataOffset + j]?.valid_from
-            ).valueOf() ===
-            new Date(consumptionDataResults[i].interval_start).valueOf()
+            ).valueOf() === currentResultStartDateTimestamp
           ) {
             totalPrice +=
               filteredRateDataResults[i + rateDataOffset + j].value_inc_vat *
@@ -522,15 +523,17 @@ export const calculatePrice = (
       }
     } else if (category === "Tracker" || category === "Agile") {
       // Agile or Tracker
+      const currentResultStartDateTimestamp = new Date(
+        consumptionDataResults[i].interval_start
+      ).valueOf();
+      const currentRateStartDateTimestamp = new Date(
+        filteredRateDataResults[i + rateDataOffset]?.valid_from
+      ).valueOf();
+      /* check the same start time OR difference of 1 hour in daylight saving time */
       if (
-        new Date(
-          filteredRateDataResults[i + rateDataOffset]?.valid_from
-        ).valueOf() ===
-          new Date(consumptionDataResults[i].interval_start).valueOf() ||
-        new Date(
-          filteredRateDataResults[i + rateDataOffset]?.valid_from
-        ).valueOf() ===
-          new Date(consumptionDataResults[i].interval_start).valueOf() - 3600000
+        currentRateStartDateTimestamp === currentResultStartDateTimestamp ||
+        currentRateStartDateTimestamp ===
+          currentResultStartDateTimestamp - 3600000
       ) {
         totalPrice +=
           filteredRateDataResults[i + rateDataOffset].value_inc_vat *
@@ -541,8 +544,7 @@ export const calculatePrice = (
           if (
             new Date(
               filteredRateDataResults[i + rateDataOffset + j]?.valid_from
-            ).valueOf() ===
-            new Date(consumptionDataResults[i].interval_start).valueOf()
+            ).valueOf() === currentResultStartDateTimestamp
           ) {
             totalPrice +=
               filteredRateDataResults[i + rateDataOffset + j].value_inc_vat *

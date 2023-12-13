@@ -198,7 +198,7 @@ const SavingsChart = ({
           <>
             <div className="flex flex-1 flex-col md:flex-row justify-between gap-4 max-h-full overflow-hidden">
               <MonthlyChart cost={cost} costSVT={costSVT} lastDate={lastDate} />
-              <div className="flex flex-col font-normal justify-between divide-y [&>div]:border-accentBlue-900 gap-1">
+              <div className="flex flex-col font-normal justify-start divide-y [&>div]:border-accentBlue-900 gap-3">
                 <div className="flex flex-wrap justify-between items-start md:block text-[#85cbf9] bg-theme-900/30">
                   <Badge
                     label="Total Saving"

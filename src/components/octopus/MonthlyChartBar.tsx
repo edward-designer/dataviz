@@ -71,14 +71,19 @@ const MonthlyChartBar = ({
             >
               <span className="flex sm:items-center flex-col sm:flex-row overflow-visible ">
                 <span
-                  className={`text-xs md:text-base font-bold whitespace-nowrap sm:whitespace-normal block leading-tight min-w-20 sm:w-14 shrink-0 text-white mix-blend-difference md:mix-blend-normal md:text-black`}
+                  className={`text-xs md:text-base font-bold whitespace-nowrap sm:whitespace-normal block leading-tight min-w-20 sm:w-14 shrink-0  md:mix-blend-normal md:text-black ${
+                    widthCurrent < 40 ? "mix-blend-difference text-white" : ""
+                  }`}
                 >
                   {period}
                 </span>
                 <span
-                  className={`flex leading-tight w-18 font-bold text-xl md:font-extralight md:text-4xl items-center text-white mix-blend-difference md:mix-blend-normal md:text-black`}
+                  className={`flex leading-tight w-18 font-bold text-xl md:font-extralight md:text-4xl items-center ${
+                    widthCurrent < 40 ? "mix-blend-difference text-white" : ""
+                  } md:mix-blend-normal md:text-black`}
                 >
-                  <TbPigMoney className="stroke-white w-4 h-4 md:w-6 md:h-6 flex-shrink-0" />
+                  <TbPigMoney className={`md:text-white ${
+                    widthCurrent < 40 ? "mix-blend-normal text-white" : "text-black"} w-4 h-4 md:w-6 md:h-6 flex-shrink-0`} />
                   <FormattedPrice price={saving} value="pound" />
                 </span>
               </span>

@@ -17,54 +17,40 @@ import TariffSelect from "./TariffSelect";
 import MapChart from "@/components/octopus/MapChart";
 import { json } from "d3";
 import { useQuery } from "@tanstack/react-query";
-import { ITariffPlan, QueryProducts } from "@/data/source";
+import { AGILE, ITariffPlan, QueryProducts } from "@/data/source";
 import PricePaneAgile2 from "./PricePaneAgile2";
 import MapChartAgile from "./MapChartAgile";
 import { WindowResizeContext } from "@/context/windowResize";
 import { WindowVisibilityContext } from "@/context/windowVisibility";
 
 const AgileTariff = () => {
-  const [tariff, setTariff] = useState("");
+  const [tariff, setTariff] = useState(AGILE[0].code);
   const [currentPeriod, setCurrentPeriod] = useState(new Date().toUTCString());
-  const {
-    value: { gsp },
-  } = useContext(UserContext);
+  const { value, setValue } = useContext(UserContext);
   useContext(WindowResizeContext);
   useContext(WindowVisibilityContext);
 
-  const queryCapFn = (url: string) => async () => {
-    const data: QueryProducts | undefined = await json(url);
-    const agile =
-      data?.results.filter((plan) => plan.full_name.includes("Agile")) ?? [];
-    return agile.map(
-      ({ code, display_name }) =>
-        ({
-          code,
-          name: display_name,
-          currentPlan: true,
-        } as ITariffPlan)
-    );
-  };
-  const AgilePlans = useQuery({
-    queryKey: ["getAgilePlans"],
-    queryFn: queryCapFn(
-      "https://api.octopus.energy/v1/products/?brand=OCTOPUS_ENERGY"
-    ),
-  });
+  const { gsp, agileCode } = value;
 
   useEffect(() => {
-    if (!AgilePlans.data) return;
-    setTariff(AgilePlans.data[0].code);
-  }, [AgilePlans.data]);
+    if (agileCode) setTariff(agileCode);
+  }, [agileCode]);
+
+  const handleSelect = (selectValue: string) => {
+    setTariff(selectValue);
+    setValue({ ...value, agileCode: selectValue });
+  };
+
+  const AgilePlans = AGILE;
 
   return (
     <div className="lg:col-[content] my-4">
       <section className="my-4">
         <TariffSelect
           tariff={tariff}
-          setTariff={setTariff}
+          setTariff={handleSelect}
           type="Octopus Agile Plan"
-          source={AgilePlans.data ?? []}
+          source={AgilePlans}
         >
           <Remark variant="badge">
             With Agile Octopus, you get access to half-hourly energy prices,

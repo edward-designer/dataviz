@@ -2,22 +2,14 @@
 
 import Loading from "@/components/Loading";
 import { UserContext } from "@/context/user";
-import {
-  ETARIFFS,
-  GTARIFFS,
-  IUserApiResult,
-  TariffCategory,
-} from "@/data/source";
+import { IUserApiResult } from "@/data/source";
 import { useQuery } from "@tanstack/react-query";
-import { useCallback, useContext, useState } from "react";
+import { useContext } from "react";
 import NotCurrentlySupported from "./NotCurrentlySupported";
 import Remark from "./Remark";
-import TariffComparisionCard from "./TariffComparisionCard";
-import TariffComparisionCardsContainer from "./TariffComparisionCardsContainer";
 
 import { AiFillFire } from "react-icons/ai";
 import { BsLightningChargeFill } from "react-icons/bs";
-import AddATariff from "./AddATariffToCompare";
 import SavingsChart from "./SavingsChart";
 import TariffDetails from "./TariffDetails";
 
@@ -154,8 +146,8 @@ const SavingsCalculation = () => {
                 Approximations and assumptions are used in the calculations. The
                 actual savings are likely to differ because of missing data and
                 rounding. Also, please note the figures for the latest month may
-                not be complete (maybe up to a few days earlier) as it takes time
-                for your data to be updated.
+                not be complete (maybe up to a few days earlier) as it takes
+                time for your data to be updated.
               </Remark>
             </div>
           </div>

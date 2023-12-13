@@ -91,6 +91,36 @@ export const SVT_ETARIFF =
 export const SVT_GTARIFF =
   GTARIFFS.find((tariff) => tariff.category === "SVT")?.tariff ?? "";
 
+export const AGILE: ITrackerTariffPlan[] = [
+  {
+    code: "AGILE-23-12-06",
+    name: "Agile Octopus December 2023 v1",
+    currentPlan: true,
+    cap: {
+      E: 100,
+      G: 0,
+    },
+  },
+  {
+    code: "AGILE-FLEX-22-11-25",
+    name: "Agile Octopus November 2022 v1",
+    currentPlan: false,
+    cap: {
+      E: 100,
+      G: 0,
+    },
+  },
+  {
+    code: "AGILE-OUTGOING-19-05-13",
+    name: "Agile Outgoing Octopus May 2019",
+    currentPlan: true,
+    cap: {
+      E: 100,
+      G: 0,
+    },
+  },
+];
+
 export const TRACKER: ITrackerTariffPlan[] = [
   {
     code: "SILVER-23-12-06",
