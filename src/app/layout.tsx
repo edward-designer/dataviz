@@ -115,7 +115,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         >
           <Toast>
             <ReactQueryDevtools initialIsOpen={false} />
-            <div className="min-h-screen p-4 lg:grid grid-rows-[100px_1fr_140px] lg:py-0 lg:p-0 lg:grid-cols-[[fullwidth_start]_minmax(0,5%)_[breakout_start]_minmax(0,5%)_[content_start]_minmax(1000px,_1fr)_[content_end]_minmax(0,5%)_[breakout_end]_minmax(0,5%)_[fullwidth_end]]">
+            <div className="min-h-screen p-4 lg:grid grid-rows-[100px_1fr_160px] lg:py-0 lg:p-0 lg:grid-cols-[[fullwidth_start]_minmax(0,5%)_[breakout_start]_minmax(0,5%)_[content_start]_minmax(1000px,_1fr)_[content_end]_minmax(0,5%)_[breakout_end]_minmax(0,5%)_[fullwidth_end]]">
               <Header className="lg:col-[content]" />
               {children}
               <footer className="lg:col-[content] text-sm font-light text-white/60 mt-16">
@@ -126,7 +126,16 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                 </a>
                 . This app does not collect personal information. <br />
                 Your Octopus info is stored on your browser only for retrieving
-                pricing and consumption data.
+                pricing and consumption data. <br />
+                <span className="text-accentBlue-500">
+                  Bugs report & enquiries:{" "}
+                  <a
+                    href="mailto:edward.chung.dev@gmail.com"
+                    className="underline"
+                  >
+                    edward.chung.dev@gmail.com
+                  </a>
+                </span>
               </footer>
             </div>
           </Toast>
