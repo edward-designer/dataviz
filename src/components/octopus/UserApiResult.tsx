@@ -9,7 +9,7 @@ import {
   TariffCategory,
 } from "@/data/source";
 import { useQuery } from "@tanstack/react-query";
-import { useCallback, useContext, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import NotCurrentlySupported from "./NotCurrentlySupported";
 import Remark from "./Remark";
 import TariffComparisionCard from "./TariffComparisionCard";
@@ -18,6 +18,7 @@ import TariffComparisionCardsContainer from "./TariffComparisionCardsContainer";
 import { AiFillFire } from "react-icons/ai";
 import { BsLightningChargeFill } from "react-icons/bs";
 import AddATariff from "./AddATariffToCompare";
+import { getGsp } from "@/utils/helpers";
 
 const UserApiResult = () => {
   const { value, setValue } = useContext(UserContext);
@@ -99,9 +100,23 @@ const UserApiResult = () => {
     data?.properties[0].gas_meter_points[0].meters[0].serial_number;
 
   const postcode = data?.properties[0].postcode;
-  if (postcode && postcode !== value.postcode) {
-    setValue({ ...value, postcode });
-  }
+  useEffect(() => {
+    if (postcode && postcode !== value.postcode) {
+      getGsp(postcode)
+        .then((gsp) => {
+          console.log(gsp);
+          if (gsp !== false)
+            setValue({
+              ...value,
+              postcode: postcode.toUpperCase(),
+              gsp: gsp.replace("_", ""),
+            });
+        })
+        .catch((error: unknown) => {
+          if (error instanceof Error) throw new Error(error.message);
+        });
+    }
+  }, [postcode, setValue, value]);
 
   const yesterday = new Date(
     new Date(new Date().setHours(23, 59, 59, 999)).setDate(

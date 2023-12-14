@@ -4,7 +4,7 @@ import Loading from "@/components/Loading";
 import { UserContext } from "@/context/user";
 import { IUserApiResult } from "@/data/source";
 import { useQuery } from "@tanstack/react-query";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import NotCurrentlySupported from "./NotCurrentlySupported";
 import Remark from "./Remark";
 
@@ -12,6 +12,7 @@ import { AiFillFire } from "react-icons/ai";
 import { BsLightningChargeFill } from "react-icons/bs";
 import SavingsChart from "./SavingsChart";
 import TariffDetails from "./TariffDetails";
+import { getGsp } from "@/utils/helpers";
 
 const SavingsCalculation = () => {
   const { value, setValue } = useContext(UserContext);
@@ -61,9 +62,23 @@ const SavingsCalculation = () => {
   const currentGTariff = currentGContract?.tariff_code.slice(5, -2) ?? "";
 
   const postcode = data?.properties[0].postcode;
-  if (postcode && postcode !== value.postcode) {
-    setValue({ ...value, postcode });
-  }
+  useEffect(() => {
+    if (postcode && postcode !== value.postcode) {
+      getGsp(postcode)
+        .then((gsp) => {
+          console.log(gsp);
+          if (gsp !== false)
+            setValue({
+              ...value,
+              postcode: postcode.toUpperCase(),
+              gsp: gsp.replace("_", ""),
+            });
+        })
+        .catch((error: unknown) => {
+          if (error instanceof Error) throw new Error(error.message);
+        });
+    }
+  }, [postcode, setValue, value]);
 
   const yesterday = new Date(
     new Date(new Date().setHours(23, 59, 59, 999)).setDate(
