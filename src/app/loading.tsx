@@ -5,7 +5,7 @@ import octopusIcon from "../../public/lottie/octopus.json";
 
 export default function Loading() {
   return (
-    <div className="fixed h-screen w-screen flex items-center justify-center flex-col">
+    <div className="lg:col-[content] h-screen w-full flex items-center justify-center flex-col">
       <Lottie
         animationData={octopusIcon}
         aria-hidden={true}
