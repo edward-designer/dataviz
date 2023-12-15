@@ -3,8 +3,7 @@ import SavingsContainer from "@/components/octopus/SavingsContainer";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title:
-    "Savings of Octoprice Tariffs Compared with Standard Varible | Octoprice",
+  title: "Savings of My Octopus Tariff vs Varible (SVT) | Octoprice",
   description:
     "An overview of how much you have saved after switching to your latest Octopus Tariff",
   keywords: [
