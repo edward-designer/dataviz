@@ -21,6 +21,7 @@
     "@splinetool/runtime": "^0.9.516",
     "@tanstack/react-query": "^5.8.4",
     "@tanstack/react-query-devtools": "^5.8.4",
+    "@vercel/analytics": "^1.1.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "d3": "^7.8.5",
