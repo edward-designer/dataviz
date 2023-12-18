@@ -96,7 +96,11 @@ const TariffComparisionCard = ({
                   </span>
                 ) : (
                   <span className="text-accentPink-500">
-                    £<AnimatedDigits to={evenRound(compareTo - cost, 2)} /> more
+                    £
+                    <AnimatedDigits
+                      to={Math.abs(evenRound(compareTo - cost, 2))}
+                    />{" "}
+                    more
                   </span>
                 )}
                 <Comparison
