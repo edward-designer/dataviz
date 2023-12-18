@@ -1,27 +1,19 @@
 "use client";
 
 import Loading from "@/components/Loading";
-import { UserContext } from "@/context/user";
-import {
-  ETARIFFS,
-  GTARIFFS,
-  IUserApiResult,
-  TariffCategory,
-} from "@/data/source";
-import { useQuery } from "@tanstack/react-query";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { ETARIFFS, GTARIFFS, TariffCategory } from "@/data/source";
+import { useCallback, useState } from "react";
 import NotCurrentlySupported from "./NotCurrentlySupported";
 import Remark from "./Remark";
 import TariffComparisionCard from "./TariffComparisionCard";
 import TariffComparisionCardsContainer from "./TariffComparisionCardsContainer";
 
+import useAccountDetails from "@/hooks/useAccountDetails";
 import { AiFillFire } from "react-icons/ai";
 import { BsLightningChargeFill } from "react-icons/bs";
 import AddATariff from "./AddATariffToCompare";
-import { getGsp } from "@/utils/helpers";
 
 const UserApiResult = () => {
-  const { value, setValue } = useContext(UserContext);
   const [tariffsEToCompare, setTariffsEToCompare] = useState(
     ETARIFFS.slice(0, 3)
   );
@@ -61,62 +53,17 @@ const UserApiResult = () => {
     []
   );
 
-  const queryFn = async () => {
-    try {
-      const response = await fetch(
-        `https://api.octopus.energy/v1/accounts/${value.accountNumber}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Basic ${btoa(value.apiKey)}`,
-          },
-        }
-      );
-      if (!response.ok) throw new Error("Sorry the request was unsuccessful");
-      return response.json();
-    } catch (err: unknown) {
-      if (err instanceof Error)
-        throw new Error(
-          `Sorry, we have an error with your info: ${err.message}. Please check if your info are correct.`
-        );
-      throw new Error("Sorry, the request was unsuccessful");
-    }
-  };
-
-  const { data, isSuccess, isLoading, error, isError } =
-    useQuery<IUserApiResult>({
-      queryKey: ["user", value.accountNumber, value.apiKey],
-      queryFn,
-    });
-
-  const MPAN = data?.properties[0].electricity_meter_points[0].mpan ?? "";
-  const ESerialNo =
-    data?.properties[0].electricity_meter_points[0].meters[0].serial_number ??
-    "";
-
-  const MPRN = data?.properties[0].gas_meter_points[0].mprn;
-  const GSerialNo =
-    data?.properties[0].gas_meter_points[0].meters[0].serial_number;
-
-  const postcode = data?.properties[0].postcode;
-  useEffect(() => {
-    if (postcode && postcode !== value.postcode) {
-      getGsp(postcode)
-        .then((gsp) => {
-          console.log(gsp);
-          if (gsp !== false)
-            setValue({
-              ...value,
-              postcode: postcode.toUpperCase(),
-              gsp: gsp.replace("_", ""),
-            });
-        })
-        .catch((error: unknown) => {
-          if (error instanceof Error) throw new Error(error.message);
-        });
-    }
-  }, [postcode, setValue, value]);
+  const {
+    data,
+    isSuccess,
+    isLoading,
+    error,
+    isError,
+    MPAN,
+    ESerialNo,
+    MPRN,
+    GSerialNo,
+  } = useAccountDetails();
 
   const yesterday = new Date(
     new Date(new Date().setHours(23, 59, 59, 999)).setDate(
@@ -138,6 +85,7 @@ const UserApiResult = () => {
 
   if (
     isSuccess &&
+    data &&
     (data.properties.length !== 1 ||
       data.properties[0].electricity_meter_points.length > 1 ||
       data.properties[0].gas_meter_points.length > 1)
@@ -177,7 +125,7 @@ const UserApiResult = () => {
           <Loading />
         </div>
       )}
-      {isError && <div>{error.message}</div>}
+      {isError && error && <div>{error.message}</div>}
       {isSuccess && (
         <>
           <div className="flex gap-2 items-center  flex-col-reverse md:flex-col lg:flex-row">

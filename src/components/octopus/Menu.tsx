@@ -125,6 +125,17 @@ const Menu = () => {
               <Badge label="beta" /> Compare{" "}
               <span className="text-lg">Tariffs</span>
             </Link>
+            <Link
+              href="/yearInReview"
+              className={`block my-5  ${
+                pathname === "/yearInReview"
+                  ? "cursor-default text-accentBlue-900"
+                  : "hover:text-accentPink-500"
+              }`}
+            >
+              <Badge label="beta" /> <span className="text-lg">Year in</span>{" "}
+              Review{" "}
+            </Link>
           </div>
           <div>
             <Link
