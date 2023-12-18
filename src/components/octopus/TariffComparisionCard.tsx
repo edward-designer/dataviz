@@ -98,7 +98,19 @@ const TariffComparisionCard = ({
                     calculations at the end of each contract month to make
                     adjustments to any charges over the price caps. In effect,
                     one will NOT be charged more than the Octopus Flexible
-                    tariff.
+                    tariff. Octopus does not state this clearly, but it can be
+                    inferred from this statement:{" "}
+                    <span className="italic">
+                      &quot;without a fixed term the tariff will be subject to
+                      the price cap&quot; -{" "}
+                      <a
+                        href="https://octopus.energy/tracker-faqs/"
+                        target="_blank"
+                        className="underline"
+                      >
+                        Octopus Energy website
+                      </a>
+                    </span>.
                   </div>
                 </Remark>
               ) : (
