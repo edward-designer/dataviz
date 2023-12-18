@@ -322,8 +322,8 @@ export const calculateMonthlyPrices = (
           new Date(currentRateEntry.valid_from) <=
             new Date(consumptionDataResults[i].interval_start) &&
           (filteredRateDataResults[j].valid_to === null ||
-            new Date(currentRateEntry.valid_to)) >=
-            new Date(consumptionDataResults[i].interval_start)
+            new Date(currentRateEntry.valid_to) >=
+              new Date(consumptionDataResults[i].interval_start))
         ) {
           totalPrice +=
             (currentRateEntry?.value_inc_vat ?? 0) *
@@ -600,7 +600,7 @@ export const calculatePrice = (
   }
 
   // if consumption data is NOT enough for the whole year (mutliply by proportion)
-  if (category === "Agile") {
+  if (category === "Agile" || category === "Go" || category === "Cosy") {
     if (consumptionDataResults.length < 365 * 48) {
       totalPrice = (totalPrice * 365 * 48) / consumptionDataResults.length;
       totalStandingCharge =
