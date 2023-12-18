@@ -9,6 +9,7 @@ import Comparison from "./Comparison";
 import { motion } from "framer-motion";
 import AnimatedDigits from "./AnimatedDigits";
 import Sparkles from "./Sparkles";
+import Remark from "./Remark";
 
 interface ITariffComparisionCard {
   deviceNumber: string;
@@ -84,6 +85,25 @@ const TariffComparisionCard = ({
               <span>
                 £<AnimatedDigits to={evenRound(cost, 2)} />
               </span>
+              {category === "Go" || category === "Cosy" ? (
+                <Remark>
+                  <div className="text-xs">
+                    <strong>
+                      The price shown here does NOT take into accounts the
+                      effects of Ofgem price caps.
+                    </strong>{" "}
+                    If the Go/Cosy tariff is <strong>NOT on fixed terms</strong>{" "}
+                    (i.e. without an end date), it should be protected by the
+                    price caps. Octopus Energy will do all the complex
+                    calculations at the end of each contract month to make
+                    adjustments to any charges over the price caps. In effect,
+                    one will NOT be charged more than the Octopus Flexible
+                    tariff.
+                  </div>
+                </Remark>
+              ) : (
+                ""
+              )}
             </div>
           </Container>
           {category !== "SVT" ? (
