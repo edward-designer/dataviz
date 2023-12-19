@@ -12,6 +12,7 @@ import { evenRound } from "@/utils/helpers";
 import { useQuery } from "@tanstack/react-query";
 import { useContext } from "react";
 import usePriceCapQuery from "./usePriceCapQuery";
+import useConsumptionData from "./useConsumptionData";
 
 export type IConsumptionCalculator = {
   deviceNumber: string;
@@ -38,39 +39,23 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
     results = "yearly",
   } = inputs;
 
-  const groupBy = {
-    Agile: "",
-    Go: "",
-    Cosy: "",
-    Tracker: "&group_by=day",
-    SVT: "&group_by=day",
-    Fixed: "&group_by=day",
-  };
-
   const fromISODate = new Date(fromDate).toISOString();
   const toISODate = new Date(toDate).toISOString();
+
   //get readings
-  const queryFn = async () => {
-    try {
-      // page_size 25000 is a year's data
-      const response = await fetch(
-        `https://api.octopus.energy/v1/${ENERGY_TYPE[type]}-meter-points/${deviceNumber}/meters/${serialNo}/consumption/?period_from=${fromISODate}&page_size=25000${groupBy[category]}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Basic ${btoa(value.apiKey)}`,
-          },
-        }
-      );
-      if (!response.ok) throw new Error("Sorry the request was unsuccessful");
-      return response.json();
-    } catch (err: unknown) {
-      if (err instanceof Error)
-        throw new Error(`Sorry, we have an error: ${err.message}`);
-      throw new Error("Sorry, the request was unsuccessful");
-    }
-  };
+  const {
+    data: consumptionData,
+    isSuccess,
+    isLoading,
+  } = useConsumptionData({
+    fromISODate,
+    toISODate,
+    type,
+    category,
+    deviceNumber,
+    serialNo,
+    apiKey: value.apiKey,
+  });
 
   const queryFnStandingChargeData = async () => {
     try {
@@ -87,16 +72,6 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
   };
 
   const caps = usePriceCapQuery({ gsp: `_${value.gsp}` as gsp });
-
-  const {
-    data: consumptionData,
-    isSuccess,
-    isLoading,
-  } = useQuery({
-    queryKey: [deviceNumber, serialNo, category, fromISODate, toISODate],
-    queryFn,
-    enabled: !!deviceNumber && !!serialNo && !!category,
-  });
 
   const {
     data: rateData,

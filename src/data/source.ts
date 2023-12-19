@@ -376,4 +376,11 @@ export type TariffCategory =
   | "SVT"
   | "Fixed"
   | "Cosy"
-  | "Go";
+  | "Go"
+  | "Chart";
+
+export interface IConsumptionData {
+  consumption: number;
+  interval_start: string;
+  interval_end: string;
+}

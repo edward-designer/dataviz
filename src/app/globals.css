@@ -192,3 +192,16 @@ input[type="range"]:focus::-webkit-slider-runnable-track {
   border-radius: 0px;
   border: 0px none #05114d;
 }
+
+.gasChart .draw,
+.electricityChart .draw {
+  stroke-dasharray: 3000;
+  stroke-dashoffset: 3000;
+  animation: draw 5s 2s linear forwards;
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}

@@ -137,7 +137,7 @@ export const tryFetch = async <T>(asyncProcess: Promise<T>) => {
 };
 
 export const selectOrAppend = (
-  element: "g" | "rect" | "circle" | "text" | "line" | "polygon",
+  element: "g" | "rect" | "circle" | "text" | "line" | "polygon" | "path",
   className: string,
   parentNode: Selection<SVGSVGElement | SVGGElement, unknown, null, undefined>
 ) => {
@@ -190,3 +190,5 @@ export const range = (start: number, end?: number, step: number = 1) => {
 
 export const capitalize = (word: string) =>
   word.replace(new RegExp(/^[a-z]{1}/), (match) => match.toUpperCase());
+
+export const toNextTen = (value: number) => Math.ceil(value / 10) * 10;

@@ -46,9 +46,9 @@ const useAccountDetails = () => {
   const currentETariff = currentEContract?.tariff_code.slice(5, -2) ?? "";
   const currentGContract =
     data?.properties[0].gas_meter_points[0].agreements.at(-1);
-  const MPRN = data?.properties[0].gas_meter_points[0].mprn;
+  const MPRN = data?.properties[0].gas_meter_points[0].mprn ?? "";
   const GSerialNo =
-    data?.properties[0].gas_meter_points[0].meters[0].serial_number;
+    data?.properties[0].gas_meter_points[0].meters[0].serial_number ?? "";
   const currentGTariff = currentGContract?.tariff_code.slice(5, -2) ?? "";
 
   const postcode = data?.properties[0].postcode;
