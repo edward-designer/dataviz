@@ -30,6 +30,7 @@ import {
   lineRadial,
   curveCatmullRomOpen,
   curveNatural,
+  easeLinear,
 } from "d3";
 
 import {
@@ -43,8 +44,14 @@ import {
 import { FaCloudBolt } from "react-icons/fa6";
 import { GiFog } from "react-icons/gi";
 import { MdWindPower } from "react-icons/md";
-import { selectOrAppend, toNextTen } from "@/utils/helpers";
+import {
+  animateNumber,
+  evenRound,
+  selectOrAppend,
+  toNextTen,
+} from "@/utils/helpers";
 import useConsumptionData from "@/hooks/useConsumptionData";
+import useTariffQuery from "@/hooks/useTariffQuery";
 
 interface IWeatherData {
   time: string;
@@ -60,16 +67,16 @@ interface IWeatherData {
 const DataArtContainer = () => {
   const chartRef = useRef<null | SVGSVGElement>(null);
 
-  const oneYearEarlier = new Date(
-    new Date(new Date().setHours(0, 0, 0, 0)).setFullYear(
-      new Date().getFullYear() - 1
-    )
-  ).toISOString();
-
   const fromDate = "2023-01-01";
   const toDate = "2023-12-31";
   const fromISODate = new Date(fromDate).toISOString();
   const toISODate = new Date(toDate).toISOString();
+
+  const icons = {
+    gas: "M 16.682 9.384 A 6.9498 6.9498 90 0 0 15.024 7.08 l -0.582 -0.534 a 0.1618 0.1618 90 0 0 -0.26 0.066 l -0.26 0.746 c -0.162 0.468 -0.46 0.946 -0.882 1.416 c -0.028 0.03 -0.06 0.038 -0.082 0.04 c -0.022 0.002 -0.056 -0.002 -0.086 -0.03 c -0.028 -0.024 -0.042 -0.06 -0.04 -0.096 c 0.074 -1.204 -0.286 -2.562 -1.074 -4.04 C 11.106 3.42 10.2 2.462 9.068 1.794 l -0.826 -0.486 c -0.108 -0.064 -0.246 0.02 -0.24 0.146 l 0.044 0.96 c 0.03 0.656 -0.046 1.236 -0.226 1.718 c -0.22 0.59 -0.536 1.138 -0.94 1.63 a 5.9128 5.9128 90 0 1 -0.95 0.922 a 7.052 7.052 90 0 0 -2.006 2.43 A 6.955 6.955 90 0 0 3.2 12.2 c 0 0.944 0.186 1.858 0.554 2.72 a 6.988 6.988 90 0 0 1.51 2.218 c 0.648 0.64 1.4 1.144 2.238 1.494 C 8.37 18.996 9.29 19.18 10.24 19.18 s 1.87 -0.184 2.738 -0.546 A 6.972 6.972 90 0 0 15.216 17.14 c 0.648 -0.64 1.156 -1.388 1.51 -2.218 a 6.884 6.884 90 0 0 0.554 -2.72 c 0 -0.976 -0.2 -1.924 -0.598 -2.818 z",
+    electricity:
+      "M11.251.068a.5.5 0 0 1 .227.58L9.677 6.5H13a.5.5 0 0 1 .364.843l-8 8.5a.5.5 0 0 1-.842-.49L6.323 9.5H3a.5.5 0 0 1-.364-.843l8-8.5a.5.5 0 0 1 .615-.09z",
+  };
 
   /* gather all data*/
   const {
@@ -90,6 +97,28 @@ const DataArtContainer = () => {
     MPRN,
     GSerialNo,
   } = useAccountDetails();
+
+  const {
+    data: tariffEData,
+    isSuccess: tariffEIsSuccess,
+    isLoading: tariffEIsLoading,
+  } = useTariffQuery<{
+    display_name: string;
+  }>({
+    tariff: currentETariff,
+    type: "E",
+  });
+
+  const {
+    data: tariffGData,
+    isSuccess: tariffGIsSuccess,
+    isLoading: tariffGIsLoading,
+  } = useTariffQuery<{
+    display_name: string;
+  }>({
+    tariff: currentGTariff,
+    type: "G",
+  });
 
   const {
     data: consumptionEData,
@@ -139,12 +168,14 @@ const DataArtContainer = () => {
   const colorScheme = {
     octopus: "#bfded8",
     weatherSymbol: "#888",
-    xAxis: "#aaa",
+    xAxis: "#99999966",
     textMonth: "#000",
-    textYear: "#798f8b66",
+    textYear: "#448f8b56",
     textTitle: "#000",
-    tempRing: "#ccc",
-    consumptionRing: '#ccc',
+    tempRing: "#33669966",
+    consumptionRing: "#99999933",
+    electricityIcon: "#1846a1",
+    gasIcon: "#f83c7f",
     Gradients: () => (
       <defs>
         <radialGradient id="fillMorning">
@@ -321,8 +352,8 @@ const DataArtContainer = () => {
         .innerRadius((d) => yScale(Number(d.temperature_2m_min)) ?? 0)
         .outerRadius((d) => yScale(Number(d.temperature_2m_max)) ?? 0)
         .startAngle((d) => xScale(d.time) ?? 0)
-        .endAngle((d) => xScale(d.time) ?? 0 + xScale.bandwidth())
-        .padAngle(0.025)
+        .endAngle((d) => (xScale(d.time) ?? 0) + xScale.bandwidth())
+        .padAngle(0.03)
         .padRadius(innerRadius);
       g.selectAll("path")
         .data(data)
@@ -367,9 +398,9 @@ const DataArtContainer = () => {
         );
     };
 
-    const xAxis = (g: Selection<SVGGElement, unknown, null, undefined>) =>
-      g
-        .attr("transform", "rotate(-90)")
+    const xAxis = (g: Selection<SVGGElement, unknown, null, undefined>) => {
+      g.selectAll("*").remove();
+      g.attr("transform", "rotate(-90)")
         .attr("text-anchor", "middle")
         .call((g) =>
           g
@@ -420,6 +451,7 @@ const DataArtContainer = () => {
                 .text((d) => d.month)
             )
         );
+    };
 
     const svg = select(chartRef.current);
     const container = svg
@@ -505,8 +537,9 @@ const DataArtContainer = () => {
     savingMsg.selectAll("*").remove();
     savingMsg
       .append("text")
-      .attr("font-size", "100px")
-      .attr("y", 30)
+      .attr("font-size", "75px")
+      .attr("font-weight", "bold")
+      .attr("dy", -30)
       .attr("fill", colorScheme.textYear)
       .attr("transform", "rotate(90)")
       .text("2023");
@@ -534,6 +567,13 @@ const DataArtContainer = () => {
       .attr("transform", "translate(-430 -360)")
       .attr("fill", colorScheme.textTitle)
       .text("Footprint");
+    heading
+      .append("text")
+      .attr("text-anchor", "end")
+      .attr("font-size", "14px")
+      .attr("transform", "translate(430 -500)")
+      .attr("fill", colorScheme.textTitle)
+      .text("https://octopriceuk.vercel.app");
   }, [
     colorScheme.octopus,
     colorScheme.tempRing,
@@ -547,6 +587,82 @@ const DataArtContainer = () => {
     xScale,
   ]);
 
+  /* tariff details */
+  useEffect(() => {
+    if (
+      !chartRef.current ||
+      (!tariffEIsSuccess && !tariffGIsSuccess) ||
+      (!tariffEData?.[0].display_name && !tariffGData?.[0].display_name)
+    )
+      return;
+
+    const svg = select(chartRef.current);
+    const infoContainer = svg.select(".info");
+    infoContainer.selectAll("*").remove();
+    if (tariffGData?.[0].display_name) {
+      infoContainer
+        .append("text")
+        .attr("font-size", "40px")
+        .attr("letter-spacing", -2)
+        .attr("transform", "translate(70 700)")
+        .attr("fill", colorScheme.textTitle)
+        .text(tariffEData?.[0].display_name ?? "");
+      infoContainer
+        .append("text")
+        .attr("font-size", "12px")
+        .attr("letter-spacing", 0)
+        .attr("transform", "translate(70 715)")
+        .attr("fill", colorScheme.textTitle)
+        .text(
+          `(from ${new Date(
+            currentGContract?.valid_from ?? ""
+          ).toLocaleDateString()})`
+        );
+      infoContainer
+        .append("path")
+        .attr("d", icons.gas)
+        .style("fill", colorScheme.gasIcon)
+        .attr("transform", "translate(20 660), scale(2.2)");
+    }
+    if (tariffEData?.[0].display_name) {
+      infoContainer
+        .append("text")
+        .attr("font-size", "40px")
+        .attr("letter-spacing", -2)
+        .attr("transform", "translate(-380 700)")
+        .attr("fill", colorScheme.textTitle)
+        .text(tariffEData?.[0].display_name ?? "");
+      infoContainer
+        .append("text")
+        .attr("font-size", "12px")
+        .attr("letter-spacing", 0)
+        .attr("transform", "translate(-380 715)")
+        .attr("fill", colorScheme.textTitle)
+        .text(
+          `(from ${new Date(
+            currentEContract?.valid_from ?? ""
+          ).toLocaleDateString()})`
+        );
+      infoContainer
+        .append("path")
+        .attr("d", icons.electricity)
+        .style("fill", colorScheme.electricityIcon)
+        .attr("transform", "translate(-430 660), scale(3)");
+    }
+  }, [
+    colorScheme.electricityIcon,
+    colorScheme.gasIcon,
+    colorScheme.textTitle,
+    currentEContract?.valid_from,
+    currentGContract?.valid_from,
+    icons.electricity,
+    icons.gas,
+    tariffEData,
+    tariffEIsSuccess,
+    tariffGData,
+    tariffGIsSuccess,
+  ]);
+
   /* draw the consumption info */
   useEffect(() => {
     if (
@@ -557,67 +673,26 @@ const DataArtContainer = () => {
     )
       return;
 
-    const icons = {
-      gas: "M 16.682 9.384 A 6.9498 6.9498 90 0 0 15.024 7.08 l -0.582 -0.534 a 0.1618 0.1618 90 0 0 -0.26 0.066 l -0.26 0.746 c -0.162 0.468 -0.46 0.946 -0.882 1.416 c -0.028 0.03 -0.06 0.038 -0.082 0.04 c -0.022 0.002 -0.056 -0.002 -0.086 -0.03 c -0.028 -0.024 -0.042 -0.06 -0.04 -0.096 c 0.074 -1.204 -0.286 -2.562 -1.074 -4.04 C 11.106 3.42 10.2 2.462 9.068 1.794 l -0.826 -0.486 c -0.108 -0.064 -0.246 0.02 -0.24 0.146 l 0.044 0.96 c 0.03 0.656 -0.046 1.236 -0.226 1.718 c -0.22 0.59 -0.536 1.138 -0.94 1.63 a 5.9128 5.9128 90 0 1 -0.95 0.922 a 7.052 7.052 90 0 0 -2.006 2.43 A 6.955 6.955 90 0 0 3.2 12.2 c 0 0.944 0.186 1.858 0.554 2.72 a 6.988 6.988 90 0 0 1.51 2.218 c 0.648 0.64 1.4 1.144 2.238 1.494 C 8.37 18.996 9.29 19.18 10.24 19.18 s 1.87 -0.184 2.738 -0.546 A 6.972 6.972 90 0 0 15.216 17.14 c 0.648 -0.64 1.156 -1.388 1.51 -2.218 a 6.884 6.884 90 0 0 0.554 -2.72 c 0 -0.976 -0.2 -1.924 -0.598 -2.818 z",
-      electricity:
-        "M11.251.068a.5.5 0 0 1 .227.58L9.677 6.5H13a.5.5 0 0 1 .364.843l-8 8.5a.5.5 0 0 1-.842-.49L6.323 9.5H3a.5.5 0 0 1-.364-.843l8-8.5a.5.5 0 0 1 .615-.09z",
-    };
     const svg = select(chartRef.current);
+    const animationDuration = 3000;
 
-    const infoContainer = svg.select(".info");
-    infoContainer.selectAll("*").remove();
+    const savingContainer = svg.select(".saving");
+    savingContainer.selectAll("g").remove();
 
-    const gasConsumption = [];
-    const electricityConsumption = [];
-
-    infoContainer
-      .append("text")
-      .attr("font-size", "40px")
-      .attr("letter-spacing", -2)
-      .attr("transform", "translate(-380 700)")
-      .attr("fill", colorScheme.textTitle)
-      .text("Octopus Tracker");
-    infoContainer
-      .append("text")
-      .attr("font-size", "12px")
-      .attr("letter-spacing", 0)
-      .attr("transform", "translate(-380 715)")
-      .attr("fill", colorScheme.textTitle)
-      .text("(from 1/7/2023)");
-    infoContainer
-      .append("path")
-      .attr("d", icons.electricity)
-      .style("fill", colorScheme.textTitle)
-      .attr("transform", "translate(-430 660), scale(3)");
-    infoContainer
-      .append("text")
-      .attr("font-size", "40px")
-      .attr("letter-spacing", -2)
-      .attr("transform", "translate(-380 630)")
-      .attr("fill", colorScheme.textTitle)
-      .text("Octopus Tracker");
-    infoContainer
-      .append("text")
-      .attr("font-size", "12px")
-      .attr("letter-spacing", 0)
-      .attr("transform", "translate(-380 645)")
-      .attr("fill", colorScheme.textTitle)
-      .text("(from 1/7/2023)");
-    infoContainer
-      .append("path")
-      .attr("d", icons.gas)
-      .style("fill", colorScheme.textTitle)
-      .attr("transform", "translate(-430 590), scale(2.2)");
+    const gasConsumptionsArr: number[] = [];
+    const electricityConsumptionsArr: number[] = [];
 
     const drawConsumption = (
       g: Selection<SVGGElement, unknown, null, undefined>,
       data: IConsumptionData[],
       scaleY: ScaleLinear<number, number, never>,
-      type: Exclude<TariffType, "EG">
+      type: Exclude<TariffType, "EG">,
+      noOfCharts: number
     ) => {
       let total = 0;
 
-      g.append("path")
+      const consumptionChart = g
+        .append("path")
         .classed("draw", true)
         .attr("stroke", `url(#${type === "E" ? "electricity" : "gas"})`)
         .attr("stroke-width", 5)
@@ -632,12 +707,83 @@ const DataArtContainer = () => {
             .angle((d) => xScale(new Date(d.interval_start)))
             .radius((d) => {
               total += d.consumption;
+              total = evenRound(total, 2);
               type === "E"
-                ? electricityConsumption.push(total)
-                : gasConsumption.push(total);
+                ? electricityConsumptionsArr.push(total)
+                : gasConsumptionsArr.push(total);
               return scaleY(total);
             })(data)
         );
+      const length = consumptionChart.node()?.getTotalLength() ?? 0;
+
+      if (type === "E") {
+        const electricitySaveContainer = savingContainer
+          .append("g")
+          .attr(
+            "transform",
+            `rotate(90) translate(-14 ${noOfCharts === 1 ? 0 : 0})`
+          )
+          .attr("class", "electricitySave");
+        electricitySaveContainer
+          .append("path")
+          .attr("d", icons.electricity)
+          .style("fill", colorScheme.electricityIcon)
+          .attr("transform", "translate(-90 -16), scale(2.6)");
+        electricitySaveContainer
+          .append("text")
+          .attr("class", "electricitySum")
+          .attr("transform", "translate(90 0)")
+          .attr("font-size", "50px")
+          .attr("text-anchor", "end")
+          .attr("dy", "20px")
+          .text("10000");
+        electricitySaveContainer
+          .append("text")
+          .attr("transform", "translate(102 18)")
+          .text("kWh");
+        const electricitySum =
+          electricitySaveContainer.select<SVGTextElement>(".electricitySum");
+        animateNumber(
+          electricityConsumptionsArr,
+          animationDuration,
+          electricitySum
+        );
+      }
+      if (type === "G") {
+        const gasSaveContainer = savingContainer
+          .append("g")
+          .attr(
+            "transform",
+            `rotate(90) translate(-14 ${noOfCharts === 1 ? 0 : 45})`
+          )
+          .attr("class", "gasSave");
+        gasSaveContainer
+          .append("path")
+          .attr("d", icons.gas)
+          .style("fill", colorScheme.gasIcon)
+          .attr("transform", "translate(-90 -16), scale(2)");
+        gasSaveContainer
+          .append("text")
+          .attr("class", "gasSum")
+          .attr("transform", "translate(90 0)")
+          .attr("font-size", "50px")
+          .attr("text-anchor", "end")
+          .attr("dy", "20px")
+          .text("10000");
+        gasSaveContainer
+          .append("text")
+          .attr("transform", "translate(102 18)")
+          .text("kWh");
+        const gasSum = gasSaveContainer.select<SVGTextElement>(".gasSum");
+        animateNumber(gasConsumptionsArr, animationDuration, gasSum);
+      }
+      consumptionChart
+        .attr("stroke-dasharray", length + " " + length)
+        .attr("stroke-dashoffset", length)
+        .transition()
+        .ease(easeLinear)
+        .attr("stroke-dashoffset", 0)
+        .duration(animationDuration);
     };
 
     const gasChartContainer = svg.select<SVGGElement>(".gasChart");
@@ -664,9 +810,10 @@ const DataArtContainer = () => {
       );
       const maxSum = max([gasSum, electricitySum]) ?? 0;
       const yConsumptionScale = scaleLinear()
-        .domain([0, maxSum+500])
+        .domain([0, maxSum + 500])
         .range([innerRadius, outerRadius - 20])
         .nice();
+
       gasChartContainer
         .attr("text-anchor", "middle")
         .selectAll()
@@ -694,18 +841,107 @@ const DataArtContainer = () => {
             .text((x, i) => `${x.toFixed(0)}kWh`)
         );
 
-      drawConsumption(gasChartContainer, gasResults, yConsumptionScale, "G");
+      drawConsumption(gasChartContainer, gasResults, yConsumptionScale, "G", 2);
       drawConsumption(
         electricityChartContainer,
         electricityResults,
         yConsumptionScale,
-        "E"
+        "E",
+        2
       );
     } else {
       if (consumptionGIsSuccess && consumptionGData?.results) {
+        const gasResults = [
+          ...consumptionGData.results,
+        ].reverse() as IConsumptionData[];
+        const gasSum = sum(gasResults, (d) => Number(d.consumption));
+        const yConsumptionScale = scaleLinear()
+          .domain([0, gasSum])
+          .range([innerRadius, outerRadius - 20])
+          .nice();
+
+        gasChartContainer
+          .attr("text-anchor", "middle")
+          .selectAll()
+          .data(yConsumptionScale.ticks(6).reverse())
+          .join("g")
+          .call((g) =>
+            g
+              .append("circle")
+              .attr("fill", "none")
+              .attr("stroke", colorScheme.consumptionRing)
+              .attr("stroke-opacity", 0.4)
+              .attr("r", yConsumptionScale)
+          )
+          .call((g) =>
+            g
+              .append("text")
+              .attr("y", (d) => -yConsumptionScale(d))
+              .attr("dy", "0.35em")
+              .attr("stroke-linecap", "round")
+              .attr("stroke", "#fff")
+              .attr("stroke-width", 2)
+              .attr("stroke-linejoin", "round")
+              .attr("fill", colorScheme.textMonth)
+              .attr("paint-order", "stroke")
+              .text((x, i) => `${x.toFixed(0)}kWh`)
+          );
+
+        drawConsumption(
+          gasChartContainer,
+          gasResults,
+          yConsumptionScale,
+          "G",
+          1
+        );
       }
 
       if (consumptionEIsSuccess && consumptionEData?.results) {
+        const electricityResults = [
+          ...consumptionEData.results,
+        ].reverse() as IConsumptionData[];
+        const electricitySum = sum(electricityResults, (d) =>
+          Number(d.consumption)
+        );
+        const yConsumptionScale = scaleLinear()
+          .domain([0, electricitySum])
+          .range([innerRadius, outerRadius - 20])
+          .nice();
+
+        electricityChartContainer
+          .attr("text-anchor", "middle")
+          .selectAll()
+          .data(yConsumptionScale.ticks(6).reverse())
+          .join("g")
+          .call((g) =>
+            g
+              .append("circle")
+              .attr("fill", "none")
+              .attr("stroke", colorScheme.consumptionRing)
+              .attr("stroke-opacity", 0.4)
+              .attr("r", yConsumptionScale)
+          )
+          .call((g) =>
+            g
+              .append("text")
+              .attr("y", (d) => -yConsumptionScale(d))
+              .attr("dy", "0.35em")
+              .attr("stroke-linecap", "round")
+              .attr("stroke", "#fff")
+              .attr("stroke-width", 2)
+              .attr("stroke-linejoin", "round")
+              .attr("fill", colorScheme.textMonth)
+              .attr("paint-order", "stroke")
+              .text((x, i) => `${x.toFixed(0)}kWh`)
+          );
+
+        drawConsumption(
+          electricityChartContainer,
+          electricityResults,
+          yConsumptionScale,
+          "E",
+          1
+        );
       }
     }
   }, [
@@ -718,6 +954,10 @@ const DataArtContainer = () => {
     xScale,
     innerRadius,
     outerRadius,
+    colorScheme.consumptionRing,
+    colorScheme.textMonth,
+    colorScheme.electricityIcon,
+    colorScheme.gasIcon,
   ]);
 
   if (

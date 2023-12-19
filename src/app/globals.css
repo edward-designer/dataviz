@@ -193,7 +193,7 @@ input[type="range"]:focus::-webkit-slider-runnable-track {
   border: 0px none #05114d;
 }
 
-.gasChart .draw,
+/*.gasChart .draw,
 .electricityChart .draw {
   stroke-dasharray: 3000;
   stroke-dashoffset: 3000;
@@ -205,3 +205,4 @@ input[type="range"]:focus::-webkit-slider-runnable-track {
     stroke-dashoffset: 0;
   }
 }
+*/

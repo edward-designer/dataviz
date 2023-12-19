@@ -192,3 +192,22 @@ export const capitalize = (word: string) =>
   word.replace(new RegExp(/^[a-z]{1}/), (match) => match.toUpperCase());
 
 export const toNextTen = (value: number) => Math.ceil(value / 10) * 10;
+
+export const delay = (time: number) =>
+  new Promise((resolve) => {
+    setTimeout(resolve, time);
+  });
+
+export const animateNumber = async (
+  numberArr: number[],
+  time: number,
+  selection: Selection<SVGTextElement, unknown, null, undefined>
+) => {
+  const startTime = new Date().getTime();
+  for (let i = 0; i < numberArr.length; i++) {
+    const remainingTime = time - (new Date().getTime() - startTime);
+    const interval = remainingTime / (numberArr.length - i);
+    selection.text(String(evenRound(numberArr[i], 0)).padStart(5, "0"));
+    await delay(interval);
+  }
+};
