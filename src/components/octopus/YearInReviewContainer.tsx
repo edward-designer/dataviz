@@ -16,10 +16,10 @@ const YearInReviewContainer = () => {
   return (
     <div className="flex flex-col font-extralight text-lg">
       <h1 className="text-accentBlue-400 font-display text-4xl lg:text-6xl font-medium ">
-        My Year in Review
+        Year in Review
       </h1>
       <h2 className="text-accentBlue-400 font-display font-medium text-lg lg:text-2xl mb-8">
-        - See how you &quot;shape up&quot; with energy consumption in a year
+        - Visualize how you &quot;shape up&quot; with energy consumption in the last year
       </h2>
 
       {hasApiInfo ? (

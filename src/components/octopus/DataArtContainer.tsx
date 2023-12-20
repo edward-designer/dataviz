@@ -168,14 +168,17 @@ const DataArtContainer = () => {
   const colorScheme = {
     octopus: "#bfded8",
     weatherSymbol: "#888",
+    weatherSymbolSunday: "#9c706d",
     xAxis: "#99999966",
     textMonth: "#000",
-    textYear: "#448f8b56",
+    textYear: "#262f4a",
     textTitle: "#000",
     tempRing: "#33669966",
     consumptionRing: "#99999933",
     electricityIcon: "#1846a1",
     gasIcon: "#f83c7f",
+    electricityLine: "#2bdaedDD",
+    gasLine: "#f83c7fDD",
     Gradients: () => (
       <defs>
         <radialGradient id="fillMorning">
@@ -186,7 +189,7 @@ const DataArtContainer = () => {
           <stop offset="100%" stopColor="#D8FEF7" />
         </radialGradient>
         <radialGradient id="fillNight">
-          <stop offset="70%" stopColor="#FFC5CB" />
+          <stop offset="78%" stopColor="#FFE8EB" />
           <stop offset="85%" stopColor="#0BA5CB" />
           <stop offset="90%" stopColor="#09457A" />
           <stop offset="95%" stopColor="#0A1A50" />
@@ -204,20 +207,19 @@ const DataArtContainer = () => {
         </radialGradient>
         <radialGradient
           id="electricity"
-          cx="0.45"
-          cy="0.75"
-          r="0.99"
-          fx="80%"
-          fy="100%"
+          cx="0.75"
+          cy="0.65"
+          r="0.92"
+          fx="40%"
+          fy="40%"
         >
-          <stop offset="45%" stopColor="#8eff76" />
-          <stop offset="50%" stopColor="#00f4b4" />
-          <stop offset="55%" stopColor="#00e0ed" />
-          <stop offset="60%" stopColor="#00b1ff" />
-          <stop offset="65%" stopColor="#0093ff" />
-          <stop offset="70%" stopColor="#2f86ff" />
-          <stop offset="80%" stopColor="#deff4d" />
-          <stop offset="95%" stopColor="#fcff41" />
+          <stop offset="35%" stopColor="#00b1ff" />
+          <stop offset="40%" stopColor="#0093ff" />
+          <stop offset="45%" stopColor="#2f86ff" />
+          <stop offset="50%" stopColor="#00e0ed" />
+          <stop offset="70%" stopColor="#fcff41" />
+          <stop offset="80%" stopColor="#00f4b4" />
+          <stop offset="90%" stopColor="#deff4d" />
         </radialGradient>
       </defs>
     ),
@@ -300,7 +302,11 @@ const DataArtContainer = () => {
                       : Number(d.weather_code)
                   ]
               )
-              .style("fill", colorScheme.weatherSymbol)
+              .style("fill", (d, i) =>
+                i % 7 === 0
+                  ? colorScheme.weatherSymbolSunday
+                  : colorScheme.weatherSymbol
+              )
               .attr("transform", "rotate(90), scale(0.013)")
           )
       );
@@ -542,6 +548,7 @@ const DataArtContainer = () => {
       .attr("dy", -30)
       .attr("fill", colorScheme.textYear)
       .attr("transform", "rotate(90)")
+      .attr("letter-spacing", -3)
       .text("2023");
 
     const heading = select(".heading");
@@ -581,6 +588,7 @@ const DataArtContainer = () => {
     colorScheme.textTitle,
     colorScheme.textYear,
     colorScheme.weatherSymbol,
+    colorScheme.weatherSymbolSunday,
     colorScheme.xAxis,
     innerRadius,
     outerRadius,
@@ -690,12 +698,13 @@ const DataArtContainer = () => {
       noOfCharts: number
     ) => {
       let total = 0;
+      const dailyChartAmplificationFactor = 30;
 
       const consumptionChart = g
         .append("path")
         .classed("draw", true)
         .attr("stroke", `url(#${type === "E" ? "electricity" : "gas"})`)
-        .attr("stroke-width", 5)
+        .attr("stroke-width", 4)
         .attr("fill", "none")
         .attr("stroke-linecap", "round")
         .attr("opacity", 0.8)
@@ -706,7 +715,10 @@ const DataArtContainer = () => {
             .curve(curveNatural)
             .angle((d) => xScale(new Date(d.interval_start)))
             .radius((d) => {
-              total += d.consumption;
+              total +=
+                type === "E"
+                  ? d.consumption
+                  : d.consumption * value.gasConversionFactor;
               total = evenRound(total, 2);
               type === "E"
                 ? electricityConsumptionsArr.push(total)
@@ -715,6 +727,32 @@ const DataArtContainer = () => {
             })(data)
         );
       const length = consumptionChart.node()?.getTotalLength() ?? 0;
+
+      const consumptionDailyChart = select(".dailyChart")
+        .append("g")
+        .append("path")
+        .classed("daily", true)
+        .attr(
+          "stroke",
+          `${type === "E" ? colorScheme.electricityLine : colorScheme.gasLine}`
+        )
+        .attr("stroke-width", 1)
+        .attr("fill", "none")
+        .attr("stroke-linecap", "round")
+        .attr(
+          "d",
+          lineRadial<IConsumptionData>()
+            .angle((d) => xScale(new Date(d.interval_start)))
+            .radius((d) => {
+              let dailyConsumption =
+                type === "E"
+                  ? d.consumption
+                  : d.consumption * value.gasConversionFactor;
+              dailyConsumption = evenRound(dailyConsumption, 2);
+              return scaleY(dailyConsumption * dailyChartAmplificationFactor);
+            })(data)
+        );
+      const dailyLength = consumptionDailyChart.node()?.getTotalLength() ?? 0;
 
       if (type === "E") {
         const electricitySaveContainer = savingContainer
@@ -739,6 +777,7 @@ const DataArtContainer = () => {
           .text("10000");
         electricitySaveContainer
           .append("text")
+          .attr("font-weight", "bold")
           .attr("transform", "translate(102 18)")
           .text("kWh");
         const electricitySum =
@@ -773,6 +812,7 @@ const DataArtContainer = () => {
         gasSaveContainer
           .append("text")
           .attr("transform", "translate(102 18)")
+          .attr("font-weight", "bold")
           .text("kWh");
         const gasSum = gasSaveContainer.select<SVGTextElement>(".gasSum");
         animateNumber(gasConsumptionsArr, animationDuration, gasSum);
@@ -784,6 +824,13 @@ const DataArtContainer = () => {
         .ease(easeLinear)
         .attr("stroke-dashoffset", 0)
         .duration(animationDuration);
+      consumptionDailyChart
+        .attr("stroke-dasharray", dailyLength + " " + dailyLength)
+        .attr("stroke-dashoffset", dailyLength)
+        .transition()
+        .ease(easeLinear)
+        .attr("stroke-dashoffset", 0)
+        .duration(animationDuration);
     };
 
     const gasChartContainer = svg.select<SVGGElement>(".gasChart");
@@ -791,6 +838,7 @@ const DataArtContainer = () => {
     const electricityChartContainer =
       svg.select<SVGGElement>(".electricityChart");
     electricityChartContainer.selectAll("*").remove();
+    select(".dailyChart").selectAll("*").remove();
 
     if (
       consumptionGIsSuccess &&
@@ -801,7 +849,10 @@ const DataArtContainer = () => {
       const gasResults = [
         ...consumptionGData.results,
       ].reverse() as IConsumptionData[];
-      const gasSum = sum(gasResults, (d) => Number(d.consumption));
+      const gasSum = sum(
+        gasResults,
+        (d) => Number(d.consumption) * value.gasConversionFactor
+      );
       const electricityResults = [
         ...consumptionEData.results,
       ].reverse() as IConsumptionData[];
@@ -810,8 +861,8 @@ const DataArtContainer = () => {
       );
       const maxSum = max([gasSum, electricitySum]) ?? 0;
       const yConsumptionScale = scaleLinear()
-        .domain([0, maxSum + 500])
-        .range([innerRadius, outerRadius - 20])
+        .domain([0, maxSum])
+        .range([innerRadius, outerRadius - 10])
         .nice();
 
       gasChartContainer
@@ -958,6 +1009,11 @@ const DataArtContainer = () => {
     colorScheme.textMonth,
     colorScheme.electricityIcon,
     colorScheme.gasIcon,
+    value.gasConversionFactor,
+    icons.electricity,
+    icons.gas,
+    colorScheme.electricityLine,
+    colorScheme.gasLine,
   ]);
 
   if (
@@ -1013,6 +1069,7 @@ const DataArtContainer = () => {
           <g className="temperature" />
           <g className="xAxis" />
           <g className="weatherSymbol" />
+          <g className="dailyChart" />
           <g className="gasChart" />
           <g className="electricityChart" />
           <g className="heading" />
