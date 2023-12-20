@@ -110,7 +110,8 @@ const TariffComparisionCard = ({
                       >
                         Octopus Energy website
                       </a>
-                    </span>.
+                    </span>
+                    .
                   </div>
                 </Remark>
               ) : (

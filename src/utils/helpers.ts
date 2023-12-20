@@ -4,6 +4,7 @@ import {
   FETCH_ERROR,
   QueryTariffResult,
   gsp,
+  TariffCategory,
 } from "@/data/source";
 
 import { BaseType, Selection, select } from "d3";
@@ -210,4 +211,14 @@ export const animateNumber = async (
     selection.text(String(evenRound(numberArr[i], 0)).padStart(5, "0"));
     await delay(interval);
   }
+};
+
+export const getCategory = (tariff: string): TariffCategory => {
+  if (tariff.includes("AGILE")) return "Agile";
+  if (tariff.includes("SILVER")) return "Tracker";
+  if (tariff.includes("FIX")) return "Fixed";
+  if (tariff.includes("GO")) return "Go";
+  if (tariff.includes("COSY")) return "Cosy";
+  if (tariff.includes("VAR")) return "SVT";
+  return "Chart";
 };

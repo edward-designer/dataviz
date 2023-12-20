@@ -37,6 +37,7 @@ function useTariffQuery<T>({
     week: 336,
     "2-days": 96,
     day: 48,
+    year: 44800,
   };
   // only need to fetch once
   if (!gsp) typeArr.length = 1;

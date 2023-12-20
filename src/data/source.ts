@@ -328,7 +328,7 @@ export interface LinkResult {
   rel: "self";
 }
 
-export type DurationType = "month" | "week" | "day" | "2-days";
+export type DurationType = "month" | "week" | "day" | "2-days" | "year";
 
 export interface IUserApiResult {
   number: string;

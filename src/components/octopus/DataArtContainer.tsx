@@ -1,5 +1,11 @@
 import { UserContext } from "@/context/user";
-import { IConsumptionData, IUserApiResult, TariffType } from "@/data/source";
+import {
+  IConsumptionData,
+  IUserApiResult,
+  TariffCategory,
+  TariffResult,
+  TariffType,
+} from "@/data/source";
 import useAccountDetails from "@/hooks/useAccountDetails";
 import { useQuery } from "@tanstack/react-query";
 import { useContext, useEffect, useMemo, useRef } from "react";
@@ -33,6 +39,9 @@ import {
   easeLinear,
   axisBottom,
   axisTop,
+  axisLeft,
+  timeFormat,
+  line,
 } from "d3";
 
 import {
@@ -49,11 +58,13 @@ import { MdWindPower } from "react-icons/md";
 import {
   animateNumber,
   evenRound,
+  getCategory,
   selectOrAppend,
   toNextTen,
 } from "@/utils/helpers";
 import useConsumptionData from "@/hooks/useConsumptionData";
 import useTariffQuery from "@/hooks/useTariffQuery";
+import useYearlyTariffQuery from "@/hooks/useYearlyTariffQuery";
 
 interface IWeatherData {
   time: string;
@@ -110,7 +121,6 @@ const DataArtContainer = () => {
     tariff: currentETariff,
     type: "E",
   });
-
   const {
     data: tariffGData,
     isSuccess: tariffGIsSuccess,
@@ -120,6 +130,50 @@ const DataArtContainer = () => {
   }>({
     tariff: currentGTariff,
     type: "G",
+  });
+
+  const categoryE = getCategory(currentETariff);
+  const {
+    data: rateEData,
+    isSuccess: isRateEDataSuccess,
+    isLoading: isRateEDataLoading,
+  } = useYearlyTariffQuery<{
+    results: {
+      value_inc_vat: number;
+      valid_from: string;
+      valid_to: string;
+      payment_method: null | string;
+    }[];
+  }>({
+    tariff: currentETariff,
+    type: "E",
+    gsp: value.gsp,
+    fromDate: fromISODate,
+    toDate: toISODate,
+    category: categoryE,
+    enabled: !!MPAN && !!ESerialNo,
+  });
+
+  const categoryG = getCategory(currentGTariff);
+  const {
+    data: rateGData,
+    isSuccess: isRateGDataSuccess,
+    isLoading: isRateGDataLoading,
+  } = useYearlyTariffQuery<{
+    results: {
+      value_inc_vat: number;
+      valid_from: string;
+      valid_to: string;
+      payment_method: null | string;
+    }[];
+  }>({
+    tariff: currentGTariff,
+    type: "G",
+    gsp: value.gsp,
+    fromDate: fromISODate,
+    toDate: toISODate,
+    category: categoryG,
+    enabled: !!MPRN && !!GSerialNo,
   });
 
   const {
@@ -168,13 +222,14 @@ const DataArtContainer = () => {
 */
 
   const colorScheme = {
-    octopus: "#bfded8",
     weatherSymbol: "#888",
     weatherSymbolSunday: "#9c706d",
     xAxis: "#99999966",
     textMonth: "#000",
     textYear: "#262f4a",
     textTitle: "#000",
+    textDaily: "#150887",
+    textCumulative: "#4f0637",
     tempRing: "#33669966",
     consumptionRing: "#99999933",
     electricityIcon: "#1846a1",
@@ -224,6 +279,17 @@ const DataArtContainer = () => {
           <stop offset="80%" stopColor="#00f4b4" />
           <stop offset="90%" stopColor="#deff4d" />
         </radialGradient>
+        <radialGradient
+          id="octopus"
+          cx="0.4"
+          cy="0.45"
+          r="0.8"
+          fx="30%"
+          fy="30%"
+        >
+          <stop offset="35%" stopColor="#c7e0e9" />
+          <stop offset="90%" stopColor="#ecfff0" />
+        </radialGradient>
       </defs>
     ),
   };
@@ -243,18 +309,21 @@ const DataArtContainer = () => {
     []
   );
 
-  const weatherIconDetails = [
-    "Sunny",
-    "Partial Sunny",
-    "Cloudy",
-    "Windy",
-    "Foggy",
-    "Drizzle",
-    "Rainy",
-    "Snowy",
-    "Showers",
-    "Thunderstorm",
-  ];
+  const weatherIconDetails = useMemo(
+    () => [
+      "Sunny",
+      "Partial Sunny",
+      "Cloudy",
+      "Windy",
+      "Foggy",
+      "Drizzle",
+      "Rainy",
+      "Snowy",
+      "Showers",
+      "Thunderstorm",
+    ],
+    []
+  );
 
   const width = 900;
   const height = 900;
@@ -364,7 +433,13 @@ const DataArtContainer = () => {
       .text("Day")
       .attr("font-weight", "bold")
       .attr("transform", "translate(195 83)");
-  }, []);
+  }, [
+    colorScheme.line,
+    colorScheme.weatherSymbol,
+    colorScheme.weatherSymbolSunday,
+    weatherIcon,
+    weatherIconDetails,
+  ]);
 
   /* draw the template with weather info */
   useEffect(() => {
@@ -517,6 +592,7 @@ const DataArtContainer = () => {
             .attr("stroke-linecap", "round")
             .attr("stroke", "#fff")
             .attr("stroke-width", 2)
+            .attr("font-size", 8)
             .attr("stroke-linejoin", "round")
             .attr("fill", colorScheme.textMonth)
             .attr("paint-order", "stroke")
@@ -687,7 +763,11 @@ const DataArtContainer = () => {
             .attr("fill", "black")
             .attr("font-weight", "bold")
             .attr("transform", "translate(372,-15)");
-          colorLegend.call(axisBottom(yTempScale).tickSize(-10));
+          colorLegend.call(
+            axisBottom(yTempScale)
+              .tickSize(-10)
+              .tickFormat((d) => `${d}°c`)
+          );
           colorLegend
             .selectAll(".tick text")
             .attr("font-size", 8)
@@ -714,7 +794,7 @@ const DataArtContainer = () => {
         "d",
         "m56.32,236.42c-1.84.14-3.16.88-4.55,1.38-3.55,1.28-7.18,2.27-10.94,2.67-2.41.26-4.8.76-7.24.76-2.23,0-4.39-.7-6.61-.72-1.81-.02-3.46-.58-5.08-1.25-2.93-1.2-5.49-2.67-6.2-6.23-.33-1.64.36-2.87.8-4.2.83-2.5,2.87-4.13,4.76-5.82,1.84-1.64,3.75-3.22,5.54-4.92,2.3-2.18,4.05-4.88,4.83-7.86.61-2.32,1.55-4.85.41-7.37-.14-.31-.08-.74-.05-1.11.13-2.14-.57-4.11-1.35-6.03-.61-1.49-1.38-2.9-1.74-4.5-.18-.79-.84-1.47-1.29-2.2-2.37-3.8-4.59-7.71-7.17-11.37-2.98-4.22-5.34-8.81-7.95-13.23-1.73-2.93-3.06-6.17-4.53-9.28-1.61-3.42-2.86-6.98-3.93-10.59-1.09-3.7-2.3-7.36-3.04-11.19C-.22,126.99.07,120.59,0,114.2c-.02-1.96,0-3.92,0-5.87-.01-2.95.7-5.83.92-8.75.23-3.08,1.08-6,1.66-8.99.67-3.48,1.68-6.89,2.65-10.31.86-3.05,1.74-6.07,2.91-9,1.01-2.53,2.04-5.05,3.15-7.53,1.83-4.08,3.95-8.01,6.22-11.86,1.43-2.42,3.08-4.7,4.86-6.88.61-.74.87-1.69,1.48-2.4,3.63-4.25,7.22-8.56,11.4-12.27,3.37-3,6.81-5.93,10.53-8.54,4.78-3.36,9.85-6.21,15.06-8.79,4.49-2.23,9.23-3.95,13.96-5.65,5.17-1.86,10.56-2.94,15.91-4.14,3.34-.75,6.71-1.49,10.11-1.85,2.57-.27,5.13-.65,7.71-.86,11.84-.99,23.69-.13,35.53-.43.49-.01,1,.1,1.46.26.69.24,1.34.43,2.09.23.38-.11.9-.14,1.23.04,1.63.9,3.41.39,5.11.65.59.09,1.06.46,1.64.53,2.74.34,5.44.88,8.15,1.3,4.62.72,9.05,2.12,13.59,3.1,2.66.57,5.24,1.72,7.85,2.65,2.38.85,4.63,1.99,7.05,2.76,2.81.9,5.34,2.45,7.93,3.85,4.02,2.18,7.9,4.54,11.66,7.18,3.06,2.14,6.02,4.38,8.87,6.76,3.79,3.15,7.33,6.57,10.36,10.48,1.14,1.47,2.54,2.71,3.57,4.29,2.32,3.58,5.04,6.88,7.22,10.57,2.51,4.27,4.5,8.77,6.54,13.26,1.49,3.28,2.88,6.6,3.69,10.13.73,3.16,1.74,6.25,2.47,9.42.56,2.42.89,4.91,1.63,7.3.18.59.09,1.23.14,1.84.26,3.11,1.15,6.13,1.13,9.27-.05,6.08.04,12.17-.05,18.25-.03,1.7-.48,3.4-.74,5.09-.23,1.5-.4,3.01-.72,4.49-.57,2.64-1.28,5.24-2.13,7.81-.98,2.96-1.85,5.96-3.07,8.84-1.11,2.62-2.31,5.21-3.55,7.78-1.08,2.24-2.09,4.54-3.46,6.6-2.26,3.41-3.89,7.15-6.14,10.57-2.71,4.1-4.99,8.48-7.43,12.76-2.29,4.02-3.99,8.29-5.6,12.63-1.04,2.81-1.22,5.34-.49,8.19.97,3.75,2.84,6.86,5.62,9.49,1.77,1.67,3.42,3.51,5.36,4.95,2.01,1.48,3.45,3.32,4.7,5.39,1.57,2.58.71,6.34-1.69,8.17-3.52,2.7-7.53,3.76-11.87,3.81-1.1.01-2.06.56-3.17.53-2.71-.07-5.36-.61-8.05-.78-3.29-.2-6.39-1.31-9.49-2.25-2.11-.64-4.34-1.17-6.2-2.53-.28-.21-.6-.28-1.08-.11,1.8,2.54,3.5,5.08,5.7,7.28,2.17,2.18,4.67,3.78,7.4,5.1,3.39,1.64,6.71,3.39,9.78,5.58,1.71,1.22,2.54,3.04,3.05,4.96.49,1.85-1.13,2.84-2.14,3.96-1.4,1.55-3.19,2.69-5.1,3.54-3.88,1.73-7.87,3.14-12.05,3.95-4.38.85-8.81.94-13.25.76-3.87-.16-7.63-.89-11.35-2.08-2.73-.88-5.45-1.8-8.08-2.92-1.5-.64-2.88-1.57-4.28-2.43-.97-.6-1.93-1.3-3.02-1.78-2.78-1.21-4.91-3.31-7.26-5.17-1.28-1.01-2.5-2.15-3.85-3.09-.48-.33-.93-.54-1.11.5-.42,2.42-1.24,4.76-2,7.1-.7,2.16-1.25,4.37-2.1,6.47-2.52,6.22-6.29,11.48-12.37,14.69-2.02,1.07-4.18,1.91-6.61,1.75-1.99-.13-4.01-.16-5.99,0-3,.24-5.67-.62-8.11-2.18-2.4-1.53-4.7-3.22-6.39-5.59-2.39-3.35-4.57-6.82-5.87-10.75-.43-1.3-.69-2.65-1.01-3.98-.56-2.37-1.16-4.72-1.54-7.24-1.07.78-2.14,1.42-3.05,2.24-3.21,2.9-6.88,5.06-10.69,7.04-.73.38-1.37.93-2.1,1.32-5.61,2.97-11.6,4.87-17.85,5.78-4.21.61-8.5.46-12.77.17-3.58-.24-7.03-1.11-10.35-2.22-3.05-1.02-6.25-1.95-8.83-4.09-1.44-1.19-2.72-2.55-3.96-3.92-.79-.87-.23-3.52.73-4.72,2.09-2.63,5.13-3.9,7.83-5.67,2.1-1.37,4.44-2.19,6.61-3.4,3.12-1.73,5.31-4.38,7.64-6.92.83-.91,1.51-1.96,2.45-3.2Z"
       )
-      .attr("fill", colorScheme.octopus);
+      .attr("fill", "url(#octopus)");
 
     const savingMsg = selectOrAppend(
       "g",
@@ -727,7 +807,7 @@ const DataArtContainer = () => {
       .attr("font-size", "75px")
       .attr("font-weight", "bold")
       .attr("dy", -30)
-      .attr("fill", colorScheme.textYear)
+      .attr("fill", "#FFFFFFBB")
       .attr("transform", "rotate(90)")
       .attr("letter-spacing", -3)
       .text("2023");
@@ -762,15 +842,32 @@ const DataArtContainer = () => {
       .attr("transform", "translate(430 -500)")
       .attr("fill", colorScheme.textTitle)
       .text("https://octopriceuk.vercel.app");
+    heading
+      .append("text")
+      .attr("text-anchor", "end")
+      .attr("font-size", "10px")
+      .attr("font-weight", "bold")
+      .attr("transform", "translate(0 -450), rotate(-90)")
+      .attr("fill", colorScheme.textCumulative)
+      .text("Cumulative");
+    heading
+      .append("text")
+      .attr("text-anchor", "end")
+      .attr("font-size", "10px")
+      .attr("font-weight", "bold")
+      .attr("transform", "translate(420 0)")
+      .attr("fill", colorScheme.textDaily)
+      .text("Daily");
   }, [
-    colorScheme.octopus,
     colorScheme.tempRing,
+    colorScheme.textDaily,
     colorScheme.textMonth,
     colorScheme.textTitle,
     colorScheme.textYear,
     colorScheme.weatherSymbol,
     colorScheme.weatherSymbolSunday,
     colorScheme.xAxis,
+    colorScheme.textCumulative,
     innerRadius,
     outerRadius,
     weatherIcon,
@@ -794,17 +891,17 @@ const DataArtContainer = () => {
         .append("text")
         .attr("font-size", "40px")
         .attr("letter-spacing", -2)
-        .attr("transform", "translate(70 700)")
+        .attr("transform", "translate(70 690)")
         .attr("fill", colorScheme.textTitle)
         .text(tariffEData?.[0].display_name ?? "");
       infoContainer
         .append("text")
-        .attr("font-size", "12px")
+        .attr("font-size", "10px")
         .attr("letter-spacing", 0)
-        .attr("transform", "translate(70 715)")
+        .attr("transform", "translate(70 705)")
         .attr("fill", colorScheme.textTitle)
         .text(
-          `(from ${new Date(
+          `(current tariff from ${new Date(
             currentGContract?.valid_from ?? ""
           ).toLocaleDateString()})`
         );
@@ -812,24 +909,24 @@ const DataArtContainer = () => {
         .append("path")
         .attr("d", icons.gas)
         .style("fill", colorScheme.gasIcon)
-        .attr("transform", "translate(20 660), scale(2.2)");
+        .attr("transform", "translate(20 650), scale(2.2)");
     }
     if (tariffEData?.[0].display_name) {
       infoContainer
         .append("text")
         .attr("font-size", "40px")
         .attr("letter-spacing", -2)
-        .attr("transform", "translate(-380 700)")
+        .attr("transform", "translate(-380 690)")
         .attr("fill", colorScheme.textTitle)
         .text(tariffEData?.[0].display_name ?? "");
       infoContainer
         .append("text")
-        .attr("font-size", "12px")
+        .attr("font-size", "10px")
         .attr("letter-spacing", 0)
-        .attr("transform", "translate(-380 715)")
+        .attr("transform", "translate(-380 705)")
         .attr("fill", colorScheme.textTitle)
         .text(
-          `(from ${new Date(
+          `(current tariff from ${new Date(
             currentEContract?.valid_from ?? ""
           ).toLocaleDateString()})`
         );
@@ -837,7 +934,7 @@ const DataArtContainer = () => {
         .append("path")
         .attr("d", icons.electricity)
         .style("fill", colorScheme.electricityIcon)
-        .attr("transform", "translate(-430 660), scale(3)");
+        .attr("transform", "translate(-430 650), scale(3)");
     }
   }, [
     colorScheme.electricityIcon,
@@ -880,7 +977,33 @@ const DataArtContainer = () => {
       noOfCharts: number
     ) => {
       let total = 0;
-      const dailyChartAmplificationFactor = 30;
+      const dailyChartAmplificationFactor = 50;
+      if (!(noOfCharts === 2 && type === "E")) {
+        g.selectAll(".dailyScale").remove();
+        g.append("g")
+          .classed("dailyScale", true)
+          .attr("transform", "rotate(90)")
+          .attr("text-anchor", "middle")
+          .selectAll()
+          .data(scaleY.ticks(6).reverse())
+          .join("g")
+          .call((g) =>
+            g
+              .append("text")
+              .attr("y", (d) => -scaleY(d))
+              .attr("dy", "0.35em")
+              .attr("font-size", 8)
+              .attr("stroke-linecap", "round")
+              .attr("stroke", "#fff")
+              .attr("stroke-width", 2)
+              .attr("stroke-linejoin", "round")
+              .attr("fill", colorScheme.textDaily)
+              .attr("paint-order", "stroke")
+              .text(
+                (x, i) => `${(x / dailyChartAmplificationFactor).toFixed(0)}kWh`
+              )
+          );
+      }
 
       const consumptionChart = g
         .append("path")
@@ -948,33 +1071,33 @@ const DataArtContainer = () => {
           .attr("text-anchor", "start")
           .attr("fill", "black")
           .attr("font-weight", "bold")
-          .attr("transform", "translate(-485,790)");
+          .attr("transform", "translate(-485,810)");
         electricityLegend
           .append("text")
           .text("Electricity Daily")
           .attr("text-anchor", "start")
           .attr("fill", "black")
-          .attr("transform", "translate(-385,810)");
+          .attr("transform", "translate(-385,830)");
         electricityLegend
           .append("line")
           .attr("stroke-linecap", "round")
           .attr("x1", 0)
           .attr("x2", 95)
-          .attr("transform", "translate(-485,807)")
+          .attr("transform", "translate(-485,827)")
           .attr("stroke", colorScheme.electricityLine)
           .attr("stroke-width", 1);
         electricityLegend
           .append("text")
-          .text("Electricity Cummulative")
+          .text("Electricity Cumulative")
           .attr("text-anchor", "start")
           .attr("fill", "black")
-          .attr("transform", "translate(-385,825)");
+          .attr("transform", "translate(-385,846)");
         electricityLegend
           .append("line")
           .attr("stroke-linecap", "round")
           .attr("x1", 0)
           .attr("x2", 95)
-          .attr("transform", "translate(-485,823)")
+          .attr("transform", "translate(-485,843)")
           .attr("stroke", colorScheme.electricityLine)
           .attr("stroke-width", 5)
           .attr("opacity", 0.8);
@@ -1025,33 +1148,33 @@ const DataArtContainer = () => {
           .attr("text-anchor", "start")
           .attr("fill", "black")
           .attr("font-weight", "bold")
-          .attr("transform", "translate(-485,790)");
+          .attr("transform", "translate(-485,810)");
         gasLegend
           .append("text")
           .text("Gas Daily")
           .attr("text-anchor", "start")
           .attr("fill", "black")
-          .attr("transform", `translate(-385,${noOfCharts === 1 ? 810 : 850})`);
+          .attr("transform", `translate(-385,${noOfCharts === 1 ? 830 : 870})`);
         gasLegend
           .append("line")
           .attr("stroke-linecap", "round")
           .attr("x1", 0)
           .attr("x2", 95)
-          .attr("transform", `translate(-485,${noOfCharts === 1 ? 807 : 847})`)
+          .attr("transform", `translate(-485,${noOfCharts === 1 ? 827 : 867})`)
           .attr("stroke", colorScheme.gasLine)
           .attr("stroke-width", 1);
         gasLegend
           .append("text")
-          .text("Gas Cummulative")
+          .text("Gas Cumulative")
           .attr("text-anchor", "start")
           .attr("fill", "black")
-          .attr("transform", `translate(-385,${noOfCharts === 1 ? 825 : 865})`);
+          .attr("transform", `translate(-385,${noOfCharts === 1 ? 845 : 886})`);
         gasLegend
           .append("line")
           .attr("stroke-linecap", "round")
           .attr("x1", 0)
           .attr("x2", 95)
-          .attr("transform", `translate(-485,${noOfCharts === 1 ? 823 : 862})`)
+          .attr("transform", `translate(-485,${noOfCharts === 1 ? 843 : 882})`)
           .attr("stroke", colorScheme.gasLine)
           .attr("stroke-width", 5)
           .attr("opacity", 0.8);
@@ -1082,7 +1205,6 @@ const DataArtContainer = () => {
           .attr("transform", "translate(102 18)")
           .attr("font-weight", "bold")
           .style("fill", colorScheme.gasIcon)
-
           .text("kWh");
         const gasSum = gasSaveContainer.select<SVGTextElement>(".gasSum");
         animateNumber(gasConsumptionsArr, animationDuration, gasSum);
@@ -1134,7 +1256,6 @@ const DataArtContainer = () => {
         .domain([0, maxSum])
         .range([innerRadius, outerRadius - 10])
         .nice();
-
       gasChartContainer
         .attr("text-anchor", "middle")
         .selectAll()
@@ -1156,8 +1277,9 @@ const DataArtContainer = () => {
             .attr("stroke-linecap", "round")
             .attr("stroke", "#fff")
             .attr("stroke-width", 2)
+            .attr("font-size", 8)
             .attr("stroke-linejoin", "round")
-            .attr("fill", colorScheme.textMonth)
+            .attr("fill", colorScheme.textCumulative)
             .attr("paint-order", "stroke")
             .text((x, i) => `${x.toFixed(0)}kWh`)
         );
@@ -1250,6 +1372,7 @@ const DataArtContainer = () => {
               .attr("stroke-linecap", "round")
               .attr("stroke", "#fff")
               .attr("stroke-width", 2)
+              .attr("font-size", 8)
               .attr("stroke-linejoin", "round")
               .attr("fill", colorScheme.textMonth)
               .attr("paint-order", "stroke")
@@ -1282,6 +1405,233 @@ const DataArtContainer = () => {
     value.gasConversionFactor,
     icons.electricity,
     icons.gas,
+    colorScheme.electricityLine,
+    colorScheme.gasLine,
+    colorScheme.textDaily,
+    colorScheme.textCumulative,
+  ]);
+
+  useEffect(() => {
+    if (!chartRef.current || !isRateEDataSuccess || !rateEData?.[0]?.results)
+      return;
+
+    /*const flattenedRateData = */
+    const data = rateEData?.reduce(
+      (
+        acc: {
+          value_inc_vat: number;
+          valid_from: string;
+          valid_to: string;
+          payment_method: null | string;
+        }[],
+        monthlyRateData
+      ) => {
+        return [...acc, ...monthlyRateData.results];
+      },
+      []
+    ) as TariffResult[];
+    const miniChartWidth = 420;
+    const miniChartHeight = 160;
+    const margins = {
+      top: 20,
+      bottom: 20,
+      left: 20,
+      right: 20,
+    };
+    const minValue = min(data, (d) => d.value_inc_vat) ?? 0;
+    const maxValue = max(data, (d) => d.value_inc_vat) ?? 0;
+
+    const xScale = scaleTime()
+      .domain([new Date(fromDate), new Date(toDate)])
+      .range([0, miniChartWidth - margins.left - margins.right]);
+    const yScale = scaleLinear()
+      .domain([maxValue, Math.min(0, minValue)])
+      .range([0, miniChartHeight - margins.top - margins.bottom])
+      .nice();
+
+    const svg = select(chartRef.current);
+    const electricityChartContainer = svg.select(".electricityTariffChart");
+    electricityChartContainer.selectAll("*").remove();
+
+    electricityChartContainer.attr("transform", "translate(-410 500)");
+
+    const yAxis = electricityChartContainer
+      .append("g")
+      .attr(
+        "transform",
+        `translate(${miniChartWidth - margins.left - margins.right} 0)`
+      )
+      .call(
+        axisLeft(yScale)
+          .tickSize(miniChartWidth - margins.left - margins.right)
+          .tickFormat((d) => `${d}p`)
+      );
+    yAxis
+      .selectAll(".tick text")
+      .attr("font-size", 8)
+      .attr("font-weight", "thin")
+      .attr("fill", colorScheme.line);
+    yAxis
+      .selectAll("line")
+      .attr("stroke-width", 1)
+      .attr("stroke", colorScheme.consumptionRing);
+    yAxis.selectAll("path").remove();
+
+    const xAxisGenerator = axisBottom(xScale).ticks(12, "%b");
+    const xAxis = electricityChartContainer
+      .append("g")
+      .attr(
+        "transform",
+        `translate(0 ${miniChartHeight - margins.top - margins.bottom})`
+      )
+      .call(xAxisGenerator);
+    xAxis
+      .selectAll(".tick text")
+      .attr("font-size", 8)
+      .attr("font-weight", "thin")
+      .attr("fill", colorScheme.line)
+      .attr("text-anchor", "middle")
+      .attr("transform", "translate(14 0)");
+    xAxis
+      .selectAll("line")
+      .attr("stroke-width", 1)
+      .attr("stroke", colorScheme.consumptionRing);
+    xAxis
+      .selectAll("path")
+      .attr("stroke-width", 1)
+      .attr("stroke", colorScheme.consumptionRing);
+
+    electricityChartContainer
+      .append("path")
+      .datum(data)
+      .attr("fill", "none")
+      .attr("stroke", colorScheme.electricityLine)
+      .attr("stroke-width", 1)
+      .attr("stroke-linecap", "round")
+      .attr("stroke-linejoin", "round")
+      .attr(
+        "d",
+        line<TariffResult>()
+          .x((d) => xScale(new Date(d.valid_from)))
+          .y((d) => yScale(d.value_inc_vat))
+      );
+  }, [
+    rateEData,
+    isRateEDataSuccess,
+    colorScheme.line,
+    colorScheme.consumptionRing,
+    colorScheme.electricityLine,
+  ]);
+
+  useEffect(() => {
+    if (!chartRef.current || !isRateGDataSuccess || !rateGData?.[0]?.results)
+      return;
+
+    const data = rateGData?.reduce(
+      (
+        acc: {
+          value_inc_vat: number;
+          valid_from: string;
+          valid_to: string;
+          payment_method: null | string;
+        }[],
+        monthlyRateData
+      ) => {
+        return [...acc, ...monthlyRateData.results];
+      },
+      []
+    ) as TariffResult[];
+    const miniChartWidth = 420;
+    const miniChartHeight = 160;
+    const margins = {
+      top: 20,
+      bottom: 20,
+      left: 20,
+      right: 20,
+    };
+    const minValue = min(data, (d) => d.value_inc_vat) ?? 0;
+    const maxValue = max(data, (d) => d.value_inc_vat) ?? 0;
+
+    const xScale = scaleTime()
+      .domain([new Date(fromDate), new Date(toDate)])
+      .range([0, miniChartWidth - margins.left - margins.right]);
+    const yScale = scaleLinear()
+      .domain([maxValue, Math.min(0, minValue)])
+      .range([0, miniChartHeight - margins.top - margins.bottom])
+      .nice();
+
+    const svg = select(chartRef.current);
+    const gasChartContainer = svg.select(".gasTariffChart");
+    gasChartContainer.selectAll("*").remove();
+
+    gasChartContainer.attr("transform", "translate(40 500)");
+
+    const yAxis = gasChartContainer
+      .append("g")
+      .attr(
+        "transform",
+        `translate(${miniChartWidth - margins.left - margins.right} 0)`
+      )
+      .call(
+        axisLeft(yScale)
+          .tickSize(miniChartWidth - margins.left - margins.right)
+          .ticks(10)
+          .tickFormat((d) => `${d}p`)
+      );
+    yAxis
+      .selectAll(".tick text")
+      .attr("font-size", 8)
+      .attr("font-weight", "thin")
+      .attr("fill", colorScheme.line);
+    yAxis
+      .selectAll("line")
+      .attr("stroke-width", 1)
+      .attr("stroke", colorScheme.consumptionRing);
+    yAxis.selectAll("path").remove();
+
+    const xAxisGenerator = axisBottom(xScale).ticks(12, "%b");
+    const xAxis = gasChartContainer
+      .append("g")
+      .attr(
+        "transform",
+        `translate(0 ${miniChartHeight - margins.top - margins.bottom})`
+      )
+      .call(xAxisGenerator);
+    xAxis
+      .selectAll(".tick text")
+      .attr("font-size", 8)
+      .attr("font-weight", "thin")
+      .attr("fill", colorScheme.line)
+      .attr("text-anchor", "middle")
+      .attr("transform", "translate(14 0)");
+    xAxis
+      .selectAll("line")
+      .attr("stroke-width", 1)
+      .attr("stroke", colorScheme.consumptionRing);
+    xAxis
+      .selectAll("path")
+      .attr("stroke-width", 1)
+      .attr("stroke", colorScheme.consumptionRing);
+
+    gasChartContainer
+      .append("path")
+      .datum(data)
+      .attr("fill", "none")
+      .attr("stroke", colorScheme.gasLine)
+      .attr("stroke-width", 1)
+      .attr("stroke-linecap", "round")
+      .attr("stroke-linejoin", "round")
+      .attr(
+        "d",
+        line<TariffResult>()
+          .x((d) => xScale(new Date(d.valid_from)))
+          .y((d) => yScale(d.value_inc_vat))
+      );
+  }, [
+    rateGData,
+    isRateGDataSuccess,
+    colorScheme.line,
+    colorScheme.consumptionRing,
     colorScheme.electricityLine,
     colorScheme.gasLine,
   ]);
@@ -1327,7 +1677,7 @@ const DataArtContainer = () => {
         ref={chartRef}
         width={900}
         height={1200}
-        viewBox="-450 -500 900 1200"
+        viewBox="-450 -505 900 1200"
         className="w-full h-auto"
       >
         <filter id="shadow">
@@ -1342,6 +1692,8 @@ const DataArtContainer = () => {
           <g className="dailyChart" />
           <g className="gasChart" />
           <g className="electricityChart" />
+          <g className="gasTariffChart" />
+          <g className="electricityTariffChart" />
           <g className="heading" />
           <g className="info" />
           <g className="legend" />
