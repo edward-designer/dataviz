@@ -73,6 +73,7 @@ import useConsumptionData from "@/hooks/useConsumptionData";
 import useTariffQuery from "@/hooks/useTariffQuery";
 import useYearlyTariffQuery from "@/hooks/useYearlyTariffQuery";
 import { useUkGspMapData } from "@/hooks/useUkGspMap";
+import Remark from "./Remark";
 
 interface IWeatherData {
   time: string;
@@ -1909,89 +1910,106 @@ const DataArtContainer = () => {
   }
 
   return (
-    <div className="flex w-full aspect-[210/297] bg-black flex-col">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        ref={chartRef}
-        width={width}
-        height={height}
-        viewBox="-450 -535 900 1280"
-        className="w-full h-auto"
-      >
-        <filter id="shadow">
-          <feDropShadow
-            dx="0.5"
-            dy="0.5"
-            stdDeviation="2"
-            floodColor="#15748c"
-            floodOpacity="0.8"
+    <>
+      <div className="flex gap-2 items-center mb-4 flex-col-reverse md:flex-col lg:flex-row">
+        <div className="flex-grow">
+          The following data visualization graphic shows your energy use pattern
+          over the 2023 in relation to the local weather conditions.
+          <Remark>
+            Kindly note that this page is still in beta version and may not be
+            able to cater to all Octopus customer accounts. Should you encounter
+            any issues while using this page, please contact Edward at
+            <a href="mailto:edward.chung.dev@gmail.com">
+              edward.chung.dev@gmail.com
+            </a>
+            . Thanks a lot!
+          </Remark>
+        </div>
+      </div>
+      <div className="flex w-full aspect-[210/297] bg-black flex-col">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          ref={chartRef}
+          width={width}
+          height={height}
+          viewBox="-450 -535 900 1280"
+          className="w-full h-auto"
+        >
+          <filter id="shadow">
+            <feDropShadow
+              dx="0.5"
+              dy="0.5"
+              stdDeviation="2"
+              floodColor="#15748c"
+              floodOpacity="0.8"
+            />
+          </filter>
+          <colorScheme.Gradients />
+          <rect
+            width="100%"
+            height="100%"
+            transform="translate(-450,-535)"
+            fill="white"
           />
-        </filter>
-        <colorScheme.Gradients />
-        <rect
-          width="100%"
-          height="100%"
-          transform="translate(-450,-535)"
-          fill="white"
-        />
-        <g className="container">
-          <g className="nightRegion" />
-          <g className="temperature" />
-          <g className="xAxis" />
-          <g className="weatherSymbol" />
-          <g className="dailyChart" />
-          <g className="gasChart" />
-          <g className="electricityChart" />
-          <g className="gasTariffChart" />
-          <g className="electricityTariffChart" />
-          <g className="map" />
-          <g className="heading" />
-          <g className="info" />
-          <g className="legend" />
-        </g>
-      </svg>
-      <button
-        onClick={async () => {
-          if (!chartRef.current) return;
+          <g className="container">
+            <g className="nightRegion" />
+            <g className="temperature" />
+            <g className="xAxis" />
+            <g className="weatherSymbol" />
+            <g className="dailyChart" />
+            <g className="gasChart" />
+            <g className="electricityChart" />
+            <g className="gasTariffChart" />
+            <g className="electricityTariffChart" />
+            <g className="map" />
+            <g className="heading" />
+            <g className="info" />
+            <g className="legend" />
+          </g>
+        </svg>
+        <button
+          onClick={async () => {
+            if (!chartRef.current) return;
 
-          const resolution = 2;
-          const xml = new XMLSerializer().serializeToString(chartRef.current);
-          const svgBlob = new Blob([xml], {
-            type: "image/svg+xml;charset=utf-8",
-          });
-          const url = URL.createObjectURL(svgBlob);
-          const img = new Image();
-          img.addEventListener("load", () => {
-            const bbox = chartRef.current!.getBBox();
-            const scale = window.devicePixelRatio;
-            const canvas = document.createElement("canvas");
-            canvas.width = width * resolution;
-            canvas.height = height * resolution;
-            const context = canvas.getContext("2d")!;
-            context.drawImage(
-              img,
-              0,
-              0,
-              width * resolution,
-              height * resolution
-            );
+            const resolution = 2;
+            const xml = new XMLSerializer().serializeToString(chartRef.current);
+            const svgBlob = new Blob([xml], {
+              type: "image/svg+xml;charset=utf-8",
+            });
+            const url = URL.createObjectURL(svgBlob);
+            const img = new Image();
+            img.addEventListener("load", () => {
+              const bbox = chartRef.current!.getBBox();
+              const scale = window.devicePixelRatio;
+              const canvas = document.createElement("canvas");
+              canvas.width = width * resolution;
+              canvas.height = height * resolution;
+              const context = canvas.getContext("2d")!;
+              context.drawImage(
+                img,
+                0,
+                0,
+                width * resolution,
+                height * resolution
+              );
 
-            URL.revokeObjectURL(url);
+              URL.revokeObjectURL(url);
 
-            // trigger a synthetic download operation with a temporary link
-            const a = document.createElement("a");
-            a.download = "myEnergyProfile.jpg";
-            document.body.appendChild(a);
-            a.href = canvas.toDataURL("image/jpeg", 0.8);
-            a.click();
-            a.remove();
-          });
-          img.src = url;
-        }}
-      >
-        Download as Image
-      </button>
-    </div>
+              // trigger a synthetic download operation with a temporary link
+              const a = document.createElement("a");
+              a.download = "myEnergyProfile.jpg";
+              document.body.appendChild(a);
+              a.href = canvas.toDataURL("image/jpeg", 0.8);
+              a.click();
+              a.remove();
+            });
+            img.src = url;
+          }}
+        >
+          Download as Image
+        </button>
+      </div>
+    </>
   );
 };
 

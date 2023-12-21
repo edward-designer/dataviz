@@ -133,8 +133,8 @@ const Menu = () => {
                   : "hover:text-accentPink-500"
               }`}
             >
-              <Badge label="beta" /> <span className="text-lg">Year in</span>{" "}
-              Review{" "}
+              <Badge label="beta" /> <span className="text-lg">My </span>
+              Octopast <span className="text-lg">Year</span>
             </Link>
           </div>
           <div>
