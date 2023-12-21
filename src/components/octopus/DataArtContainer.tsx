@@ -8,7 +8,7 @@ import {
 } from "@/data/source";
 import useAccountDetails from "@/hooks/useAccountDetails";
 import { useQuery } from "@tanstack/react-query";
-import { useContext, useEffect, useMemo, useRef } from "react";
+import { useCallback, useContext, useEffect, useMemo, useRef } from "react";
 import NotCurrentlySupported from "./NotCurrentlySupported";
 import {
   arc,
@@ -42,6 +42,11 @@ import {
   axisLeft,
   timeFormat,
   line,
+  geoPath,
+  geoIdentity,
+  curveStepAfter,
+  curveStepBefore,
+  curveLinear,
 } from "d3";
 
 import {
@@ -61,10 +66,12 @@ import {
   getCategory,
   selectOrAppend,
   toNextTen,
+  tryFetch,
 } from "@/utils/helpers";
 import useConsumptionData from "@/hooks/useConsumptionData";
 import useTariffQuery from "@/hooks/useTariffQuery";
 import useYearlyTariffQuery from "@/hooks/useYearlyTariffQuery";
+import { useUkGspMapData } from "@/hooks/useUkGspMap";
 
 interface IWeatherData {
   time: string;
@@ -203,6 +210,19 @@ const DataArtContainer = () => {
     serialNo: GSerialNo,
     apiKey: value.apiKey,
   });
+
+  const mapData = useUkGspMapData();
+  const { data: pinData, isSuccess: isPinSuccess } = useQuery({
+    queryFn: async () => {
+      const response = await tryFetch(
+        fetch(`https://api.postcodes.io/postcodes/${value?.postcode}`)
+      );
+      const results = response.json();
+      return results;
+    },
+    queryKey: ["pin", value?.postcode],
+    enabled: !!value?.postcode,
+  });
   // get coordinates and then weather info
   // https://api.postcodes.io/postcodes/RG194SD
   // https://archive-api.open-meteo.com/v1/archive?latitude=51.394907&longitude=-1.25207&start_date=2023-01-01&end_date=2023-12-18&daily=weather_code,apparent_temperature_max,apparent_temperature_min,sunshine_duration&wind_speed_unit=mph&timezone=auto
@@ -222,8 +242,8 @@ const DataArtContainer = () => {
 */
 
   const colorScheme = {
-    weatherSymbol: "#888",
-    weatherSymbolSunday: "#9c706d",
+    weatherSymbol: "#426770",
+    weatherSymbolSunday: "#c96b65",
     xAxis: "#99999966",
     textMonth: "#000",
     textYear: "#262f4a",
@@ -254,12 +274,12 @@ const DataArtContainer = () => {
           <stop offset="100%" stopColor="#050228" />
         </radialGradient>
         <radialGradient id="gas" cx="0.75" cy="0.65" r="0.92" fx="40%" fy="40%">
-          <stop offset="30%" stopColor="#663e86" />
-          <stop offset="35%" stopColor="#6f3e88" />
+          <stop offset="30%" stopColor="#8450ad" />
+          <stop offset="35%" stopColor="#a85bcf" />
           <stop offset="45%" stopColor="#863f8d" />
-          <stop offset="50%" stopColor="#a63d90" />
-          <stop offset="55%" stopColor="#c83b8d" />
-          <stop offset="60%" stopColor="#e53a86" />
+          <stop offset="50%" stopColor="#b654bf" />
+          <stop offset="55%" stopColor="#e84da7" />
+          <stop offset="60%" stopColor="#f54293" />
           <stop offset="65%" stopColor="#f83c7f" />
           <stop offset="70%" stopColor="#ff4958" />
         </radialGradient>
@@ -330,10 +350,60 @@ const DataArtContainer = () => {
   const innerRadius = (0.35 * width) / 2;
   const outerRadius = (0.85 * width) / 2;
 
-  const xScale = scaleUtc(
-    [new Date(fromDate), new Date(toDate)],
-    [0, 2 * Math.PI]
+  const xScale = useCallback(
+    (d: Date) =>
+      scaleUtc([new Date(fromDate), new Date(toDate)], [0, 2 * Math.PI])(d),
+    []
   );
+  /* draw map */
+  useEffect(() => {
+    if (!mapData || !chartRef.current) return;
+
+    const mapIcon =
+      "M 2.8285 -8.3475 c -1.562 -1.5365 -4.0945 -1.5365 -5.6565 0 c -1.562 1.537 -1.562 4.0285 0 5.565 L 0 0 l 2.8285 -2.7825 c 1.562 -1.5365 1.562 -4.028 0 -5.565 z m -2.8285 4.0975 c -0.334 0 -0.6475 -0.13 -0.884 -0.366 c -0.4875 -0.4875 -0.4875 -1.2805 0 -1.768 c 0.236 -0.236 0.55 -0.366 0.884 -0.366 s 0.648 0.13 0.884 0.366 c 0.4875 0.4875 0.4875 1.281 0 1.768 c -0.236 0.236 -0.55 0.366 -0.884 0.366 z";
+    const svg = select(chartRef.current);
+    const map = svg.select(".map").attr("transform", "translate(295,220)");
+
+    let path = geoPath();
+    const projection = geoIdentity()
+      .reflectY(true)
+      .fitSize([125, 250], mapData?.districts ?? null);
+    path = geoPath(projection);
+
+    map
+      .selectAll("path")
+      .data(mapData.districts.features)
+      .join("path")
+      .attr("d", (d) => path(d.geometry) ?? null)
+      .attr("stroke-width", 0.5)
+      .attr("stroke", "white")
+      .attr("fill", (d) =>
+        d.properties?.Name === `_${value.gsp}`
+          ? "#336699DD"
+          : colorScheme.tempRing
+      );
+
+    if (pinData?.result?.eastings && pinData?.result?.northings) {
+      const easting = pinData.result.eastings;
+      const northing = pinData.result.northings;
+      map
+        .selectAll(".pin")
+        .data([{ easting, northing }])
+        .enter()
+        .append("g")
+        .classed("pin", true)
+        .append("path")
+        .attr("d", mapIcon)
+        .attr("fill", "#000433")
+        .attr("stroke-width", 0.5)
+        .attr("stroke", "white")
+        .attr("transform", function (d) {
+          return (
+            "translate(" + projection([d.easting, d.northing]) + ") scale(3)"
+          );
+        });
+    }
+  }, [colorScheme.tempRing, mapData, value.gsp, isPinSuccess, pinData]);
 
   /* draw the legend */
   useEffect(() => {
@@ -477,7 +547,7 @@ const DataArtContainer = () => {
             "transform",
             (d, i, arr) => `
           rotate(${(i * 360) / 365})
-          translate(${outerRadius + 7},0)
+          translate(${outerRadius + 8},0)
         `
           )
           .call((g) =>
@@ -502,7 +572,9 @@ const DataArtContainer = () => {
                   ? colorScheme.weatherSymbolSunday
                   : colorScheme.weatherSymbol
               )
-              .attr("transform", "rotate(90), scale(0.013)")
+              .attr("opacity", (d, i) => 1 - (i % 7) * 0.1)
+              .attr("transform", "rotate(90), scale(0.011)")
+              .attr("stroke", "none")
           )
       );
 
@@ -665,6 +737,11 @@ const DataArtContainer = () => {
       container.select<SVGGElement>(".weatherSymbol");
     const temperatureContainer = container.select<SVGGElement>(".temperature");
     const xAxisContainer = container.select<SVGGElement>(".xAxis");
+
+    nightRegionContainer.selectAll("*").remove();
+    weatherSymbolContainer.selectAll("*").remove();
+    temperatureContainer.selectAll("*").remove();
+    xAxisContainer.selectAll("*").remove();
 
     csv("/weather.csv")
       .then((data) => {
@@ -1416,7 +1493,7 @@ const DataArtContainer = () => {
       return;
 
     /*const flattenedRateData = */
-    const data = rateEData?.reduce(
+    let data = rateEData?.reduce(
       (
         acc: {
           value_inc_vat: number;
@@ -1430,6 +1507,20 @@ const DataArtContainer = () => {
       },
       []
     ) as TariffResult[];
+
+    data = data.filter((d) => d.payment_method !== "NON_DIRECT_DEBIT");
+
+    if (
+      data.at(0)?.valid_to === null ||
+      new Date(data.at(0)?.valid_to ?? "").valueOf() >
+        new Date(toDate).valueOf()
+    ) {
+      data.unshift({
+        ...data.at(0),
+        valid_from: new Date(toDate).toISOString(),
+      } as TariffResult);
+    }
+
     const miniChartWidth = 420;
     const miniChartHeight = 160;
     const margins = {
@@ -1440,12 +1531,11 @@ const DataArtContainer = () => {
     };
     const minValue = min(data, (d) => d.value_inc_vat) ?? 0;
     const maxValue = max(data, (d) => d.value_inc_vat) ?? 0;
-
     const xScale = scaleTime()
       .domain([new Date(fromDate), new Date(toDate)])
       .range([0, miniChartWidth - margins.left - margins.right]);
     const yScale = scaleLinear()
-      .domain([maxValue, Math.min(0, minValue)])
+      .domain([maxValue + 5, Math.min(0, minValue)])
       .range([0, miniChartHeight - margins.top - margins.bottom])
       .nice();
 
@@ -1464,6 +1554,7 @@ const DataArtContainer = () => {
       .call(
         axisLeft(yScale)
           .tickSize(miniChartWidth - margins.left - margins.right)
+          .ticks(5)
           .tickFormat((d) => `${d}p`)
       );
     yAxis
@@ -1501,33 +1592,51 @@ const DataArtContainer = () => {
       .attr("stroke-width", 1)
       .attr("stroke", colorScheme.consumptionRing);
 
-    electricityChartContainer
-      .append("path")
-      .datum(data)
-      .attr("fill", "none")
-      .attr("stroke", colorScheme.electricityLine)
-      .attr("stroke-width", 1)
-      .attr("stroke-linecap", "round")
-      .attr("stroke-linejoin", "round")
-      .attr(
-        "d",
-        line<TariffResult>()
-          .x((d) => xScale(new Date(d.valid_from)))
-          .y((d) => yScale(d.value_inc_vat))
-      );
+    if (["SVT", "Fixed", "Tracker"].includes(categoryE)) {
+      electricityChartContainer
+        .append("path")
+        .datum(data)
+        .attr("fill", "none")
+        .attr("stroke", colorScheme.electricityLine)
+        .attr("stroke-width", 1)
+        .attr("stroke-linecap", "round")
+        .attr("stroke-linejoin", "round")
+        .attr(
+          "d",
+          line<TariffResult>()
+            .curve(
+              categoryE === "SVT" || categoryE === "Fixed"
+                ? curveStepBefore
+                : curveLinear
+            )
+            .x((d) => xScale(new Date(d.valid_from)))
+            .y((d) => yScale(d.value_inc_vat))
+        );
+    } else {
+      electricityChartContainer
+        .selectAll("circle")
+        .data(data)
+        .join("circle")
+        .attr("fill", colorScheme.electricityLine)
+        .attr("stroke", "none")
+        .attr("r", 0.5)
+        .attr("cx", (d) => xScale(new Date(d.valid_from)))
+        .attr("cy", (d) => yScale(d.value_inc_vat));
+    }
   }, [
     rateEData,
     isRateEDataSuccess,
     colorScheme.line,
     colorScheme.consumptionRing,
     colorScheme.electricityLine,
+    categoryE,
   ]);
 
   useEffect(() => {
     if (!chartRef.current || !isRateGDataSuccess || !rateGData?.[0]?.results)
       return;
 
-    const data = rateGData?.reduce(
+    let data = rateGData?.reduce(
       (
         acc: {
           value_inc_vat: number;
@@ -1541,6 +1650,20 @@ const DataArtContainer = () => {
       },
       []
     ) as TariffResult[];
+
+    data = data.filter((d) => d.payment_method !== "NON_DIRECT_DEBIT");
+
+    if (
+      data.at(0)?.valid_to === null ||
+      new Date(data.at(0)?.valid_to ?? "").valueOf() >
+        new Date(toDate).valueOf()
+    ) {
+      data.unshift({
+        ...data.at(0),
+        valid_from: new Date(toDate).toISOString(),
+      } as TariffResult);
+    }
+
     const miniChartWidth = 420;
     const miniChartHeight = 160;
     const margins = {
@@ -1575,7 +1698,7 @@ const DataArtContainer = () => {
       .call(
         axisLeft(yScale)
           .tickSize(miniChartWidth - margins.left - margins.right)
-          .ticks(10)
+          .ticks(5)
           .tickFormat((d) => `${d}p`)
       );
     yAxis
@@ -1624,6 +1747,11 @@ const DataArtContainer = () => {
       .attr(
         "d",
         line<TariffResult>()
+          .curve(
+            categoryG === "SVT" || categoryG === "Fixed"
+              ? curveStepBefore
+              : curveLinear
+          )
           .x((d) => xScale(new Date(d.valid_from)))
           .y((d) => yScale(d.value_inc_vat))
       );
@@ -1634,6 +1762,7 @@ const DataArtContainer = () => {
     colorScheme.consumptionRing,
     colorScheme.electricityLine,
     colorScheme.gasLine,
+    categoryG,
   ]);
 
   if (
@@ -1681,7 +1810,13 @@ const DataArtContainer = () => {
         className="w-full h-auto"
       >
         <filter id="shadow">
-          <feDropShadow dx="1" dy="1" stdDeviation="2" />
+          <feDropShadow
+            dx="0.5"
+            dy="0.5"
+            stdDeviation="2"
+            floodColor="#15748c"
+            floodOpacity="0.8"
+          />
         </filter>
         <colorScheme.Gradients />
         <g className="container">
@@ -1694,6 +1829,7 @@ const DataArtContainer = () => {
           <g className="electricityChart" />
           <g className="gasTariffChart" />
           <g className="electricityTariffChart" />
+          <g className="map" />
           <g className="heading" />
           <g className="info" />
           <g className="legend" />

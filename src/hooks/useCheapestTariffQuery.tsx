@@ -39,6 +39,7 @@ function useCheapestTariffQuery<T>({
     week: 336,
     "2-days": 96,
     day: 48,
+    year: 1500,
   };
 
   const today = new Date();
