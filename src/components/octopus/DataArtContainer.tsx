@@ -62,6 +62,7 @@ import { GiFog } from "react-icons/gi";
 import { MdWindPower } from "react-icons/md";
 import {
   animateNumber,
+  delay,
   evenRound,
   getCategory,
   selectOrAppend,
@@ -307,8 +308,74 @@ const DataArtContainer = () => {
           fx="30%"
           fy="30%"
         >
+          <stop offset="35%" stopColor="#C7E9DB" />
+          <stop offset="90%" stopColor="#ecfff0" />
+        </radialGradient>
+        <radialGradient
+          id="octopus0"
+          cx="0.4"
+          cy="0.45"
+          r="0.8"
+          fx="30%"
+          fy="30%"
+        >
           <stop offset="35%" stopColor="#c7e0e9" />
           <stop offset="90%" stopColor="#ecfff0" />
+        </radialGradient>
+        <radialGradient
+          id="octopus1"
+          cx="0.4"
+          cy="0.45"
+          r="0.8"
+          fx="30%"
+          fy="30%"
+        >
+          <stop offset="35%" stopColor="#c7e0e9" />
+          <stop offset="90%" stopColor="#BDE6E1" />
+        </radialGradient>
+        <radialGradient
+          id="octopus2"
+          cx="0.4"
+          cy="0.45"
+          r="0.8"
+          fx="30%"
+          fy="30%"
+        >
+          <stop offset="35%" stopColor="#CDDDFE" />
+          <stop offset="90%" stopColor="#BDE6E1" />
+        </radialGradient>
+        <radialGradient
+          id="octopus3"
+          cx="0.4"
+          cy="0.45"
+          r="0.8"
+          fx="30%"
+          fy="30%"
+        >
+          <stop offset="35%" stopColor="#CDDDFE" />
+          <stop offset="90%" stopColor="#D0C5FA" />
+        </radialGradient>
+        <radialGradient
+          id="octopus4"
+          cx="0.4"
+          cy="0.45"
+          r="0.8"
+          fx="30%"
+          fy="30%"
+        >
+          <stop offset="35%" stopColor="#FECDFA" />
+          <stop offset="90%" stopColor="#D0C5FA" />
+        </radialGradient>
+        <radialGradient
+          id="octopus5"
+          cx="0.4"
+          cy="0.45"
+          r="0.8"
+          fx="30%"
+          fy="30%"
+        >
+          <stop offset="35%" stopColor="#FECDFA" />
+          <stop offset="90%" stopColor="#FAC5C5" />
         </radialGradient>
       </defs>
     ),
@@ -346,7 +413,7 @@ const DataArtContainer = () => {
   );
 
   const width = 900;
-  const height = 900;
+  const height = 1280;
   const innerRadius = (0.35 * width) / 2;
   const outerRadius = (0.85 * width) / 2;
 
@@ -483,7 +550,7 @@ const DataArtContainer = () => {
       .attr("transform", "translate(50 50)");
     dayNightLegend
       .append("text")
-      .text("Night")
+      .text("Dark")
       .attr("font-weight", "bold")
       .attr("transform", "translate(135 33)");
     dayNightLegend
@@ -500,7 +567,7 @@ const DataArtContainer = () => {
       .attr("transform", "translate(100 100)");
     dayNightLegend
       .append("text")
-      .text("Day")
+      .text("Daylight")
       .attr("font-weight", "bold")
       .attr("transform", "translate(195 83)");
   }, [
@@ -1136,6 +1203,47 @@ const DataArtContainer = () => {
         );
       const dailyLength = consumptionDailyChart.node()?.getTotalLength() ?? 0;
       const legendContainer = svg.select(".legend");
+
+      let currentColorId = 0;
+      const animateOctopusColor = async () => {
+        const length = Math.max(
+          electricityConsumptionsArr.length,
+          gasConsumptionsArr.length
+        );
+        const startTime = new Date().getTime();
+        for (let i = 0; i < length; i++) {
+          const remainingTime =
+            animationDuration - (new Date().getTime() - startTime);
+          const interval =
+            remainingTime / (electricityConsumptionsArr.length - i);
+          const totalConsumption =
+            (electricityConsumptionsArr[i] ??
+              electricityConsumptionsArr.at(-1) ??
+              0) + (gasConsumptionsArr[i] ?? gasConsumptionsArr.at(-1) ?? 0);
+          let thisColorId = 0;
+          if (totalConsumption > 20000) {
+            thisColorId = 5;
+          } else if (totalConsumption > 15000) {
+            thisColorId = 4;
+          } else if (totalConsumption > 10000) {
+            thisColorId = 3;
+          } else if (totalConsumption > 6000) {
+            thisColorId = 2;
+          } else if (totalConsumption > 3000) {
+            thisColorId = 1;
+          } else if (totalConsumption > 1000) {
+            thisColorId = 0;
+          }
+          if (thisColorId !== currentColorId) {
+            currentColorId = thisColorId;
+            svg
+              .select(".octopus")
+              .attr("fill", `url(#octopus${currentColorId})`);
+          }
+          await delay(interval);
+        }
+      };
+      animateOctopusColor();
 
       if (type === "E") {
         legendContainer.select(".electricityLegend").remove();
@@ -1801,12 +1909,13 @@ const DataArtContainer = () => {
   }
 
   return (
-    <div className="flex w-full aspect-[210/297] bg-white">
+    <div className="flex w-full aspect-[210/297] bg-black flex-col">
       <svg
+        xmlns="http://www.w3.org/2000/svg"
         ref={chartRef}
-        width={900}
-        height={1200}
-        viewBox="-450 -505 900 1200"
+        width={width}
+        height={height}
+        viewBox="-450 -535 900 1280"
         className="w-full h-auto"
       >
         <filter id="shadow">
@@ -1819,6 +1928,12 @@ const DataArtContainer = () => {
           />
         </filter>
         <colorScheme.Gradients />
+        <rect
+          width="100%"
+          height="100%"
+          transform="translate(-450,-535)"
+          fill="white"
+        />
         <g className="container">
           <g className="nightRegion" />
           <g className="temperature" />
@@ -1835,6 +1950,47 @@ const DataArtContainer = () => {
           <g className="legend" />
         </g>
       </svg>
+      <button
+        onClick={async () => {
+          if (!chartRef.current) return;
+
+          const resolution = 2;
+          const xml = new XMLSerializer().serializeToString(chartRef.current);
+          const svgBlob = new Blob([xml], {
+            type: "image/svg+xml;charset=utf-8",
+          });
+          const url = URL.createObjectURL(svgBlob);
+          const img = new Image();
+          img.addEventListener("load", () => {
+            const bbox = chartRef.current!.getBBox();
+            const scale = window.devicePixelRatio;
+            const canvas = document.createElement("canvas");
+            canvas.width = width * resolution;
+            canvas.height = height * resolution;
+            const context = canvas.getContext("2d")!;
+            context.drawImage(
+              img,
+              0,
+              0,
+              width * resolution,
+              height * resolution
+            );
+
+            URL.revokeObjectURL(url);
+
+            // trigger a synthetic download operation with a temporary link
+            const a = document.createElement("a");
+            a.download = "myEnergyProfile.jpg";
+            document.body.appendChild(a);
+            a.href = canvas.toDataURL("image/jpeg", 0.8);
+            a.click();
+            a.remove();
+          });
+          img.src = url;
+        }}
+      >
+        Download as Image
+      </button>
     </div>
   );
 };
