@@ -6,17 +6,20 @@ import {
   scaleSequential,
 } from "d3";
 
-import { useRef } from "react";
+import { useContext, useRef } from "react";
 
 import MonthlyChartBar from "./MonthlyChartBar";
+import { UserContext } from "@/context/user";
 
 export interface IMonthlyChart {
   cost: { [x: string]: number }[];
   costSVT: { [x: string]: number }[];
   lastDate: null | string;
+  type: "E" | "G";
 }
 
-const MonthlyChart = ({ cost, costSVT, lastDate }: IMonthlyChart) => {
+const MonthlyChart = ({ cost, costSVT, lastDate, type }: IMonthlyChart) => {
+  const { value } = useContext(UserContext);
   const scrollContainerRef = useRef<null | HTMLDivElement>(null);
 
   const valueAccessor = (d: { [x: string]: number }) => Object.values(d)[0];
@@ -56,7 +59,14 @@ const MonthlyChart = ({ cost, costSVT, lastDate }: IMonthlyChart) => {
                 ind,
                 lastDate,
               };
-              return <MonthlyChartBar key={ind} {...chartBarProps} />;
+              return (
+                <MonthlyChartBar
+                  key={`${
+                    type === "E" ? value.ESerialNo : value.GSerialNo
+                  }-${ind}`}
+                  {...chartBarProps}
+                />
+              );
             })
           ) : (
             <div>Sorry temporarily unavailable. Please check back later.</div>

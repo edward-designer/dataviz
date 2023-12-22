@@ -161,6 +161,19 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
       ) ?? [],
   };
 
+  if (isSuccess && consumptionData.results.length === 0) {
+    return {
+      cost: null,
+      totalUnit: 0,
+      totalPrice: 0,
+      totalStandingCharge: 0,
+      isLoading: false,
+      lastDate: null,
+      error:
+        "Sorry, no consumption data available. Please try to select a different meter or try later.",
+    };
+  }
+
   if (
     isSuccess &&
     isRateDataSuccess &&
@@ -202,6 +215,7 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
     totalStandingCharge: 0,
     isLoading: isLoading || isRateDataLoading,
     lastDate: null,
+    error: "",
   };
 };
 
@@ -254,12 +268,12 @@ export const calculateMonthlyPrices = (
   const filteredRateDataResults = rateData.results.filter(
     (d) => d.payment_method !== "NON_DIRECT_DEBIT"
   );
+
   const consumptionDataResults = consumptionData.results.filter(
     (d) =>
       new Date(d.interval_start) >= new Date(fromDate) &&
       new Date(d.interval_end) <= new Date(toDate)
   );
-
   for (let i = 0; i < consumptionDataResults.length; i++) {
     if (
       new Intl.DateTimeFormat("en-GB", {
@@ -275,9 +289,11 @@ export const calculateMonthlyPrices = (
         monthlyPricesInPound.reduce((acc, cur) => {
           return acc + Object.values(cur)[0];
         }, 0);
-      monthlyPricesInPound.push({
-        [currentMonth]: evenRound(monthlyCostPlusStandingChargeInPound, 2),
-      });
+      if (monthlyCostPlusStandingChargeInPound > 0) {
+        monthlyPricesInPound.push({
+          [currentMonth]: evenRound(monthlyCostPlusStandingChargeInPound, 2),
+        });
+      }
       currentMonth = new Intl.DateTimeFormat("en-GB", {
         month: "short",
         year: "2-digit",
@@ -333,7 +349,49 @@ export const calculateMonthlyPrices = (
         }
         currentRateIndex++;
       }
-    } else if (category === "Tracker" || category === "Agile") {
+    } else if (category === "Tracker") {
+      // Agile or Tracker
+      const currentResultStartDateTime = new Date(
+        consumptionDataResults[i].interval_start
+      );
+      currentResultStartDateTime.setHours(0, 0, 0, 0);
+      const currentResultStartDateTimestamp =
+        currentResultStartDateTime.valueOf();
+      const currentRateStartDateTime = new Date(
+        filteredRateDataResults[i + rateDataOffset]?.valid_from
+      );
+      currentRateStartDateTime.setHours(0, 0, 0, 0);
+      const currentRateStartDateTimestamp = currentRateStartDateTime.valueOf();
+      /* check the same start time OR difference of 1 hour in daylight saving time */
+
+      if (currentRateStartDateTimestamp === currentResultStartDateTimestamp) {
+        totalPrice +=
+          filteredRateDataResults[i + rateDataOffset].value_inc_vat *
+          consumptionDataResults[i].consumption *
+          consumptionMultiplier;
+      } else {
+        for (
+          let j = 1;
+          j < filteredRateDataResults.length - rateDataOffset;
+          j++
+        ) {
+          const nextTime = new Date(
+            filteredRateDataResults[i + rateDataOffset + j]?.valid_from
+          );
+          nextTime.setHours(0, 0, 0, 0);
+          const nextTimestamp = nextTime.valueOf();
+
+          if (nextTimestamp === currentResultStartDateTimestamp) {
+            totalPrice +=
+              filteredRateDataResults[i + rateDataOffset + j].value_inc_vat *
+              consumptionDataResults[i].consumption *
+              consumptionMultiplier;
+            rateDataOffset += j;
+            break;
+          }
+        }
+      }
+    } else if (category === "Agile") {
       // Agile or Tracker
       const currentResultStartDateTimestamp = new Date(
         consumptionDataResults[i].interval_start
@@ -342,6 +400,7 @@ export const calculateMonthlyPrices = (
         filteredRateDataResults[i + rateDataOffset]?.valid_from
       ).valueOf();
       /* check the same start time OR difference of 1 hour in daylight saving time */
+
       if (
         currentRateStartDateTimestamp === currentResultStartDateTimestamp ||
         currentRateStartDateTimestamp ===
@@ -352,11 +411,14 @@ export const calculateMonthlyPrices = (
           consumptionDataResults[i].consumption *
           consumptionMultiplier;
       } else {
-        for (let j = 1; j < consumptionDataResults.length; j++) {
+        for (let j = 1; j < filteredRateDataResults.length; j++) {
+          const nextTimestamp = new Date(
+            filteredRateDataResults[i + rateDataOffset + j]?.valid_from
+          ).valueOf();
+
           if (
-            new Date(
-              filteredRateDataResults[i + rateDataOffset + j]?.valid_from
-            ).valueOf() === currentResultStartDateTimestamp
+            nextTimestamp === currentResultStartDateTimestamp ||
+            nextTimestamp === currentResultStartDateTimestamp - 3600000
           ) {
             totalPrice +=
               filteredRateDataResults[i + rateDataOffset + j].value_inc_vat *
@@ -406,7 +468,6 @@ export const calculateMonthlyPrices = (
     }
   }
 
-  // add the last month data
   totalStandingCharge += monthlyStandingCharge;
   const monthlyCostPlusStandingChargeInPound: number =
     evenRound(totalPrice / 100, 2) +
@@ -419,6 +480,7 @@ export const calculateMonthlyPrices = (
   });
 
   totalStandingCharge = evenRound(totalStandingCharge, 2);
+
   return {
     cost: monthlyPricesInPound,
     totalUnit,
@@ -426,6 +488,7 @@ export const calculateMonthlyPrices = (
     totalStandingCharge,
     isLoading: false,
     lastDate: consumptionData?.results[0]?.interval_end ?? "",
+    error: "",
   };
 };
 
@@ -526,7 +589,49 @@ export const calculatePrice = (
         }
         currentRateIndex++;
       }
-    } else if (category === "Tracker" || category === "Agile") {
+    } else if (category === "Tracker") {
+      // Agile or Tracker
+      const currentResultStartDateTime = new Date(
+        consumptionDataResults[i].interval_start
+      );
+      currentResultStartDateTime.setHours(0, 0, 0, 0);
+      const currentResultStartDateTimestamp =
+        currentResultStartDateTime.valueOf();
+      const currentRateStartDateTime = new Date(
+        filteredRateDataResults[i + rateDataOffset]?.valid_from
+      );
+      currentRateStartDateTime.setHours(0, 0, 0, 0);
+      const currentRateStartDateTimestamp = currentRateStartDateTime.valueOf();
+      /* check the same start time OR difference of 1 hour in daylight saving time */
+
+      if (currentRateStartDateTimestamp === currentResultStartDateTimestamp) {
+        totalPrice +=
+          filteredRateDataResults[i + rateDataOffset].value_inc_vat *
+          consumptionDataResults[i].consumption *
+          consumptionMultiplier;
+      } else {
+        for (
+          let j = 1;
+          j < filteredRateDataResults.length - rateDataOffset;
+          j++
+        ) {
+          const nextTime = new Date(
+            filteredRateDataResults[i + rateDataOffset + j]?.valid_from
+          );
+          nextTime.setHours(0, 0, 0, 0);
+          const nextTimestamp = nextTime.valueOf();
+
+          if (nextTimestamp === currentResultStartDateTimestamp) {
+            totalPrice +=
+              filteredRateDataResults[i + rateDataOffset + j].value_inc_vat *
+              consumptionDataResults[i].consumption *
+              consumptionMultiplier;
+            rateDataOffset += j;
+            break;
+          }
+        }
+      }
+    } else if (category === "Agile") {
       // Agile or Tracker
       const currentResultStartDateTimestamp = new Date(
         consumptionDataResults[i].interval_start
@@ -535,6 +640,7 @@ export const calculatePrice = (
         filteredRateDataResults[i + rateDataOffset]?.valid_from
       ).valueOf();
       /* check the same start time OR difference of 1 hour in daylight saving time */
+
       if (
         currentRateStartDateTimestamp === currentResultStartDateTimestamp ||
         currentRateStartDateTimestamp ===
@@ -545,11 +651,14 @@ export const calculatePrice = (
           consumptionDataResults[i].consumption *
           consumptionMultiplier;
       } else {
-        for (let j = 1; j < consumptionDataResults.length; j++) {
+        for (let j = 1; j < filteredRateDataResults.length; j++) {
+          const nextTimestamp = new Date(
+            filteredRateDataResults[i + rateDataOffset + j]?.valid_from
+          ).valueOf();
+
           if (
-            new Date(
-              filteredRateDataResults[i + rateDataOffset + j]?.valid_from
-            ).valueOf() === currentResultStartDateTimestamp
+            nextTimestamp === currentResultStartDateTimestamp ||
+            nextTimestamp === currentResultStartDateTimestamp - 3600000
           ) {
             totalPrice +=
               filteredRateDataResults[i + rateDataOffset + j].value_inc_vat *
@@ -633,5 +742,6 @@ export const calculatePrice = (
     totalStandingCharge,
     isLoading: false,
     lastDate: null,
+    error: "",
   };
 };

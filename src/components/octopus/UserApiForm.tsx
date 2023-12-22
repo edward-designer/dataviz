@@ -74,12 +74,21 @@ const UserApiForm = ({ open, setOpen }: IUserApiForm) => {
 
   const submitHandler = () => {
     setError({});
-    setValue({
-      ...value,
-      apiKey,
-      accountNumber,
-      gasConversionFactor,
-    });
+    if (apiKey !== value.apiKey || accountNumber !== value.accountNumber) {
+      setValue({
+        ...initialValue.value,
+        apiKey,
+        accountNumber,
+        gasConversionFactor,
+      });
+    } else {
+      setValue({
+        ...value,
+        apiKey,
+        accountNumber,
+        gasConversionFactor,
+      });
+    }
     toast.success("Changes are saved.");
     setOpen(false);
   };

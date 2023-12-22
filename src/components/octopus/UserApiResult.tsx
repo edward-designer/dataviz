@@ -61,63 +61,6 @@ const UserApiResult = () => {
     []
   );
 
-  const queryFn = async () => {
-    try {
-      const response = await fetch(
-        `https://api.octopus.energy/v1/accounts/${value.accountNumber}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Basic ${btoa(value.apiKey)}`,
-          },
-        }
-      );
-      if (!response.ok) throw new Error("Sorry the request was unsuccessful");
-      return response.json();
-    } catch (err: unknown) {
-      if (err instanceof Error)
-        throw new Error(
-          `Sorry, we have an error with your info: ${err.message}. Please check if your info are correct.`
-        );
-      throw new Error("Sorry, the request was unsuccessful");
-    }
-  };
-
-  const { data, isSuccess, isLoading, error, isError } =
-    useQuery<IUserApiResult>({
-      queryKey: ["user", value.accountNumber, value.apiKey],
-      queryFn,
-    });
-
-  const MPAN = data?.properties[0].electricity_meter_points[0].mpan ?? "";
-  const ESerialNo =
-    data?.properties[0].electricity_meter_points[0].meters[0].serial_number ??
-    "";
-
-  const MPRN = data?.properties[0].gas_meter_points[0].mprn;
-  const GSerialNo =
-    data?.properties[0].gas_meter_points[0].meters[0].serial_number;
-
-  const postcode = data?.properties[0].postcode;
-  useEffect(() => {
-    if (postcode && postcode !== value.postcode) {
-      getGsp(postcode)
-        .then((gsp) => {
-          console.log(gsp);
-          if (gsp !== false)
-            setValue({
-              ...value,
-              postcode: postcode.toUpperCase(),
-              gsp: gsp.replace("_", ""),
-            });
-        })
-        .catch((error: unknown) => {
-          if (error instanceof Error) throw new Error(error.message);
-        });
-    }
-  }, [postcode, setValue, value]);
-
   const yesterday = new Date(
     new Date(new Date().setHours(23, 59, 59, 999)).setDate(
       new Date().getDate() - 1
@@ -136,27 +79,6 @@ const UserApiResult = () => {
     tariffsGToCompare.find((tariffSet) => tariffSet.category === "SVT")?.cost ??
     null;
 
-  if (
-    isSuccess &&
-    (data.properties.length !== 1 ||
-      data.properties[0].electricity_meter_points.length > 1 ||
-      data.properties[0].gas_meter_points.length > 1)
-  ) {
-    return (
-      <NotCurrentlySupported>
-        Sorry, currently addresses with more than 1 gas and 1 electricity meters
-        are not supported.
-      </NotCurrentlySupported>
-    );
-  }
-  if (isSuccess && !(MPAN || ESerialNo) && !(MPRN || GSerialNo)) {
-    return (
-      <NotCurrentlySupported>
-        Sorry, owing to technical limitations, Octo cannot retrive your data at
-        the moment. Please try again later.
-      </NotCurrentlySupported>
-    );
-  }
   const reOrderedTariffsEToCompare = [...tariffsEToCompare].sort(
     (a, b) => (a.cost ?? Infinity) - (b.cost ?? Infinity)
   );
@@ -172,13 +94,9 @@ const UserApiResult = () => {
 
   return (
     <div className="flex gap-4 flex-col relative">
-      {isLoading && (
-        <div className=" min-h-screen">
-          <Loading />
-        </div>
-      )}
-      {isError && <div>{error.message}</div>}
-      {isSuccess && (
+      {value.error ? (
+        <NotCurrentlySupported>{value.error}</NotCurrentlySupported>
+      ) : (
         <>
           <div className="flex gap-2 items-center  flex-col-reverse md:flex-col lg:flex-row">
             <div className="flex-grow">
@@ -193,7 +111,7 @@ const UserApiResult = () => {
               </Remark>
             </div>
           </div>
-          {MPAN && ESerialNo && (
+          {value.MPAN && value.ESerialNo && (
             <>
               <h2 className="font-display text-accentPink-500 text-4xl flex items-center mt-4">
                 <BsLightningChargeFill className="w-8 h-8 fill-accentPink-900 inline-block mr-2" />
@@ -204,8 +122,8 @@ const UserApiResult = () => {
                   <TariffComparisionCard
                     key={category}
                     type="E"
-                    deviceNumber={MPAN}
-                    serialNo={ESerialNo}
+                    deviceNumber={value.MPAN}
+                    serialNo={value.ESerialNo}
                     tariff={tariff}
                     category={category}
                     fromDate={oneYearEarlier}
@@ -228,7 +146,7 @@ const UserApiResult = () => {
               </TariffComparisionCardsContainer>
             </>
           )}
-          {MPRN && GSerialNo && (
+          {value.MPRN && value.GSerialNo && (
             <>
               <h2 className="font-display text-accentPink-500 text-4xl flex items-center mt-8">
                 <AiFillFire className="w-8 h-8 fill-accentPink-900 inline-block mr-2" />
@@ -239,8 +157,8 @@ const UserApiResult = () => {
                   <TariffComparisionCard
                     key={category}
                     type="G"
-                    deviceNumber={MPRN}
-                    serialNo={GSerialNo}
+                    deviceNumber={value.MPRN}
+                    serialNo={value.GSerialNo}
                     tariff={tariff}
                     category={category}
                     fromDate={oneYearEarlier}

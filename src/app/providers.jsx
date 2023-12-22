@@ -14,13 +14,11 @@ const Providers = ({ children }) => {
   return (
     <WindowVisibilityProvider>
       <WindowResizeProvider>
-        <UserContextProvider>
-          <LastShownProvider>
-            <QueryClientProvider client={queryClient}>
-              {children}
-            </QueryClientProvider>
-          </LastShownProvider>
-        </UserContextProvider>
+        <QueryClientProvider client={queryClient}>
+          <UserContextProvider>
+            <LastShownProvider>{children}</LastShownProvider>
+          </UserContextProvider>
+        </QueryClientProvider>
       </WindowResizeProvider>
     </WindowVisibilityProvider>
   );
