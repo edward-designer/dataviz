@@ -9,6 +9,8 @@ import { AiFillFire } from "react-icons/ai";
 import { BsLightningChargeFill } from "react-icons/bs";
 import SavingsChart from "./SavingsChart";
 import TariffDetails from "./TariffDetails";
+import { useContext } from "react";
+import { UserContext } from "@/context/user";
 
 const SavingsCalculation = () => {
   const { value, setValue } = useContext(UserContext);
