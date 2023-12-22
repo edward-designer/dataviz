@@ -1,7 +1,13 @@
-import { ENERGY_TYPE, TariffCategory, TariffType } from "@/data/source";
+import {
+  ENERGY_TYPE,
+  IConsumptionData,
+  TariffCategory,
+  TariffType,
+} from "@/data/source";
+import { fillMissingDays } from "@/utils/helpers";
 import { useQuery } from "@tanstack/react-query";
 
-export type IConsumptionData = {
+export type IUseConsumptionData = {
   deviceNumber: string;
   serialNo: string;
   fromISODate: string;
@@ -11,7 +17,7 @@ export type IConsumptionData = {
   apiKey: string;
 };
 
-const useConsumptionData = (inputs: IConsumptionData) => {
+const useConsumptionData = (inputs: IUseConsumptionData) => {
   const {
     fromISODate,
     toISODate,
@@ -59,7 +65,14 @@ const useConsumptionData = (inputs: IConsumptionData) => {
     enabled: !!deviceNumber && !!serialNo && !!category,
   });
 
-  return { data, isSuccess, isLoading };
+  return {
+    data:
+      category === "Chart"
+        ? { ...data, results: fillMissingDays(data?.results) }
+        : data,
+    isSuccess,
+    isLoading,
+  };
 };
 
 export default useConsumptionData;

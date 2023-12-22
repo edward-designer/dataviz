@@ -47,6 +47,12 @@ import {
   curveStepAfter,
   curveStepBefore,
   curveLinear,
+  curveMonotoneY,
+  curveBasis,
+  curveCardinal,
+  curveStep,
+  curveMonotoneX,
+  timeDays,
 } from "d3";
 
 import {
@@ -74,6 +80,7 @@ import useTariffQuery from "@/hooks/useTariffQuery";
 import useYearlyTariffQuery from "@/hooks/useYearlyTariffQuery";
 import { useUkGspMapData } from "@/hooks/useUkGspMap";
 import Remark from "./Remark";
+import TariffDetails from "./TariffDetails";
 
 interface IWeatherData {
   time: string;
@@ -87,8 +94,30 @@ interface IWeatherData {
 }
 
 const DataArtContainer = () => {
+  const { value, setValue } = useContext(UserContext);
+  const {
+    postcode,
+    gsp,
+    apiKey,
+    accountNumber,
+    gasConversionFactor,
+    trackerCode,
+    agileCode,
+    MPAN,
+    ESerialNo,
+    ESerialNos,
+    currentETariff,
+    MPRN,
+    GSerialNo,
+    GSerialNos,
+    currentGTariff,
+    error,
+    currentEContract,
+    currentGContract,
+  } = value;
   const chartRef = useRef<null | SVGSVGElement>(null);
 
+  const chartYear = "2023";
   const fromDate = "2023-01-01";
   const toDate = "2023-12-31";
   const fromISODate = new Date(fromDate).toISOString();
@@ -99,26 +128,6 @@ const DataArtContainer = () => {
     electricity:
       "M11.251.068a.5.5 0 0 1 .227.58L9.677 6.5H13a.5.5 0 0 1 .364.843l-8 8.5a.5.5 0 0 1-.842-.49L6.323 9.5H3a.5.5 0 0 1-.364-.843l8-8.5a.5.5 0 0 1 .615-.09z",
   };
-
-  /* gather all data*/
-  const {
-    postcode,
-    setValue,
-    value,
-    data,
-    isSuccess,
-    isLoading,
-    error,
-    isError,
-    currentEContract,
-    currentETariff,
-    MPAN,
-    ESerialNo,
-    currentGContract,
-    currentGTariff,
-    MPRN,
-    GSerialNo,
-  } = useAccountDetails();
 
   const {
     data: tariffEData,
@@ -955,7 +964,7 @@ const DataArtContainer = () => {
       .attr("fill", "#FFFFFFBB")
       .attr("transform", "rotate(90)")
       .attr("letter-spacing", -3)
-      .text("2023");
+      .text(chartYear);
 
     const heading = select(".heading");
     heading.selectAll("*").remove();
@@ -1098,7 +1107,6 @@ const DataArtContainer = () => {
   /* draw the consumption info */
   useEffect(() => {
     if (
-      !data ||
       !chartRef.current ||
       (!consumptionEIsSuccess && !consumptionGIsSuccess) ||
       (!consumptionEData?.results && !consumptionGData?.results)
@@ -1122,7 +1130,8 @@ const DataArtContainer = () => {
       noOfCharts: number
     ) => {
       let total = 0;
-      const dailyChartAmplificationFactor = 50;
+      const dailyChartAmplificationFactor =
+        (data?.length ?? 365) > 180 ? 50 : 25;
       if (!(noOfCharts === 2 && type === "E")) {
         g.selectAll(".dailyScale").remove();
         g.append("g")
@@ -1162,7 +1171,7 @@ const DataArtContainer = () => {
         .attr(
           "d",
           lineRadial<IConsumptionData>()
-            .curve(curveNatural)
+            .curve(curveLinear)
             .angle((d) => xScale(new Date(d.interval_start)))
             .radius((d) => {
               total +=
@@ -1577,7 +1586,6 @@ const DataArtContainer = () => {
   }, [
     consumptionGIsSuccess,
     consumptionEIsSuccess,
-    data,
     consumptionEData?.results,
     consumptionGData?.results,
     colorScheme.textTitle,
@@ -1788,7 +1796,7 @@ const DataArtContainer = () => {
       .domain([new Date(fromDate), new Date(toDate)])
       .range([0, miniChartWidth - margins.left - margins.right]);
     const yScale = scaleLinear()
-      .domain([maxValue, Math.min(0, minValue)])
+      .domain([maxValue + 5, Math.min(0, minValue)])
       .range([0, miniChartHeight - margins.top - margins.bottom])
       .nice();
 
@@ -1874,57 +1882,38 @@ const DataArtContainer = () => {
     categoryG,
   ]);
 
-  if (
-    isSuccess &&
-    data &&
-    (data.properties.length !== 1 ||
-      data.properties[0].electricity_meter_points.length > 1 ||
-      data.properties[0].gas_meter_points.length > 1)
-  ) {
-    return (
-      <NotCurrentlySupported>
-        Sorry, currently addresses with more than 1 gas and 1 electricity meters
-        are not supported.
-      </NotCurrentlySupported>
-    );
-  }
-  if (isSuccess && !(MPAN || ESerialNo) && !(MPRN || GSerialNo)) {
-    return (
-      <NotCurrentlySupported>
-        Sorry, owing to technical limitations, Octo cannot retrive your data at
-        the moment. Please try again later.
-      </NotCurrentlySupported>
-    );
-  }
-  if (
-    isSuccess &&
-    typeof currentEContract === "undefined" &&
-    typeof currentGContract === "undefined"
-  ) {
-    return (
-      <NotCurrentlySupported>
-        Sorry, owing to technical limitations, Octo cannot retrive your data at
-        the moment. Please try again later.
-      </NotCurrentlySupported>
-    );
-  }
-
   return (
     <>
       <div className="flex gap-2 items-center mb-4 flex-col-reverse md:flex-col lg:flex-row">
         <div className="flex-grow">
           The following data visualization graphic shows your energy use pattern
-          over the 2023 in relation to the local weather conditions.
+          over the {chartYear} in relation to the local weather conditions.
           <Remark>
             Kindly note that this page is still in beta version and may not be
             able to cater to all Octopus customer accounts. Should you encounter
-            any issues while using this page, please contact Edward at
-            <a href="mailto:edward.chung.dev@gmail.com">
+            any issues while using this page, please contact Edward at{" "}
+            <a href="mailto:edward.chung.dev@gmail.com" className="underline">
               edward.chung.dev@gmail.com
             </a>
             . Thanks a lot!
           </Remark>
         </div>
+      </div>
+      <div className="flex flex-row gap-2 flex-wrap [&>*]:flex-1">
+        {value.currentEContract && value.currentETariff && (
+          <TariffDetails
+            valid_from={value.currentEContract.valid_from}
+            tariff_code={value.currentETariff}
+            type="E"
+          />
+        )}
+        {value.currentGContract && value.currentGTariff && (
+          <TariffDetails
+            valid_from={value.currentGContract.valid_from}
+            tariff_code={value.currentGTariff}
+            type="G"
+          />
+        )}
       </div>
       <div className="flex w-full aspect-[210/297] bg-black flex-col">
         <svg

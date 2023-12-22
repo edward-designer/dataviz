@@ -5,9 +5,10 @@ import {
   QueryTariffResult,
   gsp,
   TariffCategory,
+  IConsumptionData,
 } from "@/data/source";
 
-import { BaseType, Selection, select } from "d3";
+import { BaseType, Selection, select, timeDays } from "d3";
 
 export const fetchEachApi = async ({
   tariffType,
@@ -221,4 +222,26 @@ export const getCategory = (tariff: string): TariffCategory => {
   if (tariff.includes("COSY")) return "Cosy";
   if (tariff.includes("VAR")) return "SVT";
   return "Chart";
+};
+
+export const fillMissingDays = (results: IConsumptionData[]) => {
+  if (!results) return;
+  if (results[0]?.interval_start && results.at(-1)?.interval_start) {
+    const filledResults = timeDays(
+      new Date(results.at(-1)!.interval_start),
+      new Date(results[0].interval_start)
+    ).map((time) => ({
+      consumption:
+        results.find((d) => {
+          const currentDay = new Date(d.interval_start);
+          currentDay.setHours(0, 0, 0, 0);
+          return currentDay.valueOf() === time.valueOf();
+        })?.consumption ?? 0,
+      interval_start: time.toUTCString(),
+      interval_end: time.toUTCString(),
+    }));
+    filledResults.reverse();
+    return filledResults;
+  }
+  return results;
 };
