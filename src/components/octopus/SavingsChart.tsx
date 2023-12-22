@@ -61,6 +61,7 @@ const SavingsChart = ({
     totalStandingCharge,
     isLoading,
     lastDate,
+    error,
   } = useConsumptionCalculation({
     tariff,
     fromDate,
@@ -94,6 +95,25 @@ const SavingsChart = ({
       </div>
     );
 
+  if (!isLoading && error) {
+    return (
+      <div
+        className="relative flex-1 flex flex-col gap-8 rounded-xl p-4 bg-theme-950 border border-accentPink-800/60 shadow-inner bg-gradient-to-br from-transparent via-theme-800/20 to-purple-600/30 bg-cover"
+        style={{
+          backgroundImage: `linear-gradient(0deg, rgba(0,3,35,0.7) 30% , rgba(0,3,35,0.9) 70%, rgba(0,4,51,1) 100% )`,
+        }}
+      >
+        <div className="flex-1 flex h-full items-center justify-center flex-col gap-2">
+          <Lottie
+            animationData={octopusIcon}
+            aria-hidden={true}
+            className="w-16 h-16"
+          />
+          <span className="text-sm font-light text-center">{error}</span>
+        </div>
+      </div>
+    );
+  }
   if (
     cost === null ||
     costSVT === null ||
@@ -197,7 +217,12 @@ const SavingsChart = ({
         {cost.length > 1 && costSVT.length ? (
           <>
             <div className="flex flex-1 flex-col md:flex-row justify-between gap-4 max-h-full overflow-hidden">
-              <MonthlyChart cost={cost} costSVT={costSVT} lastDate={lastDate} />
+              <MonthlyChart
+                cost={cost}
+                costSVT={costSVT}
+                lastDate={lastDate}
+                type={type}
+              />
               <div className="flex flex-col font-normal justify-start divide-y [&>div]:border-accentBlue-900 gap-3">
                 <div className="flex flex-wrap justify-between items-start md:block text-[#85cbf9] bg-theme-900/30">
                   <Badge

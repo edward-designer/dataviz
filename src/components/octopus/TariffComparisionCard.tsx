@@ -10,6 +10,8 @@ import { motion } from "framer-motion";
 import AnimatedDigits from "./AnimatedDigits";
 import Sparkles from "./Sparkles";
 import Remark from "./Remark";
+import Lottie from "lottie-react";
+import octopusIcon from "../../../public/lottie/octopus.json";
 
 interface ITariffComparisionCard {
   deviceNumber: string;
@@ -35,7 +37,7 @@ const TariffComparisionCard = ({
   setCost,
   rank,
 }: ITariffComparisionCard) => {
-  const { cost } = useConsumptionCalculation({
+  const { cost, isLoading, error } = useConsumptionCalculation({
     tariff,
     fromDate,
     toDate,
@@ -53,11 +55,33 @@ const TariffComparisionCard = ({
   const Container =
     cost !== null && !Number.isNaN(cost) && rank === 1 ? Sparkles : "div";
 
+  if (!isLoading && error) {
+    if (rank === 1) {
+      return (
+        <div
+          className="relative flex-1 flex flex-col gap-8 rounded-xl p-4 bg-theme-950 border border-accentPink-800/60 shadow-inner bg-gradient-to-br from-transparent via-theme-800/20 to-purple-600/30 bg-cover md:aspect-square"
+          style={{
+            backgroundImage: `linear-gradient(0deg, rgba(0,3,35,0.7) 30% , rgba(0,3,35,0.9) 70%, rgba(0,4,51,1) 100% )`,
+          }}
+        >
+          <div className="flex-1 flex h-full items-center justify-center flex-col gap-2">
+            <Lottie
+              animationData={octopusIcon}
+              aria-hidden={true}
+              className="w-16 h-16"
+            />
+            <span className="text-sm font-light text-center">{error}</span>
+          </div>
+        </div>
+      );
+    } else return;
+  }
+
   return (
     <motion.div
       transition={{ delay: 1 }}
       layoutId={`${type}-${category}`}
-      className={`relative flex-1 border border-accentPink-500/30 min-h-[200px] lg:h-[300px] rounded-2xl flex flex-col justify-center items-center gap-2 bg-cover bg-tops ${
+      className={`md:aspect-square relative flex-1 border border-accentPink-500/30 min-h-[200px] lg:h-[300px] rounded-2xl flex flex-col justify-center items-center gap-2 bg-cover bg-tops ${
         cost !== null ? `first:border-accentPink-500 first:bg-tariffWinner` : ""
       }`}
     >

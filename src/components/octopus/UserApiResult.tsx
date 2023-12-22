@@ -1,19 +1,27 @@
 "use client";
 
 import Loading from "@/components/Loading";
-import { ETARIFFS, GTARIFFS, TariffCategory } from "@/data/source";
-import { useCallback, useState } from "react";
+import { UserContext } from "@/context/user";
+import {
+  ETARIFFS,
+  GTARIFFS,
+  IUserApiResult,
+  TariffCategory,
+} from "@/data/source";
+import { useCallback, useContext, useEffect, useState } from "react";
 import NotCurrentlySupported from "./NotCurrentlySupported";
 import Remark from "./Remark";
 import TariffComparisionCard from "./TariffComparisionCard";
-import TariffComparisionCardsContainer from "./TariffComparisionCardsContainer";
 
 import useAccountDetails from "@/hooks/useAccountDetails";
 import { AiFillFire } from "react-icons/ai";
 import { BsLightningChargeFill } from "react-icons/bs";
 import AddATariff from "./AddATariffToCompare";
+import TariffDetails from "./TariffDetails";
+import { AnimatePresence } from "framer-motion";
 
 const UserApiResult = () => {
+  const { value } = useContext(UserContext);
   const [tariffsEToCompare, setTariffsEToCompare] = useState(
     ETARIFFS.slice(0, 3)
   );
@@ -53,18 +61,6 @@ const UserApiResult = () => {
     []
   );
 
-  const {
-    data,
-    isSuccess,
-    isLoading,
-    error,
-    isError,
-    MPAN,
-    ESerialNo,
-    MPRN,
-    GSerialNo,
-  } = useAccountDetails();
-
   const yesterday = new Date(
     new Date(new Date().setHours(23, 59, 59, 999)).setDate(
       new Date().getDate() - 1
@@ -83,31 +79,17 @@ const UserApiResult = () => {
     tariffsGToCompare.find((tariffSet) => tariffSet.category === "SVT")?.cost ??
     null;
 
-  if (
-    isSuccess &&
-    data &&
-    (data.properties.length !== 1 ||
-      data.properties[0].electricity_meter_points.length > 1 ||
-      data.properties[0].gas_meter_points.length > 1)
-  ) {
-    return (
-      <NotCurrentlySupported>
-        Sorry, currently addresses with more than 1 gas and 1 electricity meters
-        are not supported.
-      </NotCurrentlySupported>
-    );
-  }
-  if (isSuccess && !(MPAN || ESerialNo) && !(MPRN || GSerialNo)) {
-    return (
-      <NotCurrentlySupported>
-        Sorry, owing to technical limitations, Octo cannot retrive your data at
-        the moment. Please try again later.
-      </NotCurrentlySupported>
-    );
-  }
+  const tariffsEWithResultsCount = tariffsEToCompare.filter(
+    (tariff) => tariff.cost !== 0
+  ).length;
+
   const reOrderedTariffsEToCompare = [...tariffsEToCompare].sort(
     (a, b) => (a.cost ?? Infinity) - (b.cost ?? Infinity)
   );
+
+  const tariffsGWithResultsCount = tariffsGToCompare.filter(
+    (tariff) => tariff.cost !== 0
+  ).length;
 
   const reOrderedTariffsGToCompare = [...tariffsGToCompare].sort(
     (a, b) => (a.cost ?? Infinity) - (b.cost ?? Infinity)
@@ -120,13 +102,9 @@ const UserApiResult = () => {
 
   return (
     <div className="flex gap-4 flex-col relative">
-      {isLoading && (
-        <div className=" min-h-screen">
-          <Loading />
-        </div>
-      )}
-      {isError && error && <div>{error.message}</div>}
-      {isSuccess && (
+      {value.error ? (
+        <NotCurrentlySupported>{value.error}</NotCurrentlySupported>
+      ) : (
         <>
           <div className="flex gap-2 items-center  flex-col-reverse md:flex-col lg:flex-row">
             <div className="flex-grow">
@@ -141,64 +119,86 @@ const UserApiResult = () => {
               </Remark>
             </div>
           </div>
-          {MPAN && ESerialNo && (
+          {value.MPAN && value.ESerialNo && value.currentEContract && (
             <>
               <h2 className="font-display text-accentPink-500 text-4xl flex items-center mt-4">
                 <BsLightningChargeFill className="w-8 h-8 fill-accentPink-900 inline-block mr-2" />
                 Electricity
               </h2>
-              <TariffComparisionCardsContainer>
-                {reOrderedTariffsEToCompare.map(({ tariff, category }, ind) => (
-                  <TariffComparisionCard
-                    key={category}
-                    type="E"
-                    deviceNumber={MPAN}
-                    serialNo={ESerialNo}
-                    tariff={tariff}
-                    category={category}
-                    fromDate={oneYearEarlier}
-                    toDate={yesterday}
-                    compareTo={SVTECost}
-                    setCost={setECost}
-                    rank={ind + 1}
-                  />
-                ))}
-                {remainingTariffs.length > 0 && (
-                  <div
-                    className={`basis-full lg:basis-[32%] xl:basis-[32.5%] relative border border-dashed border-white/30 min-h-[200px] lg:h-[300px] rounded-2xl flex flex-col justify-center items-center gap-2 bg-cover bg-tops`}
-                  >
-                    <AddATariff
-                      tariffs={remainingTariffs}
-                      addToTariff={addToTariff}
-                    />
-                  </div>
-                )}
-              </TariffComparisionCardsContainer>
+              <TariffDetails
+                valid_from={value.currentEContract.valid_from}
+                tariff_code={value.currentETariff}
+                type="E"
+              />
+              <div className="flex gap-4 flex-col lg:grid lg:grid-cols-3">
+                <AnimatePresence>
+                  {reOrderedTariffsEToCompare.map(
+                    ({ tariff, category }, ind) => {
+                      return (
+                        <TariffComparisionCard
+                          key={category}
+                          type="E"
+                          deviceNumber={value.MPAN}
+                          serialNo={value.ESerialNo}
+                          tariff={tariff}
+                          category={category}
+                          fromDate={oneYearEarlier}
+                          toDate={yesterday}
+                          compareTo={SVTECost}
+                          setCost={setECost}
+                          rank={ind + 1}
+                        />
+                      );
+                    }
+                  )}
+                  {remainingTariffs.length > 0 && (
+                    <div
+                      className={`basis-full lg:basis-[32%] xl:basis-[32.5%] relative border border-dashed border-white/30 min-h-[200px] lg:h-[300px] rounded-2xl flex flex-col justify-center items-center gap-2 bg-cover bg-tops`}
+                    >
+                      <AddATariff
+                        tariffs={remainingTariffs}
+                        addToTariff={addToTariff}
+                      />
+                    </div>
+                  )}
+                </AnimatePresence>
+              </div>
             </>
           )}
-          {MPRN && GSerialNo && (
+          {value.MPRN && value.GSerialNo && value.currentGContract && (
             <>
               <h2 className="font-display text-accentPink-500 text-4xl flex items-center mt-8">
                 <AiFillFire className="w-8 h-8 fill-accentPink-900 inline-block mr-2" />
                 Gas
               </h2>
-              <TariffComparisionCardsContainer>
-                {reOrderedTariffsGToCompare.map(({ tariff, category }, ind) => (
-                  <TariffComparisionCard
-                    key={category}
-                    type="G"
-                    deviceNumber={MPRN}
-                    serialNo={GSerialNo}
-                    tariff={tariff}
-                    category={category}
-                    fromDate={oneYearEarlier}
-                    toDate={yesterday}
-                    compareTo={SVTGCost}
-                    setCost={setGCost}
-                    rank={ind + 1}
-                  />
-                ))}
-              </TariffComparisionCardsContainer>
+              <TariffDetails
+                valid_from={value.currentGContract.valid_from}
+                tariff_code={value.currentGTariff}
+                type="G"
+              />
+              <div className="flex gap-4 flex-col lg:grid lg:grid-cols-3">
+                <AnimatePresence>
+                  {reOrderedTariffsGToCompare.map(
+                    ({ tariff, cost, category }, ind) => {
+                      return (
+                        <TariffComparisionCard
+                          key={category}
+                          type="G"
+                          deviceNumber={value.MPRN}
+                          serialNo={value.GSerialNo}
+                          tariff={tariff}
+                          category={category}
+                          fromDate={oneYearEarlier}
+                          toDate={yesterday}
+                          compareTo={SVTGCost}
+                          setCost={setGCost}
+                          rank={ind + 1}
+                        />
+                      );
+                    }
+                  )}
+                </AnimatePresence>
+              </div>
             </>
           )}
         </>
