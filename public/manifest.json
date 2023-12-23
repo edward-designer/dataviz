@@ -1,6 +1,7 @@
 {
   "name": "Octoprice",
   "short_name": "Octoprice",
+  "category": ["finance", "utilities"],
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
