@@ -15,6 +15,7 @@ That's why I decided to create the Octoprice App.
 ## Features
 
 - visualize the energy consumption pattern in the past year
+  
   ![octopast](https://github.com/edward-designer/dataviz/assets/25171685/d0204b4e-86cc-49ca-8af1-891cc4cb3f17)
 
 - get the latest unit rates details for different intelligent tariffs (in pratical the half-hourly rates for Agile) with sensible comparisions for informed decision / choice
