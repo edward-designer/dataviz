@@ -30,7 +30,7 @@ const YearInReviewContainer = () => {
           <div className="">
             <UserApi />
           </div>
-          <div className="flex justify-center mt-8 md:mt-0">Demo Graphic</div>
+          <div className="flex justify-center mt-8 md:mt-0"></div>
         </div>
       )}
     </div>

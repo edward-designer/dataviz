@@ -1908,19 +1908,26 @@ const DataArtContainer = () => {
       const context = canvas.getContext("2d")!;
       context.drawImage(img, 0, 0, width * resolution, height * resolution);
 
-      canvas.toBlob((blob) => {
-        try {
-          if (blob) {
-            if (window !== undefined && "saveAs" in window && window.saveAs) {
-              window.saveAs(blob, `octopast-year-2023.png`);
-            } else {
-              saveAs(blob, `octopast-year-2023.png`);
+      canvas.toBlob(async (blob) => {
+        let data = {};
+        if (blob) {
+          data = {
+            files: [
+              new File([blob], "octoprice.png", {
+                type: blob.type,
+              }),
+            ],
+            title: `My Octopast Year`,
+            text: `Visualize my energy footprint in 2023`,
+          };
+          try {
+            await navigator.share(data);
+          } catch (err) {
+            if (err instanceof Error) {
+              if (!err.message.includes("cancellation of share"))
+                console.log(err.message);
             }
-          } else {
-            throw new Error("Sorry, cannot be downloaded at the moment.");
           }
-        } catch (err) {
-          throw new Error("Sorry, cannot be downloaded at the moment.");
         }
       });
       URL.revokeObjectURL(url);
