@@ -51,7 +51,7 @@ const SavingsCalculation = () => {
         <>
           <div className="flex gap-2 md:flex-col lg:flex-row">
             <div className="flex-grow">
-              A month-by-month overview of your energy cost savings after
+              Monthly overview of energy cost savings after
               switching to the current tariff.
               <Remark>
                 Approximations and assumptions are used in the calculations. The

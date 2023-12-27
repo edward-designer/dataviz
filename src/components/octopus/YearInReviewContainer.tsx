@@ -22,8 +22,7 @@ const YearInReviewContainer = () => {
         My Octopast Year
       </h1>
       <h2 className="text-accentBlue-400 font-display font-medium text-lg lg:text-2xl mb-8">
-        - Visualize how you &quot;shape up&quot; with energy consumption in the
-        last year
+        - Visualize how your energy consumption &quot;shape up&quot;
       </h2>
 
       {hasApiInfo ? (

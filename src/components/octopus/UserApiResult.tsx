@@ -108,8 +108,8 @@ const UserApiResult = () => {
         <>
           <div className="flex gap-2 items-center  flex-col-reverse md:flex-col lg:flex-row">
             <div className="flex-grow">
-              The following analysis is based on your actual energy use pattern
-              in the past year, showing which tariff suits you best!
+              Showing which tariff suits you best based on your actual energy use
+              pattern.
               <Remark>
                 The figures presented here are an approximation of your annual
                 energy costs. Approximations and assumptions are used in the

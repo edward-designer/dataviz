@@ -1975,8 +1975,7 @@ const DataArtContainer = () => {
     <>
       <div className="flex gap-2 items-center mb-4 flex-col-reverse md:flex-col lg:flex-row">
         <div className="flex-grow">
-          Your energy consumption pattern over {chartYear} with reference to
-          weather conditions.
+          Your energy consumption visualization over {chartYear} vs weather.
           <Remark>
             Kindly note that this page is still in beta version and may not be
             able to cater to all Octopus customer accounts. Should you encounter
@@ -1988,7 +1987,7 @@ const DataArtContainer = () => {
           </Remark>
         </div>
       </div>
-      <div className="flex flex-row gap-2 flex-wrap [&>*]:flex-1">
+      <div className="flex flex-row gap-2 mb-4 flex-wrap [&>*]:flex-1">
         {value.currentEContract && value.currentETariff && (
           <div>
             <h2 className="font-display text-accentPink-500 text-4xl flex items-center">
