@@ -100,10 +100,14 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
     useQuery<IUserApiResult>({
       queryKey: ["user", value.accountNumber, value.apiKey],
       queryFn,
-      enabled: !!value.accountNumber && !!value.apiKey,
+      enabled:
+        !!value.accountNumber &&
+        !!value.apiKey &&
+        !value.ESerialNo &&
+        !value.GSerialNo,
       retry: false,
     });
-  console.log(data, isSuccess, isLoading, error, isError);
+
   const currentEContract = useMemo(
     () =>
       data?.properties
@@ -176,19 +180,20 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
   }, [isSuccess, postcode, setValue, value]);
 
   useLayoutEffect(() => {
-    setValue((value) => ({
-      ...value,
-      MPAN,
-      ESerialNo,
-      ESerialNos,
-      MPRN,
-      GSerialNo,
-      GSerialNos,
-      currentEContract,
-      currentETariff,
-      currentGContract,
-      currentGTariff,
-    }));
+    if (isSuccess)
+      setValue((value) => ({
+        ...value,
+        MPAN,
+        ESerialNo,
+        ESerialNos,
+        MPRN,
+        GSerialNo,
+        GSerialNos,
+        currentEContract,
+        currentETariff,
+        currentGContract,
+        currentGTariff,
+      }));
   }, [
     ESerialNo,
     ESerialNos,
