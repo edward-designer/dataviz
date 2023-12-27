@@ -1908,28 +1908,32 @@ const DataArtContainer = () => {
       const context = canvas.getContext("2d")!;
       context.drawImage(img, 0, 0, width * resolution, height * resolution);
 
-      canvas.toBlob(async (blob) => {
-        let data = {};
-        if (blob) {
-          data = {
-            files: [
-              new File([blob], "octoprice.png", {
-                type: blob.type,
-              }),
-            ],
-            title: `My Octopast Year`,
-            text: `Visualize my energy footprint in 2023`,
-          };
-          try {
-            await navigator.share(data);
-          } catch (err) {
-            if (err instanceof Error) {
-              if (!err.message.includes("cancellation of share"))
-                console.log(err.message);
+      canvas.toBlob(
+        async (blob) => {
+          let data = {};
+          if (blob) {
+            data = {
+              files: [
+                new File([blob], "octoprice.jpg", {
+                  type: blob.type,
+                }),
+              ],
+              title: `My Octopast Year`,
+              text: `Visualize my energy footprint in 2023`,
+            };
+            try {
+              await navigator.share(data);
+            } catch (err) {
+              if (err instanceof Error) {
+                if (!err.message.includes("cancellation of share"))
+                  console.log(err.message);
+              }
             }
           }
-        }
-      });
+        },
+        "image/jpeg",
+        0.8
+      );
       URL.revokeObjectURL(url);
     });
     img.src = url;
