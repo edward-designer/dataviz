@@ -1975,7 +1975,8 @@ const DataArtContainer = () => {
     <>
       <div className="flex gap-2 items-center mb-4 flex-col-reverse md:flex-col lg:flex-row">
         <div className="flex-grow">
-          Your energy consumption visualization over {chartYear} vs weather.
+          Your energy consumption visualization over {chartYear} in relation to
+          weather.
           <Remark>
             Kindly note that this page is still in beta version and may not be
             able to cater to all Octopus customer accounts. Should you encounter
