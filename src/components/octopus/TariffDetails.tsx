@@ -29,7 +29,7 @@ const TariffDetails = ({ tariff_code, valid_from, type }: ITariffDetails) => {
 
   const currentSelect = type === "E" ? "ESerialNo" : "GSerialNo";
   return (
-    <div className="bg-theme-900/40 p-2 flex flex-col gap-3">
+    <div className="bg-theme-900/40 p-2 flex flex-col gap-1">
       <div className="flex flex-row items-center">
         <span className="inline-block w-[90px] text-white/70 text-sm">
           Current Tariff:

@@ -51,15 +51,24 @@ const SavingsCalculation = () => {
         <>
           <div className="flex gap-2 md:flex-col lg:flex-row">
             <div className="flex-grow">
-              The following chart(s) give you an overview of how much you have
-              saved in the period after you have switched to your current tariff
-              for up to 1 year.
+              A month-by-month overview of your energy cost savings after
+              switching to the current tariff.
               <Remark>
                 Approximations and assumptions are used in the calculations. The
                 actual savings are likely to differ because of missing data and
                 rounding. Also, please note the figures for the latest month may
                 not be complete (maybe up to a few days earlier) as it takes
-                time for your data to be updated.
+                time for your data to be updated. Kindly note that this page is
+                still in beta version and may not be able to cater to all
+                Octopus customer accounts. Should you encounter any issues while
+                using this page, please contact Edward at{" "}
+                <a
+                  href="mailto:edward.chung.dev@gmail.com"
+                  className="underline"
+                >
+                  edward.chung.dev@gmail.com
+                </a>
+                . Thanks a lot!
               </Remark>
             </div>
           </div>

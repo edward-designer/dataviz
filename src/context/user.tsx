@@ -9,9 +9,11 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useState,
 } from "react";
+import toast from "react-hot-toast";
 
 type TContract =
   | {
@@ -99,8 +101,9 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
       queryKey: ["user", value.accountNumber, value.apiKey],
       queryFn,
       enabled: !!value.accountNumber && !!value.apiKey,
+      retry: false,
     });
-
+  console.log(data, isSuccess, isLoading, error, isError);
   const currentEContract = useMemo(
     () =>
       data?.properties
@@ -149,8 +152,14 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
 
   const postcode = data?.properties?.at(-1)?.postcode;
 
-  useEffect(() => {
-    if (postcode && postcode !== value.postcode) {
+  useLayoutEffect(() => {
+    const storedValue = window.localStorage.getItem("octoprice");
+    if (storedValue && storedValue !== "undefined")
+      setValue({ ...initialValue.value, ...JSON.parse(storedValue) });
+  }, []);
+
+  useLayoutEffect(() => {
+    if (isSuccess && postcode && postcode !== value.postcode) {
       getGsp(postcode)
         .then((gsp) => {
           if (gsp !== false)
@@ -164,9 +173,9 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
           if (error instanceof Error) throw new Error(error.message);
         });
     }
-  }, [postcode, setValue, value]);
+  }, [isSuccess, postcode, setValue, value]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setValue((value) => ({
       ...value,
       MPAN,
@@ -191,16 +200,17 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
     currentETariff,
     currentGContract,
     currentGTariff,
+    isSuccess,
     setValue,
   ]);
 
-  useEffect(() => {
-    const storedValue = window.localStorage.getItem("octoprice");
-    if (storedValue && storedValue !== "undefined")
-      setValue({ ...initialValue.value, ...JSON.parse(storedValue) });
+  // need to handle existing users with saved data
+  const handleSetValue = useCallback((value: IUserValue) => {
+    window.localStorage.setItem("octoprice", JSON.stringify(value));
+    setValue(value);
   }, []);
 
-  /* error handling */
+  // handle errors
   if (
     !value.error &&
     isSuccess &&
@@ -228,11 +238,10 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
   }
 
   if (
-    (!value.error &&
-      isSuccess &&
-      typeof currentEContract === undefined &&
-      typeof currentGContract === undefined) ||
-    isError
+    !value.error &&
+    isSuccess &&
+    typeof currentEContract === undefined &&
+    typeof currentGContract === undefined
   ) {
     setValue({
       ...value,
@@ -241,11 +250,9 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
     });
   }
 
-  // need to handle existing users with saved data
-  const handleSetValue = useCallback((value: IUserValue) => {
-    window.localStorage.setItem("octoprice", JSON.stringify(value));
-    setValue(value);
-  }, []);
+  if (error) {
+    toast.error(error.message);
+  }
 
   return (
     <UserContext.Provider value={{ value, setValue: handleSetValue }}>

@@ -81,6 +81,11 @@ import useYearlyTariffQuery from "@/hooks/useYearlyTariffQuery";
 import { useUkGspMapData } from "@/hooks/useUkGspMap";
 import Remark from "./Remark";
 import TariffDetails from "./TariffDetails";
+import { RxShare2 } from "react-icons/rx";
+import { PiDownloadSimple } from "react-icons/pi";
+import { BsLightningChargeFill } from "react-icons/bs";
+import { AiFillFire } from "react-icons/ai";
+import { saveAs } from "file-saver";
 
 interface IWeatherData {
   time: string;
@@ -1882,12 +1887,85 @@ const DataArtContainer = () => {
     categoryG,
   ]);
 
+  const canShare = "share" in navigator;
+
+  const handleShare = async () => {
+    if (!chartRef.current) return;
+
+    const resolution = 2;
+    const xml = new XMLSerializer().serializeToString(chartRef.current);
+    const svgBlob = new Blob([xml], {
+      type: "image/svg+xml;charset=utf-8",
+    });
+    const url = URL.createObjectURL(svgBlob);
+    const img = new Image();
+    img.addEventListener("load", () => {
+      const bbox = chartRef.current!.getBBox();
+      const scale = window.devicePixelRatio;
+      const canvas = document.createElement("canvas");
+      canvas.width = width * resolution;
+      canvas.height = height * resolution;
+      const context = canvas.getContext("2d")!;
+      context.drawImage(img, 0, 0, width * resolution, height * resolution);
+
+      canvas.toBlob((blob) => {
+        try {
+          if (blob) {
+            if (window !== undefined && "saveAs" in window && window.saveAs) {
+              window.saveAs(blob, `octopast-year-2023.png`);
+            } else {
+              saveAs(blob, `octopast-year-2023.png`);
+            }
+          } else {
+            throw new Error("Sorry, cannot be downloaded at the moment.");
+          }
+        } catch (err) {
+          throw new Error("Sorry, cannot be downloaded at the moment.");
+        }
+      });
+      URL.revokeObjectURL(url);
+    });
+    img.src = url;
+  };
+
+  const handleDownload = async () => {
+    if (!chartRef.current) return;
+
+    const resolution = 2;
+    const xml = new XMLSerializer().serializeToString(chartRef.current);
+    const svgBlob = new Blob([xml], {
+      type: "image/svg+xml;charset=utf-8",
+    });
+    const url = URL.createObjectURL(svgBlob);
+    const img = new Image();
+    img.addEventListener("load", () => {
+      const bbox = chartRef.current!.getBBox();
+      const scale = window.devicePixelRatio;
+      const canvas = document.createElement("canvas");
+      canvas.width = width * resolution;
+      canvas.height = height * resolution;
+      const context = canvas.getContext("2d")!;
+      context.drawImage(img, 0, 0, width * resolution, height * resolution);
+
+      URL.revokeObjectURL(url);
+
+      // trigger a synthetic download operation with a temporary link
+      const a = document.createElement("a");
+      a.download = "myEnergyProfile.jpg";
+      document.body.appendChild(a);
+      a.href = canvas.toDataURL("image/jpeg", 0.8);
+      a.click();
+      a.remove();
+    });
+    img.src = url;
+  };
+
   return (
     <>
       <div className="flex gap-2 items-center mb-4 flex-col-reverse md:flex-col lg:flex-row">
         <div className="flex-grow">
-          The following data visualization graphic shows your energy use pattern
-          over the {chartYear} in relation to the local weather conditions.
+          Your energy consumption pattern over {chartYear} with reference to
+          weather conditions.
           <Remark>
             Kindly note that this page is still in beta version and may not be
             able to cater to all Octopus customer accounts. Should you encounter
@@ -1901,21 +1979,33 @@ const DataArtContainer = () => {
       </div>
       <div className="flex flex-row gap-2 flex-wrap [&>*]:flex-1">
         {value.currentEContract && value.currentETariff && (
-          <TariffDetails
-            valid_from={value.currentEContract.valid_from}
-            tariff_code={value.currentETariff}
-            type="E"
-          />
+          <div>
+            <h2 className="font-display text-accentPink-500 text-4xl flex items-center">
+              <BsLightningChargeFill className="w-8 h-8 fill-accentPink-900 inline-block mr-2" />
+              Electricity
+            </h2>
+            <TariffDetails
+              valid_from={value.currentEContract.valid_from}
+              tariff_code={value.currentETariff}
+              type="E"
+            />
+          </div>
         )}
         {value.currentGContract && value.currentGTariff && (
-          <TariffDetails
-            valid_from={value.currentGContract.valid_from}
-            tariff_code={value.currentGTariff}
-            type="G"
-          />
+          <div>
+            <h2 className="font-display text-accentPink-500 text-4xl flex items-center">
+              <AiFillFire className="w-8 h-8 fill-accentPink-900 inline-block mr-2" />
+              Gas
+            </h2>
+            <TariffDetails
+              valid_from={value.currentGContract.valid_from}
+              tariff_code={value.currentGTariff}
+              type="G"
+            />
+          </div>
         )}
       </div>
-      <div className="flex w-full aspect-[210/297] bg-black flex-col">
+      <div className="flex w-full aspect-[210/297] flex-col">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           ref={chartRef}
@@ -1957,45 +2047,18 @@ const DataArtContainer = () => {
           </g>
         </svg>
         <button
-          onClick={async () => {
-            if (!chartRef.current) return;
-
-            const resolution = 2;
-            const xml = new XMLSerializer().serializeToString(chartRef.current);
-            const svgBlob = new Blob([xml], {
-              type: "image/svg+xml;charset=utf-8",
-            });
-            const url = URL.createObjectURL(svgBlob);
-            const img = new Image();
-            img.addEventListener("load", () => {
-              const bbox = chartRef.current!.getBBox();
-              const scale = window.devicePixelRatio;
-              const canvas = document.createElement("canvas");
-              canvas.width = width * resolution;
-              canvas.height = height * resolution;
-              const context = canvas.getContext("2d")!;
-              context.drawImage(
-                img,
-                0,
-                0,
-                width * resolution,
-                height * resolution
-              );
-
-              URL.revokeObjectURL(url);
-
-              // trigger a synthetic download operation with a temporary link
-              const a = document.createElement("a");
-              a.download = "myEnergyProfile.jpg";
-              document.body.appendChild(a);
-              a.href = canvas.toDataURL("image/jpeg", 0.8);
-              a.click();
-              a.remove();
-            });
-            img.src = url;
-          }}
+          className="mt-4 self-center flex justify-center items-center gap-2 border border-accentBlue-500 p-2 px-6 text-accentBlue-500 rounded-xl hover:bg-accentBlue-800 hover:text-white"
+          onClick={canShare ? handleShare : handleDownload}
         >
-          Download as Image
+          {canShare ? (
+            <>
+              <RxShare2 /> Share
+            </>
+          ) : (
+            <>
+              <PiDownloadSimple /> Download
+            </>
+          )}
         </button>
       </div>
     </>
