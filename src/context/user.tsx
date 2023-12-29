@@ -204,19 +204,6 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
   if (
     !value.error &&
     isSuccess &&
-    data &&
-    ((data?.properties?.at(-1)?.electricity_meter_points?.length ?? 0) > 1 ||
-      (data?.properties?.at(-1)?.gas_meter_points?.length ?? 0) > 1)
-  ) {
-    setValue({
-      ...value,
-      error:
-        "Sorry, currently addresses with more than 1 gas and 1 electricity meters are not supported.",
-    });
-  }
-  if (
-    !value.error &&
-    isSuccess &&
     !(MPAN || ESerialNo) &&
     !(MPRN || GSerialNo)
   ) {
