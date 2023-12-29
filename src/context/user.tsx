@@ -215,7 +215,7 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
     setValue(value);
   }, []);
 
-  // handle errors
+  /* error handling */
   if (
     !value.error &&
     isSuccess &&
