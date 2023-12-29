@@ -1,5 +1,4 @@
 import Octopus3d from "@/components/octopus/Octopus3d";
-import { ENERGY_PLAN, ENERGY_TYPE } from "@/data/source";
 
 import EnergyPriceCard from "../components/octopus/EnergyPriceCard";
 
