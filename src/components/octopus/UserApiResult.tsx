@@ -111,6 +111,10 @@ const UserApiResult = () => {
               Showing which tariff suits you best based on your actual energy use
               pattern.
               <Remark>
+                <em>
+                  [Notes: Currently Octopus Flux and Export tariffs are NOT
+                  supported.]
+                </em>{" "}
                 The figures presented here are an approximation of your annual
                 energy costs. Approximations and assumptions are used in the
                 calculations. The actual costs may vary a lot depending on the
