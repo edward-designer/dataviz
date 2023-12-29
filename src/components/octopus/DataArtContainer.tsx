@@ -85,7 +85,6 @@ import { RxShare2 } from "react-icons/rx";
 import { PiDownloadSimple } from "react-icons/pi";
 import { BsLightningChargeFill } from "react-icons/bs";
 import { AiFillFire } from "react-icons/ai";
-import { saveAs } from "file-saver";
 
 interface IWeatherData {
   time: string;
@@ -1971,7 +1970,9 @@ const DataArtContainer = () => {
     img.src = url;
   };
 
-  return (
+  return value.error ? (
+    <NotCurrentlySupported>{value.error}</NotCurrentlySupported>
+  ) : (
     <>
       <div className="flex gap-2 items-center mb-4 flex-col-reverse md:flex-col lg:flex-row">
         <div className="flex-grow">
