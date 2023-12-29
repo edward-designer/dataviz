@@ -1052,7 +1052,7 @@ const DataArtContainer = () => {
         .attr("letter-spacing", -2)
         .attr("transform", "translate(70 690)")
         .attr("fill", colorScheme.textTitle)
-        .text(tariffEData?.[0].display_name ?? "");
+        .text(tariffGData?.[0].display_name ?? "");
       infoContainer
         .append("text")
         .attr("font-size", "10px")
