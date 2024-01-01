@@ -6,7 +6,6 @@ import {
   TariffResult,
   TariffType,
 } from "@/data/source";
-import useAccountDetails from "@/hooks/useAccountDetails";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useContext, useEffect, useMemo, useRef } from "react";
 import NotCurrentlySupported from "./NotCurrentlySupported";
@@ -240,7 +239,7 @@ const DataArtContainer = () => {
   });
   // get coordinates and then weather info
   // https://api.postcodes.io/postcodes/RG194SD
-  // https://archive-api.open-meteo.com/v1/archive?latitude=51.394907&longitude=-1.25207&start_date=2023-01-01&end_date=2023-12-18&daily=weather_code,apparent_temperature_max,apparent_temperature_min,sunshine_duration&wind_speed_unit=mph&timezone=auto
+  // https://archive-api.open-meteo.com/v1/archive?latitude=51.394907&longitude=-1.25207&start_date=2023-01-01&end_date=2023-12-31&daily=weather_code,apparent_temperature_max,apparent_temperature_min,sunshine_duration&wind_speed_unit=mph&timezone=auto
 
   /*
   0 - cloud covering half or less of the sky throughout the period            
@@ -502,7 +501,7 @@ const DataArtContainer = () => {
       .classed("weatherIconLegend", true);
     weatherIconsLegend
       .append("text")
-      .text("Weather Symbols")
+      .text("Dominant Weather Symbols")
       .attr("text-anchor", "end")
       .attr("font-weight", "bold")
       .attr("transform", "translate(370,30)");
@@ -824,7 +823,7 @@ const DataArtContainer = () => {
     temperatureContainer.selectAll("*").remove();
     xAxisContainer.selectAll("*").remove();
 
-    csv("/weather.csv")
+    csv(`/weather-${value.gsp}.csv`)
       .then((data) => {
         if (data) {
           drawNightRegion(
@@ -1030,6 +1029,7 @@ const DataArtContainer = () => {
     outerRadius,
     weatherIcon,
     xScale,
+    value.gsp,
   ]);
 
   /* tariff details */
