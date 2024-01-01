@@ -13,6 +13,7 @@ import { Advent_Pro, Roboto } from "next/font/google";
 import { IoMdHeart } from "react-icons/io";
 
 import "./globals.css";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 
 const font = Advent_Pro({
   weight: ["100", "400", "700"],
@@ -120,6 +121,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               <Header className="lg:col-[content]" />
               {children}
               <Analytics />
+              <GoogleAnalytics ga_id="G-NQX4NLSBPE" />
               <footer className="lg:col-[content] text-sm font-light text-white/60 mt-16">
                 &copy; {new Date().getFullYear()} Octoprice. Made with{" "}
                 {<IoMdHeart className="w-4 h-4 inline-block" />} by{" "}
