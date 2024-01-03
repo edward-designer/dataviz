@@ -36,7 +36,7 @@ export const GTARIFFS: ITariffToCompare[] = [
     cost: null,
   },
   {
-    tariff: "LOYAL-FIX-12M-23-11-23",
+    tariff: "LOYAL-FIX-12M-23-12-30",
     type: "G",
     category: "Fixed",
     cost: null,
@@ -68,7 +68,7 @@ export const ETARIFFS: ITariffToCompare[] = [
     cost: null,
   },
   {
-    tariff: "LOYAL-FIX-12M-23-11-23",
+    tariff: "LOYAL-FIX-12M-23-12-30",
     type: "E",
     category: "Fixed",
     cost: null,
