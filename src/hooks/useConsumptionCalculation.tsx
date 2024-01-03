@@ -292,16 +292,19 @@ export const calculateMonthlyPrices = (
           (d.valid_to === null || new Date(d.valid_to)) >=
             new Date(consumptionDataResults[i].interval_start)
       );
+
       const currentPeriodTariffCap = caps.find(
         (cap) =>
           new Date(consumptionDataResults[i].interval_start) >=
           new Date(cap.Date)
       );
+
       const currentUnitRate =
         (currentPeriodTariff?.value_inc_vat ?? 0) >
         Number(currentPeriodTariffCap?.[type] ?? 0)
           ? Number(currentPeriodTariffCap?.[type] ?? 0)
           : currentPeriodTariff?.value_inc_vat ?? 0;
+
       totalPrice +=
         currentUnitRate *
         consumptionDataResults[i].consumption *
@@ -367,7 +370,7 @@ export const calculateMonthlyPrices = (
         }
       }
     } else if (category === "Agile") {
-      // Agile or Tracker
+      // Agile
       const currentResultStartDateTimestamp = new Date(
         consumptionDataResults[i].interval_start
       ).valueOf();
@@ -699,16 +702,6 @@ export const calculatePrice = (
   }
   totalPrice = evenRound(totalPrice / 100, 2);
   totalStandingCharge = evenRound(totalStandingCharge / 100, 2);
-
-  /* temporarily increase price for tracker since 11/12/2023 price increase */
-  if (category === "Tracker") {
-    totalPrice = totalPrice * 1.05;
-    if (type === "E") totalStandingCharge = totalStandingCharge * 1.15;
-    if (type === "G") totalStandingCharge = totalStandingCharge * 1.02;
-  }
-  if (category === "Agile") {
-    if (type === "E") totalStandingCharge = totalStandingCharge * 1.15;
-  }
 
   return {
     cost: totalPrice + totalStandingCharge,

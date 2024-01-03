@@ -37,6 +37,16 @@ function useYearlyTariffQuery<T>({
 }): UseQueryResult<T[], Error> {
   const queryClient = useQueryClient();
 
+  const numberOfPages = Math.ceil(
+    (((new Date(toDate).valueOf() - new Date(fromDate).valueOf()) /
+      1000 /
+      60 /
+      60 /
+      24) *
+      2) /
+      1500
+  );
+  const agilePageArray = Array.from({ length: numberOfPages }, (_, i) => i + 1);
   const queryFnArray = {
     Chart: fetchApi([
       {
@@ -45,7 +55,7 @@ function useYearlyTariffQuery<T>({
       },
     ]),
     Agile: fetchApi(
-      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((num) => {
+      agilePageArray.map((num) => {
         return {
           tariffType: type,
           url: `https://api.octopus.energy/v1/products/${tariff}/${ENERGY_TYPE[type]}-tariffs/${type}-1R-${tariff}-${gsp}/standard-unit-rates/?page_size=1500&period_from=${fromDate}&period_to=${toDate}&page=${num}`,

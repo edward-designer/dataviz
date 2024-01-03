@@ -8,7 +8,7 @@ import { toBlob, toJpeg } from "html-to-image";
 import { saveAs } from "file-saver";
 import html2canvas from "html2canvas";
 
-import { evenRound } from "../../utils/helpers";
+import { evenRound, getCategory } from "../../utils/helpers";
 
 import useConsumptionCalculation from "@/hooks/useConsumptionCalculation";
 import Lottie from "lottie-react";
@@ -52,7 +52,7 @@ const SavingsChart = ({
   const today = new Date();
   today.setHours(23, 59, 59, 999);
   const toDate = today.toISOString();
-  const category = "Tracker";
+  const category = getCategory(tariff);
 
   const {
     cost,
