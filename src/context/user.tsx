@@ -141,7 +141,7 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
   const MPRN = data?.properties?.at(-1)?.gas_meter_points?.at(-1)?.mprn ?? "";
   const GSerialNo =
     value.GSerialNo === ""
-      ? data?.properties?.at(-1)?.gas_meter_points?.at(-1)?.meters?.at(-1)
+      ? data?.properties?.at(-1)?.gas_meter_points?.at(-1)?.meters?.at(0)
           ?.serial_number ?? ""
       : value.GSerialNo;
   const GSerialNos = useMemo(
