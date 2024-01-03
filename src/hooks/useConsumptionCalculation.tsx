@@ -249,6 +249,7 @@ export const calculateMonthlyPrices = (
       new Date(d.interval_start) >= new Date(fromDate) &&
       new Date(d.interval_end) <= new Date(toDate)
   );
+
   for (let i = 0; i < consumptionDataResults.length; i++) {
     if (
       new Intl.DateTimeFormat("en-GB", {
@@ -289,8 +290,9 @@ export const calculateMonthlyPrices = (
         (d) =>
           new Date(d.valid_from) <=
             new Date(consumptionDataResults[i].interval_start) &&
-          (d.valid_to === null || new Date(d.valid_to)) >=
-            new Date(consumptionDataResults[i].interval_start)
+          (d.valid_to === null ||
+            new Date(d.valid_to) >=
+              new Date(consumptionDataResults[i].interval_start))
       );
 
       const currentPeriodTariffCap = caps.find(
@@ -442,6 +444,7 @@ export const calculateMonthlyPrices = (
               )?.value_inc_vat ?? 0;
         }
       }
+
       monthlyStandingCharge += standingCharge;
     }
   }
