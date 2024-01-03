@@ -38,18 +38,19 @@ const useConsumptionData = (inputs: IUseConsumptionData) => {
   };
 
   const queryFn = async () => {
+    const url =
+      category === "Chart"
+        ? `https://api.octopus.energy/v1/${ENERGY_TYPE[type]}-meter-points/${deviceNumber}/meters/${serialNo}/consumption/?period_from=${fromISODate}&period_to=${toISODate}&page_size=25000${groupBy[category]}`
+        : `https://api.octopus.energy/v1/${ENERGY_TYPE[type]}-meter-points/${deviceNumber}/meters/${serialNo}/consumption/?period_from=${fromISODate}&page_size=25000${groupBy[category]}`;
     try {
       // page_size 25000 is a year's data
-      const response = await fetch(
-        `https://api.octopus.energy/v1/${ENERGY_TYPE[type]}-meter-points/${deviceNumber}/meters/${serialNo}/consumption/?period_from=${fromISODate}&page_size=25000${groupBy[category]}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Basic ${btoa(apiKey)}`,
-          },
-        }
-      );
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Basic ${btoa(apiKey)}`,
+        },
+      });
       if (!response.ok) throw new Error("Sorry the request was unsuccessful");
       return response.json();
     } catch (err: unknown) {

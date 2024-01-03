@@ -125,6 +125,7 @@ const DataArtContainer = () => {
   const toDate = "2023-12-31";
   const fromISODate = new Date(fromDate).toISOString();
   const toISODate = new Date(toDate).toISOString();
+  const toChartDate = "2024-01-01T00:00:00.000Z";
 
   const icons = {
     gas: "M 16.682 9.384 A 6.9498 6.9498 90 0 0 15.024 7.08 l -0.582 -0.534 a 0.1618 0.1618 90 0 0 -0.26 0.066 l -0.26 0.746 c -0.162 0.468 -0.46 0.946 -0.882 1.416 c -0.028 0.03 -0.06 0.038 -0.082 0.04 c -0.022 0.002 -0.056 -0.002 -0.086 -0.03 c -0.028 -0.024 -0.042 -0.06 -0.04 -0.096 c 0.074 -1.204 -0.286 -2.562 -1.074 -4.04 C 11.106 3.42 10.2 2.462 9.068 1.794 l -0.826 -0.486 c -0.108 -0.064 -0.246 0.02 -0.24 0.146 l 0.044 0.96 c 0.03 0.656 -0.046 1.236 -0.226 1.718 c -0.22 0.59 -0.536 1.138 -0.94 1.63 a 5.9128 5.9128 90 0 1 -0.95 0.922 a 7.052 7.052 90 0 0 -2.006 2.43 A 6.955 6.955 90 0 0 3.2 12.2 c 0 0.944 0.186 1.858 0.554 2.72 a 6.988 6.988 90 0 0 1.51 2.218 c 0.648 0.64 1.4 1.144 2.238 1.494 C 8.37 18.996 9.29 19.18 10.24 19.18 s 1.87 -0.184 2.738 -0.546 A 6.972 6.972 90 0 0 15.216 17.14 c 0.648 -0.64 1.156 -1.388 1.51 -2.218 a 6.884 6.884 90 0 0 0.554 -2.72 c 0 -0.976 -0.2 -1.924 -0.598 -2.818 z",
@@ -170,7 +171,7 @@ const DataArtContainer = () => {
     type: "E",
     gsp: value.gsp,
     fromDate: fromISODate,
-    toDate: toISODate,
+    toDate: toChartDate,
     category: categoryE,
     enabled: !!MPAN && !!ESerialNo,
   });
@@ -192,7 +193,7 @@ const DataArtContainer = () => {
     type: "G",
     gsp: value.gsp,
     fromDate: fromISODate,
-    toDate: toISODate,
+    toDate: toChartDate,
     category: categoryG,
     enabled: !!MPRN && !!GSerialNo,
   });
@@ -203,7 +204,7 @@ const DataArtContainer = () => {
     isLoading: consumptionEIsLoading,
   } = useConsumptionData({
     fromISODate,
-    toISODate,
+    toISODate: toChartDate,
     type: "E",
     category: "Chart",
     deviceNumber: MPAN,
@@ -217,7 +218,7 @@ const DataArtContainer = () => {
     isLoading: consumptionGIsLoading,
   } = useConsumptionData({
     fromISODate,
-    toISODate,
+    toISODate: toChartDate,
     type: "G",
     category: "Chart",
     deviceNumber: MPRN,
