@@ -41,8 +41,7 @@ function useYearlyTariffQuery<T>({
     (((new Date(toDate).valueOf() - new Date(fromDate).valueOf()) /
       1000 /
       60 /
-      60 /
-      24) *
+      60) *
       2) /
       1500
   );
