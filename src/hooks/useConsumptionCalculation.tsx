@@ -535,8 +535,9 @@ export const calculatePrice = (
         (d) =>
           new Date(d.valid_from) <=
             new Date(consumptionDataResults[i].interval_start) &&
-          (d.valid_to === null || new Date(d.valid_to)) >=
-            new Date(consumptionDataResults[i].interval_start)
+          (d.valid_to === null ||
+            new Date(d.valid_to) >=
+              new Date(consumptionDataResults[i].interval_start))
       );
       const currentPeriodTariffCap = caps.find(
         (cap) =>
