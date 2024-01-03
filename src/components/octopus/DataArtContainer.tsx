@@ -640,10 +640,11 @@ const DataArtContainer = () => {
                   weatherIcon[
                     Number(d.weather_code) >= 10
                       ? Math.floor(Number(d.weather_code) / 10)
-                      : (Number(d.weather_code) === 6 ||
-                          Number(d.weather_code) === 5) &&
+                      : (Math.floor(Number(d.weather_code) / 10) === 8 ||
+                          Math.floor(Number(d.weather_code) / 10) === 6 ||
+                          Math.floor(Number(d.weather_code) / 10) === 5) &&
                         Number(d.precipitation_hours) <
-                          Number(d.sunshine_duration) / 3600 
+                          Number(d.sunshine_duration) / 3600
                       ? 0
                       : Number(d.weather_code)
                   ]
