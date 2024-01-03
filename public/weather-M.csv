@@ -1,4 +1,4 @@
-time,weather_code,temperature_2m_max,sunshine_duration,temperature_2m_min,sunrise,sunset,precipitation_hours
+time,weather_code,temperature_2m_max,precipitation_hours,temperature_2m_min,sunrise,sunset,sunshine_duration
 2023-01-01,53,9.6,4.8,1.2,2023-01-01T08:23,2023-01-01T15:55,15016.45
 2023-01-02,2,6.2,3.1,-4.8,2023-01-02T08:23,2023-01-02T15:56,21255.21
 2023-01-03,63,12.1,8.1,-4.9,2023-01-03T08:23,2023-01-03T15:57,0.00

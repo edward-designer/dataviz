@@ -643,7 +643,7 @@ const DataArtContainer = () => {
                       : (Number(d.weather_code) === 6 ||
                           Number(d.weather_code) === 5) &&
                         Number(d.precipitation_hours) <
-                          Number(d.sunshine_duration) / 3600 / 2
+                          Number(d.sunshine_duration) / 3600 
                       ? 0
                       : Number(d.weather_code)
                   ]
