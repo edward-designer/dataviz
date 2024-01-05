@@ -1,20 +1,21 @@
 "use client";
 
-import { requestPermission, showNotification } from "../../../worker/utils";
+const NotificationPage = () => {
+  const notifyMe = () => {
+    if (!("Notification" in window)) {
+      alert("This browser does not support desktop notification");
+    } else if (Notification.permission === "granted") {
+      const notification = new Notification("Hi there!");
+    } else if (Notification.permission !== "denied") {
+      Notification.requestPermission().then((permission) => {
+        if (permission === "granted") {
+          const notification = new Notification("Hi there!");
+        }
+      });
+    }
+  };
 
-const Notification = () => {
-  return (
-    <div>
-      <div>
-        <button onClick={() => requestPermission()}>
-          Enable Notifications
-        </button>
-        <button onClick={() => showNotification("Yes, it worked!")}>
-          Show Notification
-        </button>
-      </div>
-    </div>
-  );
+  return <button onClick={notifyMe}>Show Notification</button>;
 };
 
-export default Notification;
+export default NotificationPage;
