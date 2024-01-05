@@ -2,7 +2,7 @@ export const requestPermission = async () => {
   if (!("Notification" in window)) {
     throw new Error("Notification not supported");
   }
-  const permission = await new Notification.requestPermission();
+  const permission = await Notification.requestPermission();
   if (permission !== "granted") {
     throw new Error("Permission not granted for Notification");
   }
