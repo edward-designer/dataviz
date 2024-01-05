@@ -1,3 +1,5 @@
+"use client";
+
 import { requestPermission, showNotification } from "../../../worker/utils";
 
 const Notification = () => {
