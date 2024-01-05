@@ -1,31 +1,24 @@
 "use client";
+import { Notifications } from "react-push-notification";
+import addNotification from "react-push-notification";
 
 const NotificationPage = () => {
-  const notifyMe = () => {
-    if (!("Notification" in window)) {
-      alert("This browser does not support desktop notification");
-    } else if (Notification.permission === "granted") {
-      const notification = new Notification("Hi there!");
-    } else if (Notification.permission !== "denied") {
-      Notification.requestPermission().then((permission) => {
-        if (permission === "granted") {
-          const notification = new Notification("Hi there!");
-        }
-      });
-    }
-  };
-
   const sendNotification = () => {
-    Notification.requestPermission().then(
-      (permision) =>
-        new Notification("hello", {
-          tag: "price",
-          body: "This is a permission",
-        })
-    );
+    addNotification({
+      title: "Warning",
+      subtitle: "This is a subtitle",
+      message: "This is a very long message",
+      theme: "darkblue",
+      native: true, // when using native, your OS will handle theming.
+    });
   };
 
-  return <button onClick={sendNotification}>Show Notification</button>;
+  return (
+    <>
+      <Notifications />
+      <button onClick={sendNotification}>Show Notification</button>
+    </>
+  );
 };
 
 export default NotificationPage;

@@ -104,6 +104,9 @@ dependencies:
   react-leaflet-cluster:
     specifier: ^2.1.0
     version: 2.1.0(leaflet@1.9.4)(react-dom@18.2.0)(react-leaflet@4.2.1)(react@18.2.0)
+  react-push-notification:
+    specifier: ^1.5.4
+    version: 1.5.4(react@18.2.0)
   supercluster:
     specifier: ^8.0.1
     version: 8.0.1
@@ -5436,6 +5439,14 @@ packages:
 
   /react-merge-refs@2.1.1:
     resolution: {integrity: sha512-jLQXJ/URln51zskhgppGJ2ub7b2WFKGq3cl3NYKtlHoTG+dN2q7EzWrn3hN3EgPsTMvpR9tpq5ijdp7YwFZkag==}
+    dev: false
+
+  /react-push-notification@1.5.4(react@18.2.0):
+    resolution: {integrity: sha512-ZsiJfz8dNvfz0ClKcrzaKojIAdYou+s2N2M4Z6EuAlQlBsVqex/Wv0hldgueSLKihmGbZouj/oPih/gy5xlKIQ==}
+    peerDependencies:
+      react: ^16.8.0
+    dependencies:
+      react: 18.2.0
     dev: false
 
   /react-remove-scroll-bar@2.3.4(@types/react@18.2.34)(react@18.2.0):
