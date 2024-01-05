@@ -1,22 +1,17 @@
 "use client";
-import { Notifications } from "react-push-notification";
-import addNotification from "react-push-notification";
+import { useEffect } from "react";
+import OneSignal from "react-onesignal";
 
 const NotificationPage = () => {
-  const sendNotification = () => {
-    addNotification({
-      title: "Warning",
-      subtitle: "This is a subtitle",
-      message: "This is a very long message",
-      theme: "darkblue",
-      native: true, // when using native, your OS will handle theming.
+  useEffect(() => {
+    OneSignal.init({
+      appId: "e592b679-a956-4561-8f4d-6d86e790e35f",
     });
-  };
+  }, []);
 
   return (
     <>
-      <Notifications />
-      <button onClick={sendNotification}>Show Notification</button>
+      <div className="onesignal-customlink-container"></div>
     </>
   );
 };
