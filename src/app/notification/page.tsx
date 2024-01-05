@@ -15,7 +15,17 @@ const NotificationPage = () => {
     }
   };
 
-  return <button onClick={notifyMe}>Show Notification</button>;
+  const sendNotification = () => {
+    Notification.requestPermission().then(
+      (permision) =>
+        new Notification("hello", {
+          tag: "price",
+          body: "This is a permission",
+        })
+    );
+  };
+
+  return <button onClick={sendNotification}>Show Notification</button>;
 };
 
 export default NotificationPage;
