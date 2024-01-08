@@ -52,7 +52,8 @@ const PricePane = ({
 
   const priceTodayIndex = results.findIndex(
     (data) =>
-      new Date(data.valid_from) <= today && new Date(data.valid_to) >= today
+      new Date(data.valid_from) <= today &&
+      (new Date(data.valid_to) >= today || data.valid_to === null)
   );
   const priceNextPeriodIndex =
     priceTodayIndex - 1 >= 0 ? priceTodayIndex - 1 : null;
