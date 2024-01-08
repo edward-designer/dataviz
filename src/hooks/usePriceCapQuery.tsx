@@ -14,7 +14,6 @@ const usePriceCapQuery = ({ gsp = "UK" }: { gsp?: gsp | "UK" }) => {
       "https://gist.githubusercontent.com/edward-designer/232d54ace5006183d873e9eebcf82da2/raw/energy_price_caps.tsv"
     ),
   });
-
   return caps;
 };
 

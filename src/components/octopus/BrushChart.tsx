@@ -425,6 +425,15 @@ const BrushChart = ({
             (a, b) => new Date(a.Date).valueOf() - new Date(b.Date).valueOf()
           ) ?? [];
 
+      // add back latest caps if the from_date is before today
+      if (
+        new Date(capsData.at(-1)?.Date ?? "").valueOf() < new Date().valueOf()
+      ) {
+        const tomorrow = new Date(new Date().setDate(new Date().getDate() + 1));
+        const latestCap = capsData.at(-1)!;
+        capsData.push({ ...latestCap, Date: tomorrow.toUTCString() });
+      }
+
       const capLineGenerator = (type: keyof CapsTSVResult) =>
         line<CapsTSVResult>()
           .x((d) => xScale(new Date(d.Date).setHours(0, 0, 0, 0)))
