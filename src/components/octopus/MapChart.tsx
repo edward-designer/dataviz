@@ -84,9 +84,11 @@ const MapChart = ({
       !mapData ||
       !mapData?.districts ||
       !data ||
-      !caps.data
+      !caps.data ||
+      isLoading
     )
       return;
+
     let scale = 1;
     const svg = select(svgRef.current);
     const tooltip = svg.select(".tooltipContainer");

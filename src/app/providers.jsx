@@ -14,7 +14,7 @@ const Providers = ({ children }) => {
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 30 * 60 * 1000,
+            staleTime: 10 * 60 * 1000,
           },
         },
       })
