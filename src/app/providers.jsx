@@ -9,7 +9,16 @@ import { WindowVisibilityProvider } from "@/context/windowVisibility";
 import { LastShownProvider } from "@/context/lastShownDates";
 
 const Providers = ({ children }) => {
-  const [queryClient] = useState(() => new QueryClient());
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            staleTime: 30 * 60 * 1000,
+          },
+        },
+      })
+  );
 
   return (
     <WindowVisibilityProvider>

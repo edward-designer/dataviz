@@ -42,7 +42,7 @@ function useTariffQuery<T>({
   // only need to fetch once
   if (!gsp) typeArr.length = 1;
   const query = useQuery<T[]>({
-    enabled: !!tariff,
+    enabled: !!tariff && !!gsp,
     queryKey: ["getTariff", tariff, type, gsp, duration],
     queryFn: fetchApi(
       typeArr.map((type) => {

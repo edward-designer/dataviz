@@ -97,7 +97,7 @@ function useYearlyTariffQuery<T>({
 
   const query = useQuery<T[]>({
     enabled,
-    queryKey: ["getYearlyTariff", tariff, type, gsp],
+    queryKey: ["getYearlyTariff", tariff, type, gsp, fromDate, toDate],
     queryFn: queryFnArray[category],
   });
   return query;
