@@ -113,7 +113,11 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
       data?.properties
         ?.at(-1)
         ?.electricity_meter_points?.at(-1)
-        ?.agreements.at(-1),
+        ?.agreements.filter(
+          (agreement) =>
+            agreement.valid_to === null ||
+            new Date(agreement.valid_to).valueOf > new Date().valueOf
+        )?.[0],
     [data]
   );
   const MPAN =
@@ -135,7 +139,15 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
   );
   const currentETariff = currentEContract?.tariff_code.slice(5, -2) ?? "";
   const currentGContract = useMemo(
-    () => data?.properties?.at(-1)?.gas_meter_points?.at(-1)?.agreements.at(-1),
+    () =>
+      data?.properties
+        ?.at(-1)
+        ?.gas_meter_points?.at(-1)
+        ?.agreements.filter(
+          (agreement) =>
+            agreement.valid_to === null ||
+            new Date(agreement.valid_to).valueOf > new Date().valueOf
+        )?.[0],
     [data]
   );
   const MPRN = data?.properties?.at(-1)?.gas_meter_points?.at(-1)?.mprn ?? "";
