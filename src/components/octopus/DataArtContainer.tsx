@@ -1114,8 +1114,10 @@ const DataArtContainer = () => {
   useEffect(() => {
     if (
       !chartRef.current ||
-      (!consumptionEIsSuccess && !consumptionGIsSuccess) ||
-      (!consumptionEData?.results && !consumptionGData?.results)
+      (currentETariff &&
+        !consumptionEIsSuccess &&
+        !consumptionEData?.results) ||
+      (currentGTariff && !consumptionGIsSuccess && !consumptionGData?.results)
     )
       return;
 
@@ -1592,8 +1594,8 @@ const DataArtContainer = () => {
   }, [
     consumptionGIsSuccess,
     consumptionEIsSuccess,
-    consumptionEData?.results,
-    consumptionGData?.results,
+    consumptionEData.results,
+    consumptionGData.results,
     colorScheme.textTitle,
     xScale,
     innerRadius,
@@ -1609,6 +1611,8 @@ const DataArtContainer = () => {
     colorScheme.gasLine,
     colorScheme.textDaily,
     colorScheme.textCumulative,
+    currentETariff,
+    currentGTariff,
   ]);
 
   useEffect(() => {
