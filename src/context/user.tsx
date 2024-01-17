@@ -116,7 +116,7 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
         ?.agreements.filter(
           (agreement) =>
             agreement.valid_to === null ||
-            new Date(agreement.valid_to).valueOf > new Date().valueOf
+            new Date(agreement.valid_to).valueOf() > new Date().valueOf()
         )?.[0],
     [data]
   );
@@ -146,7 +146,7 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
         ?.agreements.filter(
           (agreement) =>
             agreement.valid_to === null ||
-            new Date(agreement.valid_to).valueOf > new Date().valueOf
+            new Date(agreement.valid_to).valueOf() > new Date().valueOf()
         )?.[0],
     [data]
   );
