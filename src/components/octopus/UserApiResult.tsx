@@ -135,8 +135,8 @@ const UserApiResult = () => {
         <>
           <div className="flex gap-2 items-center  flex-col-reverse md:flex-col lg:flex-row">
             <div className="flex-grow">
-              Showing which tariff suits you best based on your actual energy
-              use pattern. Past results do not guarantee future performance.
+              Comparision of tariffs based on your actual annual energy use
+              pattern. Past results do not guarantee future performance.
               <Remark>
                 <em>
                   [Notes: Currently Octopus Flux Export tariffs are NOT included
