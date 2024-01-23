@@ -46,8 +46,8 @@ const TrackerTariff = () => {
           source={TRACKER}
         >
           <Remark variant="badge">
-            Octopus has been offereing different Tracker tariffs over the years.
-            These plans differ in the rate calcuation formulae and/or maximum
+            Octopus has been offering different Tracker tariffs over the years.
+            These plans differ in the rate calculation formulae and/or maximum
             chargable rates. Please scroll down to see the comparision between
             different Tracker plans. All unit rates inclusive of VAT.
           </Remark>
@@ -62,8 +62,8 @@ const TrackerTariff = () => {
         <Remark>
           The price caps for standard variable tariff (SVT) shown here are for
           reference only. All Octopus tracker plans have different price caps
-          set at the time of joining the plan. Please scroll down to view the
-          price caps.
+          set at the time of joining the plan. Please scroll down for the price
+          caps.
         </Remark>
       </div>
       <section className="flex justify-center items-center gap-4 my-4">
@@ -122,8 +122,8 @@ const TrackerTariff = () => {
       <section className="flex justify-center items-center gap-4 my-4 flex-col bg-black/30 rounded-xl p-4 lg:p-10">
         <p className="text-sm">
           Octopus Tracker gives the most transparent energy pricing in the UK.
-          Every day, Octopus update the price of energy based on an
-          independently published wholesale market price. The unit rate is
+          Every day, Octopus updates the price of energy based on an
+          independently published wholesale market prices. The unit rate is
           capped according to the following table (inclusive of VAT):
         </p>
         <table cellPadding={1}>
