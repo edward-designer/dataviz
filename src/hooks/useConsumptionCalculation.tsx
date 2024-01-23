@@ -311,7 +311,11 @@ export const calculateMonthlyPrices = (
         currentUnitRate *
         consumptionDataResults[i].consumption *
         consumptionMultiplier;
-    } else if (category === "Go" || category === "Cosy") {
+    } else if (
+      category === "Go" ||
+      category === "Cosy" ||
+      category === "Flux"
+    ) {
       for (let j = currentRateIndex; j < filteredRateDataResults.length; j++) {
         const currentRateEntry = filteredRateDataResults[j];
         if (
@@ -553,7 +557,11 @@ export const calculatePrice = (
         currentUnitRate *
         consumptionDataResults[i].consumption *
         consumptionMultiplier;
-    } else if (category === "Go" || category === "Cosy") {
+    } else if (
+      category === "Go" ||
+      category === "Cosy" ||
+      category === "Flux"
+    ) {
       for (let j = currentRateIndex; j < filteredRateDataResults.length; j++) {
         const currentRateEntry = filteredRateDataResults[j];
         if (
@@ -691,7 +699,12 @@ export const calculatePrice = (
   }
 
   // if consumption data is NOT enough for the whole year (mutliply by proportion)
-  if (category === "Agile" || category === "Go" || category === "Cosy") {
+  if (
+    category === "Agile" ||
+    category === "Go" ||
+    category === "Cosy" ||
+    category === "Flux"
+  ) {
     if (consumptionDataResults.length < 365 * 48) {
       totalPrice = (totalPrice * 365 * 48) / consumptionDataResults.length;
       totalStandingCharge =

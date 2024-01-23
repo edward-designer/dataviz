@@ -68,19 +68,25 @@ export const ETARIFFS: ITariffToCompare[] = [
     cost: null,
   },
   {
-    tariff: "LOYAL-FIX-12M-23-12-30",
-    type: "E",
-    category: "Fixed",
-    cost: null,
-  },
-  {
     tariff: "COSY-22-12-08",
     type: "E",
     category: "Cosy",
     cost: null,
   },
   {
-    tariff: "GO-VAR-22-10-14",
+    tariff: "LOYAL-FIX-12M-23-12-30",
+    type: "E",
+    category: "Fixed",
+    cost: null,
+  },
+  {
+    tariff: "FLUX-IMPORT-23-02-14",
+    type: "E",
+    category: "Flux",
+    cost: null,
+  },
+  {
+    tariff: "INTELLI-VAR-22-10-14",
     type: "E",
     category: "Go",
     cost: null,
@@ -368,6 +374,7 @@ export interface IMeterPointG {
   consumption_standard: number;
   meters: { registers: {}; serial_number: string }[];
   mprn: string;
+  is_export: boolean;
 }
 
 export type TariffCategory =
@@ -377,7 +384,8 @@ export type TariffCategory =
   | "Fixed"
   | "Cosy"
   | "Go"
-  | "Chart";
+  | "Chart"
+  | "Flux";
 
 export interface IConsumptionData {
   consumption: number;

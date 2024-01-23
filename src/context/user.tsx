@@ -112,7 +112,10 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
     () =>
       data?.properties
         ?.at(-1)
-        ?.electricity_meter_points?.at(-1)
+        ?.electricity_meter_points?.filter(
+          (meter_point) => !meter_point.is_export
+        )
+        ?.at(-1)
         ?.agreements.filter(
           (agreement) =>
             agreement.valid_to === null ||
@@ -121,23 +124,35 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
     [data]
   );
   const MPAN =
-    data?.properties?.at(-1)?.electricity_meter_points?.at(-1)?.mpan ?? "";
+    data?.properties
+      ?.at(-1)
+      ?.electricity_meter_points?.filter(
+        (meter_point) => !meter_point.is_export
+      )
+      ?.at(-1)?.mpan ?? "";
   const ESerialNo =
     value.ESerialNo === ""
       ? data?.properties
           ?.at(-1)
-          ?.electricity_meter_points?.at(-1)
+          ?.electricity_meter_points?.filter(
+            (meter_point) => !meter_point.is_export
+          )
+          ?.at(-1)
           ?.meters?.at(-1)?.serial_number ?? ""
       : value.ESerialNo;
   const ESerialNos = useMemo(
     () =>
       data?.properties
         ?.at(-1)
-        ?.electricity_meter_points?.at(-1)
+        ?.electricity_meter_points?.filter(
+          (meter_point) => !meter_point.is_export
+        )
+        ?.at(-1)
         ?.meters?.map((meter) => meter.serial_number) ?? [],
     [data]
   );
   const currentETariff = currentEContract?.tariff_code.slice(5, -2) ?? "";
+
   const currentGContract = useMemo(
     () =>
       data?.properties

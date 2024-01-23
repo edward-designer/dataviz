@@ -8,7 +8,13 @@ import {
   IUserApiResult,
   TariffCategory,
 } from "@/data/source";
-import { useCallback, useContext, useEffect, useState } from "react";
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from "react";
 import NotCurrentlySupported from "./NotCurrentlySupported";
 import Remark from "./Remark";
 import TariffComparisionCard from "./TariffComparisionCard";
@@ -19,6 +25,7 @@ import { BsLightningChargeFill } from "react-icons/bs";
 import AddATariff from "./AddATariffToCompare";
 import TariffDetails from "./TariffDetails";
 import { AnimatePresence } from "framer-motion";
+import { getCategory } from "@/utils/helpers";
 
 const UserApiResult = () => {
   const { value } = useContext(UserContext);
@@ -100,6 +107,26 @@ const UserApiResult = () => {
       !tariffsEToCompare.map((tariff) => tariff.tariff).includes(tariff.tariff)
   );
 
+  useEffect(() => {
+    if (!value.currentETariff) return;
+    if (
+      tariffsEToCompare.some((tariff) => tariff.tariff === value.currentETariff)
+    )
+      return;
+
+    const currentTariffCategory = getCategory(value.currentETariff);
+
+    setTariffsEToCompare((tariffs) => [
+      ...tariffs.filter((tariff) => tariff.category !== currentTariffCategory),
+      {
+        tariff: value.currentETariff,
+        type: "E",
+        category: currentTariffCategory,
+        cost: null,
+      },
+    ]);
+  }, [tariffsEToCompare, value.currentETariff]);
+
   return (
     <div className="flex gap-4 flex-col relative">
       {value.error ? (
@@ -108,18 +135,17 @@ const UserApiResult = () => {
         <>
           <div className="flex gap-2 items-center  flex-col-reverse md:flex-col lg:flex-row">
             <div className="flex-grow">
-              Showing which tariff suits you best based on your actual energy use
-              pattern.
+              Showing which tariff suits you best based on your actual energy
+              use pattern. Past results do not guarantee future performance.
               <Remark>
                 <em>
-                  [Notes: Currently Octopus Flux and Export tariffs are NOT
-                  supported.]
+                  [Notes: Currently Octopus Flux Export tariffs are NOT included
+                  in the calculations.]
                 </em>{" "}
                 The figures presented here are an approximation of your annual
                 energy costs. Approximations and assumptions are used in the
                 calculations. The actual costs may vary a lot depending on the
                 previaling unit rates and change of energy usage patterns.
-                Remember, past results do not guarantee future performance.
               </Remark>
             </div>
           </div>

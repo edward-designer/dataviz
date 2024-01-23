@@ -31,6 +31,7 @@ const useConsumptionData = (inputs: IUseConsumptionData) => {
     Agile: "",
     Go: "",
     Cosy: "",
+    Flux: "",
     Tracker: "&group_by=day",
     SVT: "&group_by=day",
     Fixed: "&group_by=day",

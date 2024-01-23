@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     siteName: "Octoprice App",
     images: [
       {
-        url: "https://octopriceuk.vercel.app/octoprice-compare.jpg",
+        url: "https://octopriceuk.vercel.app/octopus-compare.jpg",
         width: 800,
         height: 600,
       },

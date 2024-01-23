@@ -11,6 +11,8 @@ import SavingsChart from "./SavingsChart";
 import TariffDetails from "./TariffDetails";
 import { useContext } from "react";
 import { UserContext } from "@/context/user";
+import { getCategory } from "@/utils/helpers";
+import Link from "next/link";
 
 const SavingsCalculation = () => {
   const { value, setValue } = useContext(UserContext);
@@ -43,6 +45,9 @@ const SavingsCalculation = () => {
         : value.currentGContract.valid_from;
   }
 
+  const isESVT = getCategory(value.currentETariff ?? "") === "SVT";
+  const isGSVT = getCategory(value.currentGTariff ?? "") === "SVT";
+
   return (
     <div className="flex gap-4 flex-col relative">
       {value.error ? (
@@ -51,8 +56,9 @@ const SavingsCalculation = () => {
         <>
           <div className="flex gap-2 md:flex-col lg:flex-row">
             <div className="flex-grow">
-              Monthly overview of energy cost savings after
-              switching to the current tariff.
+              Monthly overview of savings current tariff vs the Standard
+              Variable Tariff with Ofgem caps (i.e. Octopus Flexible). VAT
+              inclusive.
               <Remark>
                 Approximations and assumptions are used in the calculations. The
                 actual savings are likely to differ because of missing data and
@@ -85,15 +91,29 @@ const SavingsCalculation = () => {
                   tariff_code={value.currentETariff}
                   type="E"
                 />
-                <SavingsChart
-                  tariff={value.currentETariff}
-                  fromDate={EfromDate}
-                  gsp={value.gsp}
-                  type="E"
-                  compareTo="SVT"
-                  deviceNumber={value.MPAN}
-                  serialNo={value.ESerialNo}
-                />
+                {isESVT ? (
+                  <div>
+                    You are currently on the Octopus Flexible Tariff.
+                    <br />
+                    <Link
+                      href="/compare"
+                      className="underline text-accentBlue-500 hover:no-underline"
+                    >
+                      Check whether you can save money by switching to another
+                      tariff.
+                    </Link>
+                  </div>
+                ) : (
+                  <SavingsChart
+                    tariff={value.currentETariff}
+                    fromDate={EfromDate}
+                    gsp={value.gsp}
+                    type="E"
+                    compareTo="SVT"
+                    deviceNumber={value.MPAN}
+                    serialNo={value.ESerialNo}
+                  />
+                )}
               </>
             )}
           {value.MPRN &&
@@ -109,15 +129,29 @@ const SavingsCalculation = () => {
                   tariff_code={value.currentGTariff}
                   type="G"
                 />
-                <SavingsChart
-                  tariff={value.currentGTariff}
-                  fromDate={GfromDate}
-                  gsp={value.gsp}
-                  type="G"
-                  compareTo="SVT"
-                  deviceNumber={value.MPRN}
-                  serialNo={value.GSerialNo}
-                />
+                {isGSVT ? (
+                  <div>
+                    You are currently on the Octopus Flexible Tariff.
+                    <br />
+                    <Link
+                      href="/compare"
+                      className="underline text-accentBlue-500 hover:no-underline"
+                    >
+                      Check whether you can save money by switching to another
+                      tariff.
+                    </Link>
+                  </div>
+                ) : (
+                  <SavingsChart
+                    tariff={value.currentGTariff}
+                    fromDate={GfromDate}
+                    gsp={value.gsp}
+                    type="G"
+                    compareTo="SVT"
+                    deviceNumber={value.MPRN}
+                    serialNo={value.GSerialNo}
+                  />
+                )}
               </>
             )}
         </>

@@ -371,7 +371,7 @@ const SavingsChart = ({
 
             <div className="text-white/80 text-sm flex items-center gap-1">
               <PiQuestion className="fill-accentPink-500 w-6 h-6" />
-              Why the above results are different from my Octopus bills?
+              Why are the above results different from my Octopus bills?
               <Remark variant="badge">
                 As we cannot get your bills directly from Octopus, we have
                 applied approximations and assumptions in the calculations.

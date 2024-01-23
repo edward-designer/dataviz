@@ -93,6 +93,12 @@ function useYearlyTariffQuery<T>({
         url: `https://api.octopus.energy/v1/products/${tariff}/${ENERGY_TYPE[type]}-tariffs/${type}-1R-${tariff}-${gsp}/standard-unit-rates/?page_size=1500&period_from=${fromDate}&period_to=${toDate}`,
       },
     ]),
+    Flux: fetchApi([
+      {
+        tariffType: type,
+        url: `https://api.octopus.energy/v1/products/${tariff}/${ENERGY_TYPE[type]}-tariffs/${type}-1R-${tariff}-${gsp}/standard-unit-rates/?page_size=1500&period_from=${fromDate}&period_to=${toDate}`,
+      },
+    ]),
   };
 
   const query = useQuery<T[]>({
