@@ -56,9 +56,8 @@ const SavingsCalculation = () => {
         <>
           <div className="flex gap-2 md:flex-col lg:flex-row">
             <div className="flex-grow">
-              Monthly overview of savings current tariff vs the Standard
-              Variable Tariff with Ofgem caps (i.e. Octopus Flexible). VAT
-              inclusive.
+              Monthly savings of current tariff vs Octopus Flexible (i.e. Ofgem
+              Standard Variable Tariff), VAT inclusive.
               <Remark>
                 Approximations and assumptions are used in the calculations. The
                 actual savings are likely to differ because of missing data and
