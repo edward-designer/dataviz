@@ -30,7 +30,7 @@ const DatePickerWitfhRange = ({ date, setDate }: IDatePickerWitfhRange) => {
             id="date"
             variant={"outline"}
             className={cn(
-              "w-[290px] justify-center font-sans text-lg font-thin",
+              "w-full sm:w-[290px] justify-center font-sans text-lg font-thin",
               !date && "text-muted-foreground"
             )}
           >

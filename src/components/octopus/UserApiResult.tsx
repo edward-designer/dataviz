@@ -168,11 +168,9 @@ const UserApiResult = () => {
         <NotCurrentlySupported>{value.error}</NotCurrentlySupported>
       ) : (
         <>
-          <div className="flex gap-2 items-center  flex-col-reverse md:flex-col lg:flex-row">
+          <div className="flex gap-2 flex-col-reverse sm:flex-col lg:flex-row">
             <div className="flex-grow">
-              Comparison of tariffs based on your actual energy use data.
-              Selecting a longer period will provide more accurate comparisions.{" "}
-              <i>Remember: Past results do not guarantee future performance.</i>
+              Selecting a longer period will provide more accurate comparisions.
               <Remark>
                 <em>
                   [Notes: Currently Octopus Flux Export tariffs are NOT included
@@ -217,9 +215,9 @@ const UserApiResult = () => {
               Custom
             </SelectPeriodButton>
           </div>
-          <div className="h-[60px]">
+          <div className="h-[60px] sm:w-full">
             {period.duration !== "custom" ? (
-              <div className="mt-1 flex justify-start gap-2 items-center">
+              <div className="mt-1 flex sm:justify-start gap-2 items-center w-full justify-between sm:w-fit">
                 <button
                   onClick={() => getPeriod(true)}
                   disabled={outOfAYear(period.from)}
@@ -227,7 +225,7 @@ const UserApiResult = () => {
                 >
                   <IoCaretBackOutline className="w-8 h-8" />
                 </button>
-                <div className="text-center min-w-[210px]">{`${period.from.toLocaleDateString()} - ${period.to.toLocaleDateString()}`}</div>
+                <div className="text-center min-w-[210px] grow sm:grow-0">{`${period.from.toLocaleDateString()} - ${period.to.toLocaleDateString()}`}</div>
                 <button
                   onClick={() => getPeriod(false)}
                   disabled={outOfAYear(period.to)}
@@ -343,6 +341,7 @@ const UserApiResult = () => {
           )}
         </>
       )}
+      <i>Remember: Past results do not guarantee future performance.</i>
     </div>
   );
 };

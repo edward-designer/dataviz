@@ -21,7 +21,7 @@ const CompareTariffs = () => {
         Compare Tariffs
       </h1>
       <h2 className="text-accentBlue-400 font-display font-medium text-lg lg:text-2xl mb-8">
-        - Octopus Agile or Tracker or Variable?
+        - based on your actual consumption data
       </h2>
 
       {hasApiInfo ? (
