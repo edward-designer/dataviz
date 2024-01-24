@@ -519,10 +519,14 @@ export const calculatePrice = (
     (d) => d.payment_method !== "NON_DIRECT_DEBIT"
   );
 
+  const nextOfEndDate = new Date(toDate);
+  nextOfEndDate.setDate(nextOfEndDate.getDate() + 1);
+  nextOfEndDate.setHours(0, 0, 0, 0);
+
   const consumptionDataResults = consumptionData.results.filter(
     (d) =>
       new Date(d.interval_start) >= new Date(fromDate) &&
-      new Date(d.interval_end) <= new Date(toDate)
+      new Date(d.interval_end) <= nextOfEndDate
   );
 
   for (let i = 0; i < consumptionDataResults.length; i++) {
@@ -699,22 +703,29 @@ export const calculatePrice = (
   }
 
   // if consumption data is NOT enough for the whole year (mutliply by proportion)
+  const periodLength = Math.ceil(
+    (new Date(toDate).valueOf() - new Date(fromDate).valueOf()) /
+      (24 * 60 * 60 * 1000)
+  );
+
   if (
     category === "Agile" ||
     category === "Go" ||
     category === "Cosy" ||
     category === "Flux"
   ) {
-    if (consumptionDataResults.length < 365 * 48) {
-      totalPrice = (totalPrice * 365 * 48) / consumptionDataResults.length;
+    if (consumptionDataResults.length < periodLength * 48) {
+      totalPrice =
+        (totalPrice * periodLength * 48) / consumptionDataResults.length;
       totalStandingCharge =
-        (totalStandingCharge * 365 * 48) / consumptionDataResults.length;
+        (totalStandingCharge * periodLength * 48) /
+        consumptionDataResults.length;
     }
   } else {
-    if (consumptionDataResults.length < 365) {
-      totalPrice = (totalPrice * 365) / consumptionDataResults.length;
+    if (consumptionDataResults.length < periodLength) {
+      totalPrice = (totalPrice * periodLength) / consumptionDataResults.length;
       totalStandingCharge =
-        (totalStandingCharge * 365) / consumptionDataResults.length;
+        (totalStandingCharge * periodLength) / consumptionDataResults.length;
     }
   }
   totalPrice = evenRound(totalPrice / 100, 2);

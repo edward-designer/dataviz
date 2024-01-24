@@ -12,6 +12,7 @@ const AnimatedDigits = ({ from = 0, to, duration = 1 }: IAnimatedDigits) => {
 
   useEffect(() => {
     const controls = animate(count, to, { duration });
+
     return controls.stop;
   }, [count, duration, to]);
 

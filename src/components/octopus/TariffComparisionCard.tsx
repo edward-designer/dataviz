@@ -4,7 +4,7 @@ import { EnergyIcon } from "./EnergyIcon";
 import Badge from "./Badge";
 import { evenRound } from "@/utils/helpers";
 import Loading from "../Loading";
-import { memo, useEffect } from "react";
+import { memo, useEffect, useState } from "react";
 import Comparison from "./Comparison";
 import { motion } from "framer-motion";
 import AnimatedDigits from "./AnimatedDigits";
@@ -107,7 +107,8 @@ const TariffComparisionCard = ({
           <Container>
             <div className="text-5xl">
               <span>
-                £<AnimatedDigits to={evenRound(cost, 2)} />
+                £
+                <AnimatedDigits to={evenRound(cost, 2)} />
               </span>
               {category === "Go" || category === "Cosy" ? (
                 <Remark>

@@ -247,3 +247,51 @@ export const fillMissingDays = (results: IConsumptionData[]) => {
   }
   return results;
 };
+
+export type TDuration = "year" | "month" | "week" | "day";
+export const getDate = (
+  date: Date,
+  duration: TDuration = "year",
+  earlier = true
+) => {
+  const newDate = new Date(date);
+  newDate.setHours(0, 0, 0, 0);
+  switch (duration) {
+    case "year":
+      return new Date(
+        newDate.setFullYear(
+          earlier ? newDate.getFullYear() - 1 : newDate.getFullYear() + 1
+        )
+      );
+    case "month":
+      return new Date(
+        newDate.setMonth(
+          earlier ? newDate.getMonth() - 1 : newDate.getMonth() + 1
+        )
+      );
+    case "week":
+      return new Date(
+        newDate.setDate(earlier ? newDate.getDate() - 7 : newDate.getDate() + 7)
+      );
+    default:
+    case "day":
+      return new Date(
+        newDate.setDate(earlier ? newDate.getDate() - 1 : newDate.getDate() + 1)
+      );
+  }
+};
+
+export const outOfAYear = (date: Date) => {
+  const yesterday = new Date(
+    new Date(new Date().setHours(0, 0, 0, 0)).setDate(new Date().getDate() - 1)
+  );
+  const oneYearEarlier = new Date(
+    new Date(new Date().setHours(0, 0, 0, 0)).setFullYear(
+      new Date().getFullYear() - 1
+    )
+  );
+  return (
+    date.valueOf() >= yesterday.valueOf() ||
+    date.valueOf() <= oneYearEarlier.valueOf()
+  );
+};
