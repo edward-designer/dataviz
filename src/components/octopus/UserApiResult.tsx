@@ -143,9 +143,13 @@ const UserApiResult = () => {
                   in the calculations.]
                 </em>{" "}
                 The figures presented here are an approximation of your annual
-                energy costs. Approximations and assumptions are used in the
-                calculations. The actual costs may vary a lot depending on the
-                previaling unit rates and change of energy usage patterns.
+                energy costs. If you have not been with Octopus for over a year,
+                the costs here will be proportionally multiplied to one full
+                year. However, this would make the costs less reflective of the
+                year-round conditions. Approximations and assumptions are used
+                in the calculations. The actual costs may vary a lot depending
+                on the previaling unit rates and change of energy usage
+                patterns.
               </Remark>
             </div>
           </div>

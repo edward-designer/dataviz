@@ -18,16 +18,16 @@ export const metadata: Metadata = {
   authors: [
     { name: "Edward Chung", url: "https://edward-designer.github.io/" },
   ],
-  metadataBase: new URL("https://octopriceuk.vercel.app/"),
+  metadataBase: new URL("https://octopriceuk.app/"),
   openGraph: {
     title: "Install App | Octoprice",
     description:
       "Octoprice App can be installed on mobile devices for best experiences.",
-    url: "https://octopriceuk.vercel.app/install",
+    url: "https://octopriceuk.app/install",
     siteName: "Octoprice App",
     images: [
       {
-        url: "https://octopriceuk.vercel.app/octoprice-install.jpg",
+        url: "https://octopriceuk.app/octoprice-install.jpg",
         width: 800,
         height: 600,
       },
@@ -51,7 +51,7 @@ const Install = () => {
           <li>
             Open{" "}
             <a
-              href="https://octopriceuk.vercel.app"
+              href="https://octopriceuk.app"
               className="underline text-accentPink-500 hover:no-underline"
               target="_blank"
             >

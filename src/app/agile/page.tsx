@@ -9,16 +9,19 @@ export const metadata: Metadata = {
   authors: [
     { name: "Edward Chung", url: "https://edward-designer.github.io/" },
   ],
-  metadataBase: new URL("https://octopriceuk.vercel.app/"),
+  metadataBase: new URL("https://octopriceuk.app/"),
+  alternates: {
+    canonical: `/agile`,
+  },
   openGraph: {
     title: "Octopus Agile Tariff Unit Rates for Today and Tomorrow | Octoprice",
     description:
       "Get the latest unit rates for gas and electicity on the Octopus Agile Tariff, with graphs showing the price trends and price differences all over UK.",
-    url: "https://octopriceuk.vercel.app/agile",
+    url: "https://octopriceuk.app/agile",
     siteName: "Octoprice App",
     images: [
       {
-        url: "https://octopriceuk.vercel.app/octoprice-agile.jpg",
+        url: "https://octopriceuk.app/octoprice-agile.jpg",
         width: 800,
         height: 600,
       },

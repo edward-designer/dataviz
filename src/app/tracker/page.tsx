@@ -9,17 +9,20 @@ export const metadata: Metadata = {
   authors: [
     { name: "Edward Chung", url: "https://edward-designer.github.io/" },
   ],
-  metadataBase: new URL("https://octopriceuk.vercel.app/"),
+  metadataBase: new URL("https://octopriceuk.app/"),
+  alternates: {
+    canonical: `/tracker`,
+  },
   openGraph: {
     title:
       "Octopus Tracker Tariff Unit Rates for Today and Tomorrow | Octoprice",
     description:
       "Get the latest unit rates for gas and electicity on the Octopus Tracker Tariff, with graphs showing the price trends and price differences all over UK.",
-    url: "https://octopriceuk.vercel.app/tracker",
+    url: "https://octopriceuk.app/tracker",
     siteName: "Octoprice App",
     images: [
       {
-        url: "https://octopriceuk.vercel.app/octoprice-tracker.jpg",
+        url: "https://octopriceuk.app/octoprice-tracker.jpg",
         width: 800,
         height: 600,
       },

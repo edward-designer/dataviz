@@ -10,16 +10,16 @@ export const metadata: Metadata = {
   authors: [
     { name: "Edward Chung", url: "https://edward-designer.github.io/" },
   ],
-  metadataBase: new URL("https://octopriceuk.vercel.app/"),
+  metadataBase: new URL("https://octopriceuk.app/"),
   openGraph: {
     title: "About | Octoprice",
     description:
       "Octoprice does not collect your personal information. All info entered remains in your browser.",
-    url: "https://octopriceuk.vercel.app/about",
+    url: "https://octopriceuk.app/about",
     siteName: "Octoprice App",
     images: [
       {
-        url: "https://octopriceuk.vercel.app/octoprice-about.jpg",
+        url: "https://octopriceuk.app/octoprice-about.jpg",
         width: 800,
         height: 600,
       },

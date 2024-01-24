@@ -17,17 +17,20 @@ export const metadata: Metadata = {
   authors: [
     { name: "Edward Chung", url: "https://edward-designer.github.io/" },
   ],
-  metadataBase: new URL("https://octopriceuk.vercel.app/"),
+  metadataBase: new URL("https://octopriceuk.app/"),
+  alternates: {
+    canonical: `/savings`,
+  },
   openGraph: {
     title:
       "Savings of Octoprice Tariffs Compared with Standard Varible | Octoprice",
     description:
       "An overview of how much you have saved after switching to your latest Octopus Tariff",
-    url: "https://octopriceuk.vercel.app/savings",
+    url: "https://octopriceuk.app/savings",
     siteName: "Octoprice App",
     images: [
       {
-        url: "https://octopriceuk.vercel.app/octoprice-savings.jpg",
+        url: "https://octopriceuk.app/octoprice-savings.jpg",
         width: 800,
         height: 600,
       },

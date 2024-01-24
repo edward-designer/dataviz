@@ -1000,7 +1000,7 @@ const DataArtContainer = () => {
       .attr("font-size", "14px")
       .attr("transform", "translate(430 -500)")
       .attr("fill", colorScheme.textTitle)
-      .text("https://octopriceuk.vercel.app");
+      .text("https://octopriceuk.app");
     heading
       .append("text")
       .attr("text-anchor", "end")
