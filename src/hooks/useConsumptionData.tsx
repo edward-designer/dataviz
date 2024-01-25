@@ -37,6 +37,9 @@ const useConsumptionData = (inputs: IUseConsumptionData) => {
     Fixed: "&group_by=day",
     Chart: "&group_by=day",
   };
+  const groupByType = ["Agile", "Go", "Cosy", "Flux"].includes(category)
+    ? "halfhour"
+    : "day";
 
   const queryFn = async () => {
     const url =
@@ -62,7 +65,7 @@ const useConsumptionData = (inputs: IUseConsumptionData) => {
   };
 
   const { data, isSuccess, isLoading } = useQuery({
-    queryKey: [deviceNumber, serialNo, category, fromISODate, toISODate],
+    queryKey: [deviceNumber, serialNo, groupByType, fromISODate, toISODate],
     queryFn,
     enabled: !!deviceNumber && !!serialNo && !!category,
   });

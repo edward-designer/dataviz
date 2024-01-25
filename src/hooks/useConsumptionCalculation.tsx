@@ -8,7 +8,7 @@ import {
   gsp,
 } from "@/data/source";
 import useYearlyTariffQuery from "@/hooks/useYearlyTariffQuery";
-import { evenRound } from "@/utils/helpers";
+import { evenRound, getDate } from "@/utils/helpers";
 import { useQuery } from "@tanstack/react-query";
 import { useContext } from "react";
 import usePriceCapQuery from "./usePriceCapQuery";
@@ -39,8 +39,14 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
     results = "yearly",
   } = inputs;
 
+  // avoid unnecessary refetching of consumption data if range is narrower
   const fromISODate = new Date(fromDate).toISOString();
   const toISODate = new Date(toDate).toISOString();
+
+  const fromDataISODate = getDate(new Date(), "year", true).toISOString();
+  const todayDate = new Date();
+  todayDate.setHours(0, 0, 0, 0);
+  const toDataISODate = todayDate.toISOString();
 
   //get readings
   const {
@@ -48,8 +54,8 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
     isSuccess,
     isLoading,
   } = useConsumptionData({
-    fromISODate,
-    toISODate,
+    fromISODate: fromDataISODate,
+    toISODate: toDataISODate,
     type,
     category,
     deviceNumber,
@@ -60,7 +66,7 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
   const queryFnStandingChargeData = async () => {
     try {
       const response = await fetch(
-        `https://api.octopus.energy/v1/products/${tariff}/${ENERGY_TYPE[type]}-tariffs/${type}-1R-${tariff}-${value.gsp}/standing-charges/?page_size=1500&period_from=${fromISODate}`
+        `https://api.octopus.energy/v1/products/${tariff}/${ENERGY_TYPE[type]}-tariffs/${type}-1R-${tariff}-${value.gsp}/standing-charges/?page_size=1500&period_from=${fromDataISODate}`
       );
       if (!response.ok) throw new Error("Sorry the request was unsuccessful");
       return response.json();
@@ -88,8 +94,8 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
     tariff,
     type,
     gsp: value.gsp,
-    fromDate: fromISODate,
-    toDate: toISODate,
+    fromDate: fromDataISODate,
+    toDate: toDataISODate,
     category,
     enabled: !!deviceNumber && !!serialNo && !!category,
   });
@@ -111,8 +117,8 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
       tariff,
       type,
       value.gsp,
-      fromISODate,
-      toISODate,
+      fromDataISODate,
+      toDataISODate,
     ],
     queryFn: queryFnStandingChargeData,
     enabled: !!value.gsp && !!deviceNumber && !!serialNo && !!category,
