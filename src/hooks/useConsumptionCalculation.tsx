@@ -184,7 +184,8 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
         caps.data,
         consumptionData,
         flattenedRateData,
-        standingChargeData
+        standingChargeData,
+        type === "E" ? value.currentETariff : value.currentGTariff
       );
       return results;
     }
@@ -512,7 +513,8 @@ export const calculatePrice = (
       valid_to: null | string;
       payment_method: null | string;
     }[];
-  }
+  },
+  currentTariff: string
 ) => {
   let totalPrice = 0;
   let totalUnit = 0;
@@ -737,16 +739,23 @@ export const calculatePrice = (
   totalPrice = evenRound(totalPrice / 100, 2);
   totalStandingCharge = evenRound(totalStandingCharge / 100, 2);
 
-  // formula to reflect 2023Dec change to Agile/Tracker
+  // formula to reflect 2023Dec change to Agile/Tracker if not currently on Agile/Tracker
 
-  if (category === "Agile") {
+  if (
+    (currentTariff === "AGILE-23-12-06" || !currentTariff.includes("AGILE")) &&
+    category === "Agile"
+  ) {
     // average standing charge increase E 14%, G 3%
     type === "E"
       ? (totalStandingCharge *= 1.14)
       : (totalStandingCharge *= 1.03);
   }
 
-  if (category === "Tracker") {
+  if (
+    (currentTariff === "SILVER-23-12-06" ||
+      !currentTariff.includes("SILVER")) &&
+    category === "Tracker"
+  ) {
     // average standing charge increase E 14%, G 3%
     type === "E"
       ? (totalStandingCharge *= 1.14)
