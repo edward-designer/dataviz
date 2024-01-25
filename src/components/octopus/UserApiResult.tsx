@@ -173,8 +173,10 @@ const UserApiResult = () => {
               Selecting a longer period will provide more accurate comparisions.
               <Remark>
                 <em>
-                  [Notes: Currently Octopus Flux Export tariffs are NOT included
-                  in the calculations.]
+                  [<strong>Note:</strong> With the price increase for
+                  Agile/Tracker tariffs in Dec 2023, the comparision prices
+                  shown here are now based on the NEW increased Agile/Tracker
+                  formulae unless you are a current Agile/Tracker user.]
                 </em>{" "}
                 The figures presented here are an approximation of your annual
                 energy costs. If you have not been with Octopus for over a year,
