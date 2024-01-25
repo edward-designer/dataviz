@@ -150,7 +150,7 @@ const UserApiResult = () => {
       return;
 
     const currentTariffCategory = getCategory(value.currentETariff);
-
+    if (["Agile", "Tracker"].includes(currentTariffCategory)) return;
     setTariffsEToCompare((tariffs) => [
       ...tariffs.filter((tariff) => tariff.category !== currentTariffCategory),
       {

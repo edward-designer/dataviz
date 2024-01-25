@@ -737,6 +737,24 @@ export const calculatePrice = (
   totalPrice = evenRound(totalPrice / 100, 2);
   totalStandingCharge = evenRound(totalStandingCharge / 100, 2);
 
+  // formula to reflect 2023Dec change to Agile/Tracker
+
+  if (category === "Agile") {
+    // average standing charge increase E 14%, G 3%
+    type === "E"
+      ? (totalStandingCharge *= 1.14)
+      : (totalStandingCharge *= 1.03);
+  }
+
+  if (category === "Tracker") {
+    // average standing charge increase E 14%, G 3%
+    type === "E"
+      ? (totalStandingCharge *= 1.14)
+      : (totalStandingCharge *= 1.03);
+    // average unit rate increase E 11%, G 3%
+    type === "E" ? (totalPrice *= 1.11) : (totalPrice *= 1.08);
+  }
+
   return {
     cost: totalPrice + totalStandingCharge,
     totalUnit,
