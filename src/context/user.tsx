@@ -220,6 +220,12 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
         currentETariff,
         currentGContract,
         currentGTariff,
+        trackerCode: currentETariff.includes("SILVER")
+          ? currentETariff
+          : value.trackerCode,
+        agileCode: currentETariff.includes("AGILE")
+          ? currentETariff
+          : value.agileCode,
       }));
   }, [
     ESerialNo,
