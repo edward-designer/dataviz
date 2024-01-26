@@ -13,7 +13,7 @@ const DashboardCurrentTariff = () => {
   const { value } = useContext(UserContext);
 
   return (
-    <div className="flex flex-col gap-6 flex-1 basis-7/12">
+    <div className="flex flex-col gap-6 flex-1 basis-8/12">
       <h2 className="text-accentPink-600 font-display text-4xl flex items-center gap-3">
         <FaTachometerAlt className="w-8 h-8" />
         Current Tariffs
