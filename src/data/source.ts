@@ -238,19 +238,16 @@ export interface QueryTariffResult {
 
 export type Single_tariff = Record<gsp, Single_tariff_gsp_record>;
 
-export type Single_tariff_gsp_record =
-  | {
-      direct_debit_monthly: {
-        standard_unit_rate_inc_vat: number;
-        standing_charge_inc_vat: number;
-      };
-    }
-  | {
-      varying: {
-        standard_unit_rate_inc_vat: number;
-        standing_charge_inc_vat: number;
-      };
-    };
+export type Single_tariff_gsp_record = {
+  direct_debit_monthly: {
+    standard_unit_rate_inc_vat: number;
+    standing_charge_inc_vat: number;
+  };
+  varying: {
+    standard_unit_rate_inc_vat: number;
+    standing_charge_inc_vat: number;
+  };
+};
 
 export type Single_tariff_gsp_record_charge_type =
   | "standard_unit_rate_inc_vat"

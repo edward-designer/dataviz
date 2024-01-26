@@ -170,13 +170,13 @@ const UserApiResult = () => {
         <>
           <div className="flex gap-2 flex-col-reverse sm:flex-col lg:flex-row">
             <div className="flex-grow">
-              Selecting a longer period will provide more accurate comparisions.
+              Selecting a longer period will provide more accurate comparisons.
               <Remark>
                 <em>
                   [<strong>Note:</strong> With the price increase for
-                  Agile/Tracker tariffs in Dec 2023, the comparision prices
-                  shown here are now based on the NEW increased Agile/Tracker
-                  formulae unless you are a current Agile/Tracker user.]
+                  Agile/Tracker tariffs in Dec 2023, the comparison prices shown
+                  here are now based on the NEW increased Agile/Tracker formulae
+                  unless you are a current Agile/Tracker user.]
                 </em>{" "}
                 The figures presented here are an approximation of your annual
                 energy costs. If you have not been with Octopus for over a year,

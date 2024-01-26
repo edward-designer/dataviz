@@ -226,6 +226,25 @@ export const getCategory = (tariff: string): TariffCategory => {
   return "Chart";
 };
 
+export type TariffName =
+  | "Agile"
+  | "Tracker"
+  | "Fixed"
+  | "Cosy"
+  | "Flux"
+  | "Go"
+  | "Variable"
+  | "Super Green";
+
+export const getTariffName = (tariff: string): TariffName => {
+  const tariffName = getCategory(tariff);
+  return tariffName === "SVT"
+    ? "Variable"
+    : tariffName === "Chart"
+    ? "Super Green"
+    : tariffName;
+};
+
 export const fillMissingDays = (results: IConsumptionData[]) => {
   if (!results) return;
   if (results[0]?.interval_start && results.at(-1)?.interval_start) {
@@ -294,4 +313,40 @@ export const outOfAYear = (date: Date) => {
     date.valueOf() >= yesterday.valueOf() ||
     date.valueOf() <= oneYearEarlier.valueOf()
   );
+};
+
+export const toTitleCase = (str: string) => {
+  return str.replace(
+    /\w\S*/g,
+    (txt) => txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase()
+  );
+};
+
+export const dateDiff = (dateFrom: Date, dateTo: Date): string => {
+  const second = 1000,
+    minute = second * 60,
+    hour = minute * 60,
+    day = hour * 24;
+  const date1 = dateFrom;
+  const date2 = dateTo;
+  const timeDiff = date2.valueOf() - date1.valueOf();
+  const yearDiff = Math.floor(timeDiff / (day * 365));
+  const monthDiff =
+    date2.getFullYear() * 12 +
+    date2.getMonth() -
+    (date1.getFullYear() * 12 + date1.getMonth());
+  const dayDiff = Math.floor(timeDiff / day);
+  if (yearDiff > 0)
+    return `Amazing! You have been a loyal Octopus customer for ${yearDiff} ${
+      yearDiff === 1 ? "year" : "years"
+    }.`;
+  if (monthDiff > 0)
+    return `Awesome! You have been with Octopus for ${monthDiff} ${
+      monthDiff === 1 ? "month" : "months"
+    }.`;
+  if (dayDiff > 0)
+    return `Hi there, you have been onboard Octopus for ${dayDiff} ${
+      dayDiff === 1 ? "day" : "days"
+    }!`;
+  return "Welcome to the Octopus family!";
 };

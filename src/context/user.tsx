@@ -38,9 +38,14 @@ export interface IUserValue {
   GSerialNo: string;
   GSerialNos: string[];
   currentGTariff: string;
+  EMPAN: string;
+  EESerialNo: string;
+  EESerialNos: string[];
+  currentEETariff: string;
   error: string;
   currentEContract: TContract;
   currentGContract: TContract;
+  currentEEContract: TContract;
 }
 
 export const initialValue = {
@@ -56,6 +61,10 @@ export const initialValue = {
     ESerialNo: "",
     ESerialNos: [],
     currentETariff: "",
+    EMPAN: "",
+    EESerialNo: "",
+    EESerialNos: [],
+    currentEETariff: "",
     MPRN: "",
     GSerialNo: "",
     GSerialNos: [],
@@ -63,6 +72,7 @@ export const initialValue = {
     error: "",
     currentEContract: undefined,
     currentGContract: undefined,
+    currentEEContract: undefined,
   } as IUserValue,
   setValue: (value: IUserValue) => {},
 };
@@ -153,6 +163,49 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
   );
   const currentETariff = currentEContract?.tariff_code.slice(5, -2) ?? "";
 
+  const currentEEContract = useMemo(
+    () =>
+      data?.properties
+        ?.at(-1)
+        ?.electricity_meter_points?.filter(
+          (meter_point) => meter_point.is_export
+        )
+        ?.at(-1)
+        ?.agreements.filter(
+          (agreement) =>
+            agreement.valid_to === null ||
+            new Date(agreement.valid_to).valueOf() > new Date().valueOf()
+        )?.[0],
+    [data]
+  );
+  const EMPAN =
+    data?.properties
+      ?.at(-1)
+      ?.electricity_meter_points?.filter((meter_point) => meter_point.is_export)
+      ?.at(-1)?.mpan ?? "";
+  const EESerialNo =
+    value.ESerialNo === ""
+      ? data?.properties
+          ?.at(-1)
+          ?.electricity_meter_points?.filter(
+            (meter_point) => meter_point.is_export
+          )
+          ?.at(-1)
+          ?.meters?.at(-1)?.serial_number ?? ""
+      : value.ESerialNo;
+  const EESerialNos = useMemo(
+    () =>
+      data?.properties
+        ?.at(-1)
+        ?.electricity_meter_points?.filter(
+          (meter_point) => meter_point.is_export
+        )
+        ?.at(-1)
+        ?.meters?.map((meter) => meter.serial_number) ?? [],
+    [data]
+  );
+  const currentEETariff = currentEEContract?.tariff_code.slice(5, -2) ?? "";
+
   const currentGContract = useMemo(
     () =>
       data?.properties
@@ -213,6 +266,9 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
         MPAN,
         ESerialNo,
         ESerialNos,
+        EMPAN,
+        EESerialNo,
+        EESerialNos,
         MPRN,
         GSerialNo,
         GSerialNos,
@@ -220,6 +276,8 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
         currentETariff,
         currentGContract,
         currentGTariff,
+        currentEEContract,
+        currentEETariff,
         trackerCode: currentETariff.includes("SILVER")
           ? currentETariff
           : value.trackerCode,

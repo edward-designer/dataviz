@@ -105,6 +105,16 @@ const Menu = () => {
             </Link>
             <span className="block my-2 border-t border-accentBlue-500/50"></span>
             <Link
+              href="/dashboard"
+              className={`block my-5  ${
+                pathname === "/dashboard"
+                  ? "cursor-default text-accentBlue-900"
+                  : "hover:text-accentPink-500"
+              }`}
+            >
+              <Badge label="new" /> Dashboard
+            </Link>
+            <Link
               href="/savings"
               className={`block my-5  ${
                 pathname === "/savings"
@@ -112,7 +122,7 @@ const Menu = () => {
                   : "hover:text-accentPink-500"
               }`}
             >
-              <Badge label="beta" /> <span className="text-lg">My</span> Savings
+              <span className="text-lg">My</span> Savings
             </Link>
             <Link
               href="/compare"
@@ -122,8 +132,7 @@ const Menu = () => {
                   : "hover:text-accentPink-500"
               }`}
             >
-              <Badge label="beta" /> Compare{" "}
-              <span className="text-lg">Tariffs</span>
+              Compare <span className="text-lg">Tariffs</span>
             </Link>
             <Link
               href="/yearInReview"

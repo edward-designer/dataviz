@@ -331,10 +331,13 @@ const SavingsChart = ({
                         £
                       </span>
                       <span className="shifted-text block font-bold text-white text-8xl ml-6 absolute top-[95px] leading-none">
-                        {evenRound(totalSaving, 0)}
+                        {evenRound(
+                          totalSaving,
+                          totalSaving > 100 ? 0 : totalSaving > 10 ? 1 : 2
+                        )}
                       </span>
                       <span className="block text-white text-xl m-0 p-0 absolute top-[180px] font-sans font-thin">
-                        in{" "}
+                        on{" "}
                         <span className="text-accentPink-500 text-3xl font-display font-bold">
                           {ENERGY_TYPE[type]}
                         </span>{" "}
@@ -344,7 +347,7 @@ const SavingsChart = ({
                         since {`${periodAccessor(cost[cost.length - 1])}`}
                       </span>
                       <span className="absolute font-sans bottom-1 right-2 text-[10px]">
-                        https://octopriceuk.vercel.app
+                        https://octopriceuk.app
                       </span>
                       <span className="absolute font-sans font-light top-[225px] text-[8px]">
                         *vs standard variable tariff

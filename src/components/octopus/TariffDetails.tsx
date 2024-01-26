@@ -28,8 +28,37 @@ const TariffDetails = ({ tariff_code, valid_from, type }: ITariffDetails) => {
   });
 
   const currentSelect = type === "E" ? "ESerialNo" : "GSerialNo";
+  const meterSelection = type === "E" ? "ESerialNos" : "GSerialNos";
   return (
     <div className="bg-theme-900/40 p-1 flex flex-row md:p-2 md:flex-col gap-1 justify-between">
+      <div className="flex flex-col md:flex-row items-start md:items-center text-sm md:text-base">
+        <span className="inline-block md:w-[90px] text-accentBlue-500 text-[12px] font-bold">
+          Meter No.:
+        </span>
+        {value[meterSelection].length > 1 ? (
+          <Select
+            onValueChange={(newSelection: string) =>
+              setValue({ ...value, [currentSelect]: newSelection })
+            }
+            value={value[currentSelect]}
+          >
+            <SelectTrigger className="w-auto flex items-center justify-center p-0 m-0 h-5 md:h-7 text-sm md:text-base [&>svg]:ml-0">
+              <SelectValue placeholder="" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {value[meterSelection].map((serialNo) => (
+                  <SelectItem key={serialNo} value={serialNo}>
+                    {serialNo}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        ) : (
+          value[currentSelect]
+        )}
+      </div>
       <div className="flex flex-col md:flex-row items-start md:items-center text-sm md:text-base">
         <span className="inline-block md:w-[90px] text-accentBlue-500 text-[12px] font-bold">
           Current Tariff:
@@ -41,32 +70,6 @@ const TariffDetails = ({ tariff_code, valid_from, type }: ITariffDetails) => {
           Date joined:
         </span>
         {new Date(valid_from).toLocaleDateString()}
-      </div>
-      <div className="flex flex-col md:flex-row items-start md:items-center text-sm md:text-base">
-        <span className="inline-block md:w-[90px] text-accentBlue-500 text-[12px] font-bold">
-          Meter No.:
-        </span>
-        <Select
-          onValueChange={(newSelection: string) =>
-            setValue({ ...value, [currentSelect]: newSelection })
-          }
-          value={value[currentSelect]}
-        >
-          <SelectTrigger className="w-auto flex items-center justify-center p-0 m-0 h-5 md:h-7 text-sm md:text-base [&>svg]:ml-0">
-            <SelectValue placeholder="" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              {value[type === "E" ? "ESerialNos" : "GSerialNos"].map(
-                (serialNo) => (
-                  <SelectItem key={serialNo} value={serialNo}>
-                    {serialNo}
-                  </SelectItem>
-                )
-              )}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
       </div>
     </div>
   );

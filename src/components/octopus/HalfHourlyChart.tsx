@@ -65,14 +65,26 @@ const HalfHourlyChart = ({
       !currentPeriodRef.current ||
       !timeLineContainerRef.current ||
       !currentPeriodIndicatorRef.current ||
-      reversedRates.length === 0 ||
-      reversedRates.length % 2 !== 0
+      reversedRates.length === 0
     )
       return;
     const listHeight = listContainerRef.current?.scrollHeight ?? 0;
     const setTimelinePosition = (currentIndex: number, listHeight: number) => {
       if (!timeLineContainerRef.current) return;
-      const timeOffset = ((new Date().getMinutes() % 30) / 30) * listHeight;
+      const currentList = reversedRates[currentIndex];
+      const currentListTotalMinutes = Math.floor(
+        (Date.parse(currentList.valid_to) -
+          Date.parse(currentList.valid_from)) /
+          (1000 * 60)
+      );
+      const currentElipsedMinutes = Math.floor(
+        (new Date().valueOf() - Date.parse(currentList.valid_from)) /
+          (1000 * 60)
+      );
+      const timeOffset =
+        ((currentElipsedMinutes % currentListTotalMinutes) /
+          currentListTotalMinutes) *
+        listHeight;
       timeLineContainerRef.current.setAttribute(
         "style",
         `top:${currentIndex * listHeight + timeOffset}px`
@@ -88,7 +100,6 @@ const HalfHourlyChart = ({
         const now = new Date();
         return new Date(data.valid_from) < now && new Date(data.valid_to) > now;
       });
-
       currentPeriodIndicatorRef.current.setAttribute(
         "style",
         `top:${currentIndex * listHeight}px;height:${listHeight}px`
@@ -123,10 +134,10 @@ const HalfHourlyChart = ({
       {showTicker && (
         <>
           <div
-            className="border-t border-accentPink-700 w-full absolute top-0 left-0 z-20"
+            className="border-t border-accentPink-400 w-full absolute top-0 left-0 z-20"
             ref={timeLineContainerRef}
           >
-            <div className="relative -top-2 h-0 w-0 border-t-8 border-l-8 border-b-8 border-solid border-t-transparent border-b-transparent border-l-accentPink-700" />
+            <div className="relative -top-2 h-0 w-0 border-t-8 border-l-8 border-b-8 border-solid border-t-transparent border-b-transparent border-l-accentPink-400" />
           </div>
           <div
             ref={currentPeriodIndicatorRef}

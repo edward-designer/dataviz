@@ -17,16 +17,16 @@ const UserApi = () => {
   return (
     <>
       <p>
-        Wanna know which Ocotpus tariff brings you the most savings? You will
-        need to:
+        To use the exclusive features of the Octoprice App, you will need to:
       </p>
       <ol className="list-decimal ml-5 flex flex-col gap-10 mt-4">
         <li>
-          be an <span className="text-3xl">Octopus user for a month</span>
+          be an <span className="text-3xl">Octopus Energy user</span>
           <Remark>
             The results will be more accurate if you have been an Octopus user
-            for over a year - if you are not a current Octopus Energy user, you
-            can switch now and wait for a month to use this service.
+            for at least several months, better if over a year - if you are not
+            a current Octopus Energy user, you can switch now and wait for a
+            month to use this service.
             <span className="inline-block mt-3 text-sm border-t border-b border-dotted py-2 my-2 leading-6">
               Not an Octopus user? No worries, you can get{" "}
               <ImGift className="inline-block -translate-y-1 w-6 h-6 px-1 fill-accentBlue-500" />
@@ -37,8 +37,8 @@ const UserApi = () => {
                 className="inline-block underline text-accentPink-500 hover:no-underline"
               >
                 signing up thru our exclusive link
-              </a>
-              {" "}!
+              </a>{" "}
+              !
             </span>
           </Remark>
         </li>

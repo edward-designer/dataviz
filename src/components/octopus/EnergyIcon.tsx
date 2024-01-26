@@ -13,7 +13,7 @@ export const EnergyIcon = ({
 }) => {
   return (
     <div
-      className={`absolute top-2 ${
+      className={`pointer-events-none absolute z-10 top-2 ${
         position === "right" ? `right-0` : `left-0`
       }`}
     >

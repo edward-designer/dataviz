@@ -57,7 +57,6 @@ const useAccountDetails = () => {
     if (postcode && postcode !== value.postcode) {
       getGsp(postcode)
         .then((gsp) => {
-          console.log(gsp);
           if (gsp !== false)
             setValue({
               ...value,

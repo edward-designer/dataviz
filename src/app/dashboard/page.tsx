@@ -1,15 +1,16 @@
 import CompareTariffs from "@/components/octopus/CompareTariffs";
+import DashboardContainer from "@/components/octopus/DashboardContainer";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "User Dashbaord | Octoprice",
+  title: "Octopus Energy User Dashbaord | Octoprice",
   description:
     "Get all your important Octopus Energy usage and account info in one page.",
   keywords: [
     "Octopus Energy",
     "Electricity",
     "Gas",
-    "Inforamtion",
+    "Information",
     "Dashbaord",
   ],
   authors: [
@@ -17,17 +18,17 @@ export const metadata: Metadata = {
   ],
   metadataBase: new URL("https://octopriceuk.app/"),
   alternates: {
-    canonical: `/compare`,
+    canonical: `/dashboard`,
   },
   openGraph: {
-    title: "Compare Cheapest Tariffs | Octoprice",
+    title: "Octopus Energy User Dashbaord | Octoprice",
     description:
-      "Offers recommendations on the cheapest electricity and gas tariff based on your actual energy usage figures.",
-    url: "https://octopriceuk.app/compare",
+      "Get all your important Octopus Energy usage and account info in one page.",
+    url: "https://octopriceuk.app/dashboard",
     siteName: "Octoprice App",
     images: [
       {
-        url: "https://octopriceuk.app/octopus-compare.jpg",
+        url: "https://octopriceuk.app/octoprice-preview.jpg",
         width: 800,
         height: 600,
       },
@@ -37,12 +38,20 @@ export const metadata: Metadata = {
   },
 };
 
-const Compare = () => {
+const Dashboard = () => {
   return (
     <div className="lg:col-[content] my-4">
-      <CompareTariffs />
+      <div className="flex flex-col font-extralight text-lg">
+        <h1 className="text-accentBlue-400 font-display text-4xl lg:text-6xl font-medium ">
+          Account Dashboard
+        </h1>
+        <h2 className="text-accentBlue-400 font-display font-medium text-lg lg:text-2xl mb-8">
+          - useful account and tariff info at a glance
+        </h2>
+        <DashboardContainer />
+      </div>
     </div>
   );
 };
 
-export default Compare;
+export default Dashboard;
