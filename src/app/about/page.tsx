@@ -11,6 +11,9 @@ export const metadata: Metadata = {
     { name: "Edward Chung", url: "https://edward-designer.github.io/" },
   ],
   metadataBase: new URL("https://octopriceuk.app/"),
+  alternates: {
+    canonical: `/about`,
+  },
   openGraph: {
     title: "About | Octoprice",
     description:
