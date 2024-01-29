@@ -9,7 +9,6 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useState,
 } from "react";
@@ -236,13 +235,13 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
 
   const postcode = data?.properties?.at(-1)?.postcode;
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const storedValue = window.localStorage.getItem("octoprice");
     if (storedValue && storedValue !== "undefined")
       setValue({ ...initialValue.value, ...JSON.parse(storedValue) });
   }, []);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (isSuccess && postcode && postcode !== value.postcode) {
       getGsp(postcode)
         .then((gsp) => {
@@ -259,7 +258,7 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
     }
   }, [isSuccess, postcode, setValue, value]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (isSuccess)
       setValue((value) => ({
         ...value,

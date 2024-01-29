@@ -2,6 +2,15 @@ import Octopus3d from "@/components/octopus/Octopus3d";
 
 import EnergyPriceCard from "../components/octopus/EnergyPriceCard";
 
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  metadataBase: new URL("https://octopriceuk.app/"),
+  alternates: {
+    canonical: `/savings`,
+  },
+};
+
 const Home = () => {
   return (
     <div className="lg:col-[content] my-4 flex justify-start items-center relative z-0">
