@@ -45,7 +45,7 @@ const MonthlyChartBar = ({
   return (
     <li className={`relative flex items-center select-none`}>
       <span
-        className={`z-50 w-0 animate-chart-grow absolute left-0 border-r-2 border-dashed border-accentPink-500 h-full bg-accentPink-950/30n pointer-events-none`}
+        className={`z-20 w-0 animate-chart-grow absolute left-0 border-r-2 border-dashed border-accentPink-500 h-full bg-accentPink-950/30n pointer-events-none`}
         style={
           {
             "--chart-grow-width": `${widthSVT}%`,
