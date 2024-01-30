@@ -18,6 +18,7 @@ import MonthlyChart from "./MonthlyChart";
 
 import { LiaBalanceScaleSolid } from "react-icons/lia";
 import { TbMoneybag, TbPigMoney } from "react-icons/tb";
+import { GrMoney } from "react-icons/gr";
 
 import { useEffect, useRef } from "react";
 import logo from "../../../public/octoprice-sm.svg";
@@ -43,7 +44,7 @@ const SavingsChart = ({
   type: "E" | "G";
   gsp: string;
   fromDate: string;
-  compareTo: TariffCategory;
+  compareTo: TariffCategory | string;
   deviceNumber: string;
   serialNo: string;
 }) => {
@@ -53,6 +54,8 @@ const SavingsChart = ({
   today.setHours(23, 59, 59, 999);
   const toDate = today.toISOString();
   const category = getCategory(tariff);
+  const compareToCategory =
+    compareTo === "SVT" ? "SVT" : getCategory(compareTo);
 
   const {
     cost,
@@ -78,11 +81,11 @@ const SavingsChart = ({
     totalPrice: totalPriceSVT,
     totalStandingCharge: totalStandingChargeSVT,
   } = useConsumptionCalculation({
-    tariff: SVT_ETARIFF,
+    tariff: compareTo === "SVT" ? SVT_ETARIFF : compareTo,
     fromDate,
     toDate,
     type,
-    category: "SVT",
+    category: compareToCategory,
     deviceNumber,
     serialNo,
     results: "monthly",
@@ -222,23 +225,39 @@ const SavingsChart = ({
                 costSVT={costSVT}
                 lastDate={lastDate}
                 type={type}
+                compare={compareToCategory}
               />
               <div className="flex flex-col font-normal justify-start divide-y [&>div]:border-accentBlue-900 gap-3">
                 <div className="flex flex-wrap justify-between items-start md:block text-[#85cbf9] bg-theme-900/30">
                   <Badge
-                    label="Total Saving"
-                    icon={<TbPigMoney className="stroke-[#85cbf9]" />}
+                    label={`Total ${
+                      totalCost - totalSVT < 0 ? `Saving` : `Increase`
+                    }`}
+                    icon={
+                      totalCost - totalSVT < 0 ? (
+                        <TbPigMoney className="stroke-[#85cbf9]" />
+                      ) : (
+                        <GrMoney className="stroke-[#85cbf9]" />
+                      )
+                    }
                     variant="item"
                   />
                   <div className="font-digit text-4xl flex flex-col items-end justify-start">
-                    <FormattedPrice price={totalSaving} value="pound" />
+                    <FormattedPrice
+                      price={Math.abs(totalSaving)}
+                      value="pound"
+                    />
                     <div className="text-xs">
                       <Comparison
                         change={evenRound(
                           ((totalCost - totalSVT) / totalSVT) * 100,
                           0
                         )}
-                        compare="Variable Tariff"
+                        compare={`${
+                          compareToCategory === "Tracker"
+                            ? "Old Tracker"
+                            : "Variable Tariff"
+                        }`}
                       />
                     </div>
                   </div>
@@ -260,15 +279,37 @@ const SavingsChart = ({
                             100,
                           0
                         )}
-                        compare="Variable Tariff"
+                        compare={`${
+                          compareToCategory === "Tracker"
+                            ? "Old Tracker"
+                            : "Variable Tariff"
+                        }`}
                       />
                     </div>
                   </div>
                 </div>
-                <div className="flex flex-wrap justify-between items-start md:block text-white">
+                <div
+                  className={`flex flex-wrap justify-between items-start md:block ${
+                    compareToCategory === "Tracker"
+                      ? "text-accentPink-500"
+                      : "text-white"
+                  }`}
+                >
                   <Badge
-                    label="Total Cost"
-                    icon={<TbMoneybag className="stroke-white" />}
+                    label={`${
+                      compareToCategory === "Tracker"
+                        ? "New Tracker"
+                        : "Total Cost"
+                    }`}
+                    icon={
+                      <TbMoneybag
+                        className={`${
+                          compareToCategory === "Tracker"
+                            ? "stroke-accentPink-500"
+                            : "stroke-white"
+                        }`}
+                      />
+                    }
                     variant="item"
                   />
                   <div className="font-digit text-4xl flex flex-col items-end justify-start font-medium">
@@ -278,10 +319,28 @@ const SavingsChart = ({
                     )} - ${periodAccessor(cost[0])}`}</div>
                   </div>
                 </div>
-                <div className="flex flex-wrap justify-between items-start md:block text-accentPink-500">
+                <div
+                  className={`flex flex-wrap justify-between items-start md:block ${
+                    compareToCategory === "Tracker"
+                      ? "text-white"
+                      : "text-accentPink-500"
+                  }`}
+                >
                   <Badge
-                    label="Total SVT Cost"
-                    icon={<TbMoneybag className="stroke-accentPink-500" />}
+                    label={`${
+                      compareToCategory === "Tracker"
+                        ? "Old Tracker"
+                        : "Total SVT Cost"
+                    }`}
+                    icon={
+                      <TbMoneybag
+                        className={`${
+                          compareToCategory === "Tracker"
+                            ? "text-white"
+                            : "text-accentPink-500"
+                        }`}
+                      />
+                    }
                     variant="item"
                   />
                   <div className="font-digit text-4xl flex flex-col items-end justify-start">

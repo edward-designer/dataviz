@@ -112,7 +112,7 @@ const Menu = () => {
                   : "hover:text-accentPink-500"
               }`}
             >
-              <Badge label="new" /> Dashboard
+              Dashboard
             </Link>
             <Link
               href="/savings"
@@ -133,6 +133,17 @@ const Menu = () => {
               }`}
             >
               Compare <span className="text-lg">Tariffs</span>
+            </Link>
+            <Link
+              href="/compareTracker"
+              className={`block my-5  ${
+                pathname === "/compareTracker"
+                  ? "cursor-default text-accentBlue-900"
+                  : "hover:text-accentPink-500"
+              }`}
+            >
+              <Badge label="new" /> <span className="text-lg">New vs Old</span>
+              Tracker
             </Link>
             <Link
               href="/yearInReview"

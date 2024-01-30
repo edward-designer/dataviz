@@ -13,6 +13,8 @@ import { CSSProperties, useState } from "react";
 import { LiaBalanceScaleSolid } from "react-icons/lia";
 import { TbPigMoney } from "react-icons/tb";
 import { TbMoneybag } from "react-icons/tb";
+import { GrMoney } from "react-icons/gr";
+import { IoMdTrendingUp } from "react-icons/io";
 
 interface IMonthlyChartBar {
   widthSVT: number;
@@ -38,11 +40,12 @@ const MonthlyChartBar = ({
   lastDate,
 }: IMonthlyChartBar) => {
   const [open, setOpen] = useState(false);
+  const isCheaper = monthlycostSVT - monthlycostCurrent > 0;
 
   return (
     <li className={`relative flex items-center select-none`}>
       <span
-        className={`z-10 w-0 animate-chart-grow absolute left-0 border-r border-dashed border-accentPink-500 h-full bg-accentPink-950/30n pointer-events-none`}
+        className={`z-50 w-0 animate-chart-grow absolute left-0 border-r-2 border-dashed border-accentPink-500 h-full bg-accentPink-950/30n pointer-events-none`}
         style={
           {
             "--chart-grow-width": `${widthSVT}%`,
@@ -80,19 +83,25 @@ const MonthlyChartBar = ({
                 <span
                   className={`flex leading-tight w-18 font-bold text-xl md:font-extralight md:text-4xl items-center`}
                 >
-                  <TbPigMoney
-                    className={`md:text-white ${
-                      widthCurrent < 40
-                        ? "mix-blend-normal text-white"
-                        : "text-black"
-                    } w-4 h-4 md:w-6 md:h-6 flex-shrink-0`}
-                  />
+                  {saving > 0 ? (
+                    <TbPigMoney
+                      className={`md:text-white ${
+                        widthCurrent < 40
+                          ? "mix-blend-normal text-white"
+                          : "text-black"
+                      } w-4 h-4 md:w-6 md:h-6 flex-shrink-0`}
+                    />
+                  ) : (
+                    <IoMdTrendingUp
+                      className={`md:text-accentPink-500 w-4 h-4 md:w-6 md:h-6 flex-shrink-0`}
+                    />
+                  )}
                   <span
                     className={`${
                       widthCurrent < 40 ? "mix-blend-difference text-white" : ""
                     } `}
                   >
-                    <FormattedPrice price={saving} value="pound" />
+                    <FormattedPrice price={Math.abs(saving)} value="pound" />
                   </span>
                 </span>
               </span>
@@ -100,21 +109,32 @@ const MonthlyChartBar = ({
           </TooltipTrigger>
           <TooltipContent className="bg-theme-900 text-base font-sans">
             {ind === 0 && lastDate && (
-              <div className="text-xs font-sans text-theme-300 mb-1">
+              <div className={`text-xs font-sans text-theme-300 mb-1`}>
                 (latest reading: {new Date(lastDate).toLocaleString()})
               </div>
             )}
-            <div className="flex items-center gap-1">
+            <div
+              className={`flex items-center gap-1 ${
+                isCheaper ? "text-theme-300" : "text-accentPink-500"
+              } `}
+            >
               <TbMoneybag />
-              Current: £{evenRound(monthlycostCurrent, 2, true)}
+              {isCheaper ? "Current" : "New"} : £
+              {evenRound(monthlycostCurrent, 2, true)}
             </div>
-            <div className="flex items-center gap-1 text-accentPink-500">
+            <div
+              className={`flex items-center gap-1 ${
+                isCheaper ? "text-accentPink-500" : "text-theme-300"
+              } `}
+            >
               <TbMoneybag />
-              SVT: £{evenRound(monthlycostSVT, 2, true)}
+              {isCheaper ? "SVT" : "Old"} : £
+              {evenRound(monthlycostSVT, 2, true)}
             </div>
             <div className="flex items-center gap-1 text-[#85cbf9] border-theme-700 border-t mt-1 pt-1 font-bold">
               <TbPigMoney />
-              Saving: £{evenRound(saving, 2)}{" "}
+              {isCheaper ? "Saving" : "Increase"}: £
+              {evenRound(Math.abs(saving), 2)}{" "}
             </div>
             <TooltipArrow className="fill-theme-900" />
           </TooltipContent>
