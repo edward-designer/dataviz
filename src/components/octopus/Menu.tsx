@@ -103,7 +103,27 @@ const Menu = () => {
             >
               Variable <span className="text-lg">(SVT) Price</span>
             </Link>
-            <span className="block my-2 border-t border-accentBlue-500/50"></span>
+            <span className="block my-2 border-t border-accentBlue-500/50 text-xs relative mt-10">
+              <span className="absolute -top-2 bg-accentBlue-500 px-2 text-theme-950 italic skew-x-4 rounded-full">
+                considering Octopus Energy?
+              </span>
+            </span>
+            <Link
+              href="/switch"
+              className={`block my-5  ${
+                pathname === "/switch"
+                  ? "cursor-default text-accentBlue-900"
+                  : "hover:text-accentPink-500"
+              }`}
+            >
+              <Badge label="£50 Credit" />{" "}
+              <span className="text-lg">Switch to</span> Save
+            </Link>
+            <span className="block my-2 border-t border-accentBlue-500/50 text-xs relative mt-10">
+              <span className="absolute -top-2 bg-accentBlue-500 px-2 text-theme-950 italic rounded-full">
+                current Octopus users tools
+              </span>
+            </span>
             <Link
               href="/dashboard"
               className={`block my-5  ${

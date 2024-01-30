@@ -259,6 +259,22 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
   }, [isSuccess, postcode, setValue, value]);
 
   useEffect(() => {
+    if (value.postcode) {
+      getGsp(value.postcode)
+        .then((gsp) => {
+          if (gsp !== false)
+            setValue({
+              ...value,
+              gsp: gsp.replace("_", ""),
+            });
+        })
+        .catch((error: unknown) => {
+          if (error instanceof Error) throw new Error(error.message);
+        });
+    }
+  }, [postcode]);
+
+  useEffect(() => {
     if (isSuccess)
       setValue((value) => ({
         ...value,
@@ -285,6 +301,9 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
           : value.agileCode,
       }));
   }, [
+    EESerialNo,
+    EESerialNos,
+    EMPAN,
     ESerialNo,
     ESerialNos,
     GSerialNo,
@@ -292,6 +311,8 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
     MPAN,
     MPRN,
     currentEContract,
+    currentEEContract,
+    currentEETariff,
     currentETariff,
     currentGContract,
     currentGTariff,

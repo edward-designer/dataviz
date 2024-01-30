@@ -634,15 +634,15 @@ export const calculatePrice = (
         }
       }
     } else if (category === "Agile") {
-      // Agile or Tracker
+      // Agile 
       const currentResultStartDateTimestamp = new Date(
         consumptionDataResults[i].interval_start
       ).valueOf();
       const currentRateStartDateTimestamp = new Date(
         filteredRateDataResults[i + rateDataOffset]?.valid_from
       ).valueOf();
-      /* check the same start time OR difference of 1 hour in daylight saving time */
 
+      /* check the same start time OR difference of 1 hour in daylight saving time */
       if (
         currentRateStartDateTimestamp === currentResultStartDateTimestamp ||
         currentRateStartDateTimestamp ===

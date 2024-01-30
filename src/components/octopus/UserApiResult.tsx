@@ -4,14 +4,12 @@ import { UserContext } from "@/context/user";
 import {
   ETARIFFS,
   GTARIFFS,
-  IUserApiResult,
   TariffCategory,
 } from "@/data/source";
 import {
   useCallback,
   useContext,
   useEffect,
-  useLayoutEffect,
   useState,
 } from "react";
 import NotCurrentlySupported from "./NotCurrentlySupported";
