@@ -28,11 +28,11 @@ const YearInReviewContainer = () => {
       {hasApiInfo ? (
         <DataArtContainer />
       ) : (
-        <div className="flex flex-col md:flex-row justify-between gap-4">
+        <div className="flex flex-col md:flex-row justify-between gap-4 items-start">
           <div className="">
             <UserApi />
           </div>
-          <div className="flex justify-center mt-8 md:mt-0">
+          <div className="flex justify-center mt-8 md:mt-0 shrink-0">
             <Image
               src={octopastGif}
               className="w-[300px] h-auto border border-accentBlue-500 "

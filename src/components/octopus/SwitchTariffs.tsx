@@ -219,8 +219,8 @@ const SwitchTariffs = () => {
             target="_blank"
             className="block bg-theme-900 hover:bg-theme-800"
           >
-            <div className="flex flex-row items-center p-10">
-              <div className="min-w-[200px] flex items-center justify-center">
+            <div className="flex flex-col p-2 pb-10 md:pt-6 md:flex-row items-center bg-theme-900">
+              <div className="w-[100px] md:min-w-[200px] flex items-center justify-center">
                 <Lottie
                   animationData={Saving}
                   aria-hidden={true}
@@ -242,7 +242,7 @@ const SwitchTariffs = () => {
           </a>
           {!showResults ? (
             <div className="p-8 border border-accentPink-950 rounded-b-3xl relative">
-              <FaCirclePlus className="text-accentPink-800 w-14 h-14 absolute top-0 -translate-y-1/2 left-1/2 bg-theme-950 rounded-full" />
+              <FaCirclePlus className="text-accentPink-800 w-14 h-14 absolute top-0 -translate-x-1/2 -translate-y-1/2 left-1/2 bg-theme-950 rounded-full" />
               <p className="mt-8">Save an EXTRA £200+* annually if you:</p>
               <ol className="list-decimal ml-5 flex flex-col mt-4">
                 <li>
@@ -293,17 +293,17 @@ const SwitchTariffs = () => {
                     <span className="text-3xl">n3rgy</span>
                   </a>
                   <Remark>
-                    Click here to read a detailed description of how to{" "}
                     <a
                       href="https://kb.loop.homes/how-to-download-your-data"
                       target="_blank"
                       className="underline hover:no-underline text-accentPink-500 hover:text-accentBlue-500"
                     >
+                      Click here to read a detailed description of how to
                       download your smart meter data
                     </a>
                     . Since data can only be downloaded in 90-days periods, it
-                    is recommended to download the latest data for more accurate
-                    saving estimation.
+                    is recommended to download data of the latest period for
+                    more accurate saving estimations.
                   </Remark>
                 </li>
                 <li>
@@ -361,7 +361,7 @@ const SwitchTariffs = () => {
                           E: event.target.files?.[0] ?? null,
                         }));
                       }}
-                      className="px-2 rounded-full"
+                      className="px-2 rounded-full max-w-full overflow-hidden"
                     />
                   </li>
                 )}
@@ -392,7 +392,7 @@ const SwitchTariffs = () => {
                           G: event.target.files?.[0] ?? null,
                         }));
                       }}
-                      className="px-2 rounded-full"
+                      className="px-2 rounded-full max-w-full overflow-hidden"
                     />
                   </li>
                 )}
