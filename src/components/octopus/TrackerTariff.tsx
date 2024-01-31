@@ -19,6 +19,8 @@ import TariffSelect from "./TariffSelect";
 import MapChart from "@/components/octopus/MapChart";
 import { WindowResizeContext } from "@/context/windowResize";
 import { WindowVisibilityContext } from "@/context/windowVisibility";
+import { TbAlertOctagonFilled } from "react-icons/tb";
+import Link from "next/link";
 
 const TrackerTariff = () => {
   const [tariff, setTariff] = useState(TRACKER[0].code);
@@ -53,6 +55,20 @@ const TrackerTariff = () => {
           </Remark>
         </TariffSelect>
       </section>
+      <div className="flex items-center gap-2 my-2 bg-black/40 p-2 text-sm leading-tight md:justify-center">
+        <TbAlertOctagonFilled className="w-8 h-8 text-[#f8ec20] shrink-0" />
+        <div>
+          Octopus is moving all Tracker users to{" "}
+          <span className="text-accentPink-500">Tracker Dec 2023</span> on
+          15Feb.{" "}
+          <Link
+            href="/compareTracker"
+            className="underline text-accentBlue-500 hover:text-accentPink-500 hover:no-underline"
+          >
+            Figure out how much MORE you have to pay each month.
+          </Link>
+        </div>
+      </div>
       <section className="flex flex-col sm:flex-row items-stretch sm:justify-center sm:items-center gap-4 my-4">
         <PricePane tariff={tariff} type="E" gsp={gsp} />
         <PricePane tariff={tariff} type="G" gsp={gsp} />

@@ -27,18 +27,19 @@ const TrackerComparision = () => {
         <>
           <div className="flex gap-2 md:flex-col lg:flex-row">
             <div className="flex-grow">
-              Octopus is moving all Tracker customers the new Tracker on 15th
-              February. This tool shows you how much you need to pay for your
-              usage and standing charges (inclusive of VAT).
+              Shows what your energy bill would look like on the new Tracker
+              (inclusive of standing charges & VAT).
               <Remark>
-                Approximations and assumptions are used in the calculations. The
-                actual savings are likely to differ because of missing data and
-                rounding. Also, please note the figures for the latest month may
-                not be complete (maybe up to a few days earlier) as it takes
-                time for your data to be updated. Kindly note that this page is
-                still in beta version and may not be able to cater to all
-                Octopus customer accounts. Should you encounter any issues while
-                using this page, please contact Edward at{" "}
+                [Note: Octopus is moving all Tracker customers the new Tracker
+                on 15th February.] Approximations and assumptions are used in
+                the calculations. The actual savings are likely to differ
+                because of missing data and rounding. Also, please note the
+                figures for the latest month may not be complete (maybe up to a
+                few days earlier) as it takes time for your data to be updated.
+                Kindly note that this page is still in beta version and may not
+                be able to cater to all Octopus customer accounts. Should you
+                encounter any issues while using this page, please contact
+                Edward at{" "}
                 <a
                   href="mailto:edward.chung.dev@gmail.com"
                   className="underline"

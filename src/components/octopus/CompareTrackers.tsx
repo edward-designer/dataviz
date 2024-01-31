@@ -21,7 +21,7 @@ const CompareTariffs = () => {
         Old vs New Tracker Tariffs
       </h1>
       <h2 className="text-accentBlue-400 font-display font-medium text-lg lg:text-2xl mb-8">
-        - get what you would have to pay with the increased price
+        - how much MORE you have to pay
       </h2>
 
       {hasApiInfo ? (

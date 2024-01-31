@@ -2,7 +2,7 @@ import CompareTrackers from "@/components/octopus/CompareTrackers";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Old vs New Tracker Price | Octoprice",
+  title: "Old vs New Tracker Prices | Octoprice",
   description:
     "Get what you would need to pay for under the new Tracker tariff as Octopus is forcing existing customers to the new Tracker tariff.",
   keywords: [
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     canonical: `/compareTracker`,
   },
   openGraph: {
-    title: "Compare Cheapest Tariffs | Octoprice",
+    title: "Old vs New Tracker Prices | Octoprice",
     description:
       "Get what you would need to pay for under the new Tracker tariff as Octopus is forcing existing customers to the new Tracker tariff.",
     url: "https://octopriceuk.app/compareTracker",
