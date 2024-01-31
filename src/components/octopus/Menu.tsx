@@ -103,7 +103,12 @@ const Menu = () => {
             >
               Variable <span className="text-lg">(SVT) Price</span>
             </Link>
-            <span className="block my-2 border-t border-accentBlue-500/50"></span>
+           
+            <span className="block my-2 border-t border-accentBlue-500/50 text-xs relative mt-10">
+              <span className="absolute -top-2 bg-accentBlue-500 px-2 text-theme-950 italic rounded-full">
+                Octopus users tools
+              </span>
+            </span>
             <Link
               href="/dashboard"
               className={`block my-5  ${
