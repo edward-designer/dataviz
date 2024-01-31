@@ -37,7 +37,6 @@ const EarningChart = ({
   type,
   gsp,
   fromDate,
-  compareTo,
   deviceNumber,
   serialNo,
 }: {
@@ -45,7 +44,6 @@ const EarningChart = ({
   type: "E" | "G";
   gsp: string;
   fromDate: string;
-  compareTo: TariffCategory | string;
   deviceNumber: string;
   serialNo: string;
 }) => {
@@ -55,8 +53,6 @@ const EarningChart = ({
   today.setHours(23, 59, 59, 999);
   const toDate = today.toISOString();
   const category = getCategory(tariff);
-  const compareToCategory =
-    compareTo === "SVT" ? "SVT" : getCategory(compareTo);
 
   const {
     cost,

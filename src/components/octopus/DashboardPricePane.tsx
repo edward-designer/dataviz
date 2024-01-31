@@ -38,16 +38,18 @@ import PricePaneAgile2 from "./PricePaneAgile2";
 import HalfHourlyChart from "./HalfHourlyChart";
 import { max, maxIndex, mean, min, minIndex } from "d3";
 
-const PricePane = ({
+const DashboardPricePane = ({
   tariff,
   type,
   gsp,
-  standingCharge,
+  standingCharge = null,
+  date,
 }: {
   tariff: string;
   type: Exclude<TariffType, "EG">;
   gsp: string;
-  standingCharge: number;
+  standingCharge: number | null;
+  date?: string;
 }) => {
   const { isLoading, isError, isSuccess, isRefetching, refetch, data, error } =
     useTariffQuery<QueryTariffResult>({
@@ -58,26 +60,29 @@ const PricePane = ({
     });
   const tariffName = getTariffName(tariff);
 
-  const todayStart = new Date();
-  todayStart.setHours(0, 0, 0, 0);
-  const todayEnd = new Date(new Date().setDate(new Date().getDate() + 1));
-  todayEnd.setHours(0, 0, 0, 0);
+  const dayStart = date ? new Date(date) : new Date();
+  dayStart.setHours(0, 0, 0, 0);
+  const dayEnd = new Date(
+    new Date(dayStart).setDate(new Date(dayStart).getDate() + 1)
+  );
+  dayEnd.setHours(0, 0, 0, 0);
+
   const results =
     data?.[0]?.results.filter((result) =>
       tariffName === "Agile" || tariffName === "Flux" || tariffName === "Go"
         ? !(
-            Date.parse(result.valid_to) <= todayStart.valueOf() ||
-            Date.parse(result.valid_from) >= todayEnd.valueOf()
+            Date.parse(result.valid_to) <= dayStart.valueOf() ||
+            Date.parse(result.valid_from) >= dayEnd.valueOf()
           )
-        : !(Date.parse(result.valid_to) <= todayStart.valueOf())
+        : !(Date.parse(result.valid_to) <= dayStart.valueOf())
     ) ?? [];
 
   if (tariffName === "Flux" || tariffName === "Go") {
     results.forEach((result, i) => {
-      if (Date.parse(result.valid_from) < todayStart.valueOf())
-        results[i].valid_from = todayStart.toISOString();
-      if (Date.parse(result.valid_to) > todayEnd.valueOf())
-        results[i].valid_to = todayEnd.toISOString();
+      if (Date.parse(result.valid_from) < dayStart.valueOf())
+        results[i].valid_from = dayStart.toISOString();
+      if (Date.parse(result.valid_to) > dayEnd.valueOf())
+        results[i].valid_to = dayEnd.toISOString();
     });
   }
   const singleTariff = ["Variable", "Tracker", "Fixed"].includes(tariffName);
@@ -90,7 +95,6 @@ const PricePane = ({
           (data.valid_to === null ||
             Date.parse(data.valid_to) > new Date().valueOf())
       );
-  console.log(priceTodayIndex);
   const priceYesterdayIndex = results.findIndex((data) =>
     isSameDate(
       new Date(new Date().setDate(new Date().getDate() - 1)),
@@ -176,7 +180,7 @@ const PricePane = ({
                     {results
                       .filter(
                         (result) =>
-                          Date.parse(result.valid_from) <= todayEnd.valueOf()
+                          Date.parse(result.valid_from) <= dayEnd.valueOf()
                       )
                       .reverse()
                       .map((result, i) => (
@@ -185,7 +189,7 @@ const PricePane = ({
                           className="flex flex-col border-l-4 border-l-accentBlue-800 pl-2"
                         >
                           <span className="text-xs leading-none">
-                            {new Date(result.valid_from) < todayStart
+                            {new Date(result.valid_from) < dayStart
                               ? "00:00"
                               : new Date(result.valid_from).toLocaleTimeString(
                                   [],
@@ -193,7 +197,7 @@ const PricePane = ({
                                 )}
                             {` - `}
                             {result.valid_to === null ||
-                            new Date(result.valid_to) > todayEnd
+                            new Date(result.valid_to) > dayEnd
                               ? "24:00"
                               : new Date(result.valid_to).toLocaleTimeString(
                                   [],
@@ -216,13 +220,15 @@ const PricePane = ({
               </div>
             </div>
             <div className="flex justify-between items-start flex-wrap">
-              <div className="flex justify-center items-start flex-col">
-                <Badge label="Standing Charge" variant="secondary" />
-                <div className="font-digit font-thin text-center text-3xl text-white flex justify-center items-end">
-                  {evenRound(standingCharge, 2, true)}
-                  <span className="text-sm font-thin font-sans pl-1">p</span>
+              {standingCharge !== null && (
+                <div className="flex justify-center items-start flex-col">
+                  <Badge label="Standing Charge" variant="secondary" />
+                  <div className="font-digit font-thin text-center text-3xl text-white flex justify-center items-end">
+                    {evenRound(standingCharge, 2, true)}
+                    <span className="text-sm font-thin font-sans pl-1">p</span>
+                  </div>
                 </div>
-              </div>
+              )}
               {(tariffName === "Agile" || tariffName === "Flux") && (
                 <>
                   <div className="flex justify-center items-start flex-col border-l-4 border-l-accentBlue-700 pl-2">
@@ -270,7 +276,7 @@ const PricePane = ({
   );
 };
 
-export default PricePane;
+export default DashboardPricePane;
 
 interface IGetPriceDisplay {
   priceTodayIndex: number | undefined;

@@ -117,7 +117,6 @@ const SavingsCalculation = () => {
                     fromDate={EEfromDate}
                     gsp={value.gsp}
                     type="E"
-                    compareTo="SVT"
                     deviceNumber={value.EMPAN}
                     serialNo={value.EESerialNo}
                   />

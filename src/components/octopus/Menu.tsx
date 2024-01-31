@@ -70,7 +70,7 @@ const Menu = () => {
           isOpen ? "translate-none" : "translate-x-full"
         }`}
       >
-        <nav className="text-4xl font-extralight p-4 pt-20 flex justify-between flex-col h-full">
+        <nav className="text-4xl font-extralight p-4 pt-20 flex justify-between flex-col h-full overflow-y-scroll">
           <div>
             <span className="block my-2 border-t border-accentBlue-500/50"></span>
             <Link
@@ -103,7 +103,7 @@ const Menu = () => {
             >
               Variable <span className="text-lg">(SVT) Price</span>
             </Link>
-           
+
             <span className="block my-2 border-t border-accentBlue-500/50 text-xs relative mt-10">
               <span className="absolute -top-2 bg-accentBlue-500 px-2 text-theme-950 italic rounded-full">
                 Octopus users tools
