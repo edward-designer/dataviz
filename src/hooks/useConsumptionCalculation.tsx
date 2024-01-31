@@ -192,6 +192,7 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
   }
   return {
     cost: null,
+    monthlyUnits: null,
     totalUnit: 0,
     totalPrice: 0,
     totalStandingCharge: 0,
@@ -235,6 +236,8 @@ export const calculateMonthlyPrices = (
   }
 ) => {
   let monthlyPricesInPound = [];
+  let monthlyUnits = [];
+  let monthUnit = 0;
   let totalPrice = 0;
   let monthlyStandingCharge = 0;
   let totalStandingCharge = 0;
@@ -276,6 +279,10 @@ export const calculateMonthlyPrices = (
         monthlyPricesInPound.push({
           [currentMonth]: evenRound(monthlyCostPlusStandingChargeInPound, 2),
         });
+        monthlyUnits.push({
+          [currentMonth]: evenRound(monthUnit, 2),
+        });
+        monthUnit = 0;
       }
       currentMonth = new Intl.DateTimeFormat("en-GB", {
         month: "short",
@@ -285,6 +292,7 @@ export const calculateMonthlyPrices = (
     }
 
     totalUnit += consumptionDataResults[i].consumption * consumptionMultiplier;
+    monthUnit += consumptionDataResults[i].consumption * consumptionMultiplier;
 
     if (category === "Fixed") {
       const currentPeriodTariff = filteredRateDataResults[0];
@@ -470,11 +478,14 @@ export const calculateMonthlyPrices = (
   monthlyPricesInPound.push({
     [currentMonth]: evenRound(monthlyCostPlusStandingChargeInPound, 2),
   });
-
+  monthlyUnits.push({
+    [currentMonth]: evenRound(monthUnit, 2),
+  });
   totalStandingCharge = evenRound(totalStandingCharge, 2);
 
   return {
     cost: monthlyPricesInPound,
+    monthlyUnits,
     totalUnit,
     totalPrice,
     totalStandingCharge,
@@ -634,7 +645,7 @@ export const calculatePrice = (
         }
       }
     } else if (category === "Agile") {
-      // Agile 
+      // Agile
       const currentResultStartDateTimestamp = new Date(
         consumptionDataResults[i].interval_start
       ).valueOf();
@@ -766,6 +777,7 @@ export const calculatePrice = (
 
   return {
     cost: totalPrice + totalStandingCharge,
+    monthlyUnits: null,
     totalUnit,
     totalPrice,
     totalStandingCharge,

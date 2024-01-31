@@ -1,18 +1,19 @@
 "use client";
 
-import Loading from "@/components/Loading";
 import NotCurrentlySupported from "./NotCurrentlySupported";
 import Remark from "./Remark";
 
-import useAccountDetails from "@/hooks/useAccountDetails";
 import { AiFillFire } from "react-icons/ai";
 import { BsLightningChargeFill } from "react-icons/bs";
+import { PiSunDimFill } from "react-icons/pi";
+
 import SavingsChart from "./SavingsChart";
 import TariffDetails from "./TariffDetails";
 import { useContext } from "react";
 import { UserContext } from "@/context/user";
 import { getCategory } from "@/utils/helpers";
 import Link from "next/link";
+import EarningChart from "./EarningChart";
 
 const SavingsCalculation = () => {
   const { value, setValue } = useContext(UserContext);
@@ -37,6 +38,14 @@ const SavingsCalculation = () => {
         : value.currentEContract.valid_from;
   }
 
+  let EEfromDate = "";
+  if (typeof value.currentEEContract !== "undefined") {
+    EEfromDate =
+      new Date(value.currentEEContract.valid_from) < new Date(oneYearEarlier)
+        ? oneYearEarlier
+        : value.currentEEContract.valid_from;
+  }
+
   let GfromDate = "";
   if (typeof value.currentGContract !== "undefined") {
     GfromDate =
@@ -57,7 +66,7 @@ const SavingsCalculation = () => {
           <div className="flex gap-2 md:flex-col lg:flex-row">
             <div className="flex-grow">
               Monthly savings of current tariff vs Octopus Flexible (i.e. Ofgem
-              Standard Variable Tariff), VAT inclusive.
+              Standard Variable Tariff), standing charges & VAT inclusive.
               <Remark>
                 Approximations and assumptions are used in the calculations. The
                 actual savings are likely to differ because of missing data and
@@ -77,6 +86,44 @@ const SavingsCalculation = () => {
               </Remark>
             </div>
           </div>
+          {value.EMPAN &&
+            value.EESerialNo &&
+            typeof value.currentEEContract !== "undefined" && (
+              <>
+                <h2 className="font-display text-accentPink-500 text-4xl flex items-center mt-4">
+                  <PiSunDimFill className="w-8 h-8 fill-accentPink-900 inline-block mr-2" />
+                  Electricity Export Earnings
+                </h2>
+                <TariffDetails
+                  valid_from={value.currentEEContract.valid_from}
+                  tariff_code={value.currentEETariff}
+                  type="E"
+                />
+                {isESVT ? (
+                  <div>
+                    You are currently on the Octopus Flexible Tariff.
+                    <br />
+                    <Link
+                      href="/compare"
+                      className="underline text-accentBlue-500 hover:no-underline"
+                    >
+                      Check whether you can save money by switching to another
+                      tariff.
+                    </Link>
+                  </div>
+                ) : (
+                  <EarningChart
+                    tariff={value.currentEETariff}
+                    fromDate={EEfromDate}
+                    gsp={value.gsp}
+                    type="E"
+                    compareTo="SVT"
+                    deviceNumber={value.EMPAN}
+                    serialNo={value.EESerialNo}
+                  />
+                )}
+              </>
+            )}
           {value.MPAN &&
             value.ESerialNo &&
             typeof value.currentEContract !== "undefined" && (
