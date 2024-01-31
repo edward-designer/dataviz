@@ -30,6 +30,7 @@ import { getGsp } from "@/utils/helpers";
 import { IoLocationOutline } from "react-icons/io5";
 import { VscAdd } from "react-icons/vsc";
 import { ETARIFFS, ITariffToCompare } from "@/data/source";
+import TariffDetails from "./TariffDetails";
 
 export type ErrorType = Record<string, string>;
 
@@ -40,10 +41,10 @@ interface IAddATariff {
 
 const AddATariff = ({ tariffs, addToTariff }: IAddATariff) => {
   const [open, setOpen] = useState(false);
-  const [tariff, setTariff] = useState("");
+  const [tariff, setTariff] = useState<string[]>([]);
 
   const submitHandler = () => {
-    addToTariff(tariff);
+    tariff.forEach((tariffCode) => addToTariff(tariffCode));
     setOpen(false);
   };
   const cancelHandler = () => {
@@ -64,26 +65,34 @@ const AddATariff = ({ tariffs, addToTariff }: IAddATariff) => {
         <DialogContent className="text-white">
           <DialogHeader>
             <DialogTitle className="text-2xl">
-              Add a Tariff for Comparison
+              Add Tariff(s) for Comparison
             </DialogTitle>
           </DialogHeader>
-
-          <Select
-            onValueChange={(value: string) => setTariff(value)}
-          >
-            <SelectTrigger className="w-full border border-accentBlue-500/50 rounded-lg text-xl ">
-              <SelectValue placeholder="Select a Tariff" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {tariffs.map((tariff) => (
-                  <SelectItem key={tariff.tariff} value={tariff.tariff}>
-                    {tariff.category}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+          <div className="flex flex-col text-2xl font-thin">
+            {tariffs.map((tariff) => (
+              <label
+                key={tariff.tariff}
+                className="flex gap-2 items-center [&:has(:checked)]:text-accentPink-500 [&:has(:checked)]:font-bold"
+              >
+                <input
+                  type="checkbox"
+                  name="tariff"
+                  value={tariff.tariff}
+                  className="w-4 h-4 accent-accentPink-500"
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    setTariff((tariff) =>
+                      e.target.checked
+                        ? [...tariff, e.target.value]
+                        : [...tariff].filter(
+                            (tariffCode) => tariffCode !== e.target.value
+                          )
+                    )
+                  }
+                />
+                Octopus {tariff.category}
+              </label>
+            ))}
+          </div>
           <div className="flex gap-2">
             <Button
               clickHandler={submitHandler}
@@ -105,3 +114,18 @@ const AddATariff = ({ tariffs, addToTariff }: IAddATariff) => {
 };
 
 export default AddATariff;
+
+/*<Select onValueChange={(value: string) => setTariff(value)}>
+            <SelectTrigger className="w-full border border-accentBlue-500/50 rounded-lg text-xl ">
+              <SelectValue placeholder="Select a Tariff" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {tariffs.map((tariff) => (
+                  <SelectItem key={tariff.tariff} value={tariff.tariff}>
+                    {tariff.category}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>*/

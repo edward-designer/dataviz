@@ -81,7 +81,7 @@ const UserApi = () => {
             className=" text-accentBlue-500 hover:no-underline block"
           >
             <h3 className="text-4xl mb-2 bg-gradient-to-r from-accentPink-500 via-amber-300 to-accentBlue-500 inline-block text-transparent bg-clip-text">
-              Save <strong>£200+</strong> by switching!
+              Save <strong>£250+</strong> by switching!
             </h3>
           </a>
           <p>
