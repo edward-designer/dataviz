@@ -73,16 +73,17 @@ const UserApi = () => {
           />
         </div>
         <div className="flex flex-col gap-2">
-          <p className="text-accentBlue-600">Not an Octopus Energy user?</p>
-          <h3 className="text-4xl mb-2 text-accentBlue-500">
-            <a
-              href="https://share.octopus.energy/sky-heron-134"
-              target="_blank"
-              className=" text-accentBlue-500 hover:no-underline"
-            >
-              Save £200+* by switching!
-            </a>
-          </h3>
+          <p className="text-accentPink-300">Not an Octopus Energy user?</p>
+
+          <a
+            href="https://share.octopus.energy/sky-heron-134"
+            target="_blank"
+            className=" text-accentBlue-500 hover:no-underline block"
+          >
+            <h3 className="text-4xl mb-2 bg-gradient-to-r from-accentPink-500 via-amber-300 to-accentBlue-500 inline-block text-transparent bg-clip-text">
+              Save <strong>£200+</strong> by switching!
+            </h3>
+          </a>
           <p>
             By switching to Octopus through our exclusive link to get a FREE £50
             credit on your account! Swap today for 100% renewable energy and

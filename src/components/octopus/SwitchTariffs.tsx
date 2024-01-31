@@ -201,7 +201,7 @@ const SwitchTariffs = () => {
             an instant saving of £50! Don&apos;t worry, there is NO penalty/exit
             fee if you switch out afterwards.
           </p>
-          <div className="bg-theme-800 mt-8 p-2 px-4 leading-6 text-center rounded-t-3xl">
+          <div className="bg-theme-900 mt-8 p-2 px-4 leading-6 text-center rounded-t-3xl">
             Get an extra{" "}
             <ImGift className="inline-block -translate-y-1 w-6 h-6 px-1 fill-accentBlue-500" />
             <strong>£50 bill credit</strong> instantly by{" "}
@@ -217,9 +217,9 @@ const SwitchTariffs = () => {
           <a
             href="https://share.octopus.energy/sky-heron-134"
             target="_blank"
-            className="block bg-theme-900 hover:bg-theme-800"
+            className="block bg-theme-950 hover:bg-theme-900"
           >
-            <div className="flex flex-col p-2 pb-10 md:pt-6 md:flex-row items-center bg-theme-900">
+            <div className="flex flex-col p-2 pb-10 md:pt-6 md:flex-row items-center">
               <div className="w-[100px] md:min-w-[200px] flex items-center justify-center">
                 <Lottie
                   animationData={Saving}
@@ -229,8 +229,8 @@ const SwitchTariffs = () => {
                 />
               </div>
               <div>
-                <h3 className="text-4xl mb-2 text-accentBlue-500">
-                  Get £50 by signing up!
+                <h3 className="text-4xl mb-2 bg-gradient-to-r from-accentPink-500 via-amber-300 to-accentBlue-500 inline-block text-transparent bg-clip-text">
+                  Get <strong>£50</strong> free credit by signing up!
                 </h3>
                 <p>
                   Just switch to Octopus through our exclusive link to get a £50
@@ -243,7 +243,9 @@ const SwitchTariffs = () => {
           {!showResults ? (
             <div className="p-8 border border-accentPink-950 rounded-b-3xl relative">
               <FaCirclePlus className="text-accentPink-800 w-14 h-14 absolute top-0 -translate-x-1/2 -translate-y-1/2 left-1/2 bg-theme-950 rounded-full" />
-              <p className="mt-8">Save an EXTRA £200+* annually if you:</p>
+              <h3 className="text-4xl mb-2 bg-gradient-to-r from-accentPink-500 via-amber-300 to-accentBlue-500 inline-block text-transparent bg-clip-text">
+                Save an extra <strong>£200+</strong> annually if you:
+              </h3>
               <ol className="list-decimal ml-5 flex flex-col mt-4">
                 <li>
                   have a <span className="text-3xl">Smart Meter</span>
@@ -284,7 +286,7 @@ const SwitchTariffs = () => {
               </p>
               <ol className="list-decimal ml-5 flex flex-col mt-4 gap-5">
                 <li>
-                  register and download your consumption data via{" "}
+                  register and download your consumption data via a 3rd-party app{" "}
                   <a
                     className="text-3xl text-accentPink-500 hover:text-accentBlue-500"
                     href="https://www.n3rgy.com/"
