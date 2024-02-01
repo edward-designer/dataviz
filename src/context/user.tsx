@@ -117,24 +117,29 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
       retry: false,
     });
 
+  const currentProperty = useMemo(
+    () =>
+      data?.properties?.filter(
+        (property) => property.moved_out_at === null
+      )?.[0],
+    [data]
+  );
+
   const currentEContract = useMemo(
     () =>
-      data?.properties
-        ?.at(-1)
-        ?.electricity_meter_points?.filter(
-          (meter_point) => !meter_point.is_export
-        )
+      currentProperty?.electricity_meter_points
+        ?.filter((meter_point) => !meter_point.is_export)
         ?.at(-1)
         ?.agreements.filter(
           (agreement) =>
             agreement.valid_to === null ||
             new Date(agreement.valid_to).valueOf() > new Date().valueOf()
         )?.[0],
-    [data]
+    [currentProperty]
   );
   const MPAN =
     data?.properties
-      ?.at(-1)
+      ?.filter((property) => property.moved_out_at === null)?.[0]
       ?.electricity_meter_points?.filter(
         (meter_point) => !meter_point.is_export
       )
@@ -142,7 +147,7 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
   const ESerialNo =
     value.ESerialNo === ""
       ? data?.properties
-          ?.at(-1)
+          ?.filter((property) => property.moved_out_at === null)?.[0]
           ?.electricity_meter_points?.filter(
             (meter_point) => !meter_point.is_export
           )
@@ -151,89 +156,74 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
       : value.ESerialNo;
   const ESerialNos = useMemo(
     () =>
-      data?.properties
-        ?.at(-1)
-        ?.electricity_meter_points?.filter(
-          (meter_point) => !meter_point.is_export
-        )
+      currentProperty?.electricity_meter_points
+        ?.filter((meter_point) => !meter_point.is_export)
         ?.at(-1)
         ?.meters?.map((meter) => meter.serial_number) ?? [],
-    [data]
+    [currentProperty]
   );
   const currentETariff = currentEContract?.tariff_code.slice(5, -2) ?? "";
 
   const currentEEContract = useMemo(
     () =>
-      data?.properties
-        ?.at(-1)
-        ?.electricity_meter_points?.filter(
-          (meter_point) => meter_point.is_export
-        )
+      currentProperty?.electricity_meter_points
+        ?.filter((meter_point) => meter_point.is_export)
         ?.at(-1)
         ?.agreements.filter(
           (agreement) =>
             agreement.valid_to === null ||
             new Date(agreement.valid_to).valueOf() > new Date().valueOf()
         )?.[0],
-    [data]
+    [currentProperty]
   );
   const EMPAN =
-    data?.properties
-      ?.at(-1)
-      ?.electricity_meter_points?.filter((meter_point) => meter_point.is_export)
+    currentProperty?.electricity_meter_points
+      ?.filter((meter_point) => meter_point.is_export)
       ?.at(-1)?.mpan ?? "";
   const EESerialNo =
     value.ESerialNo === ""
-      ? data?.properties
-          ?.at(-1)
-          ?.electricity_meter_points?.filter(
-            (meter_point) => meter_point.is_export
-          )
+      ? currentProperty?.electricity_meter_points
+          ?.filter((meter_point) => meter_point.is_export)
           ?.at(-1)
           ?.meters?.at(-1)?.serial_number ?? ""
       : value.ESerialNo;
   const EESerialNos = useMemo(
     () =>
-      data?.properties
-        ?.at(-1)
-        ?.electricity_meter_points?.filter(
-          (meter_point) => meter_point.is_export
-        )
+      currentProperty?.electricity_meter_points
+        ?.filter((meter_point) => meter_point.is_export)
         ?.at(-1)
         ?.meters?.map((meter) => meter.serial_number) ?? [],
-    [data]
+    [currentProperty]
   );
   const currentEETariff = currentEEContract?.tariff_code.slice(5, -2) ?? "";
 
   const currentGContract = useMemo(
     () =>
-      data?.properties
+      currentProperty?.gas_meter_points
         ?.at(-1)
-        ?.gas_meter_points?.at(-1)
         ?.agreements.filter(
           (agreement) =>
             agreement.valid_to === null ||
             new Date(agreement.valid_to).valueOf() > new Date().valueOf()
         )?.[0],
-    [data]
+    [currentProperty]
   );
-  const MPRN = data?.properties?.at(-1)?.gas_meter_points?.at(-1)?.mprn ?? "";
+  const MPRN = currentProperty?.gas_meter_points?.at(-1)?.mprn ?? "";
   const GSerialNo =
     value.GSerialNo === ""
-      ? data?.properties?.at(-1)?.gas_meter_points?.at(-1)?.meters?.at(0)
+      ? currentProperty?.gas_meter_points?.at(-1)?.meters?.at(0)
           ?.serial_number ?? ""
       : value.GSerialNo;
   const GSerialNos = useMemo(
     () =>
-      data?.properties
+      currentProperty?.gas_meter_points
         ?.at(-1)
-        ?.gas_meter_points?.at(-1)
         ?.meters?.map((meter) => meter.serial_number) ?? [],
-    [data]
+    [currentProperty]
   );
   const currentGTariff = currentGContract?.tariff_code.slice(5, -2) ?? "";
 
-  const postcode = data?.properties?.at(-1)?.postcode;
+  const postcode = currentProperty?.postcode;
 
   useEffect(() => {
     const storedValue = window.localStorage.getItem("octoprice");
