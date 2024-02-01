@@ -11,14 +11,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { IoMdArrowDropright } from "react-icons/io";
+import { TbPlayerTrackNextFilled } from "react-icons/tb";
 
 interface ITariffDetails {
   tariff_code: string;
+  valid_to: string;
   valid_from: string;
   type: TariffType;
 }
 
-const TariffDetails = ({ tariff_code, valid_from, type }: ITariffDetails) => {
+const TariffDetails = ({
+  tariff_code,
+  valid_from,
+  valid_to,
+  type,
+}: ITariffDetails) => {
   const { value, setValue } = useContext(UserContext);
   const { data, isSuccess, isLoading } = useTariffQuery<{
     display_name: string;
@@ -61,15 +69,30 @@ const TariffDetails = ({ tariff_code, valid_from, type }: ITariffDetails) => {
       </div>
       <div className="flex flex-col md:flex-row items-start md:items-center text-sm md:text-base">
         <span className="inline-block md:w-[90px] text-accentBlue-500 text-[12px] font-bold">
-          Current Tariff:
+          Tariff:
         </span>
         {isSuccess ? data[0]?.display_name ?? tariff_code : tariff_code}
       </div>
       <div className="flex flex-col md:flex-row items-start md:items-center text-sm md:text-base">
         <span className="inline-block md:w-[90px] text-accentBlue-500 text-[12px] font-bold">
-          Date joined:
+          Duration:
         </span>
         {new Date(valid_from).toLocaleDateString()}
+        {valid_to ? (
+          <>
+            <IoMdArrowDropright />
+            <span className="text-accentPink-300">
+              {new Date(valid_to).toLocaleDateString()}
+            </span>
+          </>
+        ) : (
+          <>
+            <TbPlayerTrackNextFilled className="w-3 h-3 mx-1" />
+            <em className="text-xs font-light relative -top-[2px] text-accentBlue-300">
+              ongoing
+            </em>
+          </>
+        )}
       </div>
     </div>
   );

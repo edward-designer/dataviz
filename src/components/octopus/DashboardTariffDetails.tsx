@@ -64,7 +64,7 @@ const DashboardTariffDetails = ({
         </div>
         <div className="flex flex-row items-center text-base">
           <span className="inline-block w-[100px] text-accentBlue-500 text-[12px] font-light">
-            Contract Period:
+            Duration:
           </span>
           {new Date(valid_from).toLocaleDateString()}
           {valid_to ? (

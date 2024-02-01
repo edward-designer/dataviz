@@ -2004,6 +2004,7 @@ const DataArtContainer = () => {
             </h2>
             <TariffDetails
               valid_from={value.currentEContract.valid_from}
+              valid_to={value.currentEContract.valid_to}
               tariff_code={value.currentETariff}
               type="E"
             />
@@ -2018,6 +2019,7 @@ const DataArtContainer = () => {
             <TariffDetails
               valid_from={value.currentGContract.valid_from}
               tariff_code={value.currentGTariff}
+              valid_to={value.currentGContract.valid_to}
               type="G"
             />
           </div>

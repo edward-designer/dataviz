@@ -96,6 +96,7 @@ const SavingsCalculation = () => {
                 </h2>
                 <TariffDetails
                   valid_from={value.currentEEContract.valid_from}
+                  valid_to={value.currentEEContract.valid_to}
                   tariff_code={value.currentEETariff}
                   type="E"
                 />
@@ -133,6 +134,7 @@ const SavingsCalculation = () => {
                 </h2>
                 <TariffDetails
                   valid_from={value.currentEContract.valid_from}
+                  valid_to={value.currentEContract.valid_to}
                   tariff_code={value.currentETariff}
                   type="E"
                 />
@@ -171,6 +173,7 @@ const SavingsCalculation = () => {
                 </h2>
                 <TariffDetails
                   valid_from={value.currentGContract.valid_from}
+                  valid_to={value.currentGContract.valid_to}
                   tariff_code={value.currentGTariff}
                   type="G"
                 />
