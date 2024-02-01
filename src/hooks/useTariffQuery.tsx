@@ -15,7 +15,7 @@ import {
   DurationType,
 } from "@/data/source";
 
-import { fetchApi } from "../utils/helpers";
+import { fetchApi, getCategory } from "../utils/helpers";
 
 function useTariffQuery<T>({
   tariff,
@@ -29,13 +29,50 @@ function useTariffQuery<T>({
   duration?: DurationType;
 }): UseQueryResult<T[], Error> {
   const queryClient = useQueryClient();
+  const category = getCategory(tariff);
   const typeArr = type
     .split("")
     .filter((type: string) => type === "E" || type === "G") as ApiTariffType[];
+
+  const noByCategory = {
+    Go: {
+      month: 120,
+      "2-days": 6,
+    },
+    Cosy: {
+      month: 240,
+      "2-days": 12,
+    },
+    Agile: {
+      month: 1500,
+      "2-days": 96,
+    },
+    Tracker: {
+      month: 1500,
+      "2-days": 96,
+    },
+    SVT: {
+      month: 1500,
+      "2-days": 96,
+    },
+    Fixed: {
+      month: 1500,
+      "2-days": 96,
+    },
+    Chart: {
+      month: 1500,
+      "2-days": 96,
+    },
+    Flux: {
+      month: 1500,
+      "2-days": 96,
+    },
+  };
+
   const noOfRecords = {
-    month: 1500,
+    month: noByCategory[category]["month"],
     week: 336,
-    "2-days": 96,
+    "2-days": noByCategory[category]["2-days"],
     day: 48,
     year: 44800,
   };

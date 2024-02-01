@@ -58,6 +58,11 @@ const TrackerComparision = () => {
                   <BsLightningChargeFill className="w-8 h-8 fill-accentPink-900 inline-block mr-2" />
                   Electricity Tracker Comparision
                 </h2>
+                <TariffDetails
+                  valid_from={value.currentEContract.valid_from}
+                  tariff_code={value.currentETariff}
+                  type="E"
+                />
                 <SavingsChart
                   tariff="SILVER-23-12-06"
                   fromDate={dec2023}
@@ -77,6 +82,11 @@ const TrackerComparision = () => {
                   <AiFillFire className="w-8 h-8 fill-accentPink-900 inline-block mr-2" />
                   Gas Tracker Comparision
                 </h2>
+                <TariffDetails
+                  valid_from={value.currentGContract.valid_from}
+                  tariff_code={value.currentGTariff}
+                  type="G"
+                />
                 <SavingsChart
                   tariff="SILVER-23-12-06"
                   fromDate={dec2023}

@@ -4,7 +4,6 @@ import Badge from "@/components/octopus/Badge";
 import Comparison from "@/components/octopus/Comparison";
 import { ENERGY_TYPE, SVT_ETARIFF, TariffCategory } from "@/data/source";
 
-import { toBlob, toJpeg } from "html-to-image";
 import { saveAs } from "file-saver";
 import html2canvas from "html2canvas";
 
@@ -13,6 +12,7 @@ import { evenRound, getCategory } from "../../utils/helpers";
 import useConsumptionCalculation from "@/hooks/useConsumptionCalculation";
 import Lottie from "lottie-react";
 import octopusIcon from "../../../public/lottie/octopus.json";
+import chartIcon from "../../../public/lottie/chart.json";
 import FormattedPrice from "./FormattedPrice";
 import MonthlyChart from "./MonthlyChart";
 
@@ -21,7 +21,6 @@ import { TbMoneybag, TbPigMoney } from "react-icons/tb";
 import { GrMoney } from "react-icons/gr";
 
 import { useEffect, useRef } from "react";
-import logo from "../../../public/octoprice-sm.svg";
 
 import { RxShare2 } from "react-icons/rx";
 import { PiDownloadSimple } from "react-icons/pi";
@@ -217,251 +216,264 @@ const SavingsChart = ({
           backgroundImage: `linear-gradient(0deg, rgba(0,3,35,0.7) 30% , rgba(0,3,35,0.9) 70%, rgba(0,4,51,1) 100% )`,
         }}
       >
-        {cost.length >= 1 && costSVT.length ? (
-          <>
-            <div className="flex flex-1 flex-col md:flex-row justify-between gap-4 max-h-full overflow-hidden">
-              <MonthlyChart
-                cost={cost}
-                costSVT={costSVT}
-                lastDate={lastDate}
-                type={type}
-                compare={compareToCategory}
-              />
-              <div className="flex flex-col font-normal justify-start divide-y [&>div]:border-accentBlue-900 gap-3">
-                <div className="flex flex-wrap justify-between items-start md:block text-[#85cbf9] bg-theme-900/30">
-                  <Badge
-                    label={`Total ${
-                      totalCost - totalSVT < 0 ? `Saving` : `Increase`
-                    }`}
-                    icon={
-                      totalCost - totalSVT < 0 ? (
-                        <TbPigMoney className="stroke-[#85cbf9]" />
-                      ) : (
-                        <GrMoney className="stroke-[#85cbf9]" />
-                      )
-                    }
-                    variant="item"
-                  />
-                  <div className="font-digit text-4xl flex flex-col items-end justify-start">
-                    <FormattedPrice
-                      price={Math.abs(totalSaving)}
-                      value="pound"
+        {totalPrice > 0 ? (
+          cost.length >= 1 && costSVT.length ? (
+            <>
+              <div className="flex flex-1 flex-col md:flex-row justify-between gap-4 max-h-full overflow-hidden">
+                <MonthlyChart
+                  cost={cost}
+                  costSVT={costSVT}
+                  lastDate={lastDate}
+                  type={type}
+                  compare={compareToCategory}
+                />
+                <div className="flex flex-col font-normal justify-start divide-y [&>div]:border-accentBlue-900 gap-3">
+                  <div className="flex flex-wrap justify-between items-start md:block text-[#85cbf9] bg-theme-900/30">
+                    <Badge
+                      label={`Total ${
+                        totalCost - totalSVT < 0 ? `Saving` : `Increase`
+                      }`}
+                      icon={
+                        totalCost - totalSVT < 0 ? (
+                          <TbPigMoney className="stroke-[#85cbf9]" />
+                        ) : (
+                          <GrMoney className="stroke-[#85cbf9]" />
+                        )
+                      }
+                      variant="item"
                     />
-                    <div className="text-xs">
-                      <Comparison
-                        change={evenRound(
-                          ((totalCost - totalSVT) / totalSVT) * 100,
-                          0
-                        )}
-                        compare={`${
-                          compareToCategory === "Tracker"
-                            ? "Old Tracker"
-                            : "Variable Tariff"
-                        }`}
+                    <div className="font-digit text-4xl flex flex-col items-end justify-start">
+                      <FormattedPrice
+                        price={Math.abs(totalSaving)}
+                        value="pound"
                       />
+                      <div className="text-xs">
+                        <Comparison
+                          change={evenRound(
+                            ((totalCost - totalSVT) / totalSVT) * 100,
+                            0
+                          )}
+                          compare={`${
+                            compareToCategory === "Tracker"
+                              ? "Old Tracker"
+                              : "Variable Tariff"
+                          }`}
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="flex flex-wrap justify-between items-start md:block text-[#aaffdd]">
-                  <Badge
-                    label="Average Unit Rate"
-                    icon={<LiaBalanceScaleSolid className="fill-[#aaffdd]" />}
-                    variant="item"
-                  />
-                  <div className="font-digit text-4xl flex flex-col items-end justify-start">
-                    <FormattedPrice price={unitRateAverage} value="pence" />
-                    <div className="text-xs">
-                      <Comparison
-                        change={evenRound(
-                          ((unitRateAverage - unitRateAverageSVT) /
-                            unitRateAverageSVT) *
-                            100,
-                          0
-                        )}
-                        compare={`${
-                          compareToCategory === "Tracker"
-                            ? "Old Tracker"
-                            : "Variable Tariff"
-                        }`}
-                      />
+                  <div className="flex flex-wrap justify-between items-start md:block text-[#aaffdd]">
+                    <Badge
+                      label="Average Unit Rate"
+                      icon={<LiaBalanceScaleSolid className="fill-[#aaffdd]" />}
+                      variant="item"
+                    />
+                    <div className="font-digit text-4xl flex flex-col items-end justify-start">
+                      <FormattedPrice price={unitRateAverage} value="pence" />
+                      <div className="text-xs">
+                        <Comparison
+                          change={evenRound(
+                            ((unitRateAverage - unitRateAverageSVT) /
+                              unitRateAverageSVT) *
+                              100,
+                            0
+                          )}
+                          compare={`${
+                            compareToCategory === "Tracker"
+                              ? "Old Tracker"
+                              : "Variable Tariff"
+                          }`}
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div
-                  className={`flex flex-wrap justify-between items-start md:block ${
-                    compareToCategory === "Tracker"
-                      ? "text-accentPink-500"
-                      : "text-white"
-                  }`}
-                >
-                  <Badge
-                    label={`${
+                  <div
+                    className={`flex flex-wrap justify-between items-start md:block ${
                       compareToCategory === "Tracker"
-                        ? "New Tracker"
-                        : "Total Cost"
+                        ? "text-accentPink-500"
+                        : "text-white"
                     }`}
-                    icon={
-                      <TbMoneybag
-                        className={`${
-                          compareToCategory === "Tracker"
-                            ? "stroke-accentPink-500"
-                            : "stroke-white"
-                        }`}
-                      />
-                    }
-                    variant="item"
-                  />
-                  <div className="font-digit text-4xl flex flex-col items-end justify-start font-medium">
-                    <FormattedPrice price={totalCost} value="pound" />
-                    <div className="text-xs font-sans font-light -translate-y-1">{`@ ${periodAccessor(
-                      cost[cost.length - 1]
-                    )} - ${periodAccessor(cost[0])}`}</div>
+                  >
+                    <Badge
+                      label={`${
+                        compareToCategory === "Tracker"
+                          ? "New Tracker"
+                          : "Total Cost"
+                      }`}
+                      icon={
+                        <TbMoneybag
+                          className={`${
+                            compareToCategory === "Tracker"
+                              ? "stroke-accentPink-500"
+                              : "stroke-white"
+                          }`}
+                        />
+                      }
+                      variant="item"
+                    />
+                    <div className="font-digit text-4xl flex flex-col items-end justify-start font-medium">
+                      <FormattedPrice price={totalCost} value="pound" />
+                      <div className="text-xs font-sans font-light -translate-y-1">{`@ ${periodAccessor(
+                        cost[cost.length - 1]
+                      )} - ${periodAccessor(cost[0])}`}</div>
+                    </div>
                   </div>
-                </div>
-                <div
-                  className={`flex flex-wrap justify-between items-start md:block ${
-                    compareToCategory === "Tracker"
-                      ? "text-white"
-                      : "text-accentPink-500"
-                  }`}
-                >
-                  <Badge
-                    label={`${
+                  <div
+                    className={`flex flex-wrap justify-between items-start md:block ${
                       compareToCategory === "Tracker"
-                        ? "Old Tracker"
-                        : "Total SVT Cost"
+                        ? "text-white"
+                        : "text-accentPink-500"
                     }`}
-                    icon={
-                      <TbMoneybag
-                        className={`${
-                          compareToCategory === "Tracker"
-                            ? "text-white"
-                            : "text-accentPink-500"
-                        }`}
-                      />
-                    }
-                    variant="item"
-                  />
-                  <div className="font-digit text-4xl flex flex-col items-end justify-start">
-                    <FormattedPrice price={totalSVT} value="pound" />
-                    <div className="text-xs font-sans font-light -translate-y-1">{`@ ${periodAccessor(
-                      cost[cost.length - 1]
-                    )} - ${periodAccessor(cost[0])}`}</div>
+                  >
+                    <Badge
+                      label={`${
+                        compareToCategory === "Tracker"
+                          ? "Old Tracker"
+                          : "Total SVT Cost"
+                      }`}
+                      icon={
+                        <TbMoneybag
+                          className={`${
+                            compareToCategory === "Tracker"
+                              ? "text-white"
+                              : "text-accentPink-500"
+                          }`}
+                        />
+                      }
+                      variant="item"
+                    />
+                    <div className="font-digit text-4xl flex flex-col items-end justify-start">
+                      <FormattedPrice price={totalSVT} value="pound" />
+                      <div className="text-xs font-sans font-light -translate-y-1">{`@ ${periodAccessor(
+                        cost[cost.length - 1]
+                      )} - ${periodAccessor(cost[0])}`}</div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            {totalSaving > 0 && (
-              <>
-                <div className="flex justify-center">
-                  <div
-                    ref={imageRef}
-                    className={`w-[300px] h-[300px] lg:w-[600px] lg:h-[600px] bg-accentPink-500`}
-                  >
+              {totalSaving > 0 && (
+                <>
+                  <div className="flex justify-center">
                     <div
-                      className={`${
-                        type === "E"
-                          ? "bg-[url(/images/octoprice-bg.jpg)]"
-                          : "bg-[url(/images/octoprice-bg-gas.jpg)]"
-                      } relative font-display font-medium rounded-3xl border-[5px] border-accentPink-500 p-2 px-4 aspect-square w-[300px] h-[300px] bg-cover lg:scale-[2] lg:mb-[300px] origin-top-left`}
+                      ref={imageRef}
+                      className={`w-[300px] h-[300px] lg:w-[600px] lg:h-[600px] bg-accentPink-500`}
                     >
-                      <span className="absolute left-2 top-2">
-                        {type === "E" && (
-                          <BsLightningChargeFill className="fill-accentBlue-500/50 w-8 h-8" />
-                        )}
-                        {type === "G" && (
-                          <AiFillFire className="fill-accentPink-500/50 w-8 h-8" />
-                        )}
-                      </span>
-                      <img
-                        alt="Octoprice logo"
-                        src="/octoprice-sm.svg"
-                        className="absolute top-2 right-2 w-[83px] h-[20px]"
-                      />
+                      <div
+                        className={`${
+                          type === "E"
+                            ? "bg-[url(/images/octoprice-bg.jpg)]"
+                            : "bg-[url(/images/octoprice-bg-gas.jpg)]"
+                        } relative font-display font-medium rounded-3xl border-[5px] border-accentPink-500 p-2 px-4 aspect-square w-[300px] h-[300px] bg-cover lg:scale-[2] lg:mb-[300px] origin-top-left`}
+                      >
+                        <span className="absolute left-2 top-2">
+                          {type === "E" && (
+                            <BsLightningChargeFill className="fill-accentBlue-500/50 w-8 h-8" />
+                          )}
+                          {type === "G" && (
+                            <AiFillFire className="fill-accentPink-500/50 w-8 h-8" />
+                          )}
+                        </span>
+                        <img
+                          alt="Octoprice logo"
+                          src="/octoprice-sm.svg"
+                          className="absolute top-2 right-2 w-[83px] h-[20px]"
+                        />
 
-                      <span className="block pt-16 text-accentPink-500 text-2xl m-0 p-0 absolute -top-[10px]">
-                        <span className="font-sans font-thin">🎉 I have</span>
-                      </span>
-                      <span className="shifted-text block text-white text-5xl m-0 p-0 absolute top-[65px]">
-                        saved*
-                      </span>
-                      <span className="text-3xl font-sans absolute top-[105px]">
-                        £
-                      </span>
-                      <span className="shifted-text block font-bold text-white text-8xl ml-6 absolute top-[95px] leading-none">
-                        {evenRound(
-                          totalSaving,
-                          totalSaving > 100 ? 0 : totalSaving > 10 ? 1 : 2
-                        )}
-                      </span>
-                      <span className="block text-white text-xl m-0 p-0 absolute top-[180px] font-sans font-thin">
-                        on{" "}
-                        <span className="text-accentPink-500 text-3xl font-display font-bold">
-                          {ENERGY_TYPE[type]}
-                        </span>{" "}
-                        bill
-                      </span>
-                      <span className="block text-accentBlue-500 text-base m-0 p-0 font-sans font-thin absolute top-[209px]">
-                        since {`${periodAccessor(cost[cost.length - 1])}`}
-                      </span>
-                      <span className="absolute font-sans bottom-1 right-2 text-[10px]">
-                        https://octopriceuk.app
-                      </span>
-                      <span className="absolute font-sans font-light top-[225px] text-[8px]">
-                        *vs standard variable tariff
-                      </span>
+                        <span className="block pt-16 text-accentPink-500 text-2xl m-0 p-0 absolute -top-[10px]">
+                          <span className="font-sans font-thin">🎉 I have</span>
+                        </span>
+                        <span className="shifted-text block text-white text-5xl m-0 p-0 absolute top-[65px]">
+                          saved*
+                        </span>
+                        <span className="text-3xl font-sans absolute top-[105px]">
+                          £
+                        </span>
+                        <span className="shifted-text block font-bold text-white text-8xl ml-6 absolute top-[95px] leading-none">
+                          {evenRound(
+                            totalSaving,
+                            totalSaving > 100 ? 0 : totalSaving > 10 ? 1 : 2
+                          )}
+                        </span>
+                        <span className="block text-white text-xl m-0 p-0 absolute top-[180px] font-sans font-thin">
+                          on{" "}
+                          <span className="text-accentPink-500 text-3xl font-display font-bold">
+                            {ENERGY_TYPE[type]}
+                          </span>{" "}
+                          bill
+                        </span>
+                        <span className="block text-accentBlue-500 text-base m-0 p-0 font-sans font-thin absolute top-[209px]">
+                          since {`${periodAccessor(cost[cost.length - 1])}`}
+                        </span>
+                        <span className="absolute font-sans bottom-1 right-2 text-[10px]">
+                          https://octopriceuk.app
+                        </span>
+                        <span className="absolute font-sans font-light top-[225px] text-[8px]">
+                          *vs standard variable tariff
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <button
-                  className="-translate-y-4 self-center flex justify-center items-center gap-2 border border-accentBlue-500 p-2 px-6 text-accentBlue-500 rounded-xl hover:bg-accentBlue-800 hover:text-white"
-                  onClick={canShare ? handleShare : handleDownload}
-                >
-                  {canShare ? (
-                    <>
-                      <RxShare2 /> Share
-                    </>
-                  ) : (
-                    <>
-                      <PiDownloadSimple /> Download
-                    </>
-                  )}
-                </button>
-              </>
-            )}
+                  <button
+                    className="-translate-y-4 self-center flex justify-center items-center gap-2 border border-accentBlue-500 p-2 px-6 text-accentBlue-500 rounded-xl hover:bg-accentBlue-800 hover:text-white"
+                    onClick={canShare ? handleShare : handleDownload}
+                  >
+                    {canShare ? (
+                      <>
+                        <RxShare2 /> Share
+                      </>
+                    ) : (
+                      <>
+                        <PiDownloadSimple /> Download
+                      </>
+                    )}
+                  </button>
+                </>
+              )}
 
-            <div className="text-white/80 text-sm flex items-center gap-1">
-              <PiQuestion className="fill-accentPink-500 w-6 h-6" />
-              Why are the above results different from my Octopus bills?
-              <Remark variant="badge">
-                As we cannot get your bills directly from Octopus, we have
-                applied approximations and assumptions in the calculations.
-                Reasons for the differences may be missing data, rounding or, in
-                the case of gas, the conversion of reading of gas volume to kWh
-                (the unit used in our daily quote) because
-                <strong>gas cost calculation is very complex.</strong> The unit
-                of readings from smart meters differ depending on the generation
-                of meter (i.e. SMETS1 meters have the consumption data
-                pre-converted to kWh while SMETS2 meters transfer consumption
-                data in the raw cubic meters which has to be converted to kWh
-                based on a sophisticated formula.). If the calculated costs here
-                deviate a lot from your actual charges on your bill, please
-                click on your postcode on the top of the page to change the{" "}
-                <strong>Gas Conversion Factor</strong>.
-              </Remark>
+              <div className="text-white/80 text-sm flex items-center gap-1">
+                <PiQuestion className="fill-accentPink-500 w-6 h-6" />
+                Why are the above results different from my Octopus bills?
+                <Remark variant="badge">
+                  As we cannot get your bills directly from Octopus, we have
+                  applied approximations and assumptions in the calculations.
+                  Reasons for the differences may be missing data, rounding or,
+                  in the case of gas, the conversion of reading of gas volume to
+                  kWh (the unit used in our daily quote) because
+                  <strong>gas cost calculation is very complex.</strong> The
+                  unit of readings from smart meters differ depending on the
+                  generation of meter (i.e. SMETS1 meters have the consumption
+                  data pre-converted to kWh while SMETS2 meters transfer
+                  consumption data in the raw cubic meters which has to be
+                  converted to kWh based on a sophisticated formula.). If the
+                  calculated costs here deviate a lot from your actual charges
+                  on your bill, please click on your postcode on the top of the
+                  page to change the <strong>Gas Conversion Factor</strong>.
+                </Remark>
+              </div>
+            </>
+          ) : (
+            <div className="flex-1 flex h-full items-center justify-center flex-col gap-2">
+              <Lottie
+                animationData={octopusIcon}
+                aria-hidden={true}
+                className="w-16 h-16"
+              />
+              <span className="text-sm font-light text-center">
+                Octo is working hard to calculate your savings. Please re-visit
+                this page later.
+              </span>
             </div>
-          </>
+          )
         ) : (
           <div className="flex-1 flex h-full items-center justify-center flex-col gap-2">
             <Lottie
-              animationData={octopusIcon}
+              animationData={chartIcon}
               aria-hidden={true}
               className="w-16 h-16"
             />
             <span className="text-sm font-light text-center">
-              Octo is working hard to calculate your savings. Please re-visit
-              this page later.
+              Please select another meter no. from the box above.
             </span>
           </div>
         )}

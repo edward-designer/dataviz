@@ -45,16 +45,27 @@ const PricePane = ({
     date = new Date().toDateString();
     isToday = true;
   }
+  const thisDayStart = new Date(date);
+  thisDayStart.setHours(0, 0, 0, 0);
+  const thisDayEnd = new Date(
+    new Date(date).setDate(new Date(date).getDate() + 1)
+  );
+  thisDayEnd.setHours(0, 0, 0, 0);
 
-  const thisDayRates = results.filter((data) => {
-    const thisDayStart = new Date(date);
-    thisDayStart.setHours(0, 0, 0, 0);
-    const thisDayEnd = new Date(date);
-    thisDayEnd.setHours(23, 59, 59, 999);
+  const thisDayRatesRaw = results.filter((data) => {
     return (
-      new Date(data.valid_from) >= thisDayStart &&
-      new Date(data.valid_from) <= thisDayEnd
+      new Date(data.valid_to) > thisDayStart &&
+      new Date(data.valid_from) < thisDayEnd
     );
+  });
+
+  // change valid_from / valid_to within the day
+  const thisDayRates = thisDayRatesRaw.map((data) => {
+    if (new Date(data.valid_from) < thisDayStart)
+      return { ...data, valid_from: thisDayStart.toISOString() };
+    if (new Date(data.valid_to) > thisDayEnd)
+      return { ...data, valid_to: thisDayEnd.toISOString() };
+    return data;
   });
 
   const previousDayRates = results.filter((data) => {

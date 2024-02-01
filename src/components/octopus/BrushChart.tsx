@@ -46,6 +46,7 @@ import useTariffQuery from "../../hooks/useTariffQuery";
 import {
   assertExtentNotUndefined,
   evenRound,
+  getCategory,
   selectOrAppend,
 } from "../../utils/helpers";
 
@@ -86,8 +87,7 @@ const BrushChart = ({
 
   const caps = usePriceCapQuery({});
 
-  const isAgile = tariff.includes("AGILE");
-  const isVariable = tariff.includes("VAR-");
+  const category = getCategory(tariff);
 
   // Specify chart properties (dimensions and colors)
   let widgetWidth = 1000;
@@ -117,8 +117,9 @@ const BrushChart = ({
         (result) => result.payment_method !== "NON_DIRECT_DEBIT"
       ),
     }));
+
     // hack: add first with object valid_to to array
-    if (isVariable) {
+    if (category === "SVT") {
       data.forEach((dataset, ind) => {
         const valid_from = new Date(
           new Date(data[ind].results.at(-1)?.valid_from ?? "").setMonth(
@@ -202,13 +203,20 @@ const BrushChart = ({
         .flat(),
       (d) => d
     );
-    if (isVariable) {
+    if (category === "SVT") {
       xExtent[0] = new Date(xExtent[0]!.setMonth(xExtent[0]?.getMonth()! + 3));
       xExtent[1] = new Date(xExtent[1]!.setMonth(xExtent[1]?.getMonth()! + 3));
-    } else if (!isAgile) {
+    } else if (category === "Tracker") {
       xExtent[0] = new Date(xExtent[0]!.setDate(xExtent[0]?.getDate()! + 1));
       xExtent[1] = new Date(xExtent[1]!.setDate(xExtent[1]?.getDate()! + 1));
+    } else if (category === "Go") {
+      if (duration === "2-days") {
+        const start = new Date();
+        start.setHours(0, 0, 0, 0);
+        xExtent[0] = start;
+      }
     }
+
     assertExtentNotUndefined<Date>(xExtent);
     const xScale = scaleTime()
       .domain(xExtent)
@@ -473,7 +481,7 @@ const BrushChart = ({
 
     // ↓↓↓ TIMELINE
     const drawTimeLine = (xScale: ScaleTime<number, number, never>) => {
-      if (isAgile) {
+      if (category === "Agile") {
         window.clearInterval(timeIdRef.current);
         const timelineG = selectOrAppend(
           "g",
@@ -513,7 +521,7 @@ const BrushChart = ({
     };
 
     const redrawTimeLine = (xScale: ScaleTime<number, number, never>) => {
-      if (isAgile) {
+      if (category === "Agile") {
         window.clearInterval(timeIdRef.current);
         const timeline = chart.select(".timelineG").select(".timeline");
         const timelineTriangle = chart
@@ -661,33 +669,42 @@ const BrushChart = ({
             ),
             xValue
           );
-        const pointValues = isAgile
-          ? [
-              [
-                pointerX,
-                data[0].results[index]?.value_inc_vat ?? "--",
-                ENERGY_TYPE_ICON[data[0].tariffType],
-              ] as const,
-            ]
-          : isVariable
-          ? data?.map((set) => {
-              return [
-                pointerX,
-                set.results[index]?.value_inc_vat ?? "--",
-                ENERGY_TYPE_ICON[set.tariffType],
-              ] as const;
-            })
-          : data?.map((set) => {
-              return [
-                pointerX,
-                set.results.find(
-                  (result) =>
-                    new Date(result.valid_from).getTime() ===
-                    xValue.setHours(0, 0, 0, 0)
-                )?.value_inc_vat ?? "--",
-                ENERGY_TYPE_ICON[set.tariffType],
-              ] as const;
-            });
+        const pointValues =
+          category === "Agile"
+            ? [
+                [
+                  pointerX,
+                  data[0].results[index]?.value_inc_vat ?? "--",
+                  ENERGY_TYPE_ICON[data[0].tariffType],
+                ] as const,
+              ]
+            : category === "SVT"
+            ? data?.map((set) => {
+                return [
+                  pointerX,
+                  set.results[index]?.value_inc_vat ?? "--",
+                  ENERGY_TYPE_ICON[set.tariffType],
+                ] as const;
+              })
+            : category === "Go"
+            ? data?.map((set) => {
+                return [
+                  pointerX,
+                  set.results[index]?.value_inc_vat ?? "--",
+                  ENERGY_TYPE_ICON[set.tariffType],
+                ] as const;
+              })
+            : data?.map((set) => {
+                return [
+                  pointerX,
+                  set.results.find(
+                    (result) =>
+                      new Date(result.valid_from).getTime() ===
+                      xValue.setHours(0, 0, 0, 0)
+                  )?.value_inc_vat ?? "--",
+                  ENERGY_TYPE_ICON[set.tariffType],
+                ] as const;
+              });
 
         // Tooltip position
         const tooltipWidth =
@@ -725,7 +742,9 @@ const BrushChart = ({
           .attr("fill", "#FFFFFF80")
           .attr("alignment-baseline", "hanging")
           .text(
-            isAgile ? xValue.toLocaleString() : xValue.toLocaleDateString()
+            category === "Agile" || category === "Go"
+              ? xValue.toLocaleString()
+              : xValue.toLocaleDateString()
           );
         chart
           .select(".price")
@@ -860,7 +879,7 @@ const BrushChart = ({
     rawData,
     gsp,
     id,
-    isAgile,
+    category === "Agile",
     leadingSize,
     padding.bottom,
     padding.left,

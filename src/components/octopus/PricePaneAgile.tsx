@@ -6,6 +6,7 @@ import Comparison from "@/components/octopus/Comparison";
 import {
   CapsTSVResult,
   QueryTariffResult,
+  TariffCategory,
   TariffResult,
   TariffType,
   gsp,
@@ -32,8 +33,15 @@ interface IPricePane {
   type: "E";
   gsp: string;
   setCurrentPeriod: Dispatch<SetStateAction<string>>;
+  category?: TariffCategory;
 }
-const PricePane = ({ tariff, type, gsp, setCurrentPeriod }: IPricePane) => {
+const PricePane = ({
+  tariff,
+  type,
+  gsp,
+  setCurrentPeriod,
+  category = "Agile",
+}: IPricePane) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const { isLoading, isError, isSuccess, refetch, data, error } =
     useTariffQuery<QueryTariffResult>({
@@ -46,10 +54,11 @@ const PricePane = ({ tariff, type, gsp, setCurrentPeriod }: IPricePane) => {
 
   const results = data?.[0]?.results ?? [];
 
-  const priceNowIndex = results.findIndex((data) => {
-    const now = new Date();
-    return new Date(data.valid_from) < now && new Date(data.valid_to) > now;
-  });
+  const priceNowIndex =
+    results.findIndex((data) => {
+      const now = new Date();
+      return new Date(data.valid_from) < now && new Date(data.valid_to) > now;
+    }) ?? 0;
   const todayRates = results.filter((data) => {
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
@@ -65,6 +74,31 @@ const PricePane = ({ tariff, type, gsp, setCurrentPeriod }: IPricePane) => {
     gsp: `_${gsp}` as gsp,
   });
 
+  const nextPeriodLabel = {
+    Go: `${new Date(
+      results[priceNowIndex - 1]?.valid_from ?? ""
+    ).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    })} - ${new Date(
+      results[priceNowIndex - 1]?.valid_to ?? ""
+    ).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
+    Agile: "Next 1/2 hr",
+    Tracker: "",
+    SVT: "",
+    Fixed: "",
+    Cosy: `${new Date(
+      results[priceNowIndex - 1]?.valid_from ?? ""
+    ).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    })} - ${new Date(
+      results[priceNowIndex - 1]?.valid_to ?? ""
+    ).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
+    Chart: "",
+    Flux: "",
+  };
+  console.log(results);
   const note =
     "The rates from 11pm today till tomorrow are usually available at 4.00pm. Please revisit this page later to get the updates.";
 
@@ -128,12 +162,13 @@ const PricePane = ({ tariff, type, gsp, setCurrentPeriod }: IPricePane) => {
                 <div className="font-digit text-6xl text-white flex flex-row items-end justify-start gap-1">
                   <div>{priceNowDisplay}</div>
                   <div className="flex">
-                    {typeof priceChangeNow === "number" && (
-                      <Comparison
-                        change={priceChangeNow}
-                        compare="today average"
-                      />
-                    )}
+                    {typeof priceChangeNow === "number" &&
+                      !["Go", "Cosy"].includes(category) && (
+                        <Comparison
+                          change={priceChangeNow}
+                          compare="today average"
+                        />
+                      )}
                     {typeof priceNowVsCap === "number" && (
                       <Comparison change={priceNowVsCap} compare="SVT cap">
                         <Remark variant="badge">
@@ -157,17 +192,22 @@ const PricePane = ({ tariff, type, gsp, setCurrentPeriod }: IPricePane) => {
                   </div>
                 </div>
               </div>
-              <div className="opacity-80">
-                <Badge label="NEXT 1/2 hr" variant="secondary" />
-                <div className="font-digit text-4xl text-white flex flex-row items-end justify-start gap-1">
-                  <div>{priceNextDisplay}</div>
-                  <div className="flex">
-                    {typeof priceChangeNext === "number" && (
-                      <Comparison change={priceChangeNext} compare="now" />
-                    )}
+              {typeof priceChangeNext === "number" && (
+                <div className="opacity-80">
+                  <Badge
+                    label={nextPeriodLabel[category]}
+                    variant="secondary"
+                  />
+                  <div className="font-digit text-4xl text-white flex flex-row items-end justify-start gap-1">
+                    <div>{priceNextDisplay}</div>
+                    <div className="flex">
+                      {typeof priceChangeNext === "number" && (
+                        <Comparison change={priceChangeNext} compare="now" />
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
           </>
         )}
