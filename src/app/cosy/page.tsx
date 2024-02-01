@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     title: "Octopus Cosy Tariff Unit Rates for Today and Tomorrow | Octoprice",
     description:
       "Get the latest unit rates for gas and electicity on the Octopus Cosy Tariff, with graphs showing the price trends and price differences all over UK.",
-    url: "https://octopriceuk.app/go",
+    url: "https://octopriceuk.app/cosy",
     siteName: "Octoprice App",
     images: [
       {

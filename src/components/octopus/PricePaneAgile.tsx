@@ -75,7 +75,7 @@ const PricePane = ({
   });
 
   const nextPeriodLabel = {
-    Go: `${new Date(
+    Go: `NEXT: ${new Date(
       results[priceNowIndex - 1]?.valid_from ?? ""
     ).toLocaleTimeString([], {
       hour: "2-digit",
@@ -87,7 +87,7 @@ const PricePane = ({
     Tracker: "",
     SVT: "",
     Fixed: "",
-    Cosy: `${new Date(
+    Cosy: `NEXT: ${new Date(
       results[priceNowIndex - 1]?.valid_from ?? ""
     ).toLocaleTimeString([], {
       hour: "2-digit",
@@ -96,9 +96,15 @@ const PricePane = ({
       results[priceNowIndex - 1]?.valid_to ?? ""
     ).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
     Chart: "",
-    Flux: "",
+    Flux: `NEXT: ${new Date(
+      results[priceNowIndex - 1]?.valid_from ?? ""
+    ).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    })} - ${new Date(
+      results[priceNowIndex - 1]?.valid_to ?? ""
+    ).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
   };
-  console.log(results);
   const note =
     "The rates from 11pm today till tomorrow are usually available at 4.00pm. Please revisit this page later to get the updates.";
 
@@ -163,7 +169,7 @@ const PricePane = ({
                   <div>{priceNowDisplay}</div>
                   <div className="flex">
                     {typeof priceChangeNow === "number" &&
-                      !["Go", "Cosy"].includes(category) && (
+                      !["Go", "Cosy", "Flux"].includes(category) && (
                         <Comparison
                           change={priceChangeNow}
                           compare="today average"

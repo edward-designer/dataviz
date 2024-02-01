@@ -12,6 +12,8 @@ import Sparkles from "./Sparkles";
 import Remark from "./Remark";
 import Lottie from "lottie-react";
 import octopusIcon from "../../../public/lottie/octopus.json";
+import { FaMagnifyingGlassChart } from "react-icons/fa6";
+import Link from "next/link";
 
 interface ITariffComparisionCard {
   deviceNumber: string;
@@ -91,18 +93,23 @@ const TariffComparisionCard = ({
         <>
           <EnergyIcon type={type} />
           <Container>
-            {category === "Agile" || category === "Tracker" ? (
-              <a href={`/${category.toLowerCase()}`} className="block">
-                <Badge label={`Octopus ${category}`} variant="primary" />
-              </a>
-            ) : (
+            <Link
+              href={`/${
+                category === "SVT" ? "variable" : category.toLowerCase()
+              }`}
+              target="_blank"
+              className="block relative hover:translate-x-1 hover:translate-y-1 hover:shadow-lg hover:opacity-80"
+            >
               <Badge
                 label={`Octopus ${
                   category === "SVT" ? "Variable Tariff" : category
                 }`}
+                icon={
+                  <FaMagnifyingGlassChart className="inline-block w-5 h-5 mr-1 text-accentPink-200" />
+                }
                 variant="primary"
               />
-            )}
+            </Link>
           </Container>
           <Container>
             <div className="text-5xl">

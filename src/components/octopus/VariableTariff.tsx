@@ -67,7 +67,7 @@ const VariableTariff = () => {
         </Remark>
       </div>
       <section className="flex justify-center items-center gap-4 my-4">
-        <BrushChart tariff={tariff} type="EG" gsp={gsp} />
+        <BrushChart tariff={tariff} type="EG" gsp={gsp} duration="year" />
       </section>
       <h2 className="flex-0 text-lg font-bold text-center translate-y-3 text-accentPink-600">
         Regional energy unit rates

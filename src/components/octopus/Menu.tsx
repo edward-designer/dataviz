@@ -7,9 +7,11 @@ import Badge from "./Badge";
 
 import { LiaInfoCircleSolid } from "react-icons/lia";
 import { MdOutlineInstallMobile } from "react-icons/md";
+import { MdExpandCircleDown } from "react-icons/md";
 
 const Menu = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isExtended, setIsExtended] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => setIsOpen(false), [pathname]);
@@ -72,7 +74,11 @@ const Menu = () => {
       >
         <nav className="text-4xl font-extralight p-4 pt-20 flex justify-between flex-col h-full overflow-y-scroll">
           <div>
-            <span className="block my-2 border-t border-accentBlue-500/50"></span>
+            <span className="block my-2 border-t border-accentBlue-500/50 text-xs relative mt-10">
+              <span className="absolute -top-2 bg-accentBlue-500 px-2 text-theme-950 italic rounded-full">
+                Smart Tariffs
+              </span>
+            </span>
             <Link
               href="/tracker"
               className={`block my-5 ${
@@ -93,20 +99,88 @@ const Menu = () => {
             >
               Agile <span className="text-lg">Price</span>
             </Link>
-            <Link
-              href="/variable"
-              className={`block my-5  ${
-                pathname === "/variable"
-                  ? "cursor-default text-accentBlue-900"
-                  : "hover:text-accentPink-500"
+            <div
+              className={`overflow-y-hidden transition-all duration-500 -mt-5 ${
+                isExtended ? "max-h-[1000px]" : "max-h-0"
               }`}
             >
-              Variable <span className="text-lg">(SVT) Price</span>
-            </Link>
+              <Link
+                href="/cosy"
+                className={`block my-5  ${
+                  pathname === "/cosy"
+                    ? "cursor-default text-accentBlue-900"
+                    : "hover:text-accentPink-500"
+                }`}
+              >
+                Cosy <span className="text-lg"> Price</span>
+              </Link>
+              <Link
+                href="/flux"
+                className={`block my-5  ${
+                  pathname === "/flux"
+                    ? "cursor-default text-accentBlue-900"
+                    : "hover:text-accentPink-500"
+                }`}
+              >
+                Flux <span className="text-lg"> Price</span>
+              </Link>
+              <Link
+                href="/go"
+                className={`block my-5  ${
+                  pathname === "/go"
+                    ? "cursor-default text-accentBlue-900"
+                    : "hover:text-accentPink-500"
+                }`}
+              >
+                Go <span className="text-lg"> Price</span>
+              </Link>
+              <span className="block my-2 border-t border-accentBlue-500/50 text-xs relative mt-10">
+                <span className="absolute -top-2 bg-accentBlue-500 px-2 text-theme-950 italic rounded-full">
+                  Traditional Tariffs
+                </span>
+              </span>
+              <Link
+                href="/fixed"
+                className={`block my-5  ${
+                  pathname === "/fixed"
+                    ? "cursor-default text-accentBlue-900"
+                    : "hover:text-accentPink-500"
+                }`}
+              >
+                Fixed <span className="text-lg"> Price</span>
+              </Link>
+              <Link
+                href="/variable"
+                className={`block my-5  ${
+                  pathname === "/variable"
+                    ? "cursor-default text-accentBlue-900"
+                    : "hover:text-accentPink-500"
+                }`}
+              >
+                Variable <span className="text-lg">(SVT) Price</span>
+              </Link>
+            </div>
 
+            <button
+              className={`w-full flex justify-center items-center gap-1  ${
+                isExtended ? "" : "mt-5"
+              }`}
+              onClick={() => setIsExtended(!isExtended)}
+            >
+              <span className="text-sm text-accentBlue-600">
+                {isExtended ? "less" : "more"}
+              </span>
+              <MdExpandCircleDown
+                aria-hidden="true"
+                className={`w-8 h-8 transition-all text-accentBlue-600 ${
+                  isExtended ? "rotate-180" : ""
+                }`}
+              />
+              <span className="text-sm text-accentBlue-600">tariffs</span>
+            </button>
             <span className="block my-2 border-t border-accentBlue-500/50 text-xs relative mt-10">
               <span className="absolute -top-2 bg-accentBlue-500 px-2 text-theme-950 italic rounded-full">
-                Octopus users tools
+                Octopus Tools
               </span>
             </span>
             <Link

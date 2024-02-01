@@ -113,33 +113,92 @@ const BrushChart = ({
 
     const data = rawData.map((dataset) => ({
       ...dataset,
-      results: dataset.results.filter(
-        (result) => result.payment_method !== "NON_DIRECT_DEBIT"
-      ),
+      results: dataset.results.filter((result) => {
+        let toInclude = result.payment_method !== "NON_DIRECT_DEBIT";
+        if (category === "SVT") return toInclude;
+
+        let fromDate = new Date();
+        fromDate.setHours(0, 0, 0, 0);
+        let endDate: Date | null = null;
+        switch (duration) {
+          case "2-days":
+            endDate = new Date(
+              new Date(fromDate).setDate(new Date(fromDate).getDate() + 3)
+            );
+            break;
+          case "month":
+            endDate = new Date(
+              new Date(fromDate).setDate(new Date(fromDate).getDate() + 3)
+            );
+            fromDate = new Date(
+              new Date(fromDate).setDate(new Date(fromDate).getDate() - 30)
+            );
+            break;
+          case "year":
+            fromDate = new Date(
+              new Date(fromDate).setFullYear(
+                new Date(fromDate).getFullYear() - 1
+              )
+            );
+            break;
+        }
+
+        if (endDate !== null) {
+          toInclude =
+            toInclude &&
+            !(new Date(result.valid_from).valueOf() >= endDate.valueOf()) &&
+            !(new Date(result.valid_to ?? "").valueOf() <= fromDate.valueOf());
+        } else {
+          toInclude =
+            result.valid_to === null
+              ? toInclude
+              : toInclude &&
+                new Date(result.valid_to ?? "").valueOf() >= fromDate.valueOf();
+        }
+        return toInclude;
+      }),
     }));
 
-    // hack: add first with object valid_to to array
-    if (category === "SVT") {
+    // hack: add back the last line
+    if (["Tracker", "Cosy"].includes(category)) {
       data.forEach((dataset, ind) => {
-        const valid_from = new Date(
-          new Date(data[ind].results.at(-1)?.valid_from ?? "").setMonth(
-            new Date(data[ind].results.at(-1)?.valid_from ?? "").getMonth() - 3
+        const valid_to = new Date(
+          new Date(dataset.results.at(0)?.valid_to ?? "").setDate(
+            new Date(dataset.results.at(0)?.valid_to ?? "").getDate() + 1
           )
         ).toISOString();
-        const valid_to = new Date(
-          data[ind].results.at(-1)?.valid_from ?? ""
+        const valid_from = new Date(
+          dataset.results.at(0)?.valid_to ?? ""
         ).toISOString();
 
-        data[ind].results.push({
-          payment_method: "DIRECT_DEBIT",
+        data[ind].results.unshift({
+          payment_method: null,
           valid_from,
           valid_to,
-          value_exc_vat: data[ind].results.at(-1)?.value_exc_vat ?? 0,
-          value_inc_vat: data[ind].results.at(-1)?.value_inc_vat ?? 0,
+          value_exc_vat: 0,
+          value_inc_vat: data[ind].results.at(0)?.value_inc_vat ?? 0,
         });
       });
     }
+    // hack: add first with object valid_to to array
+    if (category === "SVT") {
+      data.forEach((dataset, ind) => {
+        const valid_to = new Date(
+          new Date(data[ind].results.at(0)?.valid_from ?? "").setMonth(
+            new Date(data[ind].results.at(0)?.valid_from ?? "").getMonth() + 3
+          )
+        ).toISOString();
 
+        dataset.results.at(0)!.valid_to = valid_to;
+        dataset.results.unshift({
+          payment_method: null,
+          valid_from: valid_to,
+          valid_to,
+          value_exc_vat: 0,
+          value_inc_vat: data[ind].results.at(0)?.value_inc_vat ?? 0,
+        });
+      });
+    }
     const lineCharts: Selection<
       BaseType | SVGPathElement,
       TariffResult[],
@@ -203,19 +262,14 @@ const BrushChart = ({
         .flat(),
       (d) => d
     );
-    if (category === "SVT") {
-      xExtent[0] = new Date(xExtent[0]!.setMonth(xExtent[0]?.getMonth()! + 3));
-      xExtent[1] = new Date(xExtent[1]!.setMonth(xExtent[1]?.getMonth()! + 3));
-    } else if (category === "Tracker") {
-      xExtent[0] = new Date(xExtent[0]!.setDate(xExtent[0]?.getDate()! + 1));
-      xExtent[1] = new Date(xExtent[1]!.setDate(xExtent[1]?.getDate()! + 1));
-    } else if (category === "Go") {
-      if (duration === "2-days") {
-        const start = new Date();
-        start.setHours(0, 0, 0, 0);
-        xExtent[0] = start;
-      }
+
+    if (category === "Go") {
+      const start = new Date(xExtent[0]!);
+      start.setDate(start.getDate() + 1);
+      start.setHours(0, 0, 0, 0);
+      xExtent[0] = start;
     }
+    if (["Go"].includes(category)) xExtent[1]?.setHours(23, 59, 59, 999);
 
     assertExtentNotUndefined<Date>(xExtent);
     const xScale = scaleTime()
@@ -316,15 +370,15 @@ const BrushChart = ({
         .x((d) =>
           xScale(
             new Date(
-              d.valid_to ??
+              d.valid_from ??
                 new Date(
-                  new Date().setMonth(new Date().getMonth() + 3)
+                  new Date().setMonth(new Date().getMonth() - 3)
                 ).toISOString()
             )
           )
         )
         .y((d) => yScale(d.value_inc_vat))
-        .curve(curveStepAfter);
+        .curve(curveStepBefore);
 
     // Function to actually draw lines
     const drawLine = (
@@ -437,9 +491,13 @@ const BrushChart = ({
       if (
         new Date(capsData.at(-1)?.Date ?? "").valueOf() < new Date().valueOf()
       ) {
-        const tomorrow = new Date(new Date().setDate(new Date().getDate() + 1));
+        const quarterEnd = new Date();
+        quarterEnd.setHours(0, 0, 0, 0);
+        quarterEnd.setDate(1);
+        quarterEnd.setMonth(4 - (quarterEnd.getMonth() % 4));
+        const endDate = quarterEnd;
         const latestCap = capsData.at(-1)!;
-        capsData.push({ ...latestCap, Date: tomorrow.toUTCString() });
+        capsData.push({ ...latestCap, Date: endDate.toUTCString() });
       }
 
       const capLineGenerator = (type: keyof CapsTSVResult) =>
@@ -481,7 +539,7 @@ const BrushChart = ({
 
     // ↓↓↓ TIMELINE
     const drawTimeLine = (xScale: ScaleTime<number, number, never>) => {
-      if (category === "Agile") {
+      if (["Agile", "Go", "Cosy", "Flux"].includes(category)) {
         window.clearInterval(timeIdRef.current);
         const timelineG = selectOrAppend(
           "g",
@@ -521,7 +579,7 @@ const BrushChart = ({
     };
 
     const redrawTimeLine = (xScale: ScaleTime<number, number, never>) => {
-      if (category === "Agile") {
+      if (["Agile", "Go", "Cosy", "Flux"].includes(category)) {
         window.clearInterval(timeIdRef.current);
         const timeline = chart.select(".timelineG").select(".timeline");
         const timelineTriangle = chart
@@ -633,7 +691,8 @@ const BrushChart = ({
     };*/
 
     // ↓↓↓ TOOLTIP
-
+    const interactionContainer = chart.select("g.interactionContainer");
+    interactionContainer.attr("clip-path", `url(#clip-${id})`);
     // Show points with value on mouse hover
     const pointerInteraction = (
       xScale: ScaleTime<number, number, never>,
@@ -641,8 +700,8 @@ const BrushChart = ({
     ) => {
       const tooltip = chart.select(".tooltip");
       const pointerInteractionArea = chart.select("g.pointerInteraction");
-      /* Add clip */
       pointerInteractionArea.attr("clip-path", `url(#clip-${id})`);
+
       /* Remove all visible elements in case on Zoom */
       tooltip.attr("opacity", "0");
 
@@ -669,42 +728,41 @@ const BrushChart = ({
             ),
             xValue
           );
-        const pointValues =
-          category === "Agile"
-            ? [
-                [
-                  pointerX,
-                  data[0].results[index]?.value_inc_vat ?? "--",
-                  ENERGY_TYPE_ICON[data[0].tariffType],
-                ] as const,
-              ]
-            : category === "SVT"
-            ? data?.map((set) => {
-                return [
-                  pointerX,
-                  set.results[index]?.value_inc_vat ?? "--",
-                  ENERGY_TYPE_ICON[set.tariffType],
-                ] as const;
-              })
-            : category === "Go"
-            ? data?.map((set) => {
-                return [
-                  pointerX,
-                  set.results[index]?.value_inc_vat ?? "--",
-                  ENERGY_TYPE_ICON[set.tariffType],
-                ] as const;
-              })
-            : data?.map((set) => {
-                return [
-                  pointerX,
-                  set.results.find(
-                    (result) =>
-                      new Date(result.valid_from).getTime() ===
-                      xValue.setHours(0, 0, 0, 0)
-                  )?.value_inc_vat ?? "--",
-                  ENERGY_TYPE_ICON[set.tariffType],
-                ] as const;
-              });
+        const pointValues = ["Agile", "Go", "Cosy", "Flux"].includes(category)
+          ? [
+              [
+                pointerX,
+                data[0].results[index]?.value_exc_vat === 0
+                  ? "--"
+                  : data[0].results[index]?.value_inc_vat ?? "--",
+                ENERGY_TYPE_ICON[data[0].tariffType],
+              ] as const,
+            ]
+          : category === "SVT"
+          ? data?.map((set) => {
+              return [
+                pointerX,
+                set.results[index]?.value_inc_vat ?? "--",
+                ENERGY_TYPE_ICON[set.tariffType],
+              ] as const;
+            })
+          : data?.map((set) => {
+              return [
+                pointerX,
+                set.results.find(
+                  (result) =>
+                    new Date(result.valid_from).getTime() ===
+                    xValue.setHours(0, 0, 0, 0)
+                )?.value_exc_vat === 0
+                  ? "--"
+                  : set.results.find(
+                      (result) =>
+                        new Date(result.valid_from).getTime() ===
+                        xValue.setHours(0, 0, 0, 0)
+                    )?.value_inc_vat ?? "--",
+                ENERGY_TYPE_ICON[set.tariffType],
+              ] as const;
+            });
 
         // Tooltip position
         const tooltipWidth =
@@ -742,7 +800,7 @@ const BrushChart = ({
           .attr("fill", "#FFFFFF80")
           .attr("alignment-baseline", "hanging")
           .text(
-            category === "Agile" || category === "Go"
+            ["Agile", "Go", "Cosy", "Flux"].includes(category)
               ? xValue.toLocaleString()
               : xValue.toLocaleDateString()
           );
@@ -797,11 +855,7 @@ const BrushChart = ({
 
     if (type.includes("E")) {
       const lineChart = drawLine(
-        [
-          data[0].results.filter(
-            (d) => d.payment_method !== "NON_DIRECT_DEBIT"
-          ),
-        ],
+        [data[0].results],
         "electricity",
         xScale,
         yScale,
@@ -812,11 +866,7 @@ const BrushChart = ({
     }
     if (type.includes("G")) {
       const lineChart2 = drawLine(
-        [
-          data[1].results.filter(
-            (d) => d.payment_method !== "NON_DIRECT_DEBIT"
-          ),
-        ],
+        [data[1].results],
         "gas",
         xScale,
         yScale,

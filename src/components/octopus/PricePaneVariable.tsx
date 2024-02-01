@@ -47,7 +47,9 @@ const PricePane = ({
   const todayDate = today.toLocaleDateString();
   const results =
     data?.[0]?.results.filter(
-      (result) => result.payment_method === "DIRECT_DEBIT"
+      (result) =>
+        result.payment_method === "DIRECT_DEBIT" ||
+        result.payment_method === null
     ) ?? [];
 
   const priceTodayIndex = results.findIndex(

@@ -9,7 +9,7 @@ import { WindowVisibilityContext } from "@/context/windowVisibility";
 import MapChart from "@/components/octopus/MapChart";
 import useTariffQuery from "@/hooks/useTariffQuery";
 
-import Loading from "../Loading";
+import Loading from "../../app/loading";
 import BrushChart from "./BrushChart";
 import MapChartAgile from "./MapChartAgile";
 import PricePaneAgile from "./PricePaneAgile";
@@ -18,7 +18,13 @@ import Remark from "./Remark";
 
 import { ITariffToCompare, Single_tariff } from "@/data/source";
 
-const Tariff = ({ tariff }: { tariff: ITariffToCompare }) => {
+const Tariff = ({
+  tariff,
+  remarks = "",
+}: {
+  tariff: ITariffToCompare;
+  remarks?: string;
+}) => {
   const [currentPeriod, setCurrentPeriod] = useState(new Date().toUTCString());
   const { value, setValue } = useContext(UserContext);
   useContext(WindowResizeContext);
@@ -42,7 +48,14 @@ const Tariff = ({ tariff }: { tariff: ITariffToCompare }) => {
     type: "E",
   });
 
-  if (isLoading) return <Loading />;
+  if (isLoading)
+    return (
+      <div className="lg:col-[content] my-4">
+        <div className="flex items-center justify-center">
+          <Loading />
+        </div>
+      </div>
+    );
 
   return (
     isSuccess &&
@@ -55,6 +68,11 @@ const Tariff = ({ tariff }: { tariff: ITariffToCompare }) => {
                 <span>{tariffData[0].display_name}</span>
               </h1>
               <Remark variant="badge">
+                {remarks && (
+                  <span className="text-accentPink-500 font-bold pr-2">
+                    {remarks}
+                  </span>
+                )}
                 [{tariffData[0].full_name}] {tariffData[0].description}
               </Remark>
             </div>
@@ -101,7 +119,7 @@ const Tariff = ({ tariff }: { tariff: ITariffToCompare }) => {
           Changes over the past month
         </div>
         <section className="flex justify-center items-center gap-4 my-4">
-          <BrushChart tariff={tariffCode} type="E" gsp={gsp} />
+          <BrushChart tariff={tariffCode} type="E" gsp={gsp} duration="month" />
         </section>
         <section className="flex flex-col md:flex-row items-stretch md:justify-center md:items-center gap-4 my-4 md:mt-8">
           <div className="flex-1">
