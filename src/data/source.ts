@@ -48,6 +48,15 @@ export const GTARIFFS: ITariffToCompare[] = [
     cost: null,
   },
 ];
+export const EETARIFFS: ITariffToCompare[] = [
+  {
+    tariff: "FLUX-EXPORT-23-02-14",
+    type: "E",
+    category: "Flux",
+    cost: null,
+  },
+];
+
 export const ETARIFFS: ITariffToCompare[] = [
   {
     tariff: "VAR-22-11-01",
