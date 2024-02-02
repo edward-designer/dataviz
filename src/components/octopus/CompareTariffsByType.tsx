@@ -8,6 +8,7 @@ import {
   useContext,
   useEffect,
   useId,
+  useMemo,
   useState,
 } from "react";
 import NotCurrentlySupported from "./NotCurrentlySupported";
@@ -19,6 +20,7 @@ import { BsLightningChargeFill } from "react-icons/bs";
 import { PiSunDimFill } from "react-icons/pi";
 import AddATariff from "./AddATariffToCompare";
 import TariffDetails from "./TariffDetails";
+import { getCategory } from "@/utils/helpers";
 
 const CompareTariffsByType = ({
   selectedTariffs,
@@ -35,6 +37,8 @@ const CompareTariffsByType = ({
 }) => {
   const { value } = useContext(UserContext);
   const [tariffsToCompare, setTariffsToCompare] = useState(selectedTariffs);
+
+  const typePlusExport = isExport ? "EE" : type;
 
   const addToTariff = (tariffToAdd: (typeof allTariffs)[number]["tariff"]) => {
     setTariffsToCompare((tariffsToCompare) => {
@@ -89,27 +93,72 @@ const CompareTariffsByType = ({
       !tariffsToCompare.map((tariff) => tariff.tariff).includes(tariff.tariff)
   );
 
-  /*useEffect(() => {
-    if (!value.currentETariff) return;
+  const currentMeterType = useMemo(
+    () => ({
+      E: {
+        accessPoint: value.MPAN,
+        serialNo: value.ESerialNo,
+        currentContract: value.currentEContract,
+        currentTariff: value.currentETariff,
+        heading: (
+          <>
+            <BsLightningChargeFill className="w-8 h-8 fill-accentPink-900 inline-block mr-2" />
+            Electricity
+          </>
+        ),
+      },
+      G: {
+        accessPoint: value.MPRN,
+        serialNo: value.GSerialNo,
+        currentContract: value.currentGContract,
+        currentTariff: value.currentGTariff,
+        heading: (
+          <>
+            <AiFillFire className="w-8 h-8 fill-accentPink-900 inline-block mr-2" />
+            Gas
+          </>
+        ),
+      },
+      EE: {
+        accessPoint: value.EMPAN,
+        serialNo: value.EESerialNo,
+        currentContract: value.currentEEContract,
+        currentTariff: value.currentEETariff,
+        heading: (
+          <>
+            <PiSunDimFill className="w-8 h-8 fill-accentPink-700 inline-block mr-2" />
+            Electricity (export)
+          </>
+        ),
+      },
+    }),
+    [value]
+  );
+
+  useEffect(() => {
+    if (!currentMeterType[typePlusExport].currentTariff) return;
     if (
-      tariffsToCompare.some((tariff) => tariff.tariff === value.currentETariff)
+      tariffsToCompare.some(
+        (tariff) =>
+          tariff.tariff === currentMeterType[typePlusExport].currentTariff
+      )
     )
       return;
-
-    const currentTariffCategory = getCategory(value.currentETariff);
+    const currentTariff = currentMeterType[typePlusExport].currentTariff;
+    const currentTariffCategory = getCategory(
+      currentMeterType[typePlusExport].currentTariff
+    );
     if (["Agile", "Tracker"].includes(currentTariffCategory)) return;
     setTariffsToCompare((tariffs) => [
       ...tariffs.filter((tariff) => tariff.category !== currentTariffCategory),
       {
-        tariff: value.currentETariff,
+        tariff: currentTariff,
         type,
         category: currentTariffCategory,
         cost: null,
       } as ITariffToCompare,
     ]);
-  }, [tariffsToCompare, type, value.currentETariff]);*/
-
-  const typePlusExport = isExport ? "EE" : type;
+  }, [currentMeterType, tariffsToCompare, type, typePlusExport]);
 
   if (
     typePlusExport === "E" &&
@@ -130,45 +179,6 @@ const CompareTariffsByType = ({
     !(value.EMPAN && value.EESerialNo && value.currentEEContract)
   )
     return;
-
-  const currentMeterType = {
-    E: {
-      accessPoint: value.MPAN,
-      serialNo: value.ESerialNo,
-      currentContract: value.currentEContract,
-      currentTariff: value.currentETariff,
-      heading: (
-        <>
-          <BsLightningChargeFill className="w-8 h-8 fill-accentPink-900 inline-block mr-2" />
-          Electricity
-        </>
-      ),
-    },
-    G: {
-      accessPoint: value.MPRN,
-      serialNo: value.GSerialNo,
-      currentContract: value.currentGContract,
-      currentTariff: value.currentGTariff,
-      heading: (
-        <>
-          <AiFillFire className="w-8 h-8 fill-accentPink-900 inline-block mr-2" />
-          Gas
-        </>
-      ),
-    },
-    EE: {
-      accessPoint: value.EMPAN,
-      serialNo: value.EESerialNo,
-      currentContract: value.currentEEContract,
-      currentTariff: value.currentEETariff,
-      heading: (
-        <>
-          <PiSunDimFill className="w-8 h-8 fill-accentPink-700 inline-block mr-2" />
-          Electricity (export)
-        </>
-      ),
-    },
-  };
 
   return (
     <div
