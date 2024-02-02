@@ -30,14 +30,18 @@ const useConsumptionData = (inputs: IUseConsumptionData) => {
   const groupBy = {
     Agile: "",
     Go: "",
+    IGo: "",
     Cosy: "",
     Flux: "",
+    IFlux: "",
     Tracker: "&group_by=day",
     SVT: "&group_by=day",
     Fixed: "&group_by=day",
     Chart: "&group_by=day",
   };
-  const groupByType = ["Agile", "Go", "Cosy", "Flux"].includes(category)
+  const groupByType = ["Agile", "Go", "IGo", "Cosy", "Flux", "IFlux"].includes(
+    category
+  )
     ? "halfhour"
     : "day";
 

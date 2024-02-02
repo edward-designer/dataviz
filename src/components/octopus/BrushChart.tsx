@@ -88,6 +88,7 @@ const BrushChart = ({
   const caps = usePriceCapQuery({});
 
   const category = getCategory(tariff);
+  const intelligentTariffs = ["IGo", "Agile", "Go", "Cosy", "Flux", "IFlux"];
 
   // Specify chart properties (dimensions and colors)
   let widgetWidth = 1000;
@@ -110,6 +111,14 @@ const BrushChart = ({
     if (!rawData || !svgRef || !svgRef.current) return;
     // ↓↓↓ when svgRef.current and data are ready //
     select(svgRef.current);
+
+    if (typeof document !== "undefined") {
+      widgetWidth =
+        // hack to ensure width of widget is responsive to container width
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        document.getElementById(`chart-${id}`)?.getBoundingClientRect().width ??
+        widgetWidth;
+    }
 
     const data = rawData.map((dataset) => ({
       ...dataset,
@@ -160,7 +169,7 @@ const BrushChart = ({
     }));
 
     // hack: add back the last line
-    if (["Tracker", "Cosy"].includes(category)) {
+    if (["Tracker", "Cosy", "Go"].includes(category)) {
       data.forEach((dataset, ind) => {
         const valid_to = new Date(
           new Date(dataset.results.at(0)?.valid_to ?? "").setDate(
@@ -263,13 +272,13 @@ const BrushChart = ({
       (d) => d
     );
 
-    if (category === "Go") {
+    if (category === "IGo") {
       const start = new Date(xExtent[0]!);
       start.setDate(start.getDate() + 1);
       start.setHours(0, 0, 0, 0);
       xExtent[0] = start;
     }
-    if (["Go"].includes(category)) xExtent[1]?.setHours(23, 59, 59, 999);
+    if (["IGo"].includes(category)) xExtent[1]?.setHours(23, 59, 59, 999);
 
     assertExtentNotUndefined<Date>(xExtent);
     const xScale = scaleTime()
@@ -539,7 +548,7 @@ const BrushChart = ({
 
     // ↓↓↓ TIMELINE
     const drawTimeLine = (xScale: ScaleTime<number, number, never>) => {
-      if (["Agile", "Go", "Cosy", "Flux"].includes(category)) {
+      if (intelligentTariffs.includes(category)) {
         window.clearInterval(timeIdRef.current);
         const timelineG = selectOrAppend(
           "g",
@@ -579,7 +588,7 @@ const BrushChart = ({
     };
 
     const redrawTimeLine = (xScale: ScaleTime<number, number, never>) => {
-      if (["Agile", "Go", "Cosy", "Flux"].includes(category)) {
+      if (intelligentTariffs.includes(category)) {
         window.clearInterval(timeIdRef.current);
         const timeline = chart.select(".timelineG").select(".timeline");
         const timelineTriangle = chart
@@ -728,7 +737,7 @@ const BrushChart = ({
             ),
             xValue
           );
-        const pointValues = ["Agile", "Go", "Cosy", "Flux"].includes(category)
+        const pointValues = intelligentTariffs.includes(category)
           ? [
               [
                 pointerX,
@@ -800,7 +809,7 @@ const BrushChart = ({
           .attr("fill", "#FFFFFF80")
           .attr("alignment-baseline", "hanging")
           .text(
-            ["Agile", "Go", "Cosy", "Flux"].includes(category)
+            intelligentTariffs.includes(category)
               ? xValue.toLocaleString()
               : xValue.toLocaleDateString()
           );
@@ -950,7 +959,7 @@ const BrushChart = ({
       {isError && <ErrorMessage error={error} errorHandler={() => refetch()} />}
 
       <>
-        <svg ref={svgRef}>
+        <svg ref={svgRef} key={category}>
           <defs>
             <linearGradient id="electricity" x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor="#aa33cc" />

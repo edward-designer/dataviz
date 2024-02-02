@@ -219,9 +219,10 @@ export const getCategory = (tariff: string): TariffCategory => {
   if (tariff.includes("SILVER")) return "Tracker";
   if (tariff.includes("FIX")) return "Fixed";
   if (tariff.includes("COSY")) return "Cosy";
+  if (tariff.includes("INTELLI-FLUX")) return "IFlux";
   if (tariff.includes("FLUX")) return "Flux";
   if (tariff.includes("GO")) return "Go";
-  if (tariff.includes("INTELLI")) return "Go";
+  if (tariff.includes("INTELLI")) return "IGo";
   if (tariff.includes("VAR")) return "SVT";
   return "Chart";
 };
@@ -232,7 +233,9 @@ export type TariffName =
   | "Fixed"
   | "Cosy"
   | "Flux"
+  | "IFlux"
   | "Go"
+  | "IGo"
   | "Variable"
   | "Super Green";
 

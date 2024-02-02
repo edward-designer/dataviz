@@ -72,16 +72,16 @@ const Menu = () => {
           isOpen ? "translate-none" : "translate-x-full"
         }`}
       >
-        <nav className="text-4xl font-extralight p-4 pt-20 flex justify-between flex-col h-full overflow-y-scroll">
+        <nav className="text-4xl font-extralight p-4 pt-16 flex justify-between flex-col h-full overflow-y-scroll">
           <div>
-            <span className="block my-2 border-t border-accentBlue-500/50 text-xs relative mt-10">
+            <span className="block border-t border-accentBlue-500/50 text-xs relative mt-2 mb-6">
               <span className="absolute -top-2 bg-accentBlue-500 px-2 text-theme-950 italic rounded-full">
-                Smart Tariffs
+                Import Tariffs
               </span>
             </span>
             <Link
               href="/tracker"
-              className={`block my-5 ${
+              className={`block my-4 ${
                 pathname === "/tracker"
                   ? "cursor-default text-accentBlue-900"
                   : "hover:text-accentPink-500"
@@ -91,7 +91,7 @@ const Menu = () => {
             </Link>
             <Link
               href="/agile"
-              className={`block my-5  ${
+              className={`block my-4  ${
                 pathname === "/agile"
                   ? "cursor-default text-accentBlue-900"
                   : "hover:text-accentPink-500"
@@ -100,13 +100,13 @@ const Menu = () => {
               Agile <span className="text-lg">Price</span>
             </Link>
             <div
-              className={`overflow-y-hidden transition-all duration-500 -mt-5 ${
+              className={`overflow-y-hidden transition-all duration-500 -mt-4 ${
                 isExtended ? "max-h-[1000px]" : "max-h-0"
               }`}
             >
               <Link
                 href="/cosy"
-                className={`block my-5  ${
+                className={`block my-4  ${
                   pathname === "/cosy"
                     ? "cursor-default text-accentBlue-900"
                     : "hover:text-accentPink-500"
@@ -116,7 +116,7 @@ const Menu = () => {
               </Link>
               <Link
                 href="/flux"
-                className={`block my-5  ${
+                className={`block my-4  ${
                   pathname === "/flux"
                     ? "cursor-default text-accentBlue-900"
                     : "hover:text-accentPink-500"
@@ -125,8 +125,19 @@ const Menu = () => {
                 Flux <span className="text-lg"> Price</span>
               </Link>
               <Link
+                href="/iflux"
+                className={`block my-4  ${
+                  pathname === "/iflux"
+                    ? "cursor-default text-accentBlue-900"
+                    : "hover:text-accentPink-500"
+                }`}
+              >
+                <span className="text-lg">Intelligent</span> Flux{" "}
+                <span className="text-lg"> Price</span>
+              </Link>
+              <Link
                 href="/go"
-                className={`block my-5  ${
+                className={`block my-4  ${
                   pathname === "/go"
                     ? "cursor-default text-accentBlue-900"
                     : "hover:text-accentPink-500"
@@ -134,14 +145,20 @@ const Menu = () => {
               >
                 Go <span className="text-lg"> Price</span>
               </Link>
-              <span className="block my-2 border-t border-accentBlue-500/50 text-xs relative mt-10">
-                <span className="absolute -top-2 bg-accentBlue-500 px-2 text-theme-950 italic rounded-full">
-                  Traditional Tariffs
-                </span>
-              </span>
+              <Link
+                href="/igo"
+                className={`block my-4  ${
+                  pathname === "/igo"
+                    ? "cursor-default text-accentBlue-900"
+                    : "hover:text-accentPink-500"
+                }`}
+              >
+                <span className="text-lg">Intelligent</span> Go{" "}
+                <span className="text-lg"> Price</span>
+              </Link>
               <Link
                 href="/fixed"
-                className={`block my-5  ${
+                className={`block my-4  ${
                   pathname === "/fixed"
                     ? "cursor-default text-accentBlue-900"
                     : "hover:text-accentPink-500"
@@ -151,13 +168,39 @@ const Menu = () => {
               </Link>
               <Link
                 href="/variable"
-                className={`block my-5  ${
+                className={`block my-4  ${
                   pathname === "/variable"
                     ? "cursor-default text-accentBlue-900"
                     : "hover:text-accentPink-500"
                 }`}
               >
                 Variable <span className="text-lg">(SVT) Price</span>
+              </Link>
+              <span className="block border-t border-accentBlue-500/50 text-xs relative mt-8 mb-6">
+                <span className="absolute -top-2 bg-accentBlue-500 px-2 text-theme-950 italic rounded-full">
+                  Export Tariffs
+                </span>
+              </span>
+              <Link
+                href="/flux"
+                className={`block my-4  ${
+                  pathname === "/flux"
+                    ? "cursor-default text-accentBlue-900"
+                    : "hover:text-accentPink-500"
+                }`}
+              >
+                Flux <span className="text-lg"> Export Price</span>
+              </Link>
+              <Link
+                href="/iflux"
+                className={`block my-4  ${
+                  pathname === "/iflux"
+                    ? "cursor-default text-accentBlue-900"
+                    : "hover:text-accentPink-500"
+                }`}
+              >
+                <span className="text-lg">Intelligent</span> Flux{" "}
+                <span className="text-lg"> Export Price</span>
               </Link>
             </div>
 
@@ -178,14 +221,14 @@ const Menu = () => {
               />
               <span className="text-sm text-accentBlue-600">tariffs</span>
             </button>
-            <span className="block my-2 border-t border-accentBlue-500/50 text-xs relative mt-10">
+            <span className="block border-t border-accentBlue-500/50 text-xs relative mt-8 mb-6">
               <span className="absolute -top-2 bg-accentBlue-500 px-2 text-theme-950 italic rounded-full">
                 Octopus Tools
               </span>
             </span>
             <Link
               href="/dashboard"
-              className={`block my-5  ${
+              className={`block my-4  ${
                 pathname === "/dashboard"
                   ? "cursor-default text-accentBlue-900"
                   : "hover:text-accentPink-500"
@@ -195,7 +238,7 @@ const Menu = () => {
             </Link>
             <Link
               href="/savings"
-              className={`block my-5  ${
+              className={`block my-4  ${
                 pathname === "/savings"
                   ? "cursor-default text-accentBlue-900"
                   : "hover:text-accentPink-500"
@@ -205,7 +248,7 @@ const Menu = () => {
             </Link>
             <Link
               href="/compare"
-              className={`block my-5  ${
+              className={`block my-4  ${
                 pathname === "/compare"
                   ? "cursor-default text-accentBlue-900"
                   : "hover:text-accentPink-500"
@@ -215,7 +258,7 @@ const Menu = () => {
             </Link>
             <Link
               href="/compareTracker"
-              className={`block my-5  ${
+              className={`block my-4  ${
                 pathname === "/compareTracker"
                   ? "cursor-default text-accentBlue-900"
                   : "hover:text-accentPink-500"
@@ -226,7 +269,7 @@ const Menu = () => {
             </Link>
             <Link
               href="/yearInReview"
-              className={`block my-5  ${
+              className={`block my-4  ${
                 pathname === "/yearInReview"
                   ? "cursor-default text-accentBlue-900"
                   : "hover:text-accentPink-500"
@@ -239,7 +282,7 @@ const Menu = () => {
           <div>
             <Link
               href="/install"
-              className={`flex items-center gap-1 my-3 text-base  ${
+              className={`flex items-center gap-1 my-4 text-base  ${
                 pathname === "/install"
                   ? "cursor-default text-accentBlue-900"
                   : "hover:text-accentPink-500"
@@ -249,7 +292,7 @@ const Menu = () => {
             </Link>
             <Link
               href="/about"
-              className={`flex items-center gap-1 my-3 text-base  ${
+              className={`flex items-center gap-1 my-4 text-base  ${
                 pathname === "/about"
                   ? "cursor-default text-accentBlue-900"
                   : "hover:text-accentPink-500"

@@ -67,6 +67,12 @@ function useYearlyTariffQuery<T>({
         url: `https://api.octopus.energy/v1/products/${tariff}/${ENERGY_TYPE[type]}-tariffs/${type}-1R-${tariff}-${gsp}/standard-unit-rates/?page_size=1500&period_from=${fromDate}&period_to=${toDate}`,
       },
     ]),
+    IGo: fetchApi([
+      {
+        tariffType: type,
+        url: `https://api.octopus.energy/v1/products/${tariff}/${ENERGY_TYPE[type]}-tariffs/${type}-1R-${tariff}-${gsp}/standard-unit-rates/?page_size=1500&period_from=${fromDate}&period_to=${toDate}`,
+      },
+    ]),
     Cosy: fetchApi(
       [1, 2].map((num) => {
         return {
@@ -94,6 +100,12 @@ function useYearlyTariffQuery<T>({
       },
     ]),
     Flux: fetchApi([
+      {
+        tariffType: type,
+        url: `https://api.octopus.energy/v1/products/${tariff}/${ENERGY_TYPE[type]}-tariffs/${type}-1R-${tariff}-${gsp}/standard-unit-rates/?page_size=1500&period_from=${fromDate}&period_to=${toDate}`,
+      },
+    ]),
+    IFlux: fetchApi([
       {
         tariffType: type,
         url: `https://api.octopus.energy/v1/products/${tariff}/${ENERGY_TYPE[type]}-tariffs/${type}-1R-${tariff}-${gsp}/standard-unit-rates/?page_size=1500&period_from=${fromDate}&period_to=${toDate}`,

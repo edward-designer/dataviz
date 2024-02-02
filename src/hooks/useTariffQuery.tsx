@@ -36,8 +36,12 @@ function useTariffQuery<T>({
 
   const noByCategory = {
     Go: {
-      month: 120,
-      "2-days": 6,
+      month: 240,
+      "2-days": 12,
+    },
+    IGo: {
+      month: 240,
+      "2-days": 12,
     },
     Cosy: {
       month: 240,
@@ -64,6 +68,10 @@ function useTariffQuery<T>({
       "2-days": 96,
     },
     Flux: {
+      month: 1500,
+      "2-days": 96,
+    },
+    IFlux: {
       month: 1500,
       "2-days": 96,
     },

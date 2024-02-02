@@ -84,7 +84,9 @@ const Tariff = ({
           <div className="flex items-center justify-center font-display">
             <div className="h-14 rounded-md px-3 py-2 ring-offset-background focus:outline-none [&amp;>h1>span]:line-clamp-1 [&amp;>span]:line-clamp-1 w-auto max-w-full text-[clamp(20px,7vw,80px)] text-accentBlue-400 flex items-center justify-center">
               <h1 className="overflow-hidden [&amp;>*]:whitespace-pre  [&amp;>*]:text-ellipsis  [&amp;>*]:overflow-hidden  [&amp;>*]:block! [&amp;>*]:max-w-full">
-                <span>Octopus Flux</span>
+                <span>
+                  {tariffCode.includes("INTELLI") && "Intelligent"} Octopus Flux
+                </span>
               </h1>
               <Remark variant="badge">
                 {remarks && (

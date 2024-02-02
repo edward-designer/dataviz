@@ -327,9 +327,11 @@ export const calculateMonthlyPrices = (
         consumptionDataResults[i].consumption *
         consumptionMultiplier;
     } else if (
+      category === "IGo" ||
       category === "Go" ||
       category === "Cosy" ||
-      category === "Flux"
+      category === "Flux" ||
+      category === "IFlux"
     ) {
       for (let j = currentRateIndex; j < filteredRateDataResults.length; j++) {
         const currentRateEntry = filteredRateDataResults[j];
@@ -527,6 +529,11 @@ export const calculatePrice = (
   },
   currentTariff: string
 ) => {
+  const audit: {
+    date: string | undefined;
+    rate: number | undefined;
+    cost: number;
+  }[] = [];
   let totalPrice = 0;
   let totalUnit = 0;
   let totalStandingCharge = 0;
@@ -552,13 +559,21 @@ export const calculatePrice = (
     totalUnit += consumptionDataResults[i].consumption * consumptionMultiplier;
 
     if (category === "Fixed") {
-      const currentPeriodTariff = filteredRateDataResults[0];
+      const currentRateEntry = filteredRateDataResults[0];
       totalPrice +=
-        (currentPeriodTariff?.value_inc_vat ?? 0) *
+        (currentRateEntry?.value_inc_vat ?? 0) *
         consumptionDataResults[i].consumption *
         consumptionMultiplier;
+      audit.push({
+        date: currentRateEntry.valid_from,
+        rate: currentRateEntry?.value_inc_vat,
+        cost:
+          (currentRateEntry?.value_inc_vat ?? 0) *
+          consumptionDataResults[i].consumption *
+          consumptionMultiplier,
+      });
     } else if (category === "SVT") {
-      const currentPeriodTariff = filteredRateDataResults.find(
+      const currentRateEntry = filteredRateDataResults.find(
         (d) =>
           new Date(d.valid_from) <=
             new Date(consumptionDataResults[i].interval_start) &&
@@ -566,24 +581,34 @@ export const calculatePrice = (
             new Date(d.valid_to) >=
               new Date(consumptionDataResults[i].interval_start))
       );
-      const currentPeriodTariffCap = caps.find(
+      const currentRateEntryCap = caps.find(
         (cap) =>
           new Date(consumptionDataResults[i].interval_start) >=
           new Date(cap.Date)
       );
       const currentUnitRate =
-        (currentPeriodTariff?.value_inc_vat ?? 0) >
-        Number(currentPeriodTariffCap?.[type] ?? 0)
-          ? Number(currentPeriodTariffCap?.[type] ?? 0)
-          : currentPeriodTariff?.value_inc_vat ?? 0;
+        (currentRateEntry?.value_inc_vat ?? 0) >
+        Number(currentRateEntryCap?.[type] ?? 0)
+          ? Number(currentRateEntryCap?.[type] ?? 0)
+          : currentRateEntry?.value_inc_vat ?? 0;
       totalPrice +=
         currentUnitRate *
         consumptionDataResults[i].consumption *
         consumptionMultiplier;
+      audit.push({
+        date: currentRateEntry?.valid_from,
+        rate: currentRateEntry?.value_inc_vat,
+        cost:
+          (currentRateEntry?.value_inc_vat ?? 0) *
+          consumptionDataResults[i].consumption *
+          consumptionMultiplier,
+      });
     } else if (
+      category === "IGo" ||
       category === "Go" ||
       category === "Cosy" ||
-      category === "Flux"
+      category === "Flux" ||
+      category === "IFlux"
     ) {
       for (let j = currentRateIndex; j < filteredRateDataResults.length; j++) {
         const currentRateEntry = filteredRateDataResults[j];
@@ -598,12 +623,20 @@ export const calculatePrice = (
             (currentRateEntry?.value_inc_vat ?? 0) *
             consumptionDataResults[i].consumption *
             consumptionMultiplier;
+          audit.push({
+            date: currentRateEntry.valid_from,
+            rate: currentRateEntry?.value_inc_vat,
+            cost:
+              (currentRateEntry?.value_inc_vat ?? 0) *
+              consumptionDataResults[i].consumption *
+              consumptionMultiplier,
+          });
           break;
         }
         currentRateIndex++;
       }
     } else if (category === "Tracker") {
-      // Agile or Tracker
+      // Tracker
       const currentResultStartDateTime = new Date(
         consumptionDataResults[i].interval_start
       );
@@ -644,6 +677,14 @@ export const calculatePrice = (
           }
         }
       }
+      audit.push({
+        date: filteredRateDataResults[i + rateDataOffset].valid_from,
+        rate: filteredRateDataResults[i + rateDataOffset]?.value_inc_vat,
+        cost:
+          (filteredRateDataResults[i + rateDataOffset]?.value_inc_vat ?? 0) *
+          consumptionDataResults[i].consumption *
+          consumptionMultiplier,
+      });
     } else if (category === "Agile") {
       // Agile
       const currentResultStartDateTimestamp = new Date(
@@ -682,6 +723,14 @@ export const calculatePrice = (
           }
         }
       }
+      audit.push({
+        date: filteredRateDataResults[i + rateDataOffset].valid_from,
+        rate: filteredRateDataResults[i + rateDataOffset]?.value_inc_vat,
+        cost:
+          (filteredRateDataResults[i + rateDataOffset]?.value_inc_vat ?? 0) *
+          consumptionDataResults[i].consumption *
+          consumptionMultiplier,
+      });
     }
 
     if (
@@ -730,19 +779,20 @@ export const calculatePrice = (
   if (
     category === "Agile" ||
     category === "Go" ||
+    category === "IGo" ||
     category === "Cosy" ||
-    category === "Flux"
+    category === "Flux" ||
+    category === "IFlux"
   ) {
-    if (consumptionDataResults.length < periodLength * 48) {
-      totalPrice =
-        (totalPrice * periodLength * 48) / consumptionDataResults.length;
+    if (audit.length < periodLength * 48) {
+      totalPrice = (totalPrice * periodLength * 48) / audit.length;
       totalStandingCharge =
         (totalStandingCharge * periodLength * 48) /
         consumptionDataResults.length;
     }
   } else {
-    if (consumptionDataResults.length < periodLength) {
-      totalPrice = (totalPrice * periodLength) / consumptionDataResults.length;
+    if (audit.length < periodLength) {
+      totalPrice = (totalPrice * periodLength) / audit.length;
       totalStandingCharge =
         (totalStandingCharge * periodLength) / consumptionDataResults.length;
     }

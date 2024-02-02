@@ -89,7 +89,12 @@ const AddATariff = ({ tariffs, addToTariff }: IAddATariff) => {
                     )
                   }
                 />
-                Octopus {tariff.category}
+                Octopus{" "}
+                {tariff.category === "IGo"
+                  ? "Intelligent Go"
+                  : tariff.category === "IFlux"
+                  ? "Intelligent Flux"
+                  : tariff.category}
               </label>
             ))}
           </div>
@@ -114,18 +119,3 @@ const AddATariff = ({ tariffs, addToTariff }: IAddATariff) => {
 };
 
 export default AddATariff;
-
-/*<Select onValueChange={(value: string) => setTariff(value)}>
-            <SelectTrigger className="w-full border border-accentBlue-500/50 rounded-lg text-xl ">
-              <SelectValue placeholder="Select a Tariff" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {tariffs.map((tariff) => (
-                  <SelectItem key={tariff.tariff} value={tariff.tariff}>
-                    {tariff.category}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>*/

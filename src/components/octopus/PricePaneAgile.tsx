@@ -75,6 +75,14 @@ const PricePane = ({
   });
 
   const nextPeriodLabel = {
+    IGo: `NEXT: ${new Date(
+      results[priceNowIndex - 1]?.valid_from ?? ""
+    ).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    })} - ${new Date(
+      results[priceNowIndex - 1]?.valid_to ?? ""
+    ).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
     Go: `NEXT: ${new Date(
       results[priceNowIndex - 1]?.valid_from ?? ""
     ).toLocaleTimeString([], {
@@ -96,6 +104,14 @@ const PricePane = ({
       results[priceNowIndex - 1]?.valid_to ?? ""
     ).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
     Chart: "",
+    IFlux: `NEXT: ${new Date(
+      results[priceNowIndex - 1]?.valid_from ?? ""
+    ).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    })} - ${new Date(
+      results[priceNowIndex - 1]?.valid_to ?? ""
+    ).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
     Flux: `NEXT: ${new Date(
       results[priceNowIndex - 1]?.valid_from ?? ""
     ).toLocaleTimeString([], {

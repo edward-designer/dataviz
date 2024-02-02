@@ -102,7 +102,13 @@ const TariffComparisionCard = ({
             >
               <Badge
                 label={`Octopus ${
-                  category === "SVT" ? "Variable Tariff" : category
+                  category === "SVT"
+                    ? "Variable Tariff"
+                    : category === "IGo"
+                    ? "Intelligent Go"
+                    : category === "IFlux"
+                    ? "Intelligent Flux"
+                    : category
                 }`}
                 icon={
                   <FaMagnifyingGlassChart className="inline-block w-5 h-5 mr-1 text-accentPink-200" />

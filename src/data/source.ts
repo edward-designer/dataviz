@@ -50,9 +50,27 @@ export const GTARIFFS: ITariffToCompare[] = [
 ];
 export const EETARIFFS: ITariffToCompare[] = [
   {
+    tariff: "AGILE-OUTGOING-19-05-13",
+    type: "E",
+    category: "Agile",
+    cost: null,
+  },
+  {
     tariff: "FLUX-EXPORT-23-02-14",
     type: "E",
     category: "Flux",
+    cost: null,
+  },
+  {
+    tariff: "INTELLI-FLUX-EXPORT-23-07-14",
+    type: "E",
+    category: "IFlux",
+    cost: null,
+  },
+  {
+    tariff: "OUTGOING-FIX-12M-19-05-13",
+    type: "E",
+    category: "Fixed",
     cost: null,
   },
 ];
@@ -95,9 +113,21 @@ export const ETARIFFS: ITariffToCompare[] = [
     cost: null,
   },
   {
-    tariff: "INTELLI-VAR-22-10-14",
+    tariff: "INTELLI-FLUX-IMPORT-23-07-14",
+    type: "E",
+    category: "IFlux",
+    cost: null,
+  },
+  {
+    tariff: "GO-VAR-BB-23-02-07",
     type: "E",
     category: "Go",
+    cost: null,
+  },
+  {
+    tariff: "INTELLI-VAR-22-10-14",
+    type: "E",
+    category: "IGo",
     cost: null,
   },
 ];
@@ -391,7 +421,9 @@ export type TariffCategory =
   | "Cosy"
   | "Go"
   | "Chart"
-  | "Flux";
+  | "Flux"
+  | "IFlux"
+  | "IGo";
 
 export interface IConsumptionData {
   consumption: number;
