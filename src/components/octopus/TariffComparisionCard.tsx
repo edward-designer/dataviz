@@ -196,6 +196,11 @@ const TariffComparisionCard = ({
               the standard tariff protected by Energy Price Cap
             </div>
           )}
+          {["Flux", "IFlux"].includes(category) && (
+            <div className="text-xs">
+              Must sign up both Import and Export at the same time.
+            </div>
+          )}
         </>
       ) : (
         <div className="text-center text-sm">
