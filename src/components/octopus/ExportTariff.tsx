@@ -157,6 +157,7 @@ const Tariff = ({
               gsp={gsp}
               setCurrentPeriod={setCurrentPeriod}
               category={exportCategory}
+              isExport={true}
             />
             <BrushChart
               tariff={exportTariffCode}
@@ -169,7 +170,12 @@ const Tariff = ({
               <div className="flex-1 text-lg font-bold text-center  text-accentPink-600">
                 Today&apos;s rates
               </div>
-              <PricePaneAgile2 tariff={exportTariffCode} type="E" gsp={gsp} />
+              <PricePaneAgile2
+                tariff={exportTariffCode}
+                type="E"
+                gsp={gsp}
+                isExport={true}
+              />
             </div>
             <div className="flex-1">
               <div className="flex-1 text-lg font-bold text-center  text-accentPink-600">

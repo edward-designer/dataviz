@@ -15,6 +15,9 @@ import ErrorMessage from "./ErrorMessage";
 import { LiaBalanceScaleSolid } from "react-icons/lia";
 import { PiSealWarningBold } from "react-icons/pi";
 import { TbPigMoney } from "react-icons/tb";
+import { FaFrownOpen } from "react-icons/fa";
+import { FaSmile } from "react-icons/fa";
+
 import FormattedPrice from "./FormattedPrice";
 import HalfHourlyChart from "./HalfHourlyChart";
 
@@ -26,11 +29,13 @@ const PricePane = ({
   type,
   gsp,
   date = new Date().toDateString(),
+  isExport = false,
 }: {
   tariff: string;
   type: "E";
   gsp: string;
   date?: string;
+  isExport?: boolean;
 }) => {
   const { isLoading, isError, isSuccess, refetch, data, error } =
     useTariffQuery<QueryTariffResult>({
@@ -113,7 +118,13 @@ const PricePane = ({
                 <div>
                   <Badge
                     label="Lowest"
-                    icon={<TbPigMoney className="stroke-[#aaffdd]" />}
+                    icon={
+                      !isExport ? (
+                        <TbPigMoney className="stroke-[#aaffdd]" />
+                      ) : (
+                        <FaFrownOpen className="fill-[#aaffdd]" />
+                      )
+                    }
                     variant="item"
                   />
                   <div className="font-digit text-4xl text-white flex flex-col items-end justify-start">
@@ -127,7 +138,13 @@ const PricePane = ({
                 <div>
                   <Badge
                     label="Highest"
-                    icon={<PiSealWarningBold className="fill-accentPink-500" />}
+                    icon={
+                      !isExport ? (
+                        <PiSealWarningBold className="fill-accentPink-500" />
+                      ) : (
+                        <FaSmile className="fill-accentPink-500" />
+                      )
+                    }
                     variant="item"
                   />
                   <div className="font-digit text-4xl text-white flex flex-col items-end justify-start">

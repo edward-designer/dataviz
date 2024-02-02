@@ -21,9 +21,11 @@ import { ITariffToCompare, Single_tariff } from "@/data/source";
 const Tariff = ({
   tariff,
   remarks = "",
+  isExport = false,
 }: {
   tariff: ITariffToCompare;
   remarks?: string;
+  isExport?: boolean;
 }) => {
   const [currentPeriod, setCurrentPeriod] = useState(new Date().toUTCString());
   const { value, setValue } = useContext(UserContext);
@@ -85,6 +87,7 @@ const Tariff = ({
             gsp={gsp}
             setCurrentPeriod={setCurrentPeriod}
             category={category}
+            isExport={isExport}
           />
           <BrushChart
             tariff={tariffCode}
@@ -99,7 +102,12 @@ const Tariff = ({
             <div className="flex-1 text-lg font-bold text-center  text-accentPink-600">
               Today&apos;s rates
             </div>
-            <PricePaneAgile2 tariff={tariffCode} type="E" gsp={gsp} />
+            <PricePaneAgile2
+              tariff={tariffCode}
+              type="E"
+              gsp={gsp}
+              isExport={isExport}
+            />
           </div>
           <div className="flex-1">
             <div className="flex-1 text-lg font-bold text-center text-accentPink-600">
@@ -112,6 +120,7 @@ const Tariff = ({
               date={new Date(
                 new Date().setDate(new Date().getDate() + 1)
               ).toDateString()}
+              isExport={isExport}
             />
           </div>
         </section>

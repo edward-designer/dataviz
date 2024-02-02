@@ -31,10 +31,12 @@ const PricePane = ({
   tariff,
   type,
   gsp,
+  isExport = false,
 }: {
   tariff: string;
   type: Exclude<TariffType, "EG">;
   gsp: string;
+  isExport?: boolean;
 }) => {
   const { isLoading, isError, isSuccess, isRefetching, refetch, data, error } =
     useTariffQuery<QueryTariffResult>({
@@ -114,39 +116,42 @@ const PricePane = ({
               <div className="font-digit text-6xl text-white flex flex-col items-start gap-1">
                 <div>{priceTodayDisplay}</div>
                 <div className="flex">
-                  {typeof priceChangeTodayVsPriceCap === "number" && (
-                    <Comparison
-                      change={priceChangeTodayVsPriceCap}
-                      compare="SVT cap"
-                    >
-                      <Remark variant="badge">
-                        The{" "}
-                        <a
-                          href="https://www.ofgem.gov.uk/energy-price-cap"
-                          target="_blank"
-                        >
-                          Ofgem Price Cap for standard variable tariff (SVT)
-                        </a>{" "}
-                        for this quarter is{" "}
-                        <strong className="text-bold">
-                          {`${evenRound(Number(caps?.[type]), 2)}p`}
-                        </strong>{" "}
-                        . This cap is reviewed every quarter. Please note that
-                        the Ofgem caps are not applicable to Tracker tariffs
-                        which have a much higher cap.
-                      </Remark>
-                    </Comparison>
-                  )}
+                  {typeof priceChangeTodayVsPriceCap === "number" &&
+                    !isExport && (
+                      <Comparison
+                        change={priceChangeTodayVsPriceCap}
+                        compare="SVT cap"
+                      >
+                        <Remark variant="badge">
+                          The{" "}
+                          <a
+                            href="https://www.ofgem.gov.uk/energy-price-cap"
+                            target="_blank"
+                          >
+                            Ofgem Price Cap for standard variable tariff (SVT)
+                          </a>{" "}
+                          for this quarter is{" "}
+                          <strong className="text-bold">
+                            {`${evenRound(Number(caps?.[type]), 2)}p`}
+                          </strong>{" "}
+                          . This cap is reviewed every quarter. Please note that
+                          the Ofgem caps are not applicable to Tracker tariffs
+                          which have a much higher cap.
+                        </Remark>
+                      </Comparison>
+                    )}
                 </div>
               </div>
             </div>
             <div className="flex justify-between items-start">
-              <div className="flex justify-center items-start flex-col">
-                <Badge label="Current price cap" variant="secondary" />
-                <div className="font-digit font-thin text-center text-3xl text-white flex justify-center items-end">
-                  {`${evenRound(Number(caps[type]), 2)}p`}
+              {!isExport && (
+                <div className="flex justify-center items-start flex-col">
+                  <Badge label="Current price cap" variant="secondary" />
+                  <div className="font-digit font-thin text-center text-3xl text-white flex justify-center items-end">
+                    {`${evenRound(Number(caps[type]), 2)}p`}
+                  </div>
                 </div>
-              </div>
+              )}
               {priceNextPeriodIndex !== null && (
                 <div className="flex justify-center items-start flex-col">
                   <Badge

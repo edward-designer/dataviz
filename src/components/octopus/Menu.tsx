@@ -182,6 +182,16 @@ const Menu = () => {
                 </span>
               </span>
               <Link
+                href="/agileOutgoing"
+                className={`block my-4  ${
+                  pathname === "/agileOutgoing"
+                    ? "cursor-default text-accentBlue-900"
+                    : "hover:text-accentPink-500"
+                }`}
+              >
+                Agile <span className="text-lg"> Export</span>
+              </Link>
+              <Link
                 href="/flux"
                 className={`block my-4  ${
                   pathname === "/flux"
@@ -189,7 +199,7 @@ const Menu = () => {
                     : "hover:text-accentPink-500"
                 }`}
               >
-                Flux <span className="text-lg"> Export Price</span>
+                Flux <span className="text-lg"> Export</span>
               </Link>
               <Link
                 href="/iflux"
@@ -200,7 +210,17 @@ const Menu = () => {
                 }`}
               >
                 <span className="text-lg">Intelligent</span> Flux{" "}
-                <span className="text-lg"> Export Price</span>
+                <span className="text-lg"> Export</span>
+              </Link>
+              <Link
+                href="/fixedOutgoing"
+                className={`block my-4  ${
+                  pathname === "/fixedOutgoing"
+                    ? "cursor-default text-accentBlue-900"
+                    : "hover:text-accentPink-500"
+                }`}
+              >
+                Fixed <span className="text-lg"> Export</span>
               </Link>
             </div>
 

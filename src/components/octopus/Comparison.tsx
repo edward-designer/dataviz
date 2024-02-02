@@ -7,10 +7,12 @@ import { evenRound } from "@/utils/helpers";
 const Comparison = ({
   change,
   compare,
+  isExport = false,
   children,
 }: {
   change: number | null;
   compare: string;
+  isExport?: boolean;
   children?: ReactNode;
 }) => {
   if (change === null) return;
@@ -20,16 +22,18 @@ const Comparison = ({
     <div className="font-display text-xs flex flex-col items-start ml-2 border-l border-accentBlue-700 pl-2">
       <span
         className={`font-display text-base inline-block  pr-[4px] rounded-md leading-[1] ${
-          change > 15
+          (change > 15 && !isExport) || (change < -15 && isExport)
             ? "text-red-500"
-            : change < -15
+            : (change < -15 && !isExport) || (change > 15 && isExport)
             ? "text-green-500"
             : "text-white"
         }`}
       >
         <ChangeIcon
           className={`w-3 h-3 inline-block mr-1 ${
-            change > 0 ? "text-red-500" : "text-green-500"
+            (change > 0 && !isExport) || (change < 0 && isExport)
+              ? "text-red-500"
+              : "text-green-500"
           }`}
         />
         {change > 0 ? "+" : ""}

@@ -28,20 +28,22 @@ import ErrorMessage from "./ErrorMessage";
 import Timer from "./Timer";
 import useCurrentLocationPriceCapQuery from "@/hooks/useCurrentLocationPriceCapQuery";
 
-interface IPricePane {
+interface IPricePaneAgile {
   tariff: string;
   type: "E";
   gsp: string;
   setCurrentPeriod: Dispatch<SetStateAction<string>>;
   category?: TariffCategory;
+  isExport?: boolean;
 }
-const PricePane = ({
+const PricePaneAgile = ({
   tariff,
   type,
   gsp,
   setCurrentPeriod,
   category = "Agile",
-}: IPricePane) => {
+  isExport = false,
+}: IPricePaneAgile) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const { isLoading, isError, isSuccess, refetch, data, error } =
     useTariffQuery<QueryTariffResult>({
@@ -189,9 +191,10 @@ const PricePane = ({
                         <Comparison
                           change={priceChangeNow}
                           compare="today average"
+                          isExport={isExport}
                         />
                       )}
-                    {typeof priceNowVsCap === "number" && (
+                    {typeof priceNowVsCap === "number" && !isExport && (
                       <Comparison change={priceNowVsCap} compare="SVT cap">
                         <Remark variant="badge">
                           The{" "}
@@ -224,7 +227,11 @@ const PricePane = ({
                     <div>{priceNextDisplay}</div>
                     <div className="flex">
                       {typeof priceChangeNext === "number" && (
-                        <Comparison change={priceChangeNext} compare="now" />
+                        <Comparison
+                          change={priceChangeNext}
+                          compare="now"
+                          isExport={isExport}
+                        />
                       )}
                     </div>
                   </div>
@@ -238,7 +245,7 @@ const PricePane = ({
   );
 };
 
-export default PricePane;
+export default PricePaneAgile;
 
 interface IGetPriceDisplay {
   priceNowIndex: number | undefined;
