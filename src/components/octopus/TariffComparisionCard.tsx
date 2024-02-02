@@ -26,6 +26,7 @@ interface ITariffComparisionCard {
   compareTo: null | number;
   setCost: (category: TariffCategory, cost: number) => void;
   rank: number;
+  isExport?: boolean;
 }
 const TariffComparisionCard = ({
   deviceNumber,
@@ -38,6 +39,7 @@ const TariffComparisionCard = ({
   compareTo,
   setCost,
   rank,
+  isExport = false,
 }: ITariffComparisionCard) => {
   const { cost, isLoading, error } = useConsumptionCalculation({
     tariff,
@@ -82,7 +84,7 @@ const TariffComparisionCard = ({
   return (
     <motion.div
       transition={{ delay: 1 }}
-      layoutId={`${type}-${category}`}
+      layoutId={`${type}-${category}-${tariff}`}
       className={`relative flex-1 border border-accentPink-500/30 min-h-[200px] lg:h-[300px] rounded-2xl flex flex-col justify-center items-center gap-2 bg-cover bg-tops ${
         cost !== null ? `first:border-accentPink-500 first:bg-tariffWinner` : ""
       }`}
@@ -96,12 +98,16 @@ const TariffComparisionCard = ({
             <Link
               href={`/${
                 category === "SVT" ? "variable" : category.toLowerCase()
+              }${
+                isExport && ["Agile", "Fixed"].includes(category)
+                  ? "Outgoing"
+                  : ""
               }`}
               target="_blank"
               className="block relative hover:translate-x-1 hover:translate-y-1 hover:shadow-lg hover:opacity-80"
             >
               <Badge
-                label={`Octopus ${
+                label={`${isExport ? "Outgoing" : "Octopus"} ${
                   category === "SVT"
                     ? "Variable Tariff"
                     : category === "IGo"
@@ -166,7 +172,11 @@ const TariffComparisionCard = ({
                     <AnimatedDigits to={evenRound(compareTo - cost, 2)} />
                   </span>
                 ) : (
-                  <span className="text-accentPink-500">
+                  <span
+                    className={`${
+                      isExport ? "text-accentBlue-500" : "text-accentPink-500"
+                    }`}
+                  >
                     £
                     <AnimatedDigits
                       to={Math.abs(evenRound(compareTo - cost, 2))}
@@ -176,7 +186,8 @@ const TariffComparisionCard = ({
                 )}
                 <Comparison
                   change={evenRound(((cost - compareTo) * 100) / compareTo, 0)}
-                  compare="Variable Tariff"
+                  compare={isExport ? "vs Lowest" : "Variable Tariff"}
+                  isExport={isExport}
                 />
               </div>
             )

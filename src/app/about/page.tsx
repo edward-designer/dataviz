@@ -54,16 +54,16 @@ const About = () => {
       <p>
         The Octoprice app is my two cents to help dear Octopus users who would
         want an easier and visually more pleasant way to get the latest unit
-        rates to plan ahead for our energy uses for greater savings on energy
-        costs.
+        rates to plan ahead for energy uses for greater savings on costs.
       </p>
       <p>I do hope you find this app useful.</p>
       <p>
-        All the data are obtained direclty from the Octopus API to allow timely
-        and accurate updates. But while I have diligently checked and tested the
-        app and data to be accurate and correct, all information on this website
-        is for references only. By using this app, you agree to take all
-        responsibility for your actions based on the information provided here.
+        And the boring legal stuff ... all the data are obtained directly from
+        the Octopus API to allow timely and accurate updates. But while I have
+        diligently checked and tested the app and data to be accurate and
+        correct, all information on this website is for references only. By
+        using this app, you agree to take all responsibility for your actions
+        based on the information provided here.
       </p>
 
       <p>ENJOY!</p>

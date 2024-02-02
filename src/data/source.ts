@@ -1,3 +1,5 @@
+import { TDuration } from "@/utils/helpers";
+
 export type ENERGY_PLAN = "agile" | "tracker";
 
 export interface ITariffPlan {
@@ -429,4 +431,10 @@ export interface IConsumptionData {
   consumption: number;
   interval_start: string;
   interval_end: string;
+}
+
+export interface IPeriod {
+  duration: TDuration | "custom";
+  from: Date;
+  to: Date;
 }

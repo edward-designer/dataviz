@@ -45,6 +45,7 @@ const AddATariff = ({ tariffs, addToTariff }: IAddATariff) => {
 
   const submitHandler = () => {
     tariff.forEach((tariffCode) => addToTariff(tariffCode));
+    setTariff([]);
     setOpen(false);
   };
   const cancelHandler = () => {

@@ -353,3 +353,15 @@ export const dateDiff = (dateFrom: Date, dateTo: Date): string => {
     }!`;
   return "Welcome to the Octopus family!";
 };
+
+export const getDatePeriod = (duration: TDuration = "year") => {
+  const today = new Date();
+  const from = getDate(today, duration, true);
+  const to = getDate(getDate(from, duration, false), "day", true);
+  to.setHours(23, 59, 59, 999);
+  return {
+    duration,
+    from,
+    to,
+  };
+};
