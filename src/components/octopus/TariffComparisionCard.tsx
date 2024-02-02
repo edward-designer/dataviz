@@ -186,7 +186,7 @@ const TariffComparisionCard = ({
                 )}
                 <Comparison
                   change={evenRound(((cost - compareTo) * 100) / compareTo, 0)}
-                  compare={isExport ? "vs Lowest" : "Variable Tariff"}
+                  compare={isExport ? "Lowest" : "Variable Tariff"}
                   isExport={isExport}
                 />
               </div>
