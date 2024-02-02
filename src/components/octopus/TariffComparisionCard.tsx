@@ -41,7 +41,7 @@ const TariffComparisionCard = ({
   rank,
   isExport = false,
 }: ITariffComparisionCard) => {
-  const { cost, isLoading, error } = useConsumptionCalculation({
+  const { cost, isLoading, error, newTracker } = useConsumptionCalculation({
     tariff,
     fromDate,
     toDate,
@@ -199,6 +199,15 @@ const TariffComparisionCard = ({
           {["Flux", "IFlux"].includes(category) && (
             <div className="text-xs">
               Must sign up both Import and Export at the same time.
+            </div>
+          )}
+          {["Tracker"].includes(category) && (
+            <div className="text-xs text-red-500">
+              Based on{" "}
+              <span className="font-bold">
+                {newTracker ? "New" : "Old"} Tracker
+              </span>{" "}
+              price.
             </div>
           )}
         </>

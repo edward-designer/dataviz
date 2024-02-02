@@ -152,6 +152,7 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
       lastDate: null,
       error:
         "Sorry, no consumption data available. Please try to select a different meter or try later.",
+      newTracker: true,
     };
   }
 
@@ -494,6 +495,7 @@ export const calculateMonthlyPrices = (
     isLoading: false,
     lastDate: consumptionData?.results[0]?.interval_end ?? "",
     error: "",
+    newTracker: true,
   };
 };
 
@@ -834,5 +836,9 @@ export const calculatePrice = (
     isLoading: false,
     lastDate: null,
     error: "",
+    newTracker:
+      (currentTariff === "SILVER-23-12-06" ||
+        !currentTariff.includes("SILVER")) &&
+      category === "Tracker",
   };
 };
