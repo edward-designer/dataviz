@@ -64,6 +64,7 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
     }
   };
 
+  const currentGSP = `_${value.gsp}` as gsp;
   const caps = usePriceCapQuery({ gsp: `_${value.gsp}` as gsp });
 
   const {
@@ -153,7 +154,8 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
         caps.data.filter((d) => d.Region === `_${value.gsp}`),
         consumptionData,
         flattenedRateData,
-        standingChargeData
+        standingChargeData,
+        currentGSP
       );
       return results;
     } else {
@@ -167,7 +169,8 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
         consumptionData,
         flattenedRateData,
         standingChargeData,
-        type === "E" ? value.currentETariff : value.currentGTariff
+        tariff === "SILVER-23-12-06",
+        currentGSP
       );
       return results;
     }
