@@ -12,7 +12,7 @@ import PeriodSelector from "./PeriodSelector";
 const UserApiResult = () => {
   const { value } = useContext(UserContext);
   const [tariffsEToCompare, setTariffsEToCompare] = useState(
-    ETARIFFS.slice(0, 3)
+    ETARIFFS.slice(0, 4)
   );
   const [tariffsEEToCompare, setTariffsEEToCompare] = useState(EETARIFFS);
   const [tariffsGToCompare, setTariffsGToCompare] = useState(GTARIFFS);

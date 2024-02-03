@@ -6,6 +6,7 @@ import {
   TariffCategory,
   TariffType,
   gsp,
+  trackerUnitPriceIncrease2023,
 } from "@/data/source";
 import useYearlyTariffQuery from "@/hooks/useYearlyTariffQuery";
 import { evenRound, getDate } from "@/utils/helpers";
@@ -29,7 +30,7 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
   const { value } = useContext(UserContext);
 
   const {
-    tariff,
+    tariff: inputTariff,
     fromDate,
     toDate,
     type,
@@ -63,6 +64,13 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
     apiKey: value.apiKey,
   });
 
+  /* Important this should be removed from 15Feb */
+  const tariff =
+    inputTariff === "SILVER-23-12-06" && results === "yearly"
+      ? "SILVER-FLEX-BB-23-02-08"
+      : inputTariff;
+  /* Important this should be removed from 15Feb */
+
   const queryFnStandingChargeData = async () => {
     try {
       const response = await fetch(
@@ -76,8 +84,8 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
       throw new Error("Sorry, the request was unsuccessful");
     }
   };
-
-  const caps = usePriceCapQuery({ gsp: `_${value.gsp}` as gsp });
+  const currentGSP = `_${value.gsp}` as gsp;
+  const caps = usePriceCapQuery({ gsp: currentGSP });
 
   const {
     data: rateData,
@@ -172,7 +180,8 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
         caps.data.filter((d) => d.Region === `_${value.gsp}`),
         consumptionData,
         flattenedRateData,
-        standingChargeData
+        standingChargeData,
+        currentGSP
       );
       return results;
     } else {
@@ -186,9 +195,10 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
         consumptionData,
         flattenedRateData,
         standingChargeData,
-        type === "E" ? value.currentETariff : value.currentGTariff
+        inputTariff === "SILVER-23-12-06",
+        currentGSP
       );
-      return results;
+      return { ...results, newTracker: inputTariff === "SILVER-23-12-06" };
     }
   }
   return {
@@ -234,7 +244,8 @@ export const calculateMonthlyPrices = (
       valid_to: null | string;
       payment_method: null | string;
     }[];
-  }
+  },
+  gsp: gsp
 ) => {
   let monthlyPricesInPound = [];
   let monthlyUnits = [];
@@ -529,7 +540,8 @@ export const calculatePrice = (
       payment_method: null | string;
     }[];
   },
-  currentTariff: string
+  isNewTracker: boolean,
+  gsp: gsp
 ) => {
   const audit: {
     date: string | undefined;
@@ -680,7 +692,7 @@ export const calculatePrice = (
         }
       }
       audit.push({
-        date: filteredRateDataResults[i + rateDataOffset].valid_from,
+        date: filteredRateDataResults[i + rateDataOffset]?.valid_from,
         rate: filteredRateDataResults[i + rateDataOffset]?.value_inc_vat,
         cost:
           (filteredRateDataResults[i + rateDataOffset]?.value_inc_vat ?? 0) *
@@ -804,27 +816,23 @@ export const calculatePrice = (
 
   // formula to reflect 2023Dec change to Agile/Tracker if not currently on Agile/Tracker
 
-  if (
-    (currentTariff === "AGILE-23-12-06" || !currentTariff.includes("AGILE")) &&
-    category === "Agile"
-  ) {
+  if (category === "Agile") {
     // average standing charge increase E 14%, G 3%
     type === "E"
-      ? (totalStandingCharge *= 1.14)
+      ? (totalStandingCharge *= 1.15)
       : (totalStandingCharge *= 1.03);
   }
 
-  if (
-    (currentTariff === "SILVER-23-12-06" ||
-      !currentTariff.includes("SILVER")) &&
-    category === "Tracker"
-  ) {
+  if (isNewTracker) {
     // average standing charge increase E 14%, G 3%
     type === "E"
-      ? (totalStandingCharge *= 1.14)
+      ? (totalStandingCharge *= 1.15)
       : (totalStandingCharge *= 1.03);
     // average unit rate increase E 11%, G 3%
-    type === "E" ? (totalPrice *= 1.11) : (totalPrice *= 1.08);
+    totalPrice = evenRound(
+      totalPrice + (trackerUnitPriceIncrease2023[gsp][type] * totalUnit) / 100,
+      2
+    );
   }
 
   return {
@@ -836,9 +844,5 @@ export const calculatePrice = (
     isLoading: false,
     lastDate: null,
     error: "",
-    newTracker:
-      (currentTariff === "SILVER-23-12-06" ||
-        !currentTariff.includes("SILVER")) &&
-      category === "Tracker",
   };
 };

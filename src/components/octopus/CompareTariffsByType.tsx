@@ -51,10 +51,10 @@ const CompareTariffsByType = ({
   };
 
   const setCost = useCallback(
-    (category: TariffCategory, cost: number) =>
+    (tariff: string, cost: number) =>
       setTariffsToCompare((value) =>
         [...value].map((tariffSet) => {
-          if (tariffSet.category === category) {
+          if (tariffSet.tariff === tariff) {
             return { ...tariffSet, cost };
           }
           return tariffSet;
@@ -62,13 +62,6 @@ const CompareTariffsByType = ({
       ),
     []
   );
-
-  const resetTariffCosts = () =>
-    setTariffsToCompare((tariffsToCompare) =>
-      tariffsToCompare.map((tariff) =>
-        tariff.category === "SVT" ? { ...tariff, cost: null } : tariff
-      )
-    );
 
   const SVTCost = (tariffsToCompare: ITariffToCompare[]) => {
     const SVTTariff = tariffsToCompare.find(
@@ -210,7 +203,7 @@ const CompareTariffsByType = ({
               {reOrderedTariffsEToCompare.map(({ tariff, category }, ind) => {
                 return (
                   <TariffComparisionCard
-                    key={category}
+                    key={tariff}
                     type={type}
                     deviceNumber={currentMeterType[typePlusExport].accessPoint}
                     serialNo={currentMeterType[typePlusExport].serialNo}

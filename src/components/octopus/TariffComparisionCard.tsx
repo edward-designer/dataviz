@@ -24,7 +24,7 @@ interface ITariffComparisionCard {
   type: Exclude<TariffType, "EG">;
   category: TariffCategory;
   compareTo: null | number;
-  setCost: (category: TariffCategory, cost: number) => void;
+  setCost: (tariff: string, cost: number) => void;
   rank: number;
   isExport?: boolean;
 }
@@ -53,8 +53,8 @@ const TariffComparisionCard = ({
 
   useEffect(() => {
     if (Number.isNaN(cost)) return;
-    if (cost !== null && typeof cost === "number") setCost(category, cost);
-  }, [category, cost, setCost]);
+    if (cost !== null && typeof cost === "number") setCost(tariff, cost);
+  }, [tariff, cost, setCost]);
 
   const Container =
     cost !== null && !Number.isNaN(cost) && rank === 1 ? Sparkles : "div";
@@ -202,7 +202,7 @@ const TariffComparisionCard = ({
             </div>
           )}
           {["Tracker"].includes(category) && (
-            <div className="text-xs text-red-500">
+            <div className="text-xs text-amber-500">
               Based on{" "}
               <span className="font-bold">
                 {newTracker ? "New" : "Old"} Tracker
