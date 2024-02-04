@@ -21,14 +21,19 @@ export const fetchEachApi = async ({
   url: string;
   tag?: string;
 }) => {
-  const response = await tryFetch(fetch(url, { cache: "no-store" }));
-  if (response.status !== 200) {
-    return { success: false };
+  try {
+    const response = await fetch(url, { cache: "no-store" });
+    if (response.status !== 200) {
+      return { success: false };
+    }
+    //if (!response.ok) throw new Error(FETCH_ERROR);
+    const json = await response.json();
+    json.dataStamp = new Date().toLocaleDateString();
+    return { success: true, ...json, tariffType, gsp, tag };
+  } catch (e) {
+    //do nothing
+    console.error("error");
   }
-  if (!response.ok) throw new Error(FETCH_ERROR);
-  const json = await response.json();
-  json.dataStamp = new Date().toLocaleDateString();
-  return { success: true, ...json, tariffType, gsp, tag };
 };
 
 export const fetchApi =
@@ -36,16 +41,14 @@ export const fetchApi =
     urls: { tariffType?: ApiTariffType; url: string; gsp?: gsp; tag?: string }[]
   ) =>
   async () => {
-    const allResponse = await tryFetch(
-      Promise.allSettled(
-        urls.map((url) =>
-          fetchEachApi({
-            tariffType: url.tariffType,
-            url: url.url,
-            gsp: url.gsp,
-            tag: url.tag,
-          })
-        )
+    const allResponse = await Promise.allSettled(
+      urls.map((url) =>
+        fetchEachApi({
+          tariffType: url.tariffType,
+          url: url.url,
+          gsp: url.gsp,
+          tag: url.tag,
+        })
       )
     );
     const result = allResponse.flatMap((response) => {
@@ -133,7 +136,9 @@ export function assertExtentNotUndefined<T>(
     throw new Error("some element is undefined");
 }
 
-export const tryFetch = async <T>(asyncProcess: Promise<T>) => {
+export const tryFetch = async <T extends Response>(
+  asyncProcess: Promise<T>
+) => {
   try {
     const results = await asyncProcess;
     return results;
