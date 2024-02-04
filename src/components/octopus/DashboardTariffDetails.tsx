@@ -118,7 +118,10 @@ const DashboardTariffDetails = ({
         gsp={value.gsp}
         standingCharge={
           data?.[0]?.[singleRegisterType]?.[`_${value.gsp}` as gsp]
-            .direct_debit_monthly.standing_charge_inc_vat ?? 0
+            ?.direct_debit_monthly?.standing_charge_inc_vat ??
+          data?.[0]?.[singleRegisterType]?.[`_${value.gsp}` as gsp]?.varying
+            ?.standing_charge_inc_vat ??
+          0
         }
       />
     </>

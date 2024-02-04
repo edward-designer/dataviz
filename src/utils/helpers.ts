@@ -22,10 +22,13 @@ export const fetchEachApi = async ({
   tag?: string;
 }) => {
   const response = await tryFetch(fetch(url, { cache: "no-store" }));
+  if (response.status !== 200) {
+    return { success: false };
+  }
   if (!response.ok) throw new Error(FETCH_ERROR);
   const json = await response.json();
   json.dataStamp = new Date().toLocaleDateString();
-  return { ...json, tariffType, gsp, tag };
+  return { success: true, ...json, tariffType, gsp, tag };
 };
 
 export const fetchApi =
@@ -34,7 +37,7 @@ export const fetchApi =
   ) =>
   async () => {
     const allResponse = await tryFetch(
-      Promise.all(
+      Promise.allSettled(
         urls.map((url) =>
           fetchEachApi({
             tariffType: url.tariffType,
@@ -45,7 +48,11 @@ export const fetchApi =
         )
       )
     );
-    return allResponse;
+    const result = allResponse.flatMap((response) => {
+      if (response.status === "fulfilled" && response.value.success)
+        return response.value;
+    });
+    return result.filter(Boolean);
   };
 
 export const isSameDate = (date1: Date, date2: Date) => {

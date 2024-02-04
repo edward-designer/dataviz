@@ -181,7 +181,7 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
       ?.filter((meter_point) => meter_point.is_export)
       ?.at(-1)?.mpan ?? "";
   const EESerialNo =
-    value.ESerialNo === ""
+    value.EESerialNo === ""
       ? currentProperty?.electricity_meter_points
           ?.filter((meter_point) => meter_point.is_export)
           ?.at(-1)
