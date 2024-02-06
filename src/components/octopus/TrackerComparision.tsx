@@ -99,7 +99,7 @@ const TrackerComparision = () => {
             )}
         </>
       )}
-      <h2 className="flex-0 text-lg font-bold text-center translate-y-3 text-accentPink-600">
+      <h2 className="flex-0 text-lg font-bold text-center translate-y-3 text-accentPink-600 mt-10">
         Regional energy unit rates increase
       </h2>
       <section className="flex flex-col sm:flex-row items-stretch sm:justify-center sm:items-center gap-4 my-4">
