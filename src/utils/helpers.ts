@@ -21,19 +21,14 @@ export const fetchEachApi = async ({
   url: string;
   tag?: string;
 }) => {
-  try {
-    const response = await fetch(url, { cache: "no-store" });
-    if (response.status !== 200) {
-      return { success: false };
-    }
-    //if (!response.ok) throw new Error(FETCH_ERROR);
-    const json = await response.json();
-    json.dataStamp = new Date().toLocaleDateString();
-    return { success: true, ...json, tariffType, gsp, tag };
-  } catch (e) {
-    //do nothing
-    console.error("error");
+  const response = await tryFetch(fetch(url, { cache: "no-store" }));
+  if (response.status !== 200) {
+    return { success: false };
   }
+  if (!response.ok) throw new Error(FETCH_ERROR);
+  const json = await response.json();
+  json.dataStamp = new Date().toLocaleDateString();
+  return { success: true, ...json, tariffType, gsp, tag };
 };
 
 export const fetchApi =

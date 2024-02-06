@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { ReactNode } from "react";
 import localFont from "next/font/local";
 import { Analytics } from "@vercel/analytics/react";
+import Image from "next/image";
 
 import Providers from "./providers";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -123,6 +124,18 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               <Analytics />
               <GoogleAnalytics ga_id="G-NQX4NLSBPE" />
               <footer className="lg:col-[content] text-sm font-light text-white/60 mt-16">
+                <a
+                  href="https://www.buymeacoffee.com/octopriceuk"
+                  target="_blank"
+                >
+                  <Image
+                    src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+                    alt="Buy Me A Coffee"
+                    width="217"
+                    height="60"
+                    className="w-[217px] h-[60px] pb-2 relative hover:shadow-lg hover:translate-x-1 hover:translate-y-1 hover:opacity-70"
+                  />
+                </a>
                 &copy; {new Date().getFullYear()} Octoprice. Made with{" "}
                 {<IoMdHeart className="w-4 h-4 inline-block" />} by{" "}
                 <a href="https://edward-designer.github.io/" target="_blank">
@@ -132,7 +145,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                 Your Octopus info is stored on your browser only for retrieving
                 pricing and consumption data. <br />
                 <span className="text-accentBlue-500">
-                  <em>[ver 2024.02.04]</em> Bugs report & enquiries:{" "}
+                  <em>[ver 2024.02.06]</em> Bugs report & enquiries:{" "}
                   <a
                     href="mailto:edward.chung.dev@gmail.com"
                     className="underline"
