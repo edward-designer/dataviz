@@ -68,6 +68,19 @@ const About = () => {
 
       <p>ENJOY!</p>
       <Image src={signature} alt="signature of Edward" className="w-60" />
+      <p className="mt-10 -pb-4 text-xs text-amber-400">
+        If you find this app useful,{" "}
+        <a
+          href="https://www.buymeacoffee.com/octopriceuk"
+          target="_blank"
+          className="underline hover:no-underline hover:text-accentBlue-500"
+        >
+          please consider supporting the app through &quot;buy me a coffee&quot;
+        </a>
+        .<br />
+        Your support means a lot to me and will help keeping the app online.
+        Thank you so much!
+      </p>
 
       <p className="mt-10 pt-4 border-t border-t-accentPink-600 border-dotted text-xs">
         <span className="font-bold">A word about personal privacy:</span> This

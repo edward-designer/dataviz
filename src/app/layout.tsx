@@ -118,7 +118,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         >
           <Toast>
             <ReactQueryDevtools initialIsOpen={false} />
-            <div className="min-h-screen p-4 lg:grid grid-rows-[100px_1fr_160px] lg:py-0 lg:p-0 lg:grid-cols-[[fullwidth_start]_minmax(0,5%)_[breakout_start]_minmax(0,5%)_[content_start]_minmax(1000px,_1fr)_[content_end]_minmax(0,5%)_[breakout_end]_minmax(0,5%)_[fullwidth_end]]">
+            <div className="min-h-screen p-4 lg:grid grid-rows-[100px_1fr_200px] lg:py-0 lg:p-0 lg:grid-cols-[[fullwidth_start]_minmax(0,5%)_[breakout_start]_minmax(0,5%)_[content_start]_minmax(1000px,_1fr)_[content_end]_minmax(0,5%)_[breakout_end]_minmax(0,5%)_[fullwidth_end]]">
               <Header className="lg:col-[content]" />
               {children}
               <Analytics />
@@ -131,9 +131,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                   <Image
                     src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
                     alt="Buy Me A Coffee"
-                    width="217"
-                    height="60"
-                    className="w-[217px] h-[60px] pb-2 relative hover:shadow-lg hover:translate-x-1 hover:translate-y-1 hover:opacity-70"
+                    width="108"
+                    height="35"
+                    className="w-[108px] h-[35px] pb-2 relative hover:shadow-lg hover:translate-x-1 hover:translate-y-1 hover:opacity-70"
                   />
                 </a>
                 &copy; {new Date().getFullYear()} Octoprice. Made with{" "}
