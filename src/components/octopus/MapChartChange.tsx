@@ -39,6 +39,7 @@ import usePriceCapQuery from "@/hooks/usePriceCapQuery";
 
 interface IMapChart {
   tariff: string;
+  compareTo: string; // must be the same tariff type
   type: keyof typeof ENERGY_TYPE;
   rate?: Single_tariff_gsp_record_charge_type;
   gsp: string;
@@ -46,6 +47,7 @@ interface IMapChart {
 
 const MapChart = ({
   tariff,
+  compareTo,
   type,
   rate = "standard_unit_rate_inc_vat",
   gsp,
@@ -57,8 +59,10 @@ const MapChart = ({
   let height = 480;
 
   if (typeof document !== "undefined") {
-    width =
-      document.querySelector(".mapDiv")?.getBoundingClientRect().width ?? width;
+    const currentChartWidth = document
+      .querySelector(".mapDiv")
+      ?.getBoundingClientRect().width;
+    width = currentChartWidth === undefined ? width : currentChartWidth;
   }
 
   const { isLoading, isError, isSuccess, refetch, data, error } =
@@ -67,7 +71,17 @@ const MapChart = ({
       type,
     });
 
-  const caps = usePriceCapQuery({});
+  const {
+    isLoading: isLoadingCompare,
+    isError: isErrorCompare,
+    isSuccess: isSuccessCompare,
+    refetch: refetchCompare,
+    data: dataCompare,
+    error: errorCompare,
+  } = useTariffQuery<QuerySingleTariffPlanResult>({
+    tariff: compareTo,
+    type,
+  });
 
   let path = geoPath();
   if (mapData?.districts) {
@@ -83,8 +97,9 @@ const MapChart = ({
       !mapData ||
       !mapData?.districts ||
       !data ||
-      !caps.data ||
-      isLoading
+      !dataCompare ||
+      isLoading ||
+      isLoadingCompare
     )
       return;
 
@@ -92,15 +107,6 @@ const MapChart = ({
     const svg = select(svgRef.current);
     const tooltip = svg.select(".tooltipContainer");
     const defs = svg.append("defs");
-
-    const getCapsRegionData = (gsp: string) =>
-      caps.data
-        ?.filter((row) => row.Region === `_${gsp}`)
-        .sort(
-          (a, b) => new Date(b.Date).valueOf() - new Date(a.Date).valueOf()
-        ) ?? [];
-    const getCapsCurrentRegionData = (gsp: string) =>
-      getCapsRegionData(gsp).find((d) => new Date(d.Date) <= new Date())!;
 
     if (rate === "standard_unit_rate_inc_vat") {
       const validDate = new Date(
@@ -117,24 +123,32 @@ const MapChart = ({
           : `Updated at ${validDate}`;
       svg.select(".info").text(updateDate);
     }
-    if (rate === "standing_charge_inc_vat") {
-      const ofgemCap = `Your SVT Cap: ${
-        getCapsCurrentRegionData(gsp)[`${type}S`]
-      }p`;
-      svg.select(".info").text(ofgemCap);
-    }
 
     const tariffTypeKey =
       `single_register_${ENERGY_TYPE[type]}_tariffs` as keyof QuerySingleTariffPlanResult;
     const singleTariffByGsp = (data[0]?.[tariffTypeKey] ?? []) as Single_tariff;
+    const singleTariffToCompareByGsp = (dataCompare[0]?.[tariffTypeKey] ??
+      []) as Single_tariff;
+
     const allValues = Object.values(
       singleTariffByGsp
     ) as Single_tariff_gsp_record[];
-    let valueExtent = extent(allValues, (d) => {
-      if ("direct_debit_monthly" in d) return d["direct_debit_monthly"][rate];
-      if ("varying" in d) return d["varying"][rate];
-      else [0, 0];
+    const allToCompareValues = Object.values(
+      singleTariffToCompareByGsp
+    ) as Single_tariff_gsp_record[];
+
+    const allValuesDifferences = allValues.map((value, i) => {
+      if ("direct_debit_monthly" in value)
+        return evenRound(
+          value["direct_debit_monthly"][rate] -
+            allToCompareValues[i]["direct_debit_monthly"][rate]
+        );
+      if ("varying" in value)
+        return value["varying"][rate] - allToCompareValues[i]["varying"][rate];
     });
+
+    let valueExtent = extent(allValuesDifferences, (d) => d);
+
     if (!valueExtent[0] && !valueExtent[1]) {
       valueExtent = [0, TRACKER[0].cap.E];
     }
@@ -185,8 +199,7 @@ const MapChart = ({
       .attr("font-size", 10)
       .attr("fill", "#FFFFFF80");
 
-    const getPrice = (gsp: gsp) => {
-      const tariffDetails = singleTariffByGsp[gsp];
+    const getPrice = (tariffDetails: Single_tariff_gsp_record) => {
       if (tariffDetails) {
         let key = "";
         if ("direct_debit_monthly" in tariffDetails)
@@ -204,6 +217,7 @@ const MapChart = ({
       }
       return;
     };
+
     svg
       .select(".districtGroup")
       .selectAll("path")
@@ -220,12 +234,7 @@ const MapChart = ({
 
         const coordinates = pointer(e);
         const gsp = select(this).attr("data-zone") as gsp;
-        const capToCompare =
-          rate === "standard_unit_rate_inc_vat"
-            ? parseFloat(getCapsCurrentRegionData(gsp.replace("_", ""))[type])
-            : parseFloat(
-                getCapsCurrentRegionData(gsp.replace("_", ""))[`${type}S`]
-              );
+
         // Tooltip position
         const tooltipPosition = svgRef.current
           ?.querySelector(".tooltip")
@@ -257,18 +266,29 @@ const MapChart = ({
         tooltip.select(".zoneName").text(select(this).attr("data-zoneName"));
         tooltip
           .select(".zonePrice")
-          .text(`${ENERGY_TYPE_ICON[type]} ${getPrice(gsp)}`);
+          .text(
+            `🆕 ${ENERGY_TYPE_ICON[type]} ${getPrice(singleTariffByGsp[gsp])}`
+          );
+        tooltip
+          .select(".zonePriceOld")
+          .text(
+            `⏹️ ${ENERGY_TYPE_ICON[type]} ${getPrice(
+              singleTariffToCompareByGsp[gsp]
+            )}`
+          );
         tooltip
           .select(".zoneCompareT1")
           .text(
             `🆚 ${
-              getPrice(gsp) === "--"
+              getPrice(singleTariffByGsp[gsp]) === "--"
                 ? "--"
                 : addSign(
                     Number(
                       calculateChangePercentage(
-                        parseFloat(getPrice(gsp) ?? "--"),
-                        capToCompare
+                        parseFloat(getPrice(singleTariffByGsp[gsp]) ?? "--"),
+                        parseFloat(
+                          getPrice(singleTariffToCompareByGsp[gsp]) ?? "--"
+                        )
                       )
                     )
                   )
@@ -293,28 +313,26 @@ const MapChart = ({
         .selectAll("text")
         .data(mapData.districts.features)
         .join("text")
-        .text((d) => getPrice(d?.properties?.Name) ?? "--")
+        .text((d) => {
+          const gsp = d?.properties?.Name as gsp;
+          return (
+            addSign(
+              evenRound(
+                parseFloat(getPrice(singleTariffByGsp[gsp]) ?? "--") -
+                  parseFloat(getPrice(singleTariffToCompareByGsp[gsp]) ?? "--"),
+                2
+              )
+            ) + "p"
+          );
+        })
         .attr("transform", (d) => {
           const coords = path.centroid(d.geometry);
           return `translate(${coords[0]} ${coords[1]})`;
         })
         .attr("text-anchor", "middle")
-        .attr("fill", (d) => {
-          const tariffDetails = singleTariffByGsp[d?.properties?.Name as gsp];
-          let value = 100;
-          if (tariffDetails) {
-            let key = "";
-            if ("direct_debit_monthly" in tariffDetails)
-              key = "direct_debit_monthly";
-            if ("varying" in tariffDetails) key = "varying";
-            value = evenRound(
-              singleTariffByGsp[d?.properties?.Name as gsp]?.[
-                key as keyof Single_tariff_gsp_record
-              ]?.[rate],
-              2
-            );
-          }
-          return colorScale(value);
+        .attr("fill", (_, i) => {
+          const value = allValuesDifferences[i];
+          return colorScale(value ?? 0);
         })
         .attr("font-weight", "bold")
         .style("pointer-events", "none");
@@ -370,8 +388,9 @@ const MapChart = ({
     gsp,
     rate,
     width,
-    caps.data,
     isLoading,
+    dataCompare,
+    isLoadingCompare,
   ]);
 
   return (
@@ -422,7 +441,12 @@ const MapChart = ({
                         x="10"
                         y="70"
                       ></text>
-                      <text className="zoneCompare fill-white" x="10" y="90">
+                      <text
+                        className="zonePriceOld fill-white"
+                        x="10"
+                        y="90"
+                      ></text>
+                      <text className="zoneCompare fill-white" x="10" y="110">
                         <tspan className="zoneCompareT1"></tspan>
                         <tspan dy="14" className="zoneCompareT2" fontSize="8">
                           *vs SVT cap

@@ -1,18 +1,15 @@
 "use client";
 
-import Loading from "@/components/Loading";
+import MapChartChange from "./MapChartChange";
 import NotCurrentlySupported from "./NotCurrentlySupported";
 import Remark from "./Remark";
-
-import useAccountDetails from "@/hooks/useAccountDetails";
-import { AiFillFire } from "react-icons/ai";
-import { BsLightningChargeFill } from "react-icons/bs";
 import SavingsChart from "./SavingsChart";
 import TariffDetails from "./TariffDetails";
+
+import { AiFillFire } from "react-icons/ai";
+import { BsLightningChargeFill } from "react-icons/bs";
 import { useContext } from "react";
 import { UserContext } from "@/context/user";
-import { getCategory } from "@/utils/helpers";
-import Link from "next/link";
 
 const TrackerComparision = () => {
   const { value, setValue } = useContext(UserContext);
@@ -102,6 +99,42 @@ const TrackerComparision = () => {
             )}
         </>
       )}
+      <h2 className="flex-0 text-lg font-bold text-center translate-y-3 text-accentPink-600">
+        Regional energy unit rates increase
+      </h2>
+      <section className="flex flex-col sm:flex-row items-stretch sm:justify-center sm:items-center gap-4 my-4">
+        <MapChartChange
+          tariff="SILVER-23-12-06"
+          compareTo="SILVER-FLEX-BB-23-02-08"
+          type="E"
+          gsp={value.gsp}
+        />
+        <MapChartChange
+          tariff="SILVER-23-12-06"
+          compareTo="SILVER-FLEX-BB-23-02-08"
+          type="G"
+          gsp={value.gsp}
+        />
+      </section>
+      <h2 className="flex-0 text-lg font-bold text-center translate-y-3 text-accentPink-600">
+        Regional standing charges increase
+      </h2>
+      <section className="flex flex-col sm:flex-row items-stretch sm:justify-center sm:items-center gap-4 my-4">
+        <MapChartChange
+          tariff="SILVER-23-12-06"
+          compareTo="SILVER-FLEX-BB-23-02-08"
+          type="E"
+          gsp={value.gsp}
+          rate="standing_charge_inc_vat"
+        />
+        <MapChartChange
+          tariff="SILVER-23-12-06"
+          compareTo="SILVER-FLEX-BB-23-02-08"
+          type="G"
+          gsp={value.gsp}
+          rate="standing_charge_inc_vat"
+        />
+      </section>
     </div>
   );
 };
