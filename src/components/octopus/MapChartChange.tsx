@@ -108,7 +108,7 @@ const MapChart = ({
     const tooltip = svg.select(".tooltipContainer");
     const defs = svg.append("defs");
 
-    if (rate === "standard_unit_rate_inc_vat") {
+    /*if (rate === "standard_unit_rate_inc_vat") {
       const validDate = new Date(
         data[0].tariffs_active_at as string
       ).toLocaleDateString();
@@ -122,7 +122,7 @@ const MapChart = ({
           ? `Yesterday (${validDate})`
           : `Updated at ${validDate}`;
       svg.select(".info").text(updateDate);
-    }
+    }*/
 
     const tariffTypeKey =
       `single_register_${ENERGY_TYPE[type]}_tariffs` as keyof QuerySingleTariffPlanResult;
