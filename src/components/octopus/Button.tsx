@@ -3,6 +3,7 @@ interface IButton extends PropsWithChildren {
   clickHandler: (event: MouseEvent<HTMLButtonElement>) => void;
   className?: string;
   variant?: "default" | "action";
+  type?: "button" | "submit" | "reset";
 }
 
 const Button = ({
@@ -10,6 +11,7 @@ const Button = ({
   clickHandler,
   variant,
   className,
+  type = "button",
   ...props
 }: IButton) => {
   return (
@@ -18,6 +20,7 @@ const Button = ({
         variant === "action" ? "border border-accentPink-600" : ""
       } ${className}`}
       onClick={clickHandler}
+      type={type}
       {...props}
     >
       {children}

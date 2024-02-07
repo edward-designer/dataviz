@@ -71,7 +71,13 @@ const useConsumptionData = (inputs: IUseConsumptionData) => {
   const { data, isSuccess, isLoading } = useQuery({
     queryKey: [deviceNumber, serialNo, groupByType, fromISODate, toISODate],
     queryFn,
-    enabled: !!deviceNumber && !!serialNo && !!category,
+    enabled:
+      !!deviceNumber &&
+      !!serialNo &&
+      !!category &&
+      !!deviceNumber &&
+      !!serialNo,
+    retry: !!deviceNumber && !!serialNo ? 0 : 5,
   });
 
   return {

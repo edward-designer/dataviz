@@ -45,6 +45,29 @@ export interface IUserValue {
   currentEContract: TContract;
   currentGContract: TContract;
   currentEEContract: TContract;
+  configBattery: {
+    hasBattery: boolean;
+    capacity: number;
+    efficiency: number;
+    rate: number;
+  };
+  configSolar: {
+    hasSolar: boolean;
+    annualProduction: [
+      number,
+      number,
+      number,
+      number,
+      number,
+      number,
+      number,
+      number,
+      number,
+      number,
+      number,
+      number
+    ];
+  };
 }
 
 export const initialValue = {
@@ -72,6 +95,16 @@ export const initialValue = {
     currentEContract: undefined,
     currentGContract: undefined,
     currentEEContract: undefined,
+    configBattery: {
+      hasBattery: false,
+      capacity: 0,
+      efficiency: 0,
+      rate: 0,
+    },
+    configSolar: {
+      hasSolar: false,
+      annualProduction: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    },
   } as IUserValue,
   setValue: (value: IUserValue) => {},
 };

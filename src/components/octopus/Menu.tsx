@@ -19,7 +19,7 @@ const Menu = () => {
   return (
     <div>
       <button
-        aria-label="menu"
+        aria-label={isOpen ? "hide menu" : "show menu"}
         className={`w-8 h-8 z-50 ${isOpen ? "fixed right-4 top-4" : ""}`}
         onClick={() => setIsOpen((isOpen) => !isOpen)}
       >
@@ -71,8 +71,13 @@ const Menu = () => {
         className={`z-40 w-80 bg-black/50 backdrop-blur-lg fixed top-0 right-0 transition-all h-full ${
           isOpen ? "translate-none" : "translate-x-full"
         }`}
+        aria-hidden={isOpen}
       >
-        <nav className="text-4xl font-extralight p-4 pt-16 flex justify-between flex-col h-full overflow-y-scroll">
+        <nav
+          className={`text-4xl font-extralight p-4 pt-16 flex justify-between flex-col h-full overflow-y-scroll ${
+            isOpen ? "" : "hidden"
+          }`}
+        >
           <div>
             <span className="block border-t border-accentBlue-500/50 text-xs relative mt-2 mb-6">
               <span className="absolute -top-2 bg-accentBlue-500 px-2 text-theme-950 italic rounded-full">
@@ -100,9 +105,10 @@ const Menu = () => {
               Agile <span className="text-lg">Price</span>
             </Link>
             <div
-              className={`overflow-y-hidden transition-all duration-500 -mt-4 ${
-                isExtended ? "max-h-[1000px]" : "max-h-0"
+              className={`overflow-y-hidden overflow-x-visible transition-all duration-500 -mt-4 ${
+                isExtended ? "max-h-[1000px] visible" : "max-h-0 hidden"
               }`}
+              aria-expanded={isExtended ? "true" : "false"}
             >
               <Link
                 href="/cosy"

@@ -32,10 +32,14 @@ type IInfoInput =
       error: ErrorType;
       value: number;
       setValue: ((value: number) => void) | null;
-      clearHandler: (() => void) | null;
+      clearHandler?: (() => void) | null;
       remark?: ReactNode;
       notice?: string;
       enterKeyHint?: InputHTMLAttributes<HTMLInputElement>["enterKeyHint"];
+      max?: number;
+      min?: number;
+      pattern?: string;
+      step?: number;
     };
 
 const InfoInput = ({
@@ -45,10 +49,11 @@ const InfoInput = ({
   error,
   value,
   setValue,
-  clearHandler,
+  clearHandler = null,
   remark,
   notice,
   enterKeyHint = "next",
+  ...props
 }: IInfoInput) => {
   const id = useId();
 
@@ -83,6 +88,7 @@ const InfoInput = ({
           disabled={!setValue}
           enterKeyHint={enterKeyHint}
           {...onChangeProps}
+          {...props}
           onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
             if (e.key !== "Enter") return;
             const inputs = document.querySelectorAll("input");
@@ -100,7 +106,7 @@ const InfoInput = ({
             }
           }}
         />
-        {value && clearHandler && (
+        {value !== 0 && clearHandler && (
           <Button clickHandler={clearHandler}>
             <MdOutlineClear className="w-6 h-6 text-accentPink-800 hover:text-accentPink-600" />
           </Button>
