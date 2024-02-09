@@ -56,25 +56,33 @@ const useConsumptionPattern = (inputs: IConsumptionPattern) => {
       const dataResults = data.results as IConsumptionData[];
       dataResults.forEach((result) => {
         const currentIntervalStart = new Date(result.interval_start);
-        if (
-          currentIntervalStart.valueOf() >= fromISODate.valueOf() &&
-          currentIntervalStart.valueOf() < toISODate.valueOf() &&
-          daysOfWeek.includes(currentIntervalStart.getDay())
-        ) {
-          let sessionNumber = currentIntervalStart.getHours() * 2;
-          if (currentIntervalStart.getMinutes() >= 30) sessionNumber++;
-          const { consumption: prevConsumption, count: prevCount } =
-            newDataByTime[sessionNumber];
-          newDataByTime[sessionNumber] = {
-            consumption: prevConsumption + result.consumption,
-            count: prevCount + 1,
-          };
-        }
+
+        if (!daysOfWeek.includes(currentIntervalStart.getDay())) return;
+        if (currentIntervalStart.valueOf() < fromISODate.valueOf()) return;
+        if (currentIntervalStart.valueOf() >= toISODate.valueOf()) return;
+
+        let sessionNumber = currentIntervalStart.getHours() * 2;
+        if (currentIntervalStart.getMinutes() >= 30) sessionNumber++;
+        const { consumption: prevConsumption, count: prevCount } =
+          newDataByTime[sessionNumber];
+        newDataByTime[sessionNumber] = {
+          consumption: prevConsumption + result.consumption,
+          count: prevCount + 1,
+        };
       });
     }
     return newDataByTime;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, fromDate, toDate, type, deviceNumber, serialNo, value.apiKey]);
+  }, [
+    data,
+    fromDate,
+    toDate,
+    type,
+    deviceNumber,
+    serialNo,
+    value.apiKey,
+    daysOfWeek,
+  ]);
 
   if (isLoading) {
     return {

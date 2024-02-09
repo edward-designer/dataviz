@@ -27,10 +27,12 @@ const FormSolar = ({ open, setOpen }: IFormSolar) => {
   const [annualProduction, setAnnualProduction] = useState<
     IUserValue["configSolar"]["annualProduction"]
   >([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+  const [rate, setRate] = useState<number>(0);
 
   useEffect(() => {
     setHasSolar(value.configSolar.hasSolar);
     setAnnualProduction(value.configSolar.annualProduction);
+    setRate(value.configSolar.rate);
   }, [value.configSolar]);
 
   const submitHandler = (e: FormEvent<HTMLFormElement>) => {
@@ -42,6 +44,7 @@ const FormSolar = ({ open, setOpen }: IFormSolar) => {
         ...value.configSolar,
         hasSolar,
         annualProduction,
+        rate,
       },
     });
 
@@ -52,6 +55,7 @@ const FormSolar = ({ open, setOpen }: IFormSolar) => {
   const cancelHandler = (value: IUserValue) => {
     setHasSolar(value.configSolar.hasSolar);
     setAnnualProduction(value.configSolar.annualProduction);
+    setRate(value.configSolar.rate);
     setOpen(false);
     setError({});
   };
@@ -114,6 +118,17 @@ const FormSolar = ({ open, setOpen }: IFormSolar) => {
           </div>
           {hasSolar && (
             <div className="flex flex-col p-4 gap-2  bg-slate-900 rounded-2xl">
+              <InfoInput
+                label="Inverter Charge/Discharge Rate (in kW)"
+                type="number"
+                placeHolder="Please enter your charge/discharge rate"
+                error={error}
+                value={rate}
+                setValue={setRate}
+                min={0}
+                pattern="^\d+(?:\.\d{1,2})?$"
+                step={0.01}
+              />
               <div className="text-accentBlue-600 text-xl">
                 Power Generation (in kWh) - total: {total} kWh
               </div>

@@ -1,14 +1,19 @@
 "use client";
 
 import { IPeriod } from "@/data/source";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import Remark from "./Remark";
 
 import { TDuration, getDate, outOfAYear } from "@/utils/helpers";
 import { DateRange } from "react-day-picker";
 import { IoCaretBackOutline, IoCaretForward } from "react-icons/io5";
+import { LiaCalendarAlt } from "react-icons/lia";
+import { MdOutlineDoubleArrow } from "react-icons/md";
+
 import DatePickerWithRange from "./DatePickerWithRange";
 import SelectPeriodButton from "./SelectPeriodButton";
+
+const weekName = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 const getDatePeriod = (duration: TDuration = "year") => {
   const today = new Date();
@@ -25,9 +30,15 @@ const getDatePeriod = (duration: TDuration = "year") => {
 const PeriodSelector = ({
   period,
   setPeriod,
+  hasDaysOfWeek = false,
+  daysOfWeek,
+  setDaysOfWeek,
 }: {
   period: IPeriod;
   setPeriod: Dispatch<SetStateAction<IPeriod>>;
+  hasDaysOfWeek?: boolean;
+  daysOfWeek?: number[];
+  setDaysOfWeek?: Dispatch<SetStateAction<number[]>>;
 }) => {
   const getPeriod = (earlier = true) => {
     const { to, from, duration } = period;
@@ -47,17 +58,13 @@ const PeriodSelector = ({
   };
 
   return (
-    <>
-      <div className="flex gap-2 flex-col-reverse sm:flex-col lg:flex-row">
-        <div className="flex-grow">
-          Selecting a longer period will provide more accurate comparisons.
-          <Remark>
-            <em>
-              [<strong>Note:</strong> With the price increase for Agile/Tracker
-              tariffs in Dec 2023, the comparison prices shown here are now
-              based on the NEW increased Agile/Tracker formulae unless you are a
-              current Agile/Tracker user.]
-            </em>{" "}
+    <div className="flex flex-col gap-2">
+      <div className="flex gap-2 flex-col-reverse sm:flex-col lg:flex-row mb-2">
+        <div className="flex items-center flex-grow text-xl gap-2 text-accentBlue-500">
+          <LiaCalendarAlt className="w-6 h-6" />
+          Consumption Data Period
+          <Remark variant="badge">
+            Selecting a longer period will provide more accurate comparisons.
             The figures presented here are an approximation of your annual
             energy costs. If you have not been with Octopus for over a year, the
             costs here will be proportionally expanded to one full year.
@@ -68,7 +75,7 @@ const PeriodSelector = ({
           </Remark>
         </div>
       </div>
-      <div className="flex justify-start gap-4">
+      <div className="flex justify-center lg:justify-start gap-x-4 gap-y-1 flex-wrap">
         <SelectPeriodButton
           isActive={period.duration === "year"}
           clickHandler={selectPeriodHandler("year")}
@@ -95,8 +102,42 @@ const PeriodSelector = ({
         >
           Custom
         </SelectPeriodButton>
+        {hasDaysOfWeek && setDaysOfWeek && daysOfWeek && (
+          <>
+            <div className="md:flex items-center self-stretch hidden">
+              <MdOutlineDoubleArrow className="h-4 w-4" />
+            </div>
+            <div className="flex flex-row items-center gap-3 text-xs mt-1">
+              {weekName.map((day, i) => (
+                <button
+                  key={day}
+                  onClick={() =>
+                    setDaysOfWeek((prevDaysOfWeek) => {
+                      if (
+                        prevDaysOfWeek.includes(i) &&
+                        prevDaysOfWeek.length < 2
+                      )
+                        return [0, 1, 2, 3, 4, 5, 6];
+                      return prevDaysOfWeek.includes(i)
+                        ? [...prevDaysOfWeek].filter((day) => day !== i)
+                        : [...prevDaysOfWeek, i];
+                    })
+                  }
+                  className={`p-2 border rounded-xl ${
+                    daysOfWeek.includes(i)
+                      ? "text-accentPink-500 border-accentPink-500 bg-accentPink-900/30"
+                      : "hover:text-accentPink-500 hover:border-accentPink-500 border-slate-300"
+                  }`}
+                >
+                  {day}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
       </div>
-      <div className="h-[60px] sm:w-full">
+
+      <div className="h-[56px] sm:w-full mt-0 md:-mt-1">
         {period.duration !== "custom" ? (
           <div className="mt-1 flex sm:justify-start gap-2 items-center w-full justify-between sm:w-fit">
             <button
@@ -138,7 +179,7 @@ const PeriodSelector = ({
           />
         )}
       </div>
-    </>
+    </div>
   );
 };
 

@@ -5,16 +5,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 
-import {
-  ENERGY_TYPE,
-  QueryTariffResult,
-  TariffType,
-  ApiTariffType,
-  TariffResult,
-  QuerySingleTariffPlanResult,
-  DurationType,
-  TariffCategory,
-} from "@/data/source";
+import { ENERGY_TYPE, TariffCategory, TariffType } from "@/data/source";
 
 import { fetchApi } from "../utils/helpers";
 

@@ -21,7 +21,7 @@ const EnergyShiftSim = () => {
         Load Shifting Visualizer
       </h1>
       <h2 className="text-accentBlue-400 font-display font-medium text-lg lg:text-2xl mb-8">
-        - data-driven experimentation to help you save most
+        - data-driven experiment tool to help you save most
       </h2>
 
       {hasApiInfo ? (

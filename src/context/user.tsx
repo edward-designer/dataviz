@@ -67,6 +67,7 @@ export interface IUserValue {
       number,
       number
     ];
+    rate: number;
   };
 }
 
@@ -104,6 +105,7 @@ export const initialValue = {
     configSolar: {
       hasSolar: false,
       annualProduction: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      rate: 0,
     },
   } as IUserValue,
   setValue: (value: IUserValue) => {},

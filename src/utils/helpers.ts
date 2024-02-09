@@ -332,6 +332,18 @@ export const toTitleCase = (str: string) => {
   );
 };
 
+export const daysDiff = (dateFrom: Date, dateTo: Date): number => {
+  const second = 1000,
+    minute = second * 60,
+    hour = minute * 60,
+    day = hour * 24;
+  const date1 = dateFrom;
+  const date2 = dateTo;
+  const timeDiff = date2.valueOf() - date1.valueOf();
+  const dayDiff = Math.ceil(timeDiff / day);
+  return dayDiff;
+};
+
 export const dateDiff = (dateFrom: Date, dateTo: Date): string => {
   const second = 1000,
     minute = second * 60,

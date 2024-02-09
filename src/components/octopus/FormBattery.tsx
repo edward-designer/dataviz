@@ -80,7 +80,7 @@ const FormBattery = ({ open, setOpen }: IFormBattery) => {
       >
         <GiBatteryPack
           aria-hidden={true}
-          className="w-10 h-10 group-hover:text-white"
+          className="w-9 h-9 mb-1 group-hover:text-white"
         />
         {!value.configBattery.hasBattery && (
           <span className="block absolute h-14 w-1 bg-slate-900/90 rotate-45 -top-1 group-hover:hidden"></span>
@@ -132,7 +132,7 @@ const FormBattery = ({ open, setOpen }: IFormBattery) => {
                 step={0.01}
               />
               <InfoInput
-                label="Charge/Discharge Rate (in kW)"
+                label="Inverter Charge/Discharge Rate (in kW)"
                 type="number"
                 placeHolder="Please enter your charge/discharge rate"
                 error={error}
