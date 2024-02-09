@@ -8,6 +8,7 @@ import {
   capitalize,
   daysDiff,
   evenRound,
+  formatNumberToDisplay,
   formatPriceChangeWithSign,
   getCategory,
   getDatePeriod,
@@ -32,6 +33,7 @@ import EnergyShiftSimCostContainer from "./EnergyShiftSimCostContainer";
 import EnergyShiftSimTariffSelector from "./EnergyShiftSimTariffSelector";
 import EnergyShiftSimTariffWithTotal from "./EnergyShiftSimTariffWithTotal";
 import SimpleLoading from "./SimpleLoading";
+import useCalculateSimPrice from "@/hooks/useCalculateSimPrice";
 
 export type ErrorType = Record<string, string>;
 
@@ -60,11 +62,6 @@ const EnergyShiftSimContainer = () => {
 
   const [importTariff, setImportTariff] = useState<string>("");
   const [exportTariff, setExportTariff] = useState<string>("");
-
-  const [currentFigures, setCurrentFigures] = useState<{
-    cost: number | undefined;
-    earning: number | undefined;
-  }>({ cost: undefined, earning: undefined });
 
   const [hasExport, setHasExport] = useState(false);
 
@@ -117,28 +114,6 @@ const EnergyShiftSimContainer = () => {
     daysOfWeek,
   });
 
-  const { dataByTime: dataByTimeCurrentImportTariff } = useTariffQueryAverage({
-    tariff: value.currentETariff,
-    type: "E",
-    gsp: value.gsp,
-    fromDate: period.from.toUTCString(),
-    toDate: period.to.toUTCString(),
-    category: getCategory(value.currentETariff),
-    enabled: value.currentETariff !== "",
-    daysOfWeek,
-  });
-
-  const { dataByTime: dataByTimeCurrentExportTariff } = useTariffQueryAverage({
-    tariff: value.currentEETariff,
-    type: "E",
-    gsp: value.gsp,
-    fromDate: period.from.toUTCString(),
-    toDate: period.to.toUTCString(),
-    category: getCategory(value.currentEETariff),
-    enabled: value.currentEETariff !== "",
-    daysOfWeek,
-  });
-
   const { dataByTime: dataByTimeImportTariff } = useTariffQueryAverage({
     tariff: importTariff,
     type: "E",
@@ -162,12 +137,17 @@ const EnergyShiftSimContainer = () => {
   });
 
   const maxConsumption = useMemo(() => {
-    if (dataByTime) return max(dataByTime, (d) => d.consumption / d.count);
+    if (dataByTime)
+      return max(dataByTime, (d) =>
+        d.count === 0 ? 0 : d.consumption / d.count
+      );
   }, [dataByTime]);
 
   const maxExport = useMemo(() => {
     if (dataByTimeExport)
-      return max(dataByTimeExport, (d) => d.consumption / d.count);
+      return max(dataByTimeExport, (d) =>
+        d.count === 0 ? 0 : d.consumption / d.count
+      );
   }, [dataByTimeExport]);
 
   const absoluteMax = Math.max(maxConsumption ?? 0, maxExport ?? 0);
@@ -178,46 +158,30 @@ const EnergyShiftSimContainer = () => {
       ? `${noOfDays}-Day`
       : `${capitalize(period.duration)}ly`;
 
-  useEffect(() => {
-    if (dataByTime && dataByTimeCurrentImportTariff) {
-      const cost = evenRound(
-        (dataByTime.reduce(
-          (acc, cur, i) =>
-            (cur.consumption / cur.count) *
-              (dataByTimeCurrentImportTariff[i].price /
-                dataByTimeCurrentImportTariff[i].count) +
-            acc,
-          0
-        ) *
-          noOfDays) /
-          100,
-        0
-      );
-      setCurrentFigures((currentFigures) => ({ ...currentFigures, cost }));
-    }
-    if (dataByTimeExport && dataByTimeCurrentExportTariff) {
-      const earning = evenRound(
-        (dataByTimeExport.reduce(
-          (acc, cur, i) =>
-            (cur.consumption / cur.count) *
-              (dataByTimeCurrentExportTariff[i].price /
-                dataByTimeCurrentExportTariff[i].count) +
-            acc,
-          0
-        ) *
-          noOfDays) /
-          100,
-        0
-      );
-      setCurrentFigures((currentFigures) => ({ ...currentFigures, earning }));
-    }
-  }, [
-    dataByTime,
-    dataByTimeExport,
-    dataByTimeCurrentImportTariff,
-    dataByTimeCurrentExportTariff,
+  const cost = useCalculateSimPrice({
+    tariff: value.currentETariff,
+    gsp: value.gsp,
+    fromDate: period.from.toUTCString(),
+    toDate: period.to.toUTCString(),
+    daysOfWeek,
     noOfDays,
-  ]);
+    consumption: dataByTime ?? [],
+  });
+
+  const earning = useCalculateSimPrice({
+    tariff: value.currentEETariff,
+    gsp: value.gsp,
+    fromDate: period.from.toUTCString(),
+    toDate: period.to.toUTCString(),
+    daysOfWeek,
+    noOfDays,
+    consumption: dataByTimeExport ?? [],
+  });
+
+  const currentFigures = {
+    cost,
+    earning,
+  };
 
   /* effect to sync state and context from localstorage */
   useEffect(() => {
@@ -253,8 +217,12 @@ const EnergyShiftSimContainer = () => {
     setAdjustedConsumption((prevConsumption) => {
       const nextConsumption = [...prevConsumption];
       nextConsumption[index] = {
-        ...nextConsumption[index],
-        consumption: (value[0] * nextConsumption[index].count) / 1000,
+        count:
+          nextConsumption[index].count === 0 ? 1 : nextConsumption[index].count,
+        consumption:
+          nextConsumption[index].count === 0
+            ? value[0] / 1000
+            : (value[0] * nextConsumption[index].count) / 1000,
       };
       return nextConsumption;
     });
@@ -269,8 +237,11 @@ const EnergyShiftSimContainer = () => {
     setAdjustedExport((prevExport) => {
       const nextExport = [...prevExport];
       nextExport[index] = {
-        ...nextExport[index],
-        consumption: (value[0] * nextExport[index].count) / 1000,
+        count: nextExport[index].count === 0 ? 1 : nextExport[index].count,
+        consumption:
+          nextExport[index].count === 0
+            ? value[0] / 1000
+            : (value[0] * nextExport[index].count) / 1000,
       };
       return nextExport;
     });
@@ -284,33 +255,39 @@ const EnergyShiftSimContainer = () => {
   /* loading while waiting */
   if (!dataByTime) return <Loading />;
   if (hasExport && !dataByTimeExport) return <Loading />;
-  if (adjustedConsumption.length === 0 || !maxConsumption) return <Loading />;
+  if (adjustedConsumption.length === 0 || maxConsumption === undefined)
+    return <Loading />;
 
   /* derived state from loaded data */
   const totalAllocated = evenRound(
     adjustedConsumption.reduce(
-      (acc, cur) => acc + cur.consumption / cur.count,
+      (acc, cur) => acc + (cur.count === 0 ? 0 : cur.consumption / cur.count),
       0
     ) * 1000,
     0
   );
 
   const totalConsumption = evenRound(
-    dataByTime.reduce((acc, cur) => acc + cur.consumption / cur.count, 0) *
-      1000,
+    dataByTime.reduce(
+      (acc, cur) => acc + (cur.count === 0 ? 0 : cur.consumption / cur.count),
+      0
+    ) * 1000,
     0
   );
 
   const totalAllocatedExport = evenRound(
-    adjustedExport.reduce((acc, cur) => acc + cur.consumption / cur.count, 0) *
-      1000,
+    adjustedExport.reduce(
+      (acc, cur) => acc + (cur.count === 0 ? 0 : cur.consumption / cur.count),
+      0
+    ) * 1000,
     0
   );
 
   const totalExport = dataByTimeExport
     ? evenRound(
         dataByTimeExport.reduce(
-          (acc, cur) => acc + cur.consumption / cur.count,
+          (acc, cur) =>
+            acc + (cur.count === 0 ? 0 : cur.consumption / cur.count),
           0
         ) * 1000,
         0
@@ -320,11 +297,15 @@ const EnergyShiftSimContainer = () => {
   const avgImportPrice =
     getCategory(importTariff) === "Agile"
       ? (dataByTimeImportTariff?.reduce(
-          (acc, cur) => acc + cur.price / cur.count,
+          (acc, cur) => acc + (cur.count === 0 ? 0 : cur.price / cur.count),
           0
         ) ?? 0) / 48
       : dataByTimeImportTariff
-      ? median(dataByTimeImportTariff?.map((data) => data.price / data.count))
+      ? median(
+          dataByTimeImportTariff?.map((data) =>
+            data.count === 0 ? 0 : data.price / data.count
+          )
+        )
       : 0;
 
   const avgExportPrice =
@@ -334,48 +315,46 @@ const EnergyShiftSimContainer = () => {
           0
         ) ?? 0) / 48
       : dataByTimeExportTariff
-      ? median(dataByTimeExportTariff?.map((data) => data.price / data.count))
+      ? median(
+          dataByTimeExportTariff?.map((data) =>
+            data.count === 0 ? 0 : data.price / data.count
+          )
+        )
       : 0;
 
   /* cost calculation */
   const adjustedCost =
     adjustedConsumption && dataByTimeImportTariff
-      ? evenRound(
-          (adjustedConsumption.reduce(
-            (acc, cur, i) =>
-              (cur.consumption / cur.count) *
-                (dataByTimeImportTariff[i].price /
-                  dataByTimeImportTariff[i].count) +
-              acc,
-            0
-          ) *
-            noOfDays) /
-            100,
+      ? (adjustedConsumption.reduce(
+          (acc, cur, i) =>
+            (cur.count === 0 ? 0 : cur.consumption / cur.count) *
+              (dataByTimeImportTariff[i].price /
+                dataByTimeImportTariff[i].count) +
+            acc,
           0
-        )
+        ) *
+          noOfDays) /
+        100
       : undefined;
   const adjustedEarning =
     adjustedExport && dataByTimeExportTariff
-      ? evenRound(
-          (adjustedExport.reduce(
-            (acc, cur, i) =>
-              (cur.consumption / cur.count) *
-                (dataByTimeExportTariff[i].price /
-                  dataByTimeExportTariff[i].count) +
-              acc,
-            0
-          ) *
-            noOfDays) /
-            100,
+      ? (adjustedExport.reduce(
+          (acc, cur, i) =>
+            (cur.count === 0 ? 0 : cur.consumption / cur.count) *
+              (dataByTimeExportTariff[i].price /
+                dataByTimeExportTariff[i].count) +
+            acc,
           0
-        )
+        ) *
+          noOfDays) /
+        100
       : undefined;
 
   const difference = isExporting ? (
-    currentFigures.cost &&
-    currentFigures.earning &&
-    adjustedEarning &&
-    adjustedCost ? (
+    currentFigures.cost !== undefined &&
+    currentFigures.earning !== undefined &&
+    adjustedEarning !== undefined &&
+    adjustedCost !== undefined ? (
       currentFigures.cost -
       currentFigures.earning -
       adjustedCost +
@@ -383,7 +362,7 @@ const EnergyShiftSimContainer = () => {
     ) : (
       <SimpleLoading />
     )
-  ) : currentFigures.cost && adjustedCost ? (
+  ) : currentFigures.cost !== undefined && adjustedCost !== undefined ? (
     currentFigures.cost - adjustedCost
   ) : (
     <SimpleLoading />
@@ -461,7 +440,7 @@ const EnergyShiftSimContainer = () => {
             changeImportTariff={setImportTariff}
             changeExportTariff={setExportTariff}
           >
-            {exportTariffs.map(({ tariff }) => (
+            {exportTariffs.flatMap(({ tariff }) => [
               <SelectItem key={tariff} value={tariff}>
                 <EnergyShiftSimTariffWithTotal
                   tariff={tariff}
@@ -472,8 +451,8 @@ const EnergyShiftSimContainer = () => {
                   noOfDays={noOfDays}
                   consumption={adjustedExport}
                 />
-              </SelectItem>
-            ))}
+              </SelectItem>,
+            ])}
           </EnergyShiftSimTariffSelector>
         )}
         <div className="flex items-center gap-1 text-sm">
@@ -491,7 +470,7 @@ const EnergyShiftSimContainer = () => {
             >
               <SliderVertical
                 defaultValue={Math.round(
-                  (1000 * data.consumption) / data.count
+                  data.count === 0 ? 0 : (1000 * data.consumption) / data.count
                 )}
                 max={Math.round(absoluteMax * 1.5 * 1000)}
                 min={0}
@@ -519,11 +498,13 @@ const EnergyShiftSimContainer = () => {
                 }
                 category={getCategory(importTariff)}
               />
-              {hasExport && adjustedExport && totalExport && (
+              {hasExport && (
                 <SliderVertical
                   defaultValue={Math.round(
-                    (1000 * adjustedExport[i]?.consumption) /
-                      adjustedExport[i]?.count
+                    adjustedExport[i]?.count === 0
+                      ? 0
+                      : (1000 * adjustedExport[i]?.consumption) /
+                          adjustedExport[i]?.count
                   )}
                   max={Math.round(absoluteMax * 1.5 * 1000)}
                   min={0}
@@ -568,13 +549,17 @@ const EnergyShiftSimContainer = () => {
                 <div
                   className={`flex flex-1 flex-row items-center text-right min-h-[40px] ${
                     typeof difference === "number"
-                      ? difference > 0
+                      ? formatNumberToDisplay(difference) > 0
                         ? "text-[#85f9ad]"
-                        : "text-[#f985c5]"
+                        : formatNumberToDisplay(difference) < 0
+                        ? "text-[#f985c5]"
+                        : "text-white"
                       : "text-white"
                   }`}
                 >
-                  <span className={`flex-1 text-3xl font-bold`}>
+                  <span
+                    className={`flex-1 text-3xl font-bold flex justify-end`}
+                  >
                     {typeof difference === "number"
                       ? formatPriceChangeWithSign(difference)
                       : difference}

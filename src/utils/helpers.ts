@@ -104,6 +104,11 @@ export function evenRound(
   return padZero ? returnValue.toFixed(2) : returnValue;
 }
 
+export const formatNumberToDisplay = (n: number) => {
+  if (Math.abs(n) > 2) return evenRound(n, 0);
+  return evenRound(n, 2);
+};
+
 export const calculateChangePercentage = (
   price: unknown,
   priceToCompare: unknown
@@ -129,9 +134,11 @@ export const formatPriceChangeWithSign = (
   price: number,
   positiveSign: boolean = true
 ) => {
-  if (price > 0) return `${positiveSign ? "+" : ""}£${price}`;
-  if (price < 0) return `-£${-1 * price}`;
-  return `-`;
+  const trimmedPrice = formatNumberToDisplay(price);
+  if (trimmedPrice === 0) return `-`;
+  if (price > 0) return `${positiveSign ? "+" : ""}£${trimmedPrice}`;
+  if (price < 0) return `-£${-1 * trimmedPrice}`;
+  return "-";
 };
 
 export function assertExtentNotUndefined<T>(

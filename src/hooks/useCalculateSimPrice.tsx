@@ -34,18 +34,16 @@ const useCalculateSimPrice = ({
 
   const total =
     tariff && consumption.length > 0 && dataByTime
-      ? evenRound(
-          (consumption.reduce(
-            (acc, cur, i) =>
-              (cur.consumption / cur.count) *
-                (dataByTime[i].price / dataByTime[i].count) +
-              acc,
-            0
-          ) *
-            noOfDays) /
-            100,
+      ? (consumption.reduce(
+          (acc, cur, i) =>
+            (cur.count === 0
+              ? 0
+              : (cur.consumption / cur.count) *
+                (dataByTime[i].price / dataByTime[i].count)) + acc,
           0
-        )
+        ) *
+          noOfDays) /
+        100
       : undefined;
   return total;
 };

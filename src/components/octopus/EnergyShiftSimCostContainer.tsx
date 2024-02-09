@@ -1,4 +1,8 @@
-import { formatPriceChangeWithSign, getCategory } from "@/utils/helpers";
+import {
+  formatNumberToDisplay,
+  formatPriceChangeWithSign,
+  getCategory,
+} from "@/utils/helpers";
 import { BiExport, BiImport } from "react-icons/bi";
 import { RiMoneyPoundBoxLine } from "react-icons/ri";
 import SimpleLoading from "./SimpleLoading";
@@ -28,8 +32,9 @@ const EnergyShiftSimCostContainer = ({
         hasExport ? "min-h-[140px]" : "min-h-[100px]"
       } ${variant === "current" ? "bg-theme-950" : "bg-theme-900"}`}
     >
-      {!importCost || (hasExport && !exportEarning) ? (
-        <div className="flex w-full justify-end">
+      {importCost === undefined ||
+      (hasExport && exportEarning === undefined) ? (
+        <div className="flex flex-grow w-full items-end justify-end">
           <SimpleLoading />
         </div>
       ) : (
@@ -65,7 +70,7 @@ const EnergyShiftSimCostContainer = ({
                   />
                   {importTariff}
                 </span>
-                <span>£{importCost}</span>
+                <span>{formatPriceChangeWithSign(importCost, false)}</span>
               </div>
               <div className="flex-1 flex flex-row items-center justify-between gap-1 text-sm">
                 <span className="flex gap-1 items-center text-xs min-w-4">
@@ -75,7 +80,7 @@ const EnergyShiftSimCostContainer = ({
                   />
                   {exportTariff}
                 </span>
-                <span>£{exportEarning}</span>
+                <span>{formatPriceChangeWithSign(exportEarning, false)}</span>
               </div>
             </>
           ) : (
@@ -87,7 +92,7 @@ const EnergyShiftSimCostContainer = ({
                   {importTariff}
                 </span>
               </span>
-              <span>£{importCost}</span>
+              <span>{formatPriceChangeWithSign(importCost, false)}</span>
             </div>
           )}
         </div>

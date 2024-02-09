@@ -1,7 +1,6 @@
-import { UserContext } from "@/context/user";
 import useCalculateSimPrice from "@/hooks/useCalculateSimPrice";
-import { useContext } from "react";
 import { ISimConsumptionData } from "./EnergyShiftSimContainer";
+import { formatPriceChangeWithSign } from "@/utils/helpers";
 
 interface IEnergyShiftSimTariffWithTotal {
   tariff: string;
@@ -31,8 +30,12 @@ const EnergyShiftSimTariffWithTotal = ({
     noOfDays,
     consumption,
   });
-
-  return `${total !== undefined && `[£${total}] `}${tariff}`;
+  console.log(total);
+  return `${
+    typeof total === "number" && !isNaN(total)
+      ? `[${formatPriceChangeWithSign(total, false)}] `
+      : `[N/A] `
+  }${tariff}`;
 };
 
 export default EnergyShiftSimTariffWithTotal;
