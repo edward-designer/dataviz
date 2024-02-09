@@ -81,6 +81,12 @@ export const EETARIFFS: ITariffToCompare[] = [
     category: "Fixed",
     cost: null,
   },
+  {
+    tariff: "OUTGOING-LITE-FIX-12M-23-09-12",
+    type: "E",
+    category: "Fixed",
+    cost: null,
+  },
 ];
 
 export const ETARIFFS: ITariffToCompare[] = [

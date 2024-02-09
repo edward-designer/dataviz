@@ -9,6 +9,7 @@ import {
 } from "@/data/source";
 
 import { BaseType, Selection, select, timeDays } from "d3";
+import { ReactNode } from "react";
 
 export const fetchEachApi = async ({
   tariffType,
@@ -122,6 +123,15 @@ export const calculateChangePercentage = (
 export const addSign = (price: number) => {
   if (price > 0) return `+${price}`;
   return String(price);
+};
+
+export const formatPriceChangeWithSign = (
+  price: number,
+  positiveSign: boolean = true
+) => {
+  if (price > 0) return `${positiveSign ? "+" : ""}£${price}`;
+  if (price < 0) return `-£${-1 * price}`;
+  return `-`;
 };
 
 export function assertExtentNotUndefined<T>(

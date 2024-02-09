@@ -114,6 +114,8 @@ const TariffComparisionCard = ({
                     ? "Intelligent Go"
                     : category === "IFlux"
                     ? "Intelligent Flux"
+                    : tariff.includes("OUTGOING-LITE-FIX")
+                    ? "Fixed Lite"
                     : category
                 }`}
                 icon={
@@ -163,7 +165,7 @@ const TariffComparisionCard = ({
               )}
             </div>
           </Container>
-          {category !== "SVT" ? (
+          {category !== "SVT" && cost !== compareTo ? (
             compareTo && (
               <div className="flex flex-row font-normal">
                 {compareTo - cost > 0 ? (

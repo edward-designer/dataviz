@@ -8,11 +8,12 @@ import {
   capitalize,
   daysDiff,
   evenRound,
+  formatPriceChangeWithSign,
   getCategory,
   getDatePeriod,
 } from "@/utils/helpers";
 import { max, median } from "d3";
-import { useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 
 import useTariffQueryAverage from "@/hooks/useTariffQueryAverage";
 import EnergyShiftSimEnergyCounter from "./EnergyShiftSimEnergyCounter";
@@ -23,18 +24,18 @@ import PeriodSelector from "./PeriodSelector";
 import Loading from "@/app/loading";
 
 import { HiMiniAdjustmentsVertical } from "react-icons/hi2";
-import { TbSunElectricity, TbZoomMoney } from "react-icons/tb";
-import { TbChartInfographic } from "react-icons/tb";
-import { AiOutlineLoading } from "react-icons/ai";
+import { TbChartInfographic, TbZoomMoney } from "react-icons/tb";
 
 import { EETARIFFS, ETARIFFS } from "@/data/source";
+import { SelectItem } from "../ui/select";
 import EnergyShiftSimCostContainer from "./EnergyShiftSimCostContainer";
 import EnergyShiftSimTariffSelector from "./EnergyShiftSimTariffSelector";
+import EnergyShiftSimTariffWithTotal from "./EnergyShiftSimTariffWithTotal";
 import SimpleLoading from "./SimpleLoading";
 
 export type ErrorType = Record<string, string>;
 
-export interface IConsumptionData {
+export interface ISimConsumptionData {
   count: number;
   consumption: number;
 }
@@ -51,20 +52,24 @@ const EnergyShiftSimContainer = () => {
   const [daysOfWeek, setDaysOfWeek] = useState([1, 2, 3, 4, 5]);
 
   const [adjustedConsumption, setAdjustedConsumption] = useState<
-    IConsumptionData[]
+    ISimConsumptionData[]
   >([]);
-  const [adjustedExport, setAdjustedExport] = useState<IConsumptionData[]>([]);
+  const [adjustedExport, setAdjustedExport] = useState<ISimConsumptionData[]>(
+    []
+  );
 
   const [importTariff, setImportTariff] = useState<string>("");
   const [exportTariff, setExportTariff] = useState<string>("");
+
+  const [currentFigures, setCurrentFigures] = useState<{
+    cost: number | undefined;
+    earning: number | undefined;
+  }>({ cost: undefined, earning: undefined });
 
   const [hasExport, setHasExport] = useState(false);
 
   const [batteryFormOpen, setBatteryFormOpen] = useState(false);
   const [solarFormOpen, setSolarFormOpen] = useState(false);
-
-  const cost = useRef<undefined | number>(undefined);
-  const earning = useRef<undefined | number>(undefined);
 
   /* derived states */
   const isExporting = !!(value.EESerialNo && value.EMPAN);
@@ -112,6 +117,28 @@ const EnergyShiftSimContainer = () => {
     daysOfWeek,
   });
 
+  const { dataByTime: dataByTimeCurrentImportTariff } = useTariffQueryAverage({
+    tariff: value.currentETariff,
+    type: "E",
+    gsp: value.gsp,
+    fromDate: period.from.toUTCString(),
+    toDate: period.to.toUTCString(),
+    category: getCategory(value.currentETariff),
+    enabled: value.currentETariff !== "",
+    daysOfWeek,
+  });
+
+  const { dataByTime: dataByTimeCurrentExportTariff } = useTariffQueryAverage({
+    tariff: value.currentEETariff,
+    type: "E",
+    gsp: value.gsp,
+    fromDate: period.from.toUTCString(),
+    toDate: period.to.toUTCString(),
+    category: getCategory(value.currentEETariff),
+    enabled: value.currentEETariff !== "",
+    daysOfWeek,
+  });
+
   const { dataByTime: dataByTimeImportTariff } = useTariffQueryAverage({
     tariff: importTariff,
     type: "E",
@@ -151,39 +178,46 @@ const EnergyShiftSimContainer = () => {
       ? `${noOfDays}-Day`
       : `${capitalize(period.duration)}ly`;
 
-  if (dataByTime && dataByTimeImportTariff && cost.current === undefined)
-    cost.current = evenRound(
-      (dataByTime.reduce(
-        (acc, cur, i) =>
-          (cur.consumption / cur.count) *
-            (dataByTimeImportTariff[i].price /
-              dataByTimeImportTariff[i].count) +
-          acc,
+  useEffect(() => {
+    if (dataByTime && dataByTimeCurrentImportTariff) {
+      const cost = evenRound(
+        (dataByTime.reduce(
+          (acc, cur, i) =>
+            (cur.consumption / cur.count) *
+              (dataByTimeCurrentImportTariff[i].price /
+                dataByTimeCurrentImportTariff[i].count) +
+            acc,
+          0
+        ) *
+          noOfDays) /
+          100,
         0
-      ) *
-        noOfDays) /
-        100,
-      0
-    );
-
-  if (
-    dataByTimeExport &&
-    dataByTimeExportTariff &&
-    earning.current === undefined
-  )
-    earning.current = evenRound(
-      (dataByTimeExport.reduce(
-        (acc, cur, i) =>
-          (cur.consumption / cur.count) *
-            (dataByTimeExportTariff[i].price /
-              dataByTimeExportTariff[i].count) +
-          acc,
+      );
+      setCurrentFigures((currentFigures) => ({ ...currentFigures, cost }));
+    }
+    if (dataByTimeExport && dataByTimeCurrentExportTariff) {
+      const earning = evenRound(
+        (dataByTimeExport.reduce(
+          (acc, cur, i) =>
+            (cur.consumption / cur.count) *
+              (dataByTimeCurrentExportTariff[i].price /
+                dataByTimeCurrentExportTariff[i].count) +
+            acc,
+          0
+        ) *
+          noOfDays) /
+          100,
         0
-      ) *
-        noOfDays) /
-        100,
-      0
-    );
+      );
+      setCurrentFigures((currentFigures) => ({ ...currentFigures, earning }));
+    }
+  }, [
+    dataByTime,
+    dataByTimeExport,
+    dataByTimeCurrentImportTariff,
+    dataByTimeCurrentExportTariff,
+    noOfDays,
+  ]);
 
   /* effect to sync state and context from localstorage */
   useEffect(() => {
@@ -337,18 +371,29 @@ const EnergyShiftSimContainer = () => {
         )
       : undefined;
 
-  const difference =
-    cost.current && earning.current && adjustedEarning && adjustedCost ? (
-      cost.current - earning.current - adjustedCost + adjustedEarning
+  const difference = isExporting ? (
+    currentFigures.cost &&
+    currentFigures.earning &&
+    adjustedEarning &&
+    adjustedCost ? (
+      currentFigures.cost -
+      currentFigures.earning -
+      adjustedCost +
+      adjustedEarning
     ) : (
       <SimpleLoading />
-    );
+    )
+  ) : currentFigures.cost && adjustedCost ? (
+    currentFigures.cost - adjustedCost
+  ) : (
+    <SimpleLoading />
+  );
 
   return (
     <div className="flex flex-col justify-between gap-4">
-      <h2 className="text-accentPink-600 font-display text-4xl flex items-center gap-3">
+      <h2 className="text-accentPink-600 font-display text-4xl flex items-center gap-3 mb-3">
         <TbChartInfographic className="w-8 h-8" />
-        Your Electricity Profile (Daily Average)
+        My Electricity Profile (Daily Average)
       </h2>
       <div className="flex items-start flex-wrap">
         <PeriodSelector
@@ -361,7 +406,8 @@ const EnergyShiftSimContainer = () => {
       </div>
       <h3 className="flex items-center gap-3 text-accentBlue-500">
         <HiMiniAdjustmentsVertical className="w-6 h-6" /> Shift your daily
-        energy use to maximize your saving:
+        energy use to maximize your saving. VAT inclusive; standing charge
+        excluded.
       </h3>
       <div className="flex flex-row justify-between items-center gap-5 flex-wrap bg-theme-900 rounded-2xl p-4">
         <EnergyShiftSimEnergyCounter
@@ -392,7 +438,21 @@ const EnergyShiftSimContainer = () => {
           tariffs={importTariffs}
           changeImportTariff={setImportTariff}
           changeExportTariff={setExportTariff}
-        />
+        >
+          {importTariffs.map(({ tariff }) => (
+            <SelectItem key={tariff} value={tariff}>
+              <EnergyShiftSimTariffWithTotal
+                tariff={tariff}
+                gsp={value.gsp}
+                fromDate={period.from.toUTCString()}
+                toDate={period.to.toUTCString()}
+                daysOfWeek={daysOfWeek}
+                noOfDays={noOfDays}
+                consumption={adjustedConsumption}
+              />
+            </SelectItem>
+          ))}
+        </EnergyShiftSimTariffSelector>
         {hasExport && (
           <EnergyShiftSimTariffSelector
             isExport={true}
@@ -400,7 +460,21 @@ const EnergyShiftSimContainer = () => {
             tariffs={exportTariffs}
             changeImportTariff={setImportTariff}
             changeExportTariff={setExportTariff}
-          />
+          >
+            {exportTariffs.map(({ tariff }) => (
+              <SelectItem key={tariff} value={tariff}>
+                <EnergyShiftSimTariffWithTotal
+                  tariff={tariff}
+                  gsp={value.gsp}
+                  fromDate={period.from.toUTCString()}
+                  toDate={period.to.toUTCString()}
+                  daysOfWeek={daysOfWeek}
+                  noOfDays={noOfDays}
+                  consumption={adjustedExport}
+                />
+              </SelectItem>
+            ))}
+          </EnergyShiftSimTariffSelector>
         )}
         <div className="flex items-center gap-1 text-sm">
           <h3 className="font-bold text-slate-500 mr-2">Price Reference:</h3>
@@ -408,7 +482,7 @@ const EnergyShiftSimContainer = () => {
           <span className="w-4 h-2 bg-red-500 inline-block ml-3"></span>Worst
         </div>
       </div>
-      <div className="flex flex-col md:flex-row gap-3">
+      <div className="flex flex-col-reverse md:flex-row gap-3">
         <div className="basis-1 md:basis-3/4 grid grid-cols-[repeat(8,_minmax(0,_1fr))] sm:grid-cols-[repeat(12,_minmax(0,_1fr))] xl:grid-cols-[repeat(16,_minmax(0,_1fr))] 2xl:grid-cols-[repeat(24,_minmax(0,_1fr))] flex-wrap gap-y-10 border border-accentPink-900 rounded-2xl pl-7 pr-5 pt-8 pb-14">
           {adjustedConsumption.map((data, i) => (
             <div
@@ -483,44 +557,69 @@ const EnergyShiftSimContainer = () => {
             </div>
           ))}
         </div>
-        <div className="flex flex-col basis-1 md:basis-1/4 border border-accentPink-900 rounded-2xl items-start justity-between">
-          <div className="flex w-full justify-between items-center px-4 py-4 gap-1 border-b-2 border-dotted border-accentPink-800">
-            <h3 className="flex w-full items-center gap-1 ">
-              <TbZoomMoney className="w-6 h-6 " /> {calculationDuration} Saving
-            </h3>
-            <div
-              className={`flex flex-row items-center min-h-[40px] ${
-                typeof difference === "number"
-                  ? difference > 0
-                    ? "text-[#85f9ad]"
-                    : "text-[#f985c5]"
-                  : "text-white"
-              }`}
-            >
-              <span className={`text-3xl font-bold`}>
-                {typeof difference === "number" && "£"}
-                {difference}
-              </span>
+        <div className="flex flex-col flex-grow basis-1 md:basis-1/4 border border-accentPink-900 rounded-2xl items-between justity-between">
+          <div>
+            <div className="flex w-full flex-col justify-between items-center px-4 py-4 gap-1 border-b-2 border-dotted border-accentPink-800">
+              <div className="flex w-full justify-between">
+                <h3 className="flex items-center gap-1 ">
+                  <TbZoomMoney className="w-6 h-6 " /> {calculationDuration}{" "}
+                  Saving
+                </h3>
+                <div
+                  className={`flex flex-1 flex-row items-center text-right min-h-[40px] ${
+                    typeof difference === "number"
+                      ? difference > 0
+                        ? "text-[#85f9ad]"
+                        : "text-[#f985c5]"
+                      : "text-white"
+                  }`}
+                >
+                  <span className={`flex-1 text-3xl font-bold`}>
+                    {typeof difference === "number"
+                      ? formatPriceChangeWithSign(difference)
+                      : difference}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <EnergyShiftSimCostContainer
+              label="Current Tariffs"
+              importTariff={value.currentETariff}
+              importCost={currentFigures.cost}
+              exportTariff={value.currentEETariff}
+              exportEarning={currentFigures.earning}
+              hasExport={hasExport}
+              variant="current"
+            />
+            <EnergyShiftSimCostContainer
+              label="Selected Tariffs"
+              importTariff={importTariff}
+              importCost={adjustedCost}
+              exportTariff={exportTariff}
+              exportEarning={adjustedEarning}
+              hasExport={hasExport}
+            />
+          </div>
+          <div className="flex-grow flex flex-col justify-end p-4 gap-1 text-slate-400">
+            <div className="text-sm text-accentPink-500">Remarks:</div>
+            <div className="text-xs">
+              <strong>Flux/Intelligent Flux</strong>: a tariff for both import
+              and export at the same time, must have a (compatible) solar system
+              and home battery
+            </div>
+            <div className="text-xs">
+              <strong>Go</strong>: must have EV and (compatible) home charger,
+              can only select Fixed Lite Export
+            </div>
+            <div className="text-xs">
+              <strong>Cosy</strong>: must have a heat pump
+            </div>
+            <div className="text-xs">
+              Figures above are estimations only. Past results do not guarantee
+              future performance.
             </div>
           </div>
-
-          <EnergyShiftSimCostContainer
-            label="Current Tariffs"
-            importTariff={value.currentETariff}
-            importCost={cost.current}
-            exportTariff={value.currentEETariff}
-            exportEarning={earning.current}
-            hasExport={hasExport}
-            variant="current"
-          />
-          <EnergyShiftSimCostContainer
-            label="Selected Tariffs"
-            importTariff={importTariff}
-            importCost={adjustedCost}
-            exportTariff={exportTariff}
-            exportEarning={adjustedEarning}
-            hasExport={hasExport}
-          />
         </div>
       </div>
     </div>

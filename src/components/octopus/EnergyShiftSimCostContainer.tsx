@@ -1,4 +1,4 @@
-import { getCategory } from "@/utils/helpers";
+import { formatPriceChangeWithSign, getCategory } from "@/utils/helpers";
 import { BiExport, BiImport } from "react-icons/bi";
 import { RiMoneyPoundBoxLine } from "react-icons/ri";
 import SimpleLoading from "./SimpleLoading";
@@ -24,19 +24,21 @@ const EnergyShiftSimCostContainer = ({
 }: IEnergyShiftSimCostContainer) => {
   return (
     <div
-      className={`flex w-full flex-col bg-theme-900 px-4 py-4 min-h-[140px] ${
-        variant === "current" ? "bg-theme-950" : "bg-theme-900"
-      }`}
+      className={`flex w-full flex-col bg-theme-900 px-4 py-4 ${
+        hasExport ? "min-h-[140px]" : "min-h-[100px]"
+      } ${variant === "current" ? "bg-theme-950" : "bg-theme-900"}`}
     >
       {!importCost || (hasExport && !exportEarning) ? (
         <div className="flex w-full justify-end">
           <SimpleLoading />
         </div>
       ) : (
-        <div className="flex w-full flex-col">
+        <div className="flex w-full flex-col pt-2">
           <h4
             className={`${
-              variant === "current" ? "text-accentPink-600" : "text-yellow-500"
+              variant === "current"
+                ? "text-accentPink-600"
+                : "text-accentBlue-500"
             } text-sm`}
           >
             {label}
@@ -51,7 +53,9 @@ const EnergyShiftSimCostContainer = ({
                   />
                   Net Cost
                 </span>
-                <span>£{importCost - exportEarning}</span>
+                <span>
+                  {formatPriceChangeWithSign(importCost - exportEarning, false)}
+                </span>
               </div>
               <div className="flex-1 flex flex-row items-center justify-between gap-1 text-sm">
                 <span className="flex gap-1 items-center text-xs">
