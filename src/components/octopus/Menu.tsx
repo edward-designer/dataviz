@@ -247,6 +247,16 @@ const Menu = () => {
               />
               <span className="text-sm text-accentBlue-600">tariffs</span>
             </button>
+            <Link
+              href="/tariffs"
+              className={`block my-4  ${
+                pathname === "/tariffs"
+                  ? "cursor-default text-accentBlue-900"
+                  : "hover:text-accentPink-500"
+              }`}
+            >
+              Tariffs <span className="text-lg">at a Glance</span>
+            </Link>
             <span className="block border-t border-accentBlue-500/50 text-xs relative mt-8 mb-6">
               <span className="absolute -top-2 bg-accentBlue-500 px-2 text-theme-950 italic rounded-full">
                 Octopus Tools

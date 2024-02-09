@@ -384,8 +384,8 @@ const EnergyShiftSimContainer = () => {
         />
       </div>
       <h3 className="flex items-center gap-3 text-accentBlue-500">
-        <HiMiniAdjustmentsVertical className="w-6 h-6" /> Shift your daily
-        energy use to maximize your saving. VAT inclusive; standing charge
+        <HiMiniAdjustmentsVertical className="w-6 h-6" /> Shift daily
+        energy use pattern to maximize saving! VAT inclusive; standing charge
         excluded.
       </h3>
       <div className="flex flex-row justify-between items-center gap-5 flex-wrap bg-theme-900 rounded-2xl p-4">
