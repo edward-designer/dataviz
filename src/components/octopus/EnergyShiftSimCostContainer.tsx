@@ -58,7 +58,7 @@ const EnergyShiftSimCostContainer = ({
                   />
                   Net Cost
                 </span>
-                <span>
+                <span className="whitespace-nowrap">
                   {formatPriceChangeWithSign(importCost - exportEarning, false)}
                 </span>
               </div>
@@ -70,7 +70,9 @@ const EnergyShiftSimCostContainer = ({
                   />
                   {importTariff}
                 </span>
-                <span>{formatPriceChangeWithSign(importCost, false)}</span>
+                <span className="whitespace-nowrap">
+                  {formatPriceChangeWithSign(importCost, false)}
+                </span>
               </div>
               <div className="flex-1 flex flex-row items-center justify-between gap-1 text-sm">
                 <span className="flex gap-1 items-center text-xs min-w-4">
@@ -80,7 +82,9 @@ const EnergyShiftSimCostContainer = ({
                   />
                   {exportTariff}
                 </span>
-                <span>{formatPriceChangeWithSign(exportEarning, false)}</span>
+                <span className="whitespace-nowrap">
+                  {formatPriceChangeWithSign(exportEarning, false)}
+                </span>
               </div>
             </>
           ) : (
@@ -92,7 +96,9 @@ const EnergyShiftSimCostContainer = ({
                   {importTariff}
                 </span>
               </span>
-              <span>{formatPriceChangeWithSign(importCost, false)}</span>
+              <span className="whitespace-nowrap">
+                {formatPriceChangeWithSign(importCost, false)}
+              </span>
             </div>
           )}
         </div>

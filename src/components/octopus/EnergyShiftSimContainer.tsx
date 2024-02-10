@@ -14,7 +14,14 @@ import {
   getCategory,
   getDatePeriod,
 } from "@/utils/helpers";
-import { useContext, useEffect, useMemo, useState } from "react";
+import {
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useReducer,
+  useState,
+} from "react";
 
 import EnergyShiftSimEnergyCounter from "./EnergyShiftSimEnergyCounter";
 import FormBattery from "./FormBattery";
@@ -34,6 +41,7 @@ import EnergyShiftSimCostContainer from "./EnergyShiftSimCostContainer";
 import EnergyShiftSimTariffSelector from "./EnergyShiftSimTariffSelector";
 import EnergyShiftSimTariffWithTotal from "./EnergyShiftSimTariffWithTotal";
 import SimpleLoading from "./SimpleLoading";
+import { energyShiftReducer } from "@/reducers/energyShift";
 
 export type ErrorType = Record<string, string>;
 
@@ -48,8 +56,14 @@ const EnergyShiftSimContainer = () => {
   }>(getDatePeriod);
   const [daysOfWeek, setDaysOfWeek] = useState([1, 2, 3, 4, 5]);
 
-  const [adjustedConsumption, setAdjustedConsumption] = useState<number[]>([]);
-  const [adjustedExport, setAdjustedExport] = useState<number[]>([]);
+  const [adjustedConsumption, adjustedConsumptionDispatch] = useReducer(
+    energyShiftReducer,
+    []
+  );
+  const [adjustedExport, adjustedExportDispatch] = useReducer(
+    energyShiftReducer,
+    []
+  );
 
   const [importTariff, setImportTariff] = useState<string>("");
   const [exportTariff, setExportTariff] = useState<string>("");
@@ -133,11 +147,6 @@ const EnergyShiftSimContainer = () => {
     consumption: dataByTimeExport ?? [],
   });
 
-  const currentFigures = {
-    cost,
-    earning,
-  };
-
   /* effect to sync state and context from localstorage */
   useEffect(() => {
     if (value.currentETariff) {
@@ -151,15 +160,21 @@ const EnergyShiftSimContainer = () => {
     }
   }, [value.currentEETariff]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (dataByTimeImport) {
-      setAdjustedConsumption(dataByTimeImport);
+      adjustedConsumptionDispatch({
+        type: "Update All Values",
+        payload: dataByTimeImport,
+      });
     }
   }, [dataByTimeImport]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (dataByTimeExport) {
-      setAdjustedExport(dataByTimeExport);
+      adjustedExportDispatch({
+        type: "Update All Values",
+        payload: dataByTimeExport,
+      });
     }
   }, [dataByTimeExport]);
 
@@ -169,10 +184,9 @@ const EnergyShiftSimContainer = () => {
 
   /* handlers */
   const valueCommitHandler = (index: number) => (value: number[]) => {
-    setAdjustedConsumption((prevConsumption) => {
-      const nextConsumption = [...prevConsumption];
-      nextConsumption[index] = value[0] / 1000;
-      return nextConsumption;
+    adjustedConsumptionDispatch({
+      type: "Update A Single Value",
+      payload: { index, value: value[0] },
     });
   };
   const valueCommitHandlerArray = useMemo(
@@ -181,10 +195,9 @@ const EnergyShiftSimContainer = () => {
   );
 
   const exportValueCommitHandler = (index: number) => (value: number[]) => {
-    setAdjustedExport((prevExport) => {
-      const nextExport = [...prevExport];
-      nextExport[index] = value[0] / 1000;
-      return nextExport;
+    adjustedExportDispatch({
+      type: "Update A Single Value",
+      payload: { index, value: value[0] },
     });
   };
   const exportValueCommitHandlerArray = useMemo(
@@ -194,7 +207,13 @@ const EnergyShiftSimContainer = () => {
 
   /* loading while waiting */
   if (!dataByTimeImport) return <Loading />;
-  if (hasExport && !dataByTimeExport) return <Loading />;
+  if (
+    hasExport &&
+    (!dataByTimeExport ||
+      maxExport === undefined ||
+      adjustedConsumption.length === 0)
+  )
+    return <Loading />;
   if (adjustedConsumption.length === 0 || maxConsumption === undefined)
     return <Loading />;
 
@@ -220,19 +239,16 @@ const EnergyShiftSimContainer = () => {
   );
 
   const difference = isExporting ? (
-    currentFigures.cost !== undefined &&
-    currentFigures.earning !== undefined &&
+    cost !== undefined &&
+    earning !== undefined &&
     adjustedEarning !== undefined &&
     adjustedCost !== undefined ? (
-      currentFigures.cost -
-      currentFigures.earning -
-      adjustedCost +
-      adjustedEarning
+      cost - earning - adjustedCost + adjustedEarning
     ) : (
       <SimpleLoading />
     )
-  ) : currentFigures.cost !== undefined && adjustedCost !== undefined ? (
-    currentFigures.cost - adjustedCost
+  ) : cost !== undefined && adjustedCost !== undefined ? (
+    cost - adjustedCost
   ) : (
     <SimpleLoading />
   );
@@ -407,7 +423,7 @@ const EnergyShiftSimContainer = () => {
                   }`}
                 >
                   <span
-                    className={`flex-1 text-3xl font-bold flex justify-end`}
+                    className={`flex-1 text-3xl font-bold flex justify-end whitespace-nowrap`}
                   >
                     {typeof difference === "number"
                       ? formatPriceChangeWithSign(difference)
@@ -420,9 +436,9 @@ const EnergyShiftSimContainer = () => {
             <EnergyShiftSimCostContainer
               label="Current Tariffs"
               importTariff={value.currentETariff}
-              importCost={currentFigures.cost}
+              importCost={cost}
               exportTariff={value.currentEETariff}
-              exportEarning={currentFigures.earning}
+              exportEarning={earning}
               hasExport={hasExport}
               variant="current"
             />

@@ -32,15 +32,12 @@ const useCalculateSimPrice = ({
     daysOfWeek,
   });
 
-  const total = useMemo(
-    () =>
-      tariff && consumption.length > 0 && dataByTime
-        ? (consumption.reduce((acc, cur, i) => cur * dataByTime[i] + acc, 0) *
-            numOfDays) /
-          100
-        : undefined,
-    [tariff, numOfDays, consumption, dataByTime]
-  );
+  const total =
+    tariff && consumption.length > 0 && dataByTime
+      ? (consumption.reduce((acc, cur, i) => cur * dataByTime[i] + acc, 0) *
+          numOfDays) /
+        100
+      : undefined;
   return total;
 };
 

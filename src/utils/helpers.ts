@@ -106,7 +106,7 @@ export function evenRound(
 }
 
 export const formatNumberToDisplay = (n: number) => {
-  if (Math.abs(n) > 2) return evenRound(n, 0);
+  if (Math.abs(n) > 10) return evenRound(n, 0);
   return evenRound(n, 2);
 };
 
