@@ -431,3 +431,21 @@ export const calculateSimTotal = (
         numOfDays) /
       100
     : undefined;
+
+export const checkGoodBadTime = (
+  isExport: boolean,
+  category: string,
+  price: number | undefined,
+  avgPrice: number | undefined
+) => {
+  if (price === undefined || avgPrice === undefined) return "";
+  const compareFactor = category === "Agile" ? 1.3 : 1.1;
+  if (isExport) {
+    if (price > avgPrice * compareFactor) return "good";
+    if (price < avgPrice / compareFactor) return "bad";
+  }
+  if (price > avgPrice * compareFactor) return "bad";
+  if (price < avgPrice / compareFactor) return "good";
+
+  return "";
+};

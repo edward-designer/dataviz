@@ -47,10 +47,6 @@ const useEnergyShiftData = ({
     daysOfWeek,
   });
 
-  const maxValue = useMemo(() => {
-    if (dataByTime) return max(dataByTime);
-  }, [dataByTime]);
-
   const totalValue = dataByTime
     ? evenRound(dataByTime.reduce((acc, cur) => acc + cur, 0) * 1000, 0)
     : Infinity;
@@ -62,7 +58,7 @@ const useEnergyShiftData = ({
       ? median(dataByTimeTariff)
       : 0;
 
-  return { dataByTime, dataByTimeTariff, maxValue, totalValue, avgTariffPrice };
+  return { dataByTime, dataByTimeTariff, totalValue, avgTariffPrice };
 };
 
 export default useEnergyShiftData;

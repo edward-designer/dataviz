@@ -18,6 +18,7 @@ const Slider = React.forwardRef<
     avgPrice?: number;
     price?: number;
     category: string;
+    indicator: "good" | "bad" | ""
   }
 >(
   (
@@ -29,6 +30,7 @@ const Slider = React.forwardRef<
       avgPrice,
       price,
       category,
+      indicator,
       ...props
     },
     ref
@@ -48,6 +50,7 @@ const Slider = React.forwardRef<
       price !== undefined && avgPrice !== undefined
         ? price < avgPrice / compareFactor
         : false;
+
     const stopPercentRaw = Math.floor(
       (((value ?? 0) - min) / (max - min)) * 100
     );

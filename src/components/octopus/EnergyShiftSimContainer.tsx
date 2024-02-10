@@ -6,6 +6,7 @@ import {
   TDuration,
   calculateSimTotal,
   capitalize,
+  checkGoodBadTime,
   daysDiff,
   evenRound,
   formatNumberToDisplay,
@@ -42,6 +43,14 @@ import EnergyShiftSimTariffSelector from "./EnergyShiftSimTariffSelector";
 import EnergyShiftSimTariffWithTotal from "./EnergyShiftSimTariffWithTotal";
 import SimpleLoading from "./SimpleLoading";
 import { energyShiftReducer } from "@/reducers/energyShift";
+import ActionButton from "./ActionButton";
+import { GrRevert } from "react-icons/gr";
+import { TbArrowBigDownLineFilled } from "react-icons/tb";
+import { LiaRandomSolid } from "react-icons/lia";
+import { LuArrowDownToLine } from "react-icons/lu";
+import { TbArrowBarBoth } from "react-icons/tb";
+import { RiCornerUpRightDoubleLine } from "react-icons/ri";
+import { max } from "d3";
 
 export type ErrorType = Record<string, string>;
 
@@ -56,7 +65,7 @@ const EnergyShiftSimContainer = () => {
   }>(getDatePeriod);
   const [daysOfWeek, setDaysOfWeek] = useState([1, 2, 3, 4, 5]);
 
-  const [adjustedConsumption, adjustedConsumptionDispatch] = useReducer(
+  const [adjustedImport, adjustedImportDispatch] = useReducer(
     energyShiftReducer,
     []
   );
@@ -89,7 +98,6 @@ const EnergyShiftSimContainer = () => {
   const {
     dataByTime: dataByTimeImport,
     dataByTimeTariff: dataByTimeImportTariff,
-    maxValue: maxConsumption,
     totalValue: totalConsumption,
     avgTariffPrice: avgImportPrice,
   } = useEnergyShiftData({
@@ -106,7 +114,6 @@ const EnergyShiftSimContainer = () => {
   const {
     dataByTime: dataByTimeExport,
     dataByTimeTariff: dataByTimeExportTariff,
-    maxValue: maxExport,
     totalValue: totalExport,
     avgTariffPrice: avgExportPrice,
   } = useEnergyShiftData({
@@ -120,7 +127,9 @@ const EnergyShiftSimContainer = () => {
     gsp: value.gsp,
   });
 
-  const absoluteMax = Math.max(maxConsumption ?? 0, maxExport ?? 0);
+  const maxImport = max(adjustedImport);
+  const maxExport = max(adjustedExport);
+  const absoluteMax = Math.max(maxImport ?? 0, maxExport ?? 0);
 
   const numOfDays = daysDiff(period.from, period.to);
   const calculationDuration =
@@ -162,7 +171,7 @@ const EnergyShiftSimContainer = () => {
 
   useLayoutEffect(() => {
     if (dataByTimeImport) {
-      adjustedConsumptionDispatch({
+      adjustedImportDispatch({
         type: "Update All Values",
         payload: dataByTimeImport,
       });
@@ -184,7 +193,7 @@ const EnergyShiftSimContainer = () => {
 
   /* handlers */
   const valueCommitHandler = (index: number) => (value: number[]) => {
-    adjustedConsumptionDispatch({
+    adjustedImportDispatch({
       type: "Update A Single Value",
       payload: { index, value: value[0] },
     });
@@ -211,15 +220,15 @@ const EnergyShiftSimContainer = () => {
     hasExport &&
     (!dataByTimeExport ||
       maxExport === undefined ||
-      adjustedConsumption.length === 0)
+      adjustedImport.length === 0)
   )
     return <Loading />;
-  if (adjustedConsumption.length === 0 || maxConsumption === undefined)
+  if (adjustedImport.length === 0 || maxImport === undefined)
     return <Loading />;
 
   /* derived from state */
   const totalAllocated = evenRound(
-    adjustedConsumption.reduce((acc, cur) => acc + cur, 0) * 1000,
+    adjustedImport.reduce((acc, cur) => acc + cur, 0) * 1000,
     0
   );
   const totalAllocatedExport = evenRound(
@@ -228,7 +237,7 @@ const EnergyShiftSimContainer = () => {
   );
 
   const adjustedCost = calculateSimTotal(
-    adjustedConsumption,
+    adjustedImport,
     dataByTimeImportTariff,
     numOfDays
   );
@@ -309,7 +318,7 @@ const EnergyShiftSimContainer = () => {
                 toDate={period.to.toUTCString()}
                 daysOfWeek={daysOfWeek}
                 numOfDays={numOfDays}
-                consumption={adjustedConsumption}
+                consumption={adjustedImport}
               />
             </SelectItem>
           ))}
@@ -345,7 +354,7 @@ const EnergyShiftSimContainer = () => {
       </div>
       <div className="flex flex-col-reverse md:flex-row gap-3">
         <div className="basis-1 md:basis-3/4 grid grid-cols-[repeat(8,_minmax(0,_1fr))] sm:grid-cols-[repeat(12,_minmax(0,_1fr))] xl:grid-cols-[repeat(16,_minmax(0,_1fr))] 2xl:grid-cols-[repeat(24,_minmax(0,_1fr))] flex-wrap gap-y-10 border border-accentPink-900 rounded-2xl pl-7 pr-5 pt-8 pb-14">
-          {adjustedConsumption.map((data, i) => (
+          {adjustedImport.map((data, i) => (
             <div
               className="flex flex-col justify-center items-center gap-y-8"
               key={i}
@@ -372,6 +381,12 @@ const EnergyShiftSimContainer = () => {
                 avgPrice={avgImportPrice}
                 price={dataByTimeImportTariff?.[i]}
                 category={getCategory(importTariff)}
+                indicator={checkGoodBadTime(
+                  false,
+                  getCategory(importTariff),
+                  dataByTimeImportTariff?.[i],
+                  avgImportPrice
+                )}
               />
               {hasExport && (
                 <SliderVertical
@@ -398,10 +413,151 @@ const EnergyShiftSimContainer = () => {
                   avgPrice={avgExportPrice}
                   price={dataByTimeExportTariff?.[i]}
                   category={getCategory(exportTariff)}
+                  indicator={checkGoodBadTime(
+                    true,
+                    getCategory(exportTariff),
+                    dataByTimeExportTariff?.[i],
+                    avgExportPrice
+                  )}
                 />
               )}
             </div>
           ))}
+          <div className="flex col-span-full items-center gap-3 flex-wrap">
+            {hasExport && (
+              <ActionButton
+                clickHandler={() => {
+                  if (dataByTimeImport)
+                    adjustedImportDispatch({
+                      type: "Reset",
+                      payload: dataByTimeImport,
+                    });
+                  if (dataByTimeExport)
+                    adjustedExportDispatch({
+                      type: "Reset",
+                      payload: dataByTimeExport,
+                    });
+                }}
+              >
+                <GrRevert />
+                Reset All
+              </ActionButton>
+            )}
+            <ActionButton
+              clickHandler={() => {
+                if (dataByTimeImport)
+                  adjustedImportDispatch({
+                    type: "Reset",
+                    payload: dataByTimeImport,
+                  });
+              }}
+            >
+              <GrRevert />
+              Reset Import
+            </ActionButton>
+            {hasExport && (
+              <ActionButton
+                clickHandler={() => {
+                  if (dataByTimeExport)
+                    adjustedExportDispatch({
+                      type: "Reset",
+                      payload: dataByTimeExport,
+                    });
+                }}
+              >
+                <GrRevert />
+                Reset Export
+              </ActionButton>
+            )}
+            {hasExport && (
+              <ActionButton
+                clickHandler={() => {
+                  if (adjustedImport && adjustedExport) {
+                    adjustedImportDispatch({
+                      type: "Offset Import with Export",
+                      payload: {
+                        from: adjustedImport,
+                        to: adjustedExport,
+                      },
+                    });
+                    adjustedExportDispatch({
+                      type: "Offset Import with Export",
+                      payload: {
+                        from: adjustedExport,
+                        to: adjustedImport,
+                      },
+                    });
+                  }
+                }}
+              >
+                <LiaRandomSolid />
+                Offset Import with Export
+              </ActionButton>
+            )}
+            {["Agile", "Flux", "IFlux", "Cosy"].includes(
+              getCategory(importTariff)
+            ) && (
+              <ActionButton
+                clickHandler={() => {
+                  if (dataByTimeExport)
+                    adjustedImportDispatch({
+                      type: "Remove All Peak Use",
+                      payload: dataByTimeImportTariff?.map((data) =>
+                        Boolean(
+                          checkGoodBadTime(
+                            false,
+                            getCategory(importTariff),
+                            data,
+                            avgImportPrice
+                          ) === "bad"
+                        )
+                      ),
+                    });
+                }}
+              >
+                <LuArrowDownToLine />
+                Remove All Peak Use
+              </ActionButton>
+            )}
+            {["Agile", "Flux", "IFlux", "Cosy", "IGo", "Go"].includes(
+              getCategory(importTariff)
+            ) && (
+              <ActionButton
+                clickHandler={() => {
+                  if (dataByTimeExport)
+                    adjustedImportDispatch({
+                      type: "Shift Import to Only Cheap Periods",
+                      payload: dataByTimeImportTariff?.map((data) =>
+                        Boolean(
+                          checkGoodBadTime(
+                            false,
+                            getCategory(importTariff),
+                            data,
+                            avgImportPrice
+                          ) === "good"
+                        )
+                      ),
+                    });
+                }}
+              >
+                <TbArrowBarBoth />
+                Shift Import to Only Cheap Periods
+              </ActionButton>
+            )}
+            {hasExport && (
+              <ActionButton
+                clickHandler={() => {
+                  adjustedExportDispatch({
+                    type: "Double Export",
+                    payload: "",
+                  });
+                }}
+              >
+                <RiCornerUpRightDoubleLine />
+                Double Export
+              </ActionButton>
+            )}
+          </div>
         </div>
         <div className="flex flex-col flex-grow basis-1 md:basis-1/4 border border-accentPink-900 rounded-2xl items-between justity-between">
           <div>
@@ -442,6 +598,9 @@ const EnergyShiftSimContainer = () => {
               hasExport={hasExport}
               variant="current"
             />
+            <div className="flex justify-center h-3">
+              <TbArrowBigDownLineFilled className="h-8 w-8 relative -top-1 text-accentPink-500" />
+            </div>
             <EnergyShiftSimCostContainer
               label="Selected Tariffs"
               importTariff={importTariff}
