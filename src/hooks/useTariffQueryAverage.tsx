@@ -147,7 +147,11 @@ function useTariffQueryAverage({
         }
       });
     }
-    return newDataByTime;
+
+    const dataByTimeValueArray = newDataByTime.map((data) =>
+      data.count === 0 ? 0 : data.price / data.count
+    );
+    return dataByTimeValueArray;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, tariff, type, gsp, fromDate, toDate, category, daysOfWeek]);
 

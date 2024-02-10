@@ -6,6 +6,7 @@ import {
   gsp,
   TariffCategory,
   IConsumptionData,
+  ITariffToCompare,
 } from "@/data/source";
 
 import { BaseType, Selection, select, timeDays } from "d3";
@@ -401,3 +402,32 @@ export const getDatePeriod = (duration: TDuration = "year") => {
     to,
   };
 };
+
+export const getAllTariffsWithCurrentTariff = (
+  TariffGroup: ITariffToCompare[],
+  currentTariff: string
+) => {
+  const tariffs = [...TariffGroup];
+  if (
+    currentTariff &&
+    !tariffs.some((tariff) => tariff.tariff === currentTariff)
+  )
+    tariffs.push({
+      tariff: currentTariff,
+      type: "E",
+      category: getCategory(currentTariff),
+      cost: null,
+    });
+  return tariffs;
+};
+
+export const calculateSimTotal = (
+  readingByTime: number[] | undefined,
+  rateByTime: number[] | undefined,
+  numOfDays: number
+) =>
+  readingByTime && rateByTime
+    ? (readingByTime.reduce((acc, cur, i) => cur * rateByTime[i] + acc, 0) *
+        numOfDays) /
+      100
+    : undefined;

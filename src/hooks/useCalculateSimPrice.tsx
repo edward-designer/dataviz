@@ -1,6 +1,6 @@
 import { evenRound, getCategory } from "@/utils/helpers";
 import useTariffQueryAverage from "./useTariffQueryAverage";
-import { ISimConsumptionData } from "@/components/octopus/EnergyShiftSimContainer";
+import { useMemo } from "react";
 
 interface IuseCalculateSimPrice {
   tariff: string;
@@ -8,8 +8,8 @@ interface IuseCalculateSimPrice {
   fromDate: string;
   toDate: string;
   daysOfWeek: number[];
-  noOfDays: number;
-  consumption: ISimConsumptionData[];
+  numOfDays: number;
+  consumption: number[];
 }
 
 const useCalculateSimPrice = ({
@@ -18,7 +18,7 @@ const useCalculateSimPrice = ({
   fromDate,
   toDate,
   daysOfWeek,
-  noOfDays,
+  numOfDays,
   consumption,
 }: IuseCalculateSimPrice) => {
   const { dataByTime } = useTariffQueryAverage({
@@ -32,19 +32,15 @@ const useCalculateSimPrice = ({
     daysOfWeek,
   });
 
-  const total =
-    tariff && consumption.length > 0 && dataByTime
-      ? (consumption.reduce(
-          (acc, cur, i) =>
-            (cur.count === 0
-              ? 0
-              : (cur.consumption / cur.count) *
-                (dataByTime[i].price / dataByTime[i].count)) + acc,
-          0
-        ) *
-          noOfDays) /
-        100
-      : undefined;
+  const total = useMemo(
+    () =>
+      tariff && consumption.length > 0 && dataByTime
+        ? (consumption.reduce((acc, cur, i) => cur * dataByTime[i] + acc, 0) *
+            numOfDays) /
+          100
+        : undefined,
+    [tariff, numOfDays, consumption, dataByTime]
+  );
   return total;
 };
 

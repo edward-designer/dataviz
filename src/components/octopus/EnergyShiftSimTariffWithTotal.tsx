@@ -1,5 +1,4 @@
 import useCalculateSimPrice from "@/hooks/useCalculateSimPrice";
-import { ISimConsumptionData } from "./EnergyShiftSimContainer";
 import { formatPriceChangeWithSign } from "@/utils/helpers";
 
 interface IEnergyShiftSimTariffWithTotal {
@@ -8,8 +7,8 @@ interface IEnergyShiftSimTariffWithTotal {
   fromDate: string;
   toDate: string;
   daysOfWeek: number[];
-  noOfDays: number;
-  consumption: ISimConsumptionData[];
+  numOfDays: number;
+  consumption: number[];
 }
 
 const EnergyShiftSimTariffWithTotal = ({
@@ -18,7 +17,7 @@ const EnergyShiftSimTariffWithTotal = ({
   fromDate,
   toDate,
   daysOfWeek,
-  noOfDays,
+  numOfDays,
   consumption,
 }: IEnergyShiftSimTariffWithTotal) => {
   const total = useCalculateSimPrice({
@@ -27,7 +26,7 @@ const EnergyShiftSimTariffWithTotal = ({
     fromDate,
     toDate,
     daysOfWeek,
-    noOfDays,
+    numOfDays,
     consumption,
   });
   console.log(total);

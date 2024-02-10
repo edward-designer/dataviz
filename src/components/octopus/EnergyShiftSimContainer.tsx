@@ -2,21 +2,20 @@
 
 import SliderVertical from "@/components/ui/sliderVertical";
 import { UserContext } from "@/context/user";
-import useConsumptionPattern from "@/hooks/useConsumptionPattern";
 import {
   TDuration,
+  calculateSimTotal,
   capitalize,
   daysDiff,
   evenRound,
   formatNumberToDisplay,
   formatPriceChangeWithSign,
+  getAllTariffsWithCurrentTariff,
   getCategory,
   getDatePeriod,
 } from "@/utils/helpers";
-import { max, median } from "d3";
 import { useContext, useEffect, useMemo, useState } from "react";
 
-import useTariffQueryAverage from "@/hooks/useTariffQueryAverage";
 import EnergyShiftSimEnergyCounter from "./EnergyShiftSimEnergyCounter";
 import FormBattery from "./FormBattery";
 import FormSolar from "./FormSolar";
@@ -28,19 +27,15 @@ import { HiMiniAdjustmentsVertical } from "react-icons/hi2";
 import { TbChartInfographic, TbZoomMoney } from "react-icons/tb";
 
 import { EETARIFFS, ETARIFFS } from "@/data/source";
+import useCalculateSimPrice from "@/hooks/useCalculateSimPrice";
+import useEnergyShiftData from "@/hooks/useEnergyShiftData";
 import { SelectItem } from "../ui/select";
 import EnergyShiftSimCostContainer from "./EnergyShiftSimCostContainer";
 import EnergyShiftSimTariffSelector from "./EnergyShiftSimTariffSelector";
 import EnergyShiftSimTariffWithTotal from "./EnergyShiftSimTariffWithTotal";
 import SimpleLoading from "./SimpleLoading";
-import useCalculateSimPrice from "@/hooks/useCalculateSimPrice";
 
 export type ErrorType = Record<string, string>;
-
-export interface ISimConsumptionData {
-  count: number;
-  consumption: number;
-}
 
 const EnergyShiftSimContainer = () => {
   /* states */
@@ -53,12 +48,8 @@ const EnergyShiftSimContainer = () => {
   }>(getDatePeriod);
   const [daysOfWeek, setDaysOfWeek] = useState([1, 2, 3, 4, 5]);
 
-  const [adjustedConsumption, setAdjustedConsumption] = useState<
-    ISimConsumptionData[]
-  >([]);
-  const [adjustedExport, setAdjustedExport] = useState<ISimConsumptionData[]>(
-    []
-  );
+  const [adjustedConsumption, setAdjustedConsumption] = useState<number[]>([]);
+  const [adjustedExport, setAdjustedExport] = useState<number[]>([]);
 
   const [importTariff, setImportTariff] = useState<string>("");
   const [exportTariff, setExportTariff] = useState<string>("");
@@ -71,91 +62,56 @@ const EnergyShiftSimContainer = () => {
   /* derived states */
   const isExporting = !!(value.EESerialNo && value.EMPAN);
 
-  const importTariffs = [...ETARIFFS];
-  if (
-    value.currentETariff &&
-    !importTariffs.some((tariff) => tariff.tariff === value.currentETariff)
-  )
-    importTariffs.push({
-      tariff: value.currentETariff,
-      type: "E",
-      category: getCategory(value.currentETariff),
-      cost: null,
-    });
-
-  const exportTariffs = [...EETARIFFS];
-  if (
-    value.currentEETariff &&
-    !exportTariffs.some((tariff) => tariff.tariff === value.currentEETariff)
-  )
-    exportTariffs.push({
-      tariff: value.currentEETariff,
-      type: "E",
-      category: getCategory(value.currentEETariff),
-      cost: null,
-    });
+  const importTariffs = useMemo(
+    () => getAllTariffsWithCurrentTariff(ETARIFFS, value.currentETariff),
+    [value.currentETariff]
+  );
+  const exportTariffs = useMemo(
+    () => getAllTariffsWithCurrentTariff(EETARIFFS, value.currentEETariff),
+    [value.currentEETariff]
+  );
 
   /* get data from API */
-  const { dataByTime } = useConsumptionPattern({
+  const {
+    dataByTime: dataByTimeImport,
+    dataByTimeTariff: dataByTimeImportTariff,
+    maxValue: maxConsumption,
+    totalValue: totalConsumption,
+    avgTariffPrice: avgImportPrice,
+  } = useEnergyShiftData({
     fromDate: period.from.toUTCString(),
     toDate: period.to.toUTCString(),
     type: "E",
     deviceNumber: value.MPAN,
     serialNo: value.ESerialNo,
     daysOfWeek,
+    tariff: importTariff,
+    gsp: value.gsp,
   });
 
-  const { dataByTime: dataByTimeExport } = useConsumptionPattern({
+  const {
+    dataByTime: dataByTimeExport,
+    dataByTimeTariff: dataByTimeExportTariff,
+    maxValue: maxExport,
+    totalValue: totalExport,
+    avgTariffPrice: avgExportPrice,
+  } = useEnergyShiftData({
     fromDate: period.from.toUTCString(),
     toDate: period.to.toUTCString(),
     type: "E",
     deviceNumber: value.EMPAN,
     serialNo: value.EESerialNo,
     daysOfWeek,
-  });
-
-  const { dataByTime: dataByTimeImportTariff } = useTariffQueryAverage({
-    tariff: importTariff,
-    type: "E",
-    gsp: value.gsp,
-    fromDate: period.from.toUTCString(),
-    toDate: period.to.toUTCString(),
-    category: getCategory(importTariff),
-    enabled: importTariff !== "",
-    daysOfWeek,
-  });
-
-  const { dataByTime: dataByTimeExportTariff } = useTariffQueryAverage({
     tariff: exportTariff,
-    type: "E",
     gsp: value.gsp,
-    fromDate: period.from.toUTCString(),
-    toDate: period.to.toUTCString(),
-    category: getCategory(exportTariff),
-    enabled: exportTariff !== "",
-    daysOfWeek,
   });
-
-  const maxConsumption = useMemo(() => {
-    if (dataByTime)
-      return max(dataByTime, (d) =>
-        d.count === 0 ? 0 : d.consumption / d.count
-      );
-  }, [dataByTime]);
-
-  const maxExport = useMemo(() => {
-    if (dataByTimeExport)
-      return max(dataByTimeExport, (d) =>
-        d.count === 0 ? 0 : d.consumption / d.count
-      );
-  }, [dataByTimeExport]);
 
   const absoluteMax = Math.max(maxConsumption ?? 0, maxExport ?? 0);
 
-  const noOfDays = daysDiff(period.from, period.to);
+  const numOfDays = daysDiff(period.from, period.to);
   const calculationDuration =
     capitalize(period.duration) === "Custom"
-      ? `${noOfDays}-Day`
+      ? `${numOfDays}-Day`
       : `${capitalize(period.duration)}ly`;
 
   const cost = useCalculateSimPrice({
@@ -164,17 +120,16 @@ const EnergyShiftSimContainer = () => {
     fromDate: period.from.toUTCString(),
     toDate: period.to.toUTCString(),
     daysOfWeek,
-    noOfDays,
-    consumption: dataByTime ?? [],
+    numOfDays,
+    consumption: dataByTimeImport ?? [],
   });
-
   const earning = useCalculateSimPrice({
     tariff: value.currentEETariff,
     gsp: value.gsp,
     fromDate: period.from.toUTCString(),
     toDate: period.to.toUTCString(),
     daysOfWeek,
-    noOfDays,
+    numOfDays,
     consumption: dataByTimeExport ?? [],
   });
 
@@ -197,14 +152,10 @@ const EnergyShiftSimContainer = () => {
   }, [value.currentEETariff]);
 
   useEffect(() => {
-    if (dataByTime) {
-      setAdjustedConsumption(dataByTime);
+    if (dataByTimeImport) {
+      setAdjustedConsumption(dataByTimeImport);
     }
-  }, [dataByTime]);
-
-  useEffect(() => {
-    setHasExport(isExporting);
-  }, [isExporting]);
+  }, [dataByTimeImport]);
 
   useEffect(() => {
     if (dataByTimeExport) {
@@ -212,22 +163,18 @@ const EnergyShiftSimContainer = () => {
     }
   }, [dataByTimeExport]);
 
+  useEffect(() => {
+    setHasExport(isExporting);
+  }, [isExporting]);
+
   /* handlers */
   const valueCommitHandler = (index: number) => (value: number[]) => {
     setAdjustedConsumption((prevConsumption) => {
       const nextConsumption = [...prevConsumption];
-      nextConsumption[index] = {
-        count:
-          nextConsumption[index].count === 0 ? 1 : nextConsumption[index].count,
-        consumption:
-          nextConsumption[index].count === 0
-            ? value[0] / 1000
-            : (value[0] * nextConsumption[index].count) / 1000,
-      };
+      nextConsumption[index] = value[0] / 1000;
       return nextConsumption;
     });
   };
-
   const valueCommitHandlerArray = useMemo(
     () => Array.from({ length: 48 }).map((_, i) => valueCommitHandler(i)),
     []
@@ -236,119 +183,41 @@ const EnergyShiftSimContainer = () => {
   const exportValueCommitHandler = (index: number) => (value: number[]) => {
     setAdjustedExport((prevExport) => {
       const nextExport = [...prevExport];
-      nextExport[index] = {
-        count: nextExport[index].count === 0 ? 1 : nextExport[index].count,
-        consumption:
-          nextExport[index].count === 0
-            ? value[0] / 1000
-            : (value[0] * nextExport[index].count) / 1000,
-      };
+      nextExport[index] = value[0] / 1000;
       return nextExport;
     });
   };
-
   const exportValueCommitHandlerArray = useMemo(
     () => Array.from({ length: 48 }).map((_, i) => exportValueCommitHandler(i)),
     []
   );
 
   /* loading while waiting */
-  if (!dataByTime) return <Loading />;
+  if (!dataByTimeImport) return <Loading />;
   if (hasExport && !dataByTimeExport) return <Loading />;
   if (adjustedConsumption.length === 0 || maxConsumption === undefined)
     return <Loading />;
 
-  /* derived state from loaded data */
+  /* derived from state */
   const totalAllocated = evenRound(
-    adjustedConsumption.reduce(
-      (acc, cur) => acc + (cur.count === 0 ? 0 : cur.consumption / cur.count),
-      0
-    ) * 1000,
+    adjustedConsumption.reduce((acc, cur) => acc + cur, 0) * 1000,
     0
   );
-
-  const totalConsumption = evenRound(
-    dataByTime.reduce(
-      (acc, cur) => acc + (cur.count === 0 ? 0 : cur.consumption / cur.count),
-      0
-    ) * 1000,
-    0
-  );
-
   const totalAllocatedExport = evenRound(
-    adjustedExport.reduce(
-      (acc, cur) => acc + (cur.count === 0 ? 0 : cur.consumption / cur.count),
-      0
-    ) * 1000,
+    adjustedExport.reduce((acc, cur) => acc + cur, 0) * 1000,
     0
   );
 
-  const totalExport = dataByTimeExport
-    ? evenRound(
-        dataByTimeExport.reduce(
-          (acc, cur) =>
-            acc + (cur.count === 0 ? 0 : cur.consumption / cur.count),
-          0
-        ) * 1000,
-        0
-      )
-    : 0;
-
-  const avgImportPrice =
-    getCategory(importTariff) === "Agile"
-      ? (dataByTimeImportTariff?.reduce(
-          (acc, cur) => acc + (cur.count === 0 ? 0 : cur.price / cur.count),
-          0
-        ) ?? 0) / 48
-      : dataByTimeImportTariff
-      ? median(
-          dataByTimeImportTariff?.map((data) =>
-            data.count === 0 ? 0 : data.price / data.count
-          )
-        )
-      : 0;
-
-  const avgExportPrice =
-    getCategory(exportTariff) === "Agile"
-      ? (dataByTimeExportTariff?.reduce(
-          (acc, cur) => acc + cur.price / cur.count,
-          0
-        ) ?? 0) / 48
-      : dataByTimeExportTariff
-      ? median(
-          dataByTimeExportTariff?.map((data) =>
-            data.count === 0 ? 0 : data.price / data.count
-          )
-        )
-      : 0;
-
-  /* cost calculation */
-  const adjustedCost =
-    adjustedConsumption && dataByTimeImportTariff
-      ? (adjustedConsumption.reduce(
-          (acc, cur, i) =>
-            (cur.count === 0 ? 0 : cur.consumption / cur.count) *
-              (dataByTimeImportTariff[i].price /
-                dataByTimeImportTariff[i].count) +
-            acc,
-          0
-        ) *
-          noOfDays) /
-        100
-      : undefined;
-  const adjustedEarning =
-    adjustedExport && dataByTimeExportTariff
-      ? (adjustedExport.reduce(
-          (acc, cur, i) =>
-            (cur.count === 0 ? 0 : cur.consumption / cur.count) *
-              (dataByTimeExportTariff[i].price /
-                dataByTimeExportTariff[i].count) +
-            acc,
-          0
-        ) *
-          noOfDays) /
-        100
-      : undefined;
+  const adjustedCost = calculateSimTotal(
+    adjustedConsumption,
+    dataByTimeImportTariff,
+    numOfDays
+  );
+  const adjustedEarning = calculateSimTotal(
+    adjustedExport,
+    dataByTimeExportTariff,
+    numOfDays
+  );
 
   const difference = isExporting ? (
     currentFigures.cost !== undefined &&
@@ -384,9 +253,8 @@ const EnergyShiftSimContainer = () => {
         />
       </div>
       <h3 className="flex items-center gap-3 text-accentBlue-500">
-        <HiMiniAdjustmentsVertical className="w-6 h-6" /> Shift daily
-        energy use pattern to maximize saving! VAT inclusive; standing charge
-        excluded.
+        <HiMiniAdjustmentsVertical className="w-6 h-6" /> Shift daily energy use
+        pattern to maximize saving! VAT inclusive; standing charge excluded.
       </h3>
       <div className="flex flex-row justify-between items-center gap-5 flex-wrap bg-theme-900 rounded-2xl p-4">
         <EnergyShiftSimEnergyCounter
@@ -394,7 +262,6 @@ const EnergyShiftSimContainer = () => {
           total={totalConsumption}
           isExport={false}
         />
-
         {hasExport && (
           <EnergyShiftSimEnergyCounter
             use={totalAllocatedExport}
@@ -402,7 +269,6 @@ const EnergyShiftSimContainer = () => {
             isExport={true}
           />
         )}
-
         {!hasExport && (
           <div className="flex flex-row gap-2 items-center">
             <FormSolar open={solarFormOpen} setOpen={setSolarFormOpen} />
@@ -426,7 +292,7 @@ const EnergyShiftSimContainer = () => {
                 fromDate={period.from.toUTCString()}
                 toDate={period.to.toUTCString()}
                 daysOfWeek={daysOfWeek}
-                noOfDays={noOfDays}
+                numOfDays={numOfDays}
                 consumption={adjustedConsumption}
               />
             </SelectItem>
@@ -448,7 +314,7 @@ const EnergyShiftSimContainer = () => {
                   fromDate={period.from.toUTCString()}
                   toDate={period.to.toUTCString()}
                   daysOfWeek={daysOfWeek}
-                  noOfDays={noOfDays}
+                  numOfDays={numOfDays}
                   consumption={adjustedExport}
                 />
               </SelectItem>,
@@ -469,9 +335,7 @@ const EnergyShiftSimContainer = () => {
               key={i}
             >
               <SliderVertical
-                defaultValue={Math.round(
-                  data.count === 0 ? 0 : (1000 * data.consumption) / data.count
-                )}
+                defaultValue={Math.round(1000 * data)}
                 max={Math.round(absoluteMax * 1.5 * 1000)}
                 min={0}
                 step={1}
@@ -490,22 +354,12 @@ const EnergyShiftSimContainer = () => {
                 onValueCommit={valueCommitHandlerArray[i]}
                 disabled={false}
                 avgPrice={avgImportPrice}
-                price={
-                  dataByTimeImportTariff
-                    ? dataByTimeImportTariff?.[i].price /
-                      dataByTimeImportTariff?.[i].count
-                    : undefined
-                }
+                price={dataByTimeImportTariff?.[i]}
                 category={getCategory(importTariff)}
               />
               {hasExport && (
                 <SliderVertical
-                  defaultValue={Math.round(
-                    adjustedExport[i]?.count === 0
-                      ? 0
-                      : (1000 * adjustedExport[i]?.consumption) /
-                          adjustedExport[i]?.count
-                  )}
+                  defaultValue={Math.round(adjustedExport[i] * 1000)}
                   max={Math.round(absoluteMax * 1.5 * 1000)}
                   min={0}
                   step={1}
@@ -526,12 +380,7 @@ const EnergyShiftSimContainer = () => {
                   isExport={true}
                   inverted={true}
                   avgPrice={avgExportPrice}
-                  price={
-                    dataByTimeExportTariff
-                      ? dataByTimeExportTariff?.[i].price /
-                        dataByTimeExportTariff?.[i].count
-                      : undefined
-                  }
+                  price={dataByTimeExportTariff?.[i]}
                   category={getCategory(exportTariff)}
                 />
               )}

@@ -5,8 +5,10 @@ import { getDate } from "@/utils/helpers";
 import { useContext, useMemo } from "react";
 import useConsumptionData from "./useConsumptionData";
 
-import { ISimConsumptionData } from "@/components/octopus/EnergyShiftSimContainer";
-
+export interface ISimConsumptionData {
+  count: number;
+  consumption: number;
+}
 export type IConsumptionPattern = {
   deviceNumber: string;
   serialNo: string;
@@ -47,7 +49,7 @@ const useConsumptionPattern = (inputs: IConsumptionPattern) => {
     serialNo,
     apiKey: value.apiKey,
   });
-  console.log(data);
+
   const dataByTime = useMemo(() => {
     const newDataByTime = Array.from({ length: 48 }).fill({
       count: 0,
@@ -73,7 +75,12 @@ const useConsumptionPattern = (inputs: IConsumptionPattern) => {
         };
       });
     }
-    return newDataByTime;
+
+    const dataByTimeValueArray = newDataByTime.map((data) =>
+      data.count === 0 ? 0 : data.consumption / data.count
+    );
+
+    return dataByTimeValueArray;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     data,
