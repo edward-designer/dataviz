@@ -29,7 +29,7 @@ const EnergyShiftSimTariffWithTotal = ({
     numOfDays,
     consumption,
   });
-  console.log(total);
+
   return `${
     typeof total === "number" && !isNaN(total)
       ? `[${formatPriceChangeWithSign(total, false)}] `

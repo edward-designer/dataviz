@@ -6,6 +6,8 @@ import {
 import { BiExport, BiImport } from "react-icons/bi";
 import { RiMoneyPoundBoxLine } from "react-icons/ri";
 import SimpleLoading from "./SimpleLoading";
+import { useContext } from "react";
+import { WindowResizeContext } from "@/context/windowResize";
 
 interface IEnergyShiftSimCostContainer {
   label: string;

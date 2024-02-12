@@ -293,6 +293,17 @@ const Menu = () => {
               Compare <span className="text-lg">Tariffs</span>
             </Link>
             <Link
+              href="/tariffHopping"
+              className={`block my-4  ${
+                pathname === "/tariffHopping"
+                  ? "cursor-default text-accentBlue-900"
+                  : "hover:text-accentPink-500"
+              }`}
+            >
+              <Badge label="beta" /> <span className="text-lg">Tariff </span>
+              Hopping
+            </Link>
+            <Link
               href="/compareTracker"
               className={`block my-4  ${
                 pathname === "/compareTracker"

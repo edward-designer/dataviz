@@ -476,3 +476,9 @@ export const trackerUnitPriceIncrease2023: Record<
   _N: { E: 2.2051, G: 0.2331 },
   _P: { E: 2.6551, G: 0.2331 },
 };
+
+export interface IPeriod {
+  duration: TDuration | "custom";
+  from: Date;
+  to: Date;
+}

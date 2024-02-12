@@ -14,6 +14,8 @@ import { UserContext } from "@/context/user";
 import { getCategory } from "@/utils/helpers";
 import Link from "next/link";
 import EarningChart from "./EarningChart";
+import Notice from "./Notice";
+import { TbBulb } from "react-icons/tb";
 
 const SavingsCalculation = () => {
   const { value, setValue } = useContext(UserContext);
@@ -86,6 +88,19 @@ const SavingsCalculation = () => {
               </Remark>
             </div>
           </div>
+          <Notice>
+            <TbBulb className="w-8 h-8 text-[#f8ec20] shrink-0" />
+            <div>
+              Wanna save even more? Use the brand new{" "}
+              <Link
+                href="/tariffHopping"
+                className="text-accentPink-500 underline hover:text-accentBlue-500 hover:no-underline"
+              >
+                Tariff Hopping
+              </Link>{" "}
+              tool to optimize tariff switching throughout the year!
+            </div>
+          </Notice>
           {value.EMPAN &&
             value.EESerialNo &&
             typeof value.currentEEContract !== "undefined" && (

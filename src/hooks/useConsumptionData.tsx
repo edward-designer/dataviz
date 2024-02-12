@@ -45,11 +45,26 @@ const useConsumptionData = (inputs: IUseConsumptionData) => {
     ? "halfhour"
     : "day";
 
+  // octopus api only accept date string in ISO format with the milliseconds format (i.e. without .000)
   const queryFn = async () => {
     const url =
       category === "Chart"
-        ? `https://api.octopus.energy/v1/${ENERGY_TYPE[type]}-meter-points/${deviceNumber}/meters/${serialNo}/consumption/?period_from=${fromISODate}&period_to=${toISODate}&page_size=25000${groupBy[category]}`
-        : `https://api.octopus.energy/v1/${ENERGY_TYPE[type]}-meter-points/${deviceNumber}/meters/${serialNo}/consumption/?period_from=${fromISODate}&page_size=25000${groupBy[category]}`;
+        ? `https://api.octopus.energy/v1/${
+            ENERGY_TYPE[type]
+          }-meter-points/${deviceNumber}/meters/${serialNo}/consumption/?period_from=${fromISODate.replace(
+            ".000",
+            ""
+          )}&period_to=${toISODate.replace(".000", "")}&page_size=25000${
+            groupBy[category]
+          }`
+        : `https://api.octopus.energy/v1/${
+            ENERGY_TYPE[type]
+          }-meter-points/${deviceNumber}/meters/${serialNo}/consumption/?period_from=${fromISODate.replace(
+            ".000",
+            ""
+          )}&period_to=${toISODate.replace(".000", "")}&page_size=25000${
+            groupBy[category]
+          }`;
     try {
       // page_size 25000 is a year's data
       const response = await fetch(url, {

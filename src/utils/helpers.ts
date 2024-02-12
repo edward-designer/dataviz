@@ -449,3 +449,13 @@ export const checkGoodBadTime = (
 
   return "";
 };
+
+export const getUnderlyingTariff = (tariff: string) => {
+  const underlyingTariff =
+    getCategory(tariff) === "Agile"
+      ? "AGILE-FLEX-22-11-25"
+      : getCategory(tariff) === "Tracker"
+      ? "SILVER-FLEX-22-11-25"
+      : tariff;
+  return underlyingTariff;
+};

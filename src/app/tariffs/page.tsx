@@ -177,7 +177,7 @@ const About = () => {
                   Fixed Import
                   <span className="flex text-xs text-theme-300 gap-1 items-center">
                     <FiAlertTriangle className="w-3 h-3 min-w-3 shrink-0 text-yellow-500" />
-                    exit fee applies
+                    NO exit fee from Feb 2024
                   </span>
                 </a>
               </td>
@@ -264,8 +264,8 @@ const About = () => {
               <td>{cross}</td>
               <td>{cross}</td>
               <td>{cross}</td>
-              <td>{cross}</td>
               <td className="bg-theme-900">{tick}</td>
+              <td>{cross}</td>
             </tr>
             <tr className="flex [&>td]:flex-1 [&>td]:p-1 [&>td]:py-4 [&>td]:flex [&>td]:leading-tight [&>td]:text-center [&>td]:items-center [&>td]:justify-center [&>td]:min-h-16 divide-x divide-y divide-theme-700 divide-dashed">
               <td>
