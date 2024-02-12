@@ -137,7 +137,7 @@ const TariffHoppingToolContainer = () => {
       </div>
       <h2 className="text-accentPink-600 font-display text-4xl flex items-center gap-3 mb-3">
         <TbChartInfographic className="w-8 h-8" />
-        Monthly Net Energy Cost
+        My Net Energy Cost
       </h2>
       <div className="flex flex-col gap-2">
         <TrafficHoppingToolSelector

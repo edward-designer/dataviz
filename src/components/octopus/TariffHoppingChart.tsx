@@ -128,7 +128,7 @@ const TariffHoppingChart = ({
   let widgetHeight = 450;
   const fontSize = 12;
   const leadingSize = fontSize * 1.5;
-  const padding = { top: 40, bottom: 60, left: 65, right: 15 };
+  const padding = { top: 40, bottom: 60, left: 60, right: 15 };
   const axisColor = "#63acb8";
 
   const dataByTimeImportInPounds =
@@ -214,7 +214,9 @@ const TariffHoppingChart = ({
         // eslint-disable-next-line react-hooks/exhaustive-deps
         (document
           .getElementById(`tariffHoppingContainer`)
-          ?.getBoundingClientRect().width ?? widgetWidth) - padding.right;
+          ?.getBoundingClientRect().width ?? widgetWidth) -
+        padding.right -
+        20;
     }
     const chart = select(svgRef.current) as Selection<
       SVGSVGElement,
@@ -315,7 +317,7 @@ const TariffHoppingChart = ({
         .attr("y", 0)
         .attr("text-anchor", "start")
         .attr("alignment-basline", "baseline")
-        .attr("font-size", "12")
+        .attr("font-size", "14")
         .attr("fill", axisColor);
     };
 
