@@ -50,16 +50,18 @@ const TariffHoppingToolContainer = () => {
   /* derived states */
   const isExporting = !!(value.EESerialNo && value.EMPAN);
 
-  if (isExporting) {
-    setImportTariff2(
-      ETARIFFS.filter((tariff) => tariff.category === "IFlux")?.[0].tariff ??
-        "INTELLI-FLUX-IMPORT-23-07-14"
-    );
-    setExportTariff2(
-      EETARIFFS.filter((tariff) => tariff.category === "IFlux")?.[0].tariff ??
-        "INTELLI-FLUX-EXPORT-23-07-14"
-    );
-  }
+  useEffect(() => {
+    if (isExporting) {
+      setImportTariff2(
+        ETARIFFS.filter((tariff) => tariff.category === "IFlux")?.[0].tariff ??
+          "INTELLI-FLUX-IMPORT-23-07-14"
+      );
+      setExportTariff2(
+        EETARIFFS.filter((tariff) => tariff.category === "IFlux")?.[0].tariff ??
+          "INTELLI-FLUX-EXPORT-23-07-14"
+      );
+    }
+  }, [isExporting]);
 
   const importTariffs = useMemo(
     () => getAllTariffsWithCurrentTariff(ETARIFFS, value.currentETariff),
