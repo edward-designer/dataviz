@@ -506,7 +506,7 @@ const TariffHoppingChart = ({
             <div className="flex justify-center">
               <table
                 cellPadding={4}
-                className="w-full lg:w-1/2 border-2 border-dotted border-slate-800"
+                className="w-full lg:w-1/2 border-t-2 border-b-2 border-dotted border-slate-800"
               >
                 <caption className="font-display text-3xl text-accentPink-500 mb-3">
                   Comparision of Costs of Tariff Sets{" "}
@@ -517,10 +517,10 @@ const TariffHoppingChart = ({
                 <thead>
                   <tr className="border-b-2 border-dotted border-slate-800">
                     <th>Month</th>
-                    <th className="font-display text-2xl text-green-700 border-l-2 border-l-green-700">
+                    <th className="font-display text-2xl text-green-700 border-l-4 border-l-green-700">
                       Set 1
                     </th>
-                    <th className="font-display text-2xl text-slate-500 border-l-2 border-l-slate-500">
+                    <th className="font-display text-2xl text-slate-500 border-l-4 border-l-slate-500">
                       Set 2
                     </th>
                   </tr>
@@ -533,7 +533,7 @@ const TariffHoppingChart = ({
                     >
                       <td className="text-center">{month}</td>
                       <td
-                        className={`text-center border-l-2 border-l-green-700 ${
+                        className={`text-center border-l-4 border-l-green-700 ${
                           dataByTimeResultsInPounds[i] <
                           dataByTimeResultsInPounds2[i]
                             ? "bg-green-700"
@@ -546,7 +546,7 @@ const TariffHoppingChart = ({
                         )}
                       </td>
                       <td
-                        className={`text-center border-l-2 border-l-slate-500 ${
+                        className={`text-center border-l-4 border-l-slate-500 ${
                           dataByTimeResultsInPounds[i] >
                           dataByTimeResultsInPounds2[i]
                             ? "bg-slate-500"
