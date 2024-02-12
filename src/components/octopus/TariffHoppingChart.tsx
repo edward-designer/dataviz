@@ -509,7 +509,10 @@ const TariffHoppingChart = ({
                 className="w-full lg:w-1/2 border-2 border-dotted border-slate-800"
               >
                 <caption className="font-display text-3xl text-accentPink-500 mb-3">
-                  Comparision of Tariff Sets
+                  Comparision of Costs of Tariff Sets{" "}
+                  <span className="block font-sans text-base text-accentBlue-500">
+                    (&quot;-£&quot; means credit)
+                  </span>
                 </caption>
                 <thead>
                   <tr className="border-b-2 border-dotted border-slate-800">
@@ -538,7 +541,8 @@ const TariffHoppingChart = ({
                         }`}
                       >
                         {formatPriceChangeWithSign(
-                          dataByTimeResultsInPounds[i]
+                          dataByTimeResultsInPounds[i],
+                          false
                         )}
                       </td>
                       <td
@@ -550,7 +554,8 @@ const TariffHoppingChart = ({
                         }`}
                       >
                         {formatPriceChangeWithSign(
-                          dataByTimeResultsInPounds2[i]
+                          dataByTimeResultsInPounds2[i],
+                          false
                         )}
                       </td>
                     </tr>

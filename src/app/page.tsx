@@ -45,11 +45,11 @@ const Home = () => {
     <div className="lg:col-[content] my-4 flex justify-start items-center relative z-0">
       <div className="max-w-full w-full md:w-[75%] min-w-[300px] z-10 mt-20 lg:mt-0 mb-20">
         <div className="lg:pl-6 lg:translate-y-3 text-sm font-extralight mb-1">
-          Help you to compare and select the best Octopus Energy electicity, gas and export tariffs
+          Help you compare and select the BEST Octopus Energy electicity, gas and export tariffs
           for both Android and iPhone users.
           <br />
           <strong className="font-bold">
-            Today&apos;s Cheapest Energy Price:
+            Today&apos;s Cheapest Energy Prices:
           </strong>
         </div>
         <div className="flex gap-2 lg:p-4 flex-col lg:flex-row flex-wrap">
