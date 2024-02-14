@@ -1063,7 +1063,7 @@ const DataArtContainer = () => {
         .text(
           `(current tariff from ${new Date(
             currentGContract?.valid_from ?? ""
-          ).toLocaleDateString()})`
+          ).toLocaleDateString("en-GB")})`
         );
       infoContainer
         .append("path")
@@ -1088,7 +1088,7 @@ const DataArtContainer = () => {
         .text(
           `(current tariff from ${new Date(
             currentEContract?.valid_from ?? ""
-          ).toLocaleDateString()})`
+          ).toLocaleDateString("en-GB")})`
         );
       infoContainer
         .append("path")

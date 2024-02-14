@@ -79,49 +79,49 @@ const PricePaneAgile = ({
   const nextPeriodLabel = {
     IGo: `NEXT: ${new Date(
       results[priceNowIndex - 1]?.valid_from ?? ""
-    ).toLocaleTimeString([], {
+    ).toLocaleTimeString("en-GB", {
       hour: "2-digit",
       minute: "2-digit",
     })} - ${new Date(
       results[priceNowIndex - 1]?.valid_to ?? ""
-    ).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
+    ).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}`,
     Go: `NEXT: ${new Date(
       results[priceNowIndex - 1]?.valid_from ?? ""
-    ).toLocaleTimeString([], {
+    ).toLocaleTimeString("en-GB", {
       hour: "2-digit",
       minute: "2-digit",
     })} - ${new Date(
       results[priceNowIndex - 1]?.valid_to ?? ""
-    ).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
+    ).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}`,
     Agile: "Next 1/2 hr",
     Tracker: "",
     SVT: "",
     Fixed: "",
     Cosy: `NEXT: ${new Date(
       results[priceNowIndex - 1]?.valid_from ?? ""
-    ).toLocaleTimeString([], {
+    ).toLocaleTimeString("en-GB", {
       hour: "2-digit",
       minute: "2-digit",
     })} - ${new Date(
       results[priceNowIndex - 1]?.valid_to ?? ""
-    ).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
+    ).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}`,
     Chart: "",
     IFlux: `NEXT: ${new Date(
       results[priceNowIndex - 1]?.valid_from ?? ""
-    ).toLocaleTimeString([], {
+    ).toLocaleTimeString("en-GB", {
       hour: "2-digit",
       minute: "2-digit",
     })} - ${new Date(
       results[priceNowIndex - 1]?.valid_to ?? ""
-    ).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
+    ).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}`,
     Flux: `NEXT: ${new Date(
       results[priceNowIndex - 1]?.valid_from ?? ""
-    ).toLocaleTimeString([], {
+    ).toLocaleTimeString("en-GB", {
       hour: "2-digit",
       minute: "2-digit",
     })} - ${new Date(
       results[priceNowIndex - 1]?.valid_to ?? ""
-    ).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
+    ).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}`,
   };
   const note =
     "The rates from 11pm today till tomorrow are usually available at 4.00pm. Please revisit this page later to get the updates.";

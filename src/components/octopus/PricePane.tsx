@@ -54,7 +54,7 @@ const PricePane = ({
     setLastShownDate,
   } = useContext(LastShownContext);
 
-  const todayDate = new Date().toLocaleDateString();
+  const todayDate = new Date().toLocaleDateString("en-GB");
   const results = data?.[0]?.results ?? [];
 
   const priceTodayIndex = results.findIndex((data) =>
@@ -112,7 +112,7 @@ const PricePane = ({
   useEffect(() => {
     if (
       priceTomorrow !== "--" &&
-      new Date().toLocaleDateString() !== lastShownDate
+      new Date().toLocaleDateString("en-GB") !== lastShownDate
     ) {
       toast(
         `Update: ${ENERGY_TYPE[type]} rate tomorrow is ${priceTomorrow}p (${
@@ -124,7 +124,7 @@ const PricePane = ({
       );
       setLastShownDate((value) => ({
         ...value,
-        [type]: new Date().toLocaleDateString(),
+        [type]: new Date().toLocaleDateString("en-GB"),
       }));
     }
   }, [
@@ -155,7 +155,7 @@ const PricePane = ({
             <EnergyIcon type={type} />
             <div className="flex flex-1 self-start flex-col">
               <Badge
-                label={`Today @ ${new Date().toLocaleString()}`}
+                label={`Today @ ${new Date().toLocaleString("en-GB")}`}
                 variant="secondary"
               />
               <div className="font-digit text-6xl text-white flex flex-col items-start gap-1">

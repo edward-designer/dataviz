@@ -192,7 +192,7 @@ const DashboardPricePane = ({
                             {new Date(result.valid_from) < dayStart
                               ? "00:00"
                               : new Date(result.valid_from).toLocaleTimeString(
-                                  [],
+                                  "en-GB",
                                   { hour: "2-digit", minute: "2-digit" }
                                 )}
                             {` - `}
@@ -200,7 +200,7 @@ const DashboardPricePane = ({
                             new Date(result.valid_to) > dayEnd
                               ? "24:00"
                               : new Date(result.valid_to).toLocaleTimeString(
-                                  [],
+                                  "en-GB",
                                   {
                                     hour: "2-digit",
                                     minute: "2-digit",

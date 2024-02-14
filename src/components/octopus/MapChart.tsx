@@ -105,14 +105,14 @@ const MapChart = ({
     if (rate === "standard_unit_rate_inc_vat") {
       const validDate = new Date(
         data[0].tariffs_active_at as string
-      ).toLocaleDateString();
+      ).toLocaleDateString("en-GB");
       const updateDate =
-        validDate === new Date().toLocaleDateString()
+        validDate === new Date().toLocaleDateString("en-GB")
           ? `Today (${validDate})`
           : validDate ===
             new Date(
               new Date().setDate(new Date().getDate() - 1)
-            ).toLocaleDateString()
+            ).toLocaleDateString("en-GB")
           ? `Yesterday (${validDate})`
           : `Updated at ${validDate}`;
       svg.select(".info").text(updateDate);

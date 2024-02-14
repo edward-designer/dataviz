@@ -93,7 +93,7 @@ const MissingDataToolContainer = () => {
         />
       </div>
       <div className="flex flex-col">
-        <div className="flex ml-6 z-50 relative">
+        <div className="flex ml-6 z-30 relative">
           {hasEExport && (
             <Button
               className={`border-t border-l border-r rounded-t-xl rounded-b-none ${

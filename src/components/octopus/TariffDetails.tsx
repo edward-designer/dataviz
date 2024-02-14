@@ -77,12 +77,12 @@ const TariffDetails = ({
         <span className="inline-block md:w-[90px] text-accentBlue-500 text-[12px] font-bold">
           Duration:
         </span>
-        {new Date(valid_from).toLocaleDateString()}
+        {new Date(valid_from).toLocaleDateString("en-GB")}
         {valid_to ? (
           <>
             <IoMdArrowDropright />
             <span className="text-accentPink-300">
-              {new Date(valid_to).toLocaleDateString()}
+              {new Date(valid_to).toLocaleDateString("en-GB")}
             </span>
           </>
         ) : (

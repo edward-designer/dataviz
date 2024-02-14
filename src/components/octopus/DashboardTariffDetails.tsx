@@ -66,12 +66,12 @@ const DashboardTariffDetails = ({
           <span className="inline-block w-[100px] text-accentBlue-500 text-[12px] font-light">
             Duration:
           </span>
-          {new Date(valid_from).toLocaleDateString()}
+          {new Date(valid_from).toLocaleDateString("en-GB")}
           {valid_to ? (
             <>
               <IoMdArrowDropright />
               <span className="text-accentPink-300">
-                {new Date(valid_to).toLocaleDateString()}
+                {new Date(valid_to).toLocaleDateString("en-GB")}
               </span>
             </>
           ) : (

@@ -136,7 +136,7 @@ const FormSolar = ({ open, setOpen }: IFormSolar) => {
                 <InfoInput
                   key={i}
                   label={`${new Date(new Date().setMonth(i)).toLocaleDateString(
-                    "gb-EN",
+                    "en-GB",
                     { month: "long" }
                   )}:`}
                   type="number"

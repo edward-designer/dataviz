@@ -810,8 +810,8 @@ const BrushChart = ({
           .attr("alignment-baseline", "hanging")
           .text(
             intelligentTariffs.includes(category)
-              ? xValue.toLocaleString()
-              : xValue.toLocaleDateString()
+              ? xValue.toLocaleString("en-GB")
+              : xValue.toLocaleDateString("en-GB")
           );
         chart
           .select(".price")

@@ -286,7 +286,8 @@ const SwitchTariffs = () => {
               </p>
               <ol className="list-decimal ml-5 flex flex-col mt-4 gap-5">
                 <li>
-                  register and download your consumption data via a 3rd-party app{" "}
+                  register and download your consumption data via a 3rd-party
+                  app{" "}
                   <a
                     className="text-3xl text-accentPink-500 hover:text-accentBlue-500"
                     href="https://www.n3rgy.com/"
@@ -431,11 +432,11 @@ const SwitchTariffs = () => {
                       (
                       {new Date(
                         uploadedEData.results.at(-1)?.interval_start ?? ""
-                      ).toLocaleDateString()}{" "}
+                      ).toLocaleDateString("en-GB")}{" "}
                       -{" "}
                       {new Date(
                         uploadedEData.results.at(0)?.interval_start ?? ""
-                      ).toLocaleDateString()}
+                      ).toLocaleDateString("en-GB")}
                       )
                     </span>
                   </h2>
@@ -491,11 +492,11 @@ const SwitchTariffs = () => {
                       (
                       {new Date(
                         uploadedGData.results.at(-1)?.interval_start ?? ""
-                      ).toLocaleDateString()}{" "}
+                      ).toLocaleDateString("en-GB")}{" "}
                       -{" "}
                       {new Date(
                         uploadedGData.results.at(0)?.interval_start ?? ""
-                      ).toLocaleDateString()}
+                      ).toLocaleDateString("en-GB")}
                       )
                     </span>
                   </h2>

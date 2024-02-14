@@ -29,7 +29,7 @@ export const fetchEachApi = async ({
   }
   if (!response.ok) throw new Error(FETCH_ERROR);
   const json = await response.json();
-  json.dataStamp = new Date().toLocaleDateString();
+  json.dataStamp = new Date().toLocaleDateString("en-GB");
   return { success: true, ...json, tariffType, gsp, tag };
 };
 
@@ -176,7 +176,7 @@ export const selectOrAppend = (
 };
 
 export const formatLocaleTime = (time: string) =>
-  new Date(time).toLocaleTimeString([], {
+  new Date(time).toLocaleTimeString("en-GB", {
     hour: "2-digit",
     minute: "2-digit",
   });

@@ -12,14 +12,14 @@ interface ITimer {
   setCurrentPeriod: Dispatch<SetStateAction<string>>;
 }
 const Timer = ({ setCurrentPeriod }: ITimer) => {
-  const [time, setTime] = useState(new Date().toLocaleTimeString());
+  const [time, setTime] = useState(new Date().toLocaleTimeString("en-GB"));
   const timerId = useRef<number | undefined>();
   const { focus } = useContext(WindowVisibilityContext);
 
   useEffect(() => {
     timerId.current = window.setInterval(() => {
       const now = new Date();
-      setTime(now.toLocaleTimeString());
+      setTime(now.toLocaleTimeString("en-GB"));
       if (
         now.getSeconds() <= 1 &&
         (now.getMinutes() === 30 || now.getMinutes() === 0)

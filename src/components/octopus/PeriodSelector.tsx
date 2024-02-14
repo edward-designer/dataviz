@@ -147,7 +147,9 @@ const PeriodSelector = ({
             >
               <IoCaretBackOutline className="w-8 h-8" />
             </button>
-            <div className="text-center min-w-[210px] grow sm:grow-0">{`${period.from.toLocaleDateString()} - ${period.to.toLocaleDateString()}`}</div>
+            <div className="text-center min-w-[210px] grow sm:grow-0">{`${period.from.toLocaleDateString(
+              "en-GB"
+            )} - ${period.to.toLocaleDateString("en-GB")}`}</div>
             <button
               onClick={() => getPeriod(false)}
               disabled={outOfAYear(period.to)}

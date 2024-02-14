@@ -71,10 +71,12 @@ const DashboardOctopusHistory = () => {
               </div>
               <div className="flex-1 flex flex-col">
                 <div className="text-xs">
-                  {new Date(property.moved_in_at).toLocaleDateString()}
+                  {new Date(property.moved_in_at).toLocaleDateString("en-GB")}
                   {" - "}
                   {property?.moved_out_at &&
-                    `${new Date(property.moved_out_at).toLocaleDateString()}`}
+                    `${new Date(property.moved_out_at).toLocaleDateString(
+                      "en-GB"
+                    )}`}
                 </div>
                 <div className="text-2xl text-accentBlue-600">
                   {`${
@@ -132,14 +134,14 @@ const DashboardOctopusHistory = () => {
                         >
                           <span className="w-6 border-t border-t-accentBlue-700 border-dotted"></span>
                           <span className="text-xs w-20 shrink-0">
-                            {new Date(
-                              agreement.valid_from
-                            ).toLocaleDateString()}
+                            {new Date(agreement.valid_from).toLocaleDateString(
+                              "en-GB"
+                            )}
                             {" - "}
                             {agreement?.valid_to &&
                               `${new Date(
                                 agreement?.valid_to
-                              ).toLocaleDateString()}`}
+                              ).toLocaleDateString("en-GB")}`}
                           </span>
                           <span className="text-2xl overflow-hidden whitespace-nowrap">
                             {`${getTariffName(agreement.tariff_code)}`}
@@ -183,14 +185,14 @@ const DashboardOctopusHistory = () => {
                         >
                           <span className="w-6 border-t border-t-accentBlue-700 border-dotted"></span>
                           <span className="text-xs w-20 shrink-0">
-                            {new Date(
-                              agreement.valid_from
-                            ).toLocaleDateString()}
+                            {new Date(agreement.valid_from).toLocaleDateString(
+                              "en-GB"
+                            )}
                             {" - "}
                             {agreement?.valid_to &&
                               `${new Date(
                                 agreement?.valid_to
-                              ).toLocaleDateString()}`}
+                              ).toLocaleDateString("en-GB")}`}
                           </span>
                           <span className="text-2xl overflow-hidden whitespace-nowrap">
                             {`${getTariffName(agreement.tariff_code)}`}
@@ -229,14 +231,14 @@ const DashboardOctopusHistory = () => {
                         >
                           <span className="w-6 border-t border-t-accentBlue-700 border-dotted"></span>
                           <span className="text-xs w-20 shrink-0">
-                            {new Date(
-                              agreement.valid_from
-                            ).toLocaleDateString()}
+                            {new Date(agreement.valid_from).toLocaleDateString(
+                              "en-GB"
+                            )}
                             {" - "}
                             {agreement?.valid_to &&
                               `${new Date(
                                 agreement?.valid_to
-                              ).toLocaleDateString()}`}
+                              ).toLocaleDateString("en-GB")}`}
                           </span>
                           <span className="text-2xl overflow-hidden whitespace-nowrap">
                             {`${getTariffName(agreement.tariff_code)}`}

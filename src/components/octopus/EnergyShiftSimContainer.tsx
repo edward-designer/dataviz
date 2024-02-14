@@ -371,7 +371,7 @@ const EnergyShiftSimContainer = () => {
                     0,
                     0
                   )
-                ).toLocaleTimeString([], {
+                ).toLocaleTimeString("en-GB", {
                   hour: "2-digit",
                   minute: "2-digit",
                 })}
@@ -401,7 +401,7 @@ const EnergyShiftSimContainer = () => {
                       0,
                       0
                     )
-                  ).toLocaleTimeString([], {
+                  ).toLocaleTimeString("en-GB", {
                     hour: "2-digit",
                     minute: "2-digit",
                   })}

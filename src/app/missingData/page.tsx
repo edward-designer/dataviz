@@ -2,7 +2,7 @@ import MissingDataTool from "@/components/octopus/MissingDataTool";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Tool for Checking Missing Smart Meter Data | Octoprice",
+  title: "Missing Smart Meter Data Checker | Octoprice",
   description:
     "Smart meters are as good as they are working properly. Use this tool to monitor whether Octopus has retrieved all your meter data and whether your smart meter is working properly.",
   keywords: [
@@ -21,8 +21,7 @@ export const metadata: Metadata = {
     canonical: `/missingData`,
   },
   openGraph: {
-    title:
-      "Advanced Energy Shift Simulator to Maximize Electricity Savings | Octoprice",
+    title: "Missing Smart Meter Data Checker | Octoprice",
     description:
       "Smart meters are as good as they are working properly. Use this tool to monitor whether Octopus has retrieved all your meter data and whether your smart meter is working properly.",
     url: "https://octopriceuk.app/missingData",

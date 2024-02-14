@@ -46,7 +46,7 @@ const PricePane = ({
     });
 
   const today = new Date();
-  const todayDate = today.toLocaleDateString();
+  const todayDate = today.toLocaleDateString("en-GB");
   const results =
     data?.[0]?.results.filter(
       (result) =>
@@ -110,7 +110,7 @@ const PricePane = ({
             <EnergyIcon type={type} />
             <div className="flex flex-1 self-start flex-col">
               <Badge
-                label={`Today @ ${new Date().toLocaleString()}`}
+                label={`Today @ ${new Date().toLocaleString("en-GB")}`}
                 variant="secondary"
               />
               <div className="font-digit text-6xl text-white flex flex-col items-start gap-1">
@@ -157,7 +157,7 @@ const PricePane = ({
                   <Badge
                     label={`From ${new Date(
                       results[priceNextPeriodIndex].valid_from
-                    ).toLocaleDateString()}`}
+                    ).toLocaleDateString("en-GB")}`}
                     variant="secondary"
                   />
                   <div className="font-digit text-center text-3xl text-white flex justify-center items-end">

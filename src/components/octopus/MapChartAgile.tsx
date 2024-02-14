@@ -111,15 +111,18 @@ const MapChartAgile = ({
     ) {
       const updateDate = `${new Date(
         dataAgile[0].result.valid_from
-      ).toLocaleDateString()} ${new Date(
+      ).toLocaleDateString("en-GB")} ${new Date(
         dataAgile[0].result.valid_from
-      ).toLocaleTimeString([], {
+      ).toLocaleTimeString("en-GB", {
         hour: "2-digit",
         minute: "2-digit",
-      })} - ${new Date(dataAgile[0].result.valid_to).toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      })}`;
+      })} - ${new Date(dataAgile[0].result.valid_to).toLocaleTimeString(
+        "en-GB",
+        {
+          hour: "2-digit",
+          minute: "2-digit",
+        }
+      )}`;
       svg.select(".info").text(updateDate);
     }
 
