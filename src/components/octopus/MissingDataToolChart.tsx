@@ -218,7 +218,7 @@ const MissingDataToolChart = ({
               </text>
               <text
                 fill="#4f72b8"
-                x={cellLength * 26}
+                x={cellLength * 25.5}
                 y={12}
                 fontSize={12}
                 textAnchor="middle"
