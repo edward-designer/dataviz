@@ -133,10 +133,6 @@ const SavingsCalculation = () => {
             value.EESerialNo &&
             typeof value.previousEEContract !== "undefined" && (
               <>
-                <h2 className="font-display text-accentPink-500 text-4xl flex items-center mt-4">
-                  <PiSunDimFill className="w-8 h-8 fill-accentPink-900 inline-block mr-2" />
-                  Electricity Export Earnings
-                </h2>
                 <TariffDetails
                   valid_from={value.previousEEContract.valid_from}
                   valid_to={value.previousEEContract.valid_to}
