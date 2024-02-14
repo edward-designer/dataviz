@@ -62,7 +62,7 @@ const PeriodSelector = ({
       <div className="flex gap-2 flex-col-reverse sm:flex-col lg:flex-row mb-2">
         <div className="flex items-center flex-grow text-xl gap-2 text-accentBlue-500">
           <LiaCalendarAlt className="w-6 h-6" />
-          Consumption Data Period
+          Smart Meter Data Period
           <Remark variant="badge">
             Selecting a longer period will provide more accurate comparisons.
             The figures presented here are an approximation of your annual

@@ -203,15 +203,6 @@ const TariffComparisionCard = ({
               Must sign up both Import and Export at the same time.
             </div>
           )}
-          {["Tracker"].includes(category) && (
-            <div className="text-xs text-amber-500">
-              Based on{" "}
-              <span className="font-bold">
-                {newTracker ? "New" : "Old"} Tracker
-              </span>{" "}
-              price.
-            </div>
-          )}
         </>
       ) : (
         <div className="text-center text-sm">

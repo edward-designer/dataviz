@@ -3,7 +3,6 @@
 import SliderVertical from "@/components/ui/sliderVertical";
 import { UserContext } from "@/context/user";
 import {
-  TDuration,
   calculateSimTotal,
   capitalize,
   checkGoodBadTime,
@@ -37,23 +36,15 @@ import { TbChartInfographic, TbZoomMoney } from "react-icons/tb";
 import { EETARIFFS, ETARIFFS, IPeriod } from "@/data/source";
 import useCalculateSimPrice from "@/hooks/useCalculateSimPrice";
 import useEnergyShiftData from "@/hooks/useEnergyShiftData";
+import { energyShiftReducer } from "@/reducers/energyShift";
+import { max } from "d3";
+import { TbArrowBigDownLineFilled } from "react-icons/tb";
 import { SelectItem } from "../ui/select";
+import EnergyShiftSimAction from "./EnergyShiftSimAction";
 import EnergyShiftSimCostContainer from "./EnergyShiftSimCostContainer";
 import EnergyShiftSimTariffSelector from "./EnergyShiftSimTariffSelector";
 import EnergyShiftSimTariffWithTotal from "./EnergyShiftSimTariffWithTotal";
 import SimpleLoading from "./SimpleLoading";
-import { energyShiftReducer } from "@/reducers/energyShift";
-import ActionButton from "./ActionButton";
-import { GrRevert } from "react-icons/gr";
-import { TbArrowBigDownLineFilled } from "react-icons/tb";
-import { LiaRandomSolid } from "react-icons/lia";
-import { LuArrowDownToLine } from "react-icons/lu";
-import { TbArrowBarBoth } from "react-icons/tb";
-import { RiCornerUpRightDoubleLine } from "react-icons/ri";
-import { max } from "d3";
-import EnergyShiftSimAction from "./EnergyShiftSimAction";
-import { BiExport, BiImport } from "react-icons/bi";
-import EnergyShiftSimSwitchChart from "./TariffHoppingChart";
 
 export type ErrorType = Record<string, string>;
 
@@ -77,6 +68,8 @@ const EnergyShiftSimContainer = () => {
   const [exportTariff, setExportTariff] = useState<string>("");
 
   const [hasExport, setHasExport] = useState(false);
+  const [hasBattery, setHasBattery] = useState(false);
+  const [hasSolar, setHasSolar] = useState(false);
 
   const [batteryFormOpen, setBatteryFormOpen] = useState(false);
   const [solarFormOpen, setSolarFormOpen] = useState(false);

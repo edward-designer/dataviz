@@ -58,6 +58,10 @@ const SavingsCalculation = () => {
 
   const isESVT = getCategory(value.currentETariff ?? "") === "SVT";
   const isGSVT = getCategory(value.currentGTariff ?? "") === "SVT";
+  const isEPrevSVT =
+    getCategory(value.previousEContract?.tariff_code ?? "") === "SVT";
+  const isGPrevSVT =
+    getCategory(value.previousGContract?.tariff_code ?? "") === "SVT";
 
   return (
     <div className="flex gap-4 flex-col relative">
@@ -115,28 +119,39 @@ const SavingsCalculation = () => {
                   tariff_code={value.currentEETariff}
                   type="E"
                 />
-                {isESVT ? (
-                  <div>
-                    You are currently on the Octopus Flexible Tariff.
-                    <br />
-                    <Link
-                      href="/compare"
-                      className="underline text-accentBlue-500 hover:no-underline"
-                    >
-                      Check whether you can save money by switching to another
-                      tariff.
-                    </Link>
-                  </div>
-                ) : (
-                  <EarningChart
-                    tariff={value.currentEETariff}
-                    fromDate={EEfromDate}
-                    gsp={value.gsp}
-                    type="E"
-                    deviceNumber={value.EMPAN}
-                    serialNo={value.EESerialNo}
-                  />
-                )}
+                <EarningChart
+                  tariff={value.currentEETariff}
+                  fromDate={EEfromDate}
+                  gsp={value.gsp}
+                  type="E"
+                  deviceNumber={value.EMPAN}
+                  serialNo={value.EESerialNo}
+                />
+              </>
+            )}
+          {value.EMPAN &&
+            value.EESerialNo &&
+            typeof value.previousEEContract !== "undefined" && (
+              <>
+                <h2 className="font-display text-accentPink-500 text-4xl flex items-center mt-4">
+                  <PiSunDimFill className="w-8 h-8 fill-accentPink-900 inline-block mr-2" />
+                  Electricity Export Earnings
+                </h2>
+                <TariffDetails
+                  valid_from={value.previousEEContract.valid_from}
+                  valid_to={value.previousEEContract.valid_to}
+                  tariff_code={value.previousEEContract.tariff_code}
+                  type="E"
+                />
+                <EarningChart
+                  tariff={value.previousEEContract.tariff_code.slice(5, -2)}
+                  fromDate={value.previousEEContract.valid_from}
+                  contractToDate={value.previousEEContract.valid_to}
+                  gsp={value.gsp}
+                  type="E"
+                  deviceNumber={value.EMPAN}
+                  serialNo={value.EESerialNo}
+                />
               </>
             )}
           {value.MPAN &&
@@ -178,6 +193,32 @@ const SavingsCalculation = () => {
                 )}
               </>
             )}
+          {value.MPAN &&
+            value.ESerialNo &&
+            typeof value.previousEContract !== "undefined" && (
+              <>
+                <TariffDetails
+                  valid_from={value.previousEContract.valid_from}
+                  valid_to={value.previousEContract.valid_to}
+                  tariff_code={value.previousEContract.tariff_code}
+                  type="E"
+                />
+                {isEPrevSVT ? (
+                  <div>You were on the Octopus Flexible Tariff.</div>
+                ) : (
+                  <SavingsChart
+                    tariff={value.previousEContract.tariff_code.slice(5, -2)}
+                    fromDate={value.previousEContract.valid_from}
+                    contractToDate={value.previousEContract.valid_to}
+                    gsp={value.gsp}
+                    type="E"
+                    compareTo="SVT"
+                    deviceNumber={value.MPAN}
+                    serialNo={value.ESerialNo}
+                  />
+                )}
+              </>
+            )}
           {value.MPRN &&
             value.GSerialNo &&
             typeof value.currentGContract !== "undefined" && (
@@ -208,6 +249,32 @@ const SavingsCalculation = () => {
                   <SavingsChart
                     tariff={value.currentGTariff}
                     fromDate={GfromDate}
+                    gsp={value.gsp}
+                    type="G"
+                    compareTo="SVT"
+                    deviceNumber={value.MPRN}
+                    serialNo={value.GSerialNo}
+                  />
+                )}
+              </>
+            )}
+          {value.MPRN &&
+            value.GSerialNo &&
+            typeof value.previousGContract !== "undefined" && (
+              <>
+                <TariffDetails
+                  valid_from={value.previousGContract.valid_from}
+                  valid_to={value.previousGContract.valid_to}
+                  tariff_code={value.previousGContract.tariff_code}
+                  type="G"
+                />
+                {isGPrevSVT ? (
+                  <div>You were on the Octopus Flexible Tariff.</div>
+                ) : (
+                  <SavingsChart
+                    tariff={value.previousGContract.tariff_code.slice(5, -2)}
+                    fromDate={value.previousGContract.valid_from}
+                    contractToDate={value.previousGContract.valid_to}
                     gsp={value.gsp}
                     type="G"
                     compareTo="SVT"

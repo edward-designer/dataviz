@@ -45,6 +45,9 @@ export interface IUserValue {
   currentEContract: undefined | TContract;
   currentGContract: undefined | TContract;
   currentEEContract: undefined | TContract;
+  previousEContract: undefined | TContract;
+  previousGContract: undefined | TContract;
+  previousEEContract: undefined | TContract;
   contractGStartDate: undefined | string;
   contractEStartDate: undefined | string;
   contractEEStartDate: undefined | string;
@@ -99,6 +102,9 @@ export const initialValue = {
     currentEContract: undefined,
     currentGContract: undefined,
     currentEEContract: undefined,
+    previousEContract: undefined,
+    previousGContract: undefined,
+    previousEEContract: undefined,
     contractGStartDate: undefined,
     contractEStartDate: undefined,
     contractEEStartDate: undefined,
@@ -177,6 +183,17 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
             new Date(agreement.valid_to).valueOf() > new Date().valueOf()
         )?.[0],
     [currentProperty]
+  );
+
+  const previousEContract = useMemo(
+    () =>
+      currentProperty?.electricity_meter_points
+        ?.filter((meter_point) => !meter_point.is_export)
+        ?.at(-1)
+        ?.agreements.filter(
+          (agreement) => agreement.valid_to === currentEContract?.valid_from
+        )?.[0],
+    [currentProperty, currentEContract]
   );
 
   const contractEStartDate = useMemo(() => {
@@ -258,6 +275,18 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
         )?.[0],
     [currentProperty]
   );
+
+  const previousEEContract = useMemo(
+    () =>
+      currentProperty?.electricity_meter_points
+        ?.filter((meter_point) => meter_point.is_export)
+        ?.at(-1)
+        ?.agreements.filter(
+          (agreement) => agreement.valid_to === currentEEContract?.valid_from
+        )?.[0],
+    [currentProperty, currentEEContract]
+  );
+
   const EMPAN =
     currentProperty?.electricity_meter_points
       ?.filter((meter_point) => meter_point.is_export)
@@ -290,6 +319,16 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
         )?.[0],
     [currentProperty]
   );
+  const previousGContract = useMemo(
+    () =>
+      currentProperty?.gas_meter_points
+        ?.at(-1)
+        ?.agreements.filter(
+          (agreement) => agreement.valid_to === currentGContract?.valid_from
+        )?.[0],
+    [currentProperty, currentGContract]
+  );
+
   const MPRN = currentProperty?.gas_meter_points?.at(-1)?.mprn ?? "";
   const GSerialNo =
     value.GSerialNo === ""
@@ -360,10 +399,13 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
         GSerialNo,
         GSerialNos,
         currentEContract,
+        previousEContract,
         currentETariff,
         currentGContract,
+        previousGContract,
         currentGTariff,
         currentEEContract,
+        previousEEContract,
         currentEETariff,
         contractEStartDate,
         contractEEStartDate,
@@ -396,6 +438,9 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
     setValue,
     contractEEStartDate,
     contractGStartDate,
+    previousEContract,
+    previousGContract,
+    previousEEContract,
   ]);
 
   // need to handle existing users with saved data

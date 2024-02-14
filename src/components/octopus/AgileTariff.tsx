@@ -15,8 +15,6 @@ import PricePaneAgile from "./PricePaneAgile";
 import Remark from "./Remark";
 import TariffSelect from "./TariffSelect";
 import MapChart from "@/components/octopus/MapChart";
-import { json } from "d3";
-import { useQuery } from "@tanstack/react-query";
 import { AGILE, ITariffPlan, QueryProducts } from "@/data/source";
 import PricePaneAgile2 from "./PricePaneAgile2";
 import MapChartAgile from "./MapChartAgile";
@@ -32,10 +30,6 @@ const AgileTariff = () => {
 
   const { gsp, agileCode } = value;
 
-  useEffect(() => {
-    if (agileCode) setTariff(agileCode);
-  }, [agileCode]);
-
   const handleSelect = (selectValue: string) => {
     setTariff(selectValue);
     setValue({ ...value, agileCode: selectValue });
@@ -46,26 +40,22 @@ const AgileTariff = () => {
   return (
     <div className="lg:col-[content] my-4">
       <section className="my-4">
-        <TariffSelect
-          tariff={tariff}
-          setTariff={handleSelect}
-          type="Octopus Agile Plan"
-          source={AgilePlans}
-        >
-          <Remark variant="badge">
-            With Agile Octopus, you get access to half-hourly energy prices,
-            tied to wholesale prices and updated daily. Outgoing Octopus Agile
-            rate pays you for all your exported energy (e.g. output from solar
-            panels) based on the day-ahead wholesale rate.
-            <br />
-            <br />
-            Kindly note that the market index used to calculate unit rates is
-            based in the CET timezone (UTC+1) and so its “day” corresponds to
-            11pm to 11pm in UK time. The unit rates for tomorrow are updated at
-            around 4pm each day. Hence you will see only rates up to 11pm before
-            4pm.
-          </Remark>
-        </TariffSelect>
+        <div className="flex items-center justify-center font-display">
+          <div className="h-14 rounded-md px-3 py-2 ring-offset-background focus:outline-none [&amp;>h1>span]:line-clamp-1 [&amp;>span]:line-clamp-1 w-auto max-w-full text-[clamp(20px,7vw,80px)] text-accentBlue-400 flex items-center justify-center">
+            <h1 className="overflow-hidden [&amp;>*]:whitespace-pre  [&amp;>*]:text-ellipsis  [&amp;>*]:overflow-hidden  [&amp;>*]:block! [&amp;>*]:max-w-full">
+              <span>Agile Octopus Dec 2023 v1</span>
+            </h1>
+            <Remark variant="badge">
+              <span className="text-accentPink-500 font-bold pr-2">
+                Octopus has moved all Agile users to{" "}
+                <span className="text-accentPink-500">
+                  Agile Octopus Dec 2023
+                </span>{" "}
+                from 15Feb onwards.
+              </span>
+            </Remark>
+          </div>
+        </div>
       </section>
       <section className="flex flex-col md:flex-row items-stretch md:justify-center md:items-center gap-4 my-4">
         <PricePaneAgile

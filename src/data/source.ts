@@ -44,12 +44,6 @@ export const GTARIFFS: ITariffToCompare[] = [
     cost: null,
   },
   {
-    tariff: "SILVER-FLEX-BB-23-02-08",
-    type: "G",
-    category: "Tracker",
-    cost: null,
-  },
-  {
     tariff: "SILVER-23-12-06",
     type: "G",
     category: "Tracker",
@@ -103,13 +97,7 @@ export const ETARIFFS: ITariffToCompare[] = [
     cost: null,
   },
   {
-    tariff: "SILVER-FLEX-BB-23-02-08",
-    type: "E",
-    category: "Tracker",
-    cost: null,
-  },
-  {
-    tariff: "AGILE-FLEX-22-11-25",
+    tariff: "AGILE-23-12-06",
     type: "E",
     category: "Agile",
     cost: null,

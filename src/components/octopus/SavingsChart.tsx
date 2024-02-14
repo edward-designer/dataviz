@@ -11,30 +11,27 @@ import { evenRound, getCategory } from "../../utils/helpers";
 
 import useConsumptionCalculation from "@/hooks/useConsumptionCalculation";
 import Lottie from "lottie-react";
-import octopusIcon from "../../../public/lottie/octopus.json";
 import chartIcon from "../../../public/lottie/chart.json";
+import octopusIcon from "../../../public/lottie/octopus.json";
 import FormattedPrice from "./FormattedPrice";
 import MonthlyChart from "./MonthlyChart";
 
+import { GrMoney } from "react-icons/gr";
 import { LiaBalanceScaleSolid } from "react-icons/lia";
 import { TbMoneybag, TbPigMoney } from "react-icons/tb";
-import { GrMoney } from "react-icons/gr";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 
-import { RxShare2 } from "react-icons/rx";
-import { PiDownloadSimple } from "react-icons/pi";
-import { BsLightningChargeFill } from "react-icons/bs";
-import { AiFillFire } from "react-icons/ai";
 import { PiQuestion } from "react-icons/pi";
-import Remark from "./Remark";
 import Loading from "../Loading";
+import Remark from "./Remark";
 
 const SavingsChart = ({
   tariff,
   type,
   gsp,
   fromDate,
+  contractToDate,
   compareTo,
   deviceNumber,
   serialNo,
@@ -43,6 +40,7 @@ const SavingsChart = ({
   type: "E" | "G";
   gsp: string;
   fromDate: string;
+  contractToDate?: undefined | string;
   compareTo: TariffCategory | string;
   deviceNumber: string;
   serialNo: string;
@@ -51,7 +49,7 @@ const SavingsChart = ({
 
   const today = new Date();
   today.setHours(23, 59, 59, 999);
-  const toDate = today.toISOString();
+  const toDate = contractToDate ?? today.toISOString();
   const category = getCategory(tariff);
   const compareToCategory =
     compareTo === "SVT" ? "SVT" : getCategory(compareTo);
@@ -223,9 +221,10 @@ const SavingsChart = ({
                 <MonthlyChart
                   cost={cost}
                   costSVT={costSVT}
-                  lastDate={lastDate}
+                  lastDate={contractToDate ? null : lastDate}
                   type={type}
                   compare={compareToCategory}
+                  tariff={tariff}
                 />
                 <div className="flex flex-col font-normal justify-start divide-y [&>div]:border-accentBlue-900 gap-3">
                   <div className="flex flex-wrap justify-between items-start md:block text-[#85cbf9] bg-theme-900/30">
@@ -352,84 +351,6 @@ const SavingsChart = ({
                   </div>
                 </div>
               </div>
-              {totalSaving > 0 && (
-                <>
-                  <div className="flex justify-center">
-                    <div
-                      ref={imageRef}
-                      className={`w-[300px] h-[300px] lg:w-[600px] lg:h-[600px] bg-accentPink-500`}
-                    >
-                      <div
-                        className={`${
-                          type === "E"
-                            ? "bg-[url(/images/octoprice-bg.jpg)]"
-                            : "bg-[url(/images/octoprice-bg-gas.jpg)]"
-                        } relative font-display font-medium rounded-3xl border-[5px] border-accentPink-500 p-2 px-4 aspect-square w-[300px] h-[300px] bg-cover lg:scale-[2] lg:mb-[300px] origin-top-left`}
-                      >
-                        <span className="absolute left-2 top-2">
-                          {type === "E" && (
-                            <BsLightningChargeFill className="fill-accentBlue-500/50 w-8 h-8" />
-                          )}
-                          {type === "G" && (
-                            <AiFillFire className="fill-accentPink-500/50 w-8 h-8" />
-                          )}
-                        </span>
-                        <img
-                          alt="Octoprice logo"
-                          src="/octoprice-sm.svg"
-                          className="absolute top-2 right-2 w-[83px] h-[20px]"
-                        />
-
-                        <span className="block pt-16 text-accentPink-500 text-2xl m-0 p-0 absolute -top-[10px]">
-                          <span className="font-sans font-thin">🎉 I have</span>
-                        </span>
-                        <span className="shifted-text block text-white text-5xl m-0 p-0 absolute top-[65px]">
-                          saved*
-                        </span>
-                        <span className="text-3xl font-sans absolute top-[105px]">
-                          £
-                        </span>
-                        <span className="shifted-text block font-bold text-white text-8xl ml-6 absolute top-[95px] leading-none">
-                          {evenRound(
-                            totalSaving,
-                            totalSaving > 100 ? 0 : totalSaving > 10 ? 1 : 2
-                          )}
-                        </span>
-                        <span className="block text-white text-xl m-0 p-0 absolute top-[180px] font-sans font-thin">
-                          on{" "}
-                          <span className="text-accentPink-500 text-3xl font-display font-bold">
-                            {ENERGY_TYPE[type]}
-                          </span>{" "}
-                          bill
-                        </span>
-                        <span className="block text-accentBlue-500 text-base m-0 p-0 font-sans font-thin absolute top-[209px]">
-                          since {`${periodAccessor(cost[cost.length - 1])}`}
-                        </span>
-                        <span className="absolute font-sans bottom-1 right-2 text-[10px]">
-                          https://octopriceuk.app
-                        </span>
-                        <span className="absolute font-sans font-light top-[225px] text-[8px]">
-                          *vs standard variable tariff
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <button
-                    className="-translate-y-4 self-center flex justify-center items-center gap-2 border border-accentBlue-500 p-2 px-6 text-accentBlue-500 rounded-xl hover:bg-accentBlue-800 hover:text-white"
-                    onClick={canShare ? handleShare : handleDownload}
-                  >
-                    {canShare ? (
-                      <>
-                        <RxShare2 /> Share
-                      </>
-                    ) : (
-                      <>
-                        <PiDownloadSimple /> Download
-                      </>
-                    )}
-                  </button>
-                </>
-              )}
 
               <div className="text-white/80 text-sm flex items-center gap-1">
                 <PiQuestion className="fill-accentPink-500 w-6 h-6" />

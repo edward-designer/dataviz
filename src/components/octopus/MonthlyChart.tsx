@@ -17,6 +17,7 @@ export interface IMonthlyChart {
   lastDate: null | string;
   type: "E" | "G";
   compare: string;
+  tariff: string;
 }
 
 const MonthlyChart = ({
@@ -25,6 +26,7 @@ const MonthlyChart = ({
   lastDate,
   type,
   compare,
+  tariff,
 }: IMonthlyChart) => {
   const { value } = useContext(UserContext);
   const scrollContainerRef = useRef<null | HTMLDivElement>(null);
@@ -89,7 +91,11 @@ const MonthlyChart = ({
       <div className="text-xs mt-4 flex flex-wrap gap-x-4">
         <span className="inline-block">
           <span className="inline-block w-8 h-2 bg-[#aaffdd]"></span>{" "}
-          {compare === "Tracker" ? "New Tracker" : "Current Tariff"}
+          {compare === "Tracker"
+            ? "New Tracker"
+            : compare === "Current"
+            ? "Current Tariff"
+            : tariff}
         </span>
         <span className="inline-block">
           <span className="inline-block w-8 border-t border-dashed border-accentPink-500 -translate-y-1"></span>{" "}

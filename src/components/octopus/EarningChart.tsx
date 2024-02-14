@@ -37,12 +37,14 @@ const EarningChart = ({
   type,
   gsp,
   fromDate,
+  contractToDate,
   deviceNumber,
   serialNo,
 }: {
   tariff: string;
   type: "E" | "G";
   gsp: string;
+  contractToDate?: string | undefined;
   fromDate: string;
   deviceNumber: string;
   serialNo: string;
@@ -124,7 +126,7 @@ const EarningChart = ({
             <div className="flex flex-1 flex-col md:flex-row justify-between gap-4 max-h-full overflow-hidden">
               <EarningMonthlyChart
                 cost={cost}
-                lastDate={lastDate}
+                lastDate={contractToDate ? null : lastDate}
                 type={type}
                 units={monthlyUnits}
               />

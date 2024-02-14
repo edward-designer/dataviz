@@ -68,7 +68,10 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
   const tariff =
     inputTariff === "SILVER-23-12-06" && results === "yearly"
       ? "SILVER-FLEX-BB-23-02-08"
+      : inputTariff === "AGILE-23-12-06" && results === "yearly"
+      ? "AGILE-FLEX-22-11-25"
       : inputTariff;
+
   /* Important this should be removed from 15Feb */
 
   const queryFnStandingChargeData = async () => {
@@ -363,7 +366,6 @@ export const calculateMonthlyPrices = (
         currentRateIndex++;
       }
     } else if (category === "Tracker") {
-      // Agile or Tracker
       const currentResultStartDateTime = new Date(
         consumptionDataResults[i].interval_start
       );

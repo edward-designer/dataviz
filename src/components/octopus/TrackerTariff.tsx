@@ -24,15 +24,15 @@ import Link from "next/link";
 import Notice from "./Notice";
 
 const TrackerTariff = () => {
-  const [tariff, setTariff] = useState(TRACKER[0].code);
+  const [tariff, setTariff] = useState("SILVER-23-12-06");
   const { value, setValue } = useContext(UserContext);
   const { gsp, trackerCode } = value;
   useContext(WindowResizeContext);
   useContext(WindowVisibilityContext);
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (trackerCode) setTariff(trackerCode);
-  }, [trackerCode]);
+  }, [trackerCode]);*/
 
   const handleSelect = (selectValue: string) => {
     setTariff(selectValue);
@@ -42,34 +42,36 @@ const TrackerTariff = () => {
   return (
     <div className="lg:col-[content] my-4">
       <section className="my-4">
-        <TariffSelect
-          tariff={tariff}
-          setTariff={handleSelect}
-          type="Octopus Tracker Plan"
-          source={TRACKER}
-        >
-          <Remark variant="badge">
-            Octopus has been offering different Tracker tariffs over the years.
-            These plans differ in the rate calculation formulae and/or maximum
-            chargable rates. Please scroll down to see the comparision between
-            different Tracker plans. All unit rates inclusive of VAT.
-          </Remark>
-        </TariffSelect>
-      </section>
-      <Notice>
-        <TbAlertOctagonFilled className="w-8 h-8 text-[#f8ec20] shrink-0" />
-        <div>
-          Octopus is moving all Tracker users to{" "}
-          <span className="text-accentPink-500">Tracker Dec 2023</span> on
-          15Feb.{" "}
-          <Link
-            href="/compareTracker"
-            className="underline text-accentBlue-500 hover:text-accentPink-500 hover:no-underline"
+        {false && (
+          <TariffSelect
+            tariff={tariff}
+            setTariff={handleSelect}
+            type="Octopus Tracker Plan"
+            source={TRACKER}
           >
-            Figure out how much MORE you have to pay each month.
-          </Link>
+            <Remark variant="badge">
+              Octopus has been offering different Tracker tariffs over the
+              years. These plans differ in the rate calculation formulae and/or
+              maximum chargable rates. Please scroll down to see the comparision
+              between different Tracker plans. All unit rates inclusive of VAT.
+            </Remark>
+          </TariffSelect>
+        )}
+        <div className="flex items-center justify-center font-display">
+          <div className="h-14 rounded-md px-3 py-2 ring-offset-background focus:outline-none [&amp;>h1>span]:line-clamp-1 [&amp;>span]:line-clamp-1 w-auto max-w-full text-[clamp(20px,7vw,80px)] text-accentBlue-400 flex items-center justify-center">
+            <h1 className="overflow-hidden [&amp;>*]:whitespace-pre  [&amp;>*]:text-ellipsis  [&amp;>*]:overflow-hidden  [&amp;>*]:block! [&amp;>*]:max-w-full">
+              <span>Tracker December 2023 v1</span>
+            </h1>
+            <Remark variant="badge">
+              <span className="text-accentPink-500 font-bold pr-2">
+                Octopus has moved all Tracker users to{" "}
+                <span className="text-accentPink-500">Tracker Dec 2023</span>{" "}
+                from 15Feb onwards.
+              </span>
+            </Remark>
+          </div>
         </div>
-      </Notice>
+      </section>
       <section className="flex flex-col sm:flex-row items-stretch sm:justify-center sm:items-center gap-4 my-4">
         <PricePane tariff={tariff} type="E" gsp={gsp} />
         <PricePane tariff={tariff} type="G" gsp={gsp} />
@@ -152,7 +154,7 @@ const TrackerTariff = () => {
             </tr>
           </thead>
           <tbody>
-            {TRACKER.map((plan) => (
+            {TRACKER.slice(0, 1).map((plan) => (
               <tr
                 key={plan.code}
                 className={`${
