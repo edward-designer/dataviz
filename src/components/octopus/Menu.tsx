@@ -293,6 +293,17 @@ const Menu = () => {
               Compare <span className="text-lg">Tariffs</span>
             </Link>
             <Link
+              href="/missingData"
+              className={`block my-4  ${
+                pathname === "/missingData"
+                  ? "cursor-default text-accentBlue-900"
+                  : "hover:text-accentPink-500"
+              }`}
+            >
+              <Badge label="new" /> <span className="text-lg">Data</span>{" "}
+              Checker
+            </Link>
+            <Link
               href="/tariffHopping"
               className={`block my-4  ${
                 pathname === "/tariffHopping"
@@ -302,17 +313,6 @@ const Menu = () => {
             >
               <Badge label="beta" /> <span className="text-lg">Tariff </span>
               Hopping
-            </Link>
-            <Link
-              href="/compareTracker"
-              className={`block my-4  ${
-                pathname === "/compareTracker"
-                  ? "cursor-default text-accentBlue-900"
-                  : "hover:text-accentPink-500"
-              }`}
-            >
-              <Badge label="new" /> <span className="text-lg">New vs Old</span>
-              Tracker
             </Link>
             <Link
               href="/yearInReview"

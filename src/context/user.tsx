@@ -42,9 +42,12 @@ export interface IUserValue {
   EESerialNos: string[];
   currentEETariff: string;
   error: string;
-  currentEContract: TContract;
-  currentGContract: TContract;
-  currentEEContract: TContract;
+  currentEContract: undefined | TContract;
+  currentGContract: undefined | TContract;
+  currentEEContract: undefined | TContract;
+  contractGStartDate: undefined | string;
+  contractEStartDate: undefined | string;
+  contractEEStartDate: undefined | string;
   configBattery: {
     hasBattery: boolean;
     capacity: number;
@@ -96,6 +99,9 @@ export const initialValue = {
     currentEContract: undefined,
     currentGContract: undefined,
     currentEEContract: undefined,
+    contractGStartDate: undefined,
+    contractEStartDate: undefined,
+    contractEEStartDate: undefined,
     configBattery: {
       hasBattery: false,
       capacity: 0,
@@ -172,6 +178,47 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
         )?.[0],
     [currentProperty]
   );
+
+  const contractEStartDate = useMemo(() => {
+    const agreements = currentProperty?.electricity_meter_points
+      ?.filter((meter_point) => !meter_point.is_export)
+      ?.at(-1)?.agreements;
+    if (agreements && agreements?.length > 0) {
+      const earliestAgreement = [...agreements];
+      earliestAgreement.sort(
+        (a, b) =>
+          new Date(a.valid_from).valueOf() - new Date(b.valid_from).valueOf()
+      );
+      return earliestAgreement[0].valid_from;
+    }
+  }, [currentProperty]);
+
+  const contractEEStartDate = useMemo(() => {
+    const agreements = currentProperty?.electricity_meter_points
+      ?.filter((meter_point) => meter_point.is_export)
+      ?.at(-1)?.agreements;
+    if (agreements && agreements?.length > 0) {
+      const earliestAgreement = [...agreements];
+      earliestAgreement.sort(
+        (a, b) =>
+          new Date(a.valid_from).valueOf() - new Date(b.valid_from).valueOf()
+      );
+      return earliestAgreement[0].valid_from;
+    }
+  }, [currentProperty]);
+
+  const contractGStartDate = useMemo(() => {
+    const agreements = currentProperty?.gas_meter_points?.at(-1)?.agreements;
+    if (agreements && agreements?.length > 0) {
+      const earliestAgreement = [...agreements];
+      earliestAgreement.sort(
+        (a, b) =>
+          new Date(a.valid_from).valueOf() - new Date(b.valid_from).valueOf()
+      );
+      return earliestAgreement[0].valid_from;
+    }
+  }, [currentProperty]);
+
   const MPAN =
     data?.properties
       ?.filter((property) => property.moved_out_at === null)?.[0]
@@ -288,16 +335,16 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
       getGsp(value.postcode)
         .then((gsp) => {
           if (gsp !== false)
-            setValue({
+            setValue((value) => ({
               ...value,
               gsp: gsp.replace("_", ""),
-            });
+            }));
         })
         .catch((error: unknown) => {
           if (error instanceof Error) throw new Error(error.message);
         });
     }
-  }, [postcode]);
+  }, [postcode, value.postcode]);
 
   useEffect(() => {
     if (isSuccess)
@@ -318,6 +365,9 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
         currentGTariff,
         currentEEContract,
         currentEETariff,
+        contractEStartDate,
+        contractEEStartDate,
+        contractGStartDate,
         trackerCode: currentETariff.includes("SILVER")
           ? currentETariff
           : value.trackerCode,
@@ -341,8 +391,11 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
     currentETariff,
     currentGContract,
     currentGTariff,
+    contractEStartDate,
     isSuccess,
     setValue,
+    contractEEStartDate,
+    contractGStartDate,
   ]);
 
   // need to handle existing users with saved data
