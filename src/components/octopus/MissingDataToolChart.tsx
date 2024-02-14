@@ -218,6 +218,15 @@ const MissingDataToolChart = ({
               </text>
               <text
                 fill="#4f72b8"
+                x={cellLength * 26}
+                y={12}
+                fontSize={12}
+                textAnchor="middle"
+              >
+                12:00
+              </text>
+              <text
+                fill="#4f72b8"
                 x={cellLength * 50}
                 y={12}
                 fontSize={12}
@@ -244,12 +253,12 @@ const MissingDataToolChart = ({
                   fill="#000433"
                 />
                 <text fill="white" x={cellLength * 1.5} y={12} fontSize={12}>
-                  no data
+                  N/A
                 </text>
               </g>
             </g>
             <g
-              transform={` translate(${cellLength * 16},${
+              transform={` translate(${cellLength * 14},${
                 height - cellLength * 0.5
               })`}
               className="legend"
