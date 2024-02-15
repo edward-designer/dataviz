@@ -58,7 +58,7 @@ const PeriodSelector = ({
   };
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 bg-black/30 p-4">
       <div className="flex gap-2 flex-col-reverse sm:flex-col lg:flex-row mb-2">
         <div className="flex items-center flex-grow text-xl gap-2 text-accentBlue-500">
           <LiaCalendarAlt className="w-6 h-6" />
@@ -137,7 +137,7 @@ const PeriodSelector = ({
         )}
       </div>
 
-      <div className="h-[56px] sm:w-full mt-0 md:-mt-1">
+      <div className="h-[40px] sm:w-full mt-0 md:-mt-1">
         {period.duration !== "custom" ? (
           <div className="mt-1 flex sm:justify-start gap-2 items-center w-full justify-between sm:w-fit">
             <button
