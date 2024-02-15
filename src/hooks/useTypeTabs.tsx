@@ -25,7 +25,7 @@ const useTypeTabs = () => {
   }, [defaultType]);
 
   const Tabs = () =>
-    !(hasEImport && hasEExport && hasGImport) ? null : (
+    !hasEImport && !hasEExport && !hasGImport ? null : (
       <div className="flex pl-6 z-30 sticky top-0 pt-4 bg-theme-950/70 backdrop-blur-md border-b border-accentPink-900 gap-1">
         {hasEImport && (
           <Button
