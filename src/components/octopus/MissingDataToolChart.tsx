@@ -193,9 +193,9 @@ const MissingDataToolChart = ({
           <svg ref={svgRef}>
             <defs>
               <linearGradient id="legendGradient">
-                <stop offset="0%" stop-color="#006837" />
-                <stop offset="50%" stop-color="#fcf4ab" />
-                <stop offset="100%" stop-color="#a50026" />
+                <stop offset="0%" stopColor="#006837" />
+                <stop offset="50%" stopColor="#fcf4ab" />
+                <stop offset="100%" stopColor="#a50026" />
               </linearGradient>
               <pattern
                 id="diagonalHatch"
@@ -281,7 +281,7 @@ const MissingDataToolChart = ({
           </svg>
         </div>
       </div>
-      <div className="flex flex-col items-center justify-center bg-accentPink-800 rounded-xl p-4">
+      <div className="relative md:sticky md:top-20 flex flex-col items-center justify-center bg-accentPink-800 rounded-xl p-4">
         <span className="text-4xl">{missingDataCount}</span>
         <span className="text-xs flex items-end whitespace-nowrap">
           missing data{" "}

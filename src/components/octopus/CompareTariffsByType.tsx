@@ -174,72 +174,68 @@ const CompareTariffsByType = ({
     return;
 
   return (
-    <div
-      className={`flex gap-4 flex-col relative ${
-        isExport
-          ? "border-b-2 border-dotted border-b-accentBlue-500 pb-8 mb-2"
-          : ""
-      }`}
-    >
-      {value.error ? (
-        <NotCurrentlySupported>{value.error}</NotCurrentlySupported>
-      ) : (
-        <>
-          <h2 className="font-display text-accentPink-500 text-4xl flex items-center mt-4">
-            {currentMeterType[typePlusExport].heading}
-          </h2>
-          <TariffDetails
-            valid_from={
-              currentMeterType[typePlusExport].currentContract!.valid_from
-            }
-            valid_to={
-              currentMeterType[typePlusExport].currentContract!.valid_to
-            }
-            tariff_code={currentMeterType[typePlusExport].currentTariff}
-            type={type}
-          />
-          <div className="flex gap-4 flex-col lg:grid lg:grid-cols-3">
-            <AnimatePresence>
-              {reOrderedTariffsEToCompare.map(({ tariff, category }, ind) => {
-                return (
-                  <TariffComparisionCard
-                    key={tariff}
-                    type={type}
-                    deviceNumber={currentMeterType[typePlusExport].accessPoint}
-                    serialNo={currentMeterType[typePlusExport].serialNo}
-                    tariff={tariff}
-                    category={category}
-                    fromDate={period.from.toISOString()}
-                    toDate={period.to.toISOString()}
-                    compareTo={
-                      isExport
-                        ? LowestCost(reOrderedTariffsEToCompare)
-                        : SVTCost(tariffsToCompare)
-                    }
-                    setCost={setCost}
-                    rank={ind + 1}
-                    isExport={isExport}
-                  />
-                );
-              })}
-              {remainingTariffs.length > 0 && (
-                <div
-                  className={`basis-full lg:basis-[32%] xl:basis-[32.5%] relative border border-dashed border-white/30 min-h-[200px] lg:h-[300px] rounded-2xl flex flex-col justify-center items-center gap-2 bg-cover bg-tops`}
-                >
-                  <AddATariff
-                    tariffs={remainingTariffs}
-                    addToTariff={addToTariff}
-                  />
-                </div>
-              )}
-            </AnimatePresence>
-          </div>
-        </>
-      )}
-      <i className="text-xs">
-        Remember: Past results do not guarantee future performance.
-      </i>
-    </div>
+      <div className="flex flex-col pt-6 gap-4">
+        {value.error ? (
+          <NotCurrentlySupported>{value.error}</NotCurrentlySupported>
+        ) : (
+          <>
+            <h2 className="font-display text-accentPink-500 text-4xl flex items-center">
+              {currentMeterType[typePlusExport].heading}
+            </h2>
+            <TariffDetails
+              valid_from={
+                currentMeterType[typePlusExport].currentContract!.valid_from
+              }
+              valid_to={
+                currentMeterType[typePlusExport].currentContract!.valid_to
+              }
+              tariff_code={currentMeterType[typePlusExport].currentTariff}
+              type={type}
+            />
+            <div className="flex gap-4 flex-col lg:grid lg:grid-cols-3">
+              <AnimatePresence>
+                {reOrderedTariffsEToCompare.map(({ tariff, category }, ind) => {
+                  return (
+                    <TariffComparisionCard
+                      key={tariff}
+                      type={type}
+                      deviceNumber={
+                        currentMeterType[typePlusExport].accessPoint
+                      }
+                      serialNo={currentMeterType[typePlusExport].serialNo}
+                      tariff={tariff}
+                      category={category}
+                      fromDate={period.from.toISOString()}
+                      toDate={period.to.toISOString()}
+                      compareTo={
+                        isExport
+                          ? LowestCost(reOrderedTariffsEToCompare)
+                          : SVTCost(tariffsToCompare)
+                      }
+                      setCost={setCost}
+                      rank={ind + 1}
+                      isExport={isExport}
+                    />
+                  );
+                })}
+                {remainingTariffs.length > 0 && (
+                  <div
+                    className={`basis-full lg:basis-[32%] xl:basis-[32.5%] relative border border-dashed border-white/30 min-h-[200px] lg:h-[300px] rounded-2xl flex flex-col justify-center items-center gap-2 bg-cover bg-tops`}
+                  >
+                    <AddATariff
+                      tariffs={remainingTariffs}
+                      addToTariff={addToTariff}
+                    />
+                  </div>
+                )}
+              </AnimatePresence>
+            </div>
+          </>
+        )}
+        <i className="text-xs">
+          Remember: Past results do not guarantee future performance.
+        </i>
+      </div>
   );
 };
 

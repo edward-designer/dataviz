@@ -16,9 +16,12 @@ import Link from "next/link";
 import EarningChart from "./EarningChart";
 import Notice from "./Notice";
 import { TbBulb } from "react-icons/tb";
+import useTypeTabs from "@/hooks/useTypeTabs";
 
 const SavingsCalculation = () => {
   const { value, setValue } = useContext(UserContext);
+
+  const { currentType, Tabs } = useTypeTabs();
 
   const yesterday = new Date(
     new Date(new Date().setHours(23, 59, 59, 999)).setDate(
@@ -92,20 +95,9 @@ const SavingsCalculation = () => {
               </Remark>
             </div>
           </div>
-          <Notice>
-            <TbBulb className="w-8 h-8 text-[#f8ec20] shrink-0" />
-            <div>
-              Wanna save even more? Use the brand new{" "}
-              <Link
-                href="/tariffHopping"
-                className="text-accentPink-500 underline hover:text-accentBlue-500 hover:no-underline"
-              >
-                Tariff Hopping
-              </Link>{" "}
-              tool to optimize tariff switching throughout the year!
-            </div>
-          </Notice>
-          {value.EMPAN &&
+          <Tabs />
+          {currentType === "EE" &&
+            value.EMPAN &&
             value.EESerialNo &&
             typeof value.currentEEContract !== "undefined" && (
               <>
@@ -129,7 +121,8 @@ const SavingsCalculation = () => {
                 />
               </>
             )}
-          {value.EMPAN &&
+          {currentType === "EE" &&
+            value.EMPAN &&
             value.EESerialNo &&
             typeof value.previousEEContract !== "undefined" && (
               <>
@@ -150,7 +143,8 @@ const SavingsCalculation = () => {
                 />
               </>
             )}
-          {value.MPAN &&
+          {currentType === "E" &&
+            value.MPAN &&
             value.ESerialNo &&
             typeof value.currentEContract !== "undefined" && (
               <>
@@ -189,7 +183,8 @@ const SavingsCalculation = () => {
                 )}
               </>
             )}
-          {value.MPAN &&
+          {currentType === "E" &&
+            value.MPAN &&
             value.ESerialNo &&
             typeof value.previousEContract !== "undefined" && (
               <>
@@ -215,7 +210,8 @@ const SavingsCalculation = () => {
                 )}
               </>
             )}
-          {value.MPRN &&
+          {currentType === "G" &&
+            value.MPRN &&
             value.GSerialNo &&
             typeof value.currentGContract !== "undefined" && (
               <>
@@ -254,7 +250,8 @@ const SavingsCalculation = () => {
                 )}
               </>
             )}
-          {value.MPRN &&
+          {currentType === "G" &&
+            value.MPRN &&
             value.GSerialNo &&
             typeof value.previousGContract !== "undefined" && (
               <>
@@ -282,6 +279,19 @@ const SavingsCalculation = () => {
             )}
         </>
       )}
+      <Notice>
+        <TbBulb className="w-8 h-8 text-[#f8ec20] shrink-0" />
+        <div>
+          Wanna save even more? Use the brand new{" "}
+          <Link
+            href="/tariffHopping"
+            className="text-accentPink-500 underline hover:text-accentBlue-500 hover:no-underline"
+          >
+            Tariff Hopping
+          </Link>{" "}
+          tool to optimize tariff switching throughout the year!
+        </div>
+      </Notice>
     </div>
   );
 };

@@ -11,9 +11,13 @@ import PeriodSelector from "./PeriodSelector";
 import Link from "next/link";
 import Notice from "./Notice";
 import { TbBulb } from "react-icons/tb";
+import useTypeTabs from "@/hooks/useTypeTabs";
 
 const UserApiResult = () => {
   const { value } = useContext(UserContext);
+
+  const { currentType, Tabs } = useTypeTabs();
+
   const [tariffsEToCompare, setTariffsEToCompare] = useState(
     ETARIFFS.slice(0, 4)
   );
@@ -27,44 +31,53 @@ const UserApiResult = () => {
   }>(getDatePeriod);
 
   return (
-    <div className="flex gap-4 flex-col relative">
+    <div className="flex flex-col relative">
       {value.error ? (
         <NotCurrentlySupported>{value.error}</NotCurrentlySupported>
       ) : (
         <>
           <PeriodSelector period={period} setPeriod={setPeriod} />
-          <CompareTariffsByType
-            selectedTariffs={tariffsEEToCompare}
-            allTariffs={EETARIFFS}
-            type="E"
-            period={period}
-            isExport={true}
-          />
-          <Notice>
-            <TbBulb className="w-8 h-8 text-[#f8ec20] shrink-0" />
-            <div>
-              Wanna save even more? Use the brand new{" "}
-              <Link
-                href="/tariffHopping"
-                className="text-accentPink-500 underline hover:text-accentBlue-500 hover:no-underline"
-              >
-                Tariff Hopping
-              </Link>{" "}
-              tool to optimize tariff switching throughout the year!
-            </div>
-          </Notice>
-          <CompareTariffsByType
-            selectedTariffs={tariffsEToCompare}
-            allTariffs={ETARIFFS}
-            type="E"
-            period={period}
-          />
-          <CompareTariffsByType
-            selectedTariffs={tariffsGToCompare}
-            allTariffs={GTARIFFS}
-            type="G"
-            period={period}
-          />
+          <Tabs />
+          {currentType === "EE" && (
+            <>
+              <CompareTariffsByType
+                selectedTariffs={tariffsEEToCompare}
+                allTariffs={EETARIFFS}
+                type="E"
+                period={period}
+                isExport={true}
+              />
+              <Notice>
+                <TbBulb className="w-8 h-8 text-[#f8ec20] shrink-0" />
+                <div>
+                  Wanna save even more? Use the brand new{" "}
+                  <Link
+                    href="/tariffHopping"
+                    className="text-accentPink-500 underline hover:text-accentBlue-500 hover:no-underline"
+                  >
+                    Tariff Hopping
+                  </Link>{" "}
+                  tool to optimize tariff switching throughout the year!
+                </div>
+              </Notice>
+            </>
+          )}
+          {currentType === "E" && (
+            <CompareTariffsByType
+              selectedTariffs={tariffsEToCompare}
+              allTariffs={ETARIFFS}
+              type="E"
+              period={period}
+            />
+          )}
+          {currentType === "G" && (
+            <CompareTariffsByType
+              selectedTariffs={tariffsGToCompare}
+              allTariffs={GTARIFFS}
+              type="G"
+              period={period}
+            />
+          )}
         </>
       )}
     </div>

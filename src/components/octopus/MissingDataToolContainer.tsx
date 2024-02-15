@@ -17,6 +17,7 @@ import { BsLightningChargeFill } from "react-icons/bs";
 import { PiSunDimFill } from "react-icons/pi";
 import MissingDataToolChart from "./MissingDataToolChart";
 import Button from "./Button";
+import useTypeTabs from "@/hooks/useTypeTabs";
 
 export type ErrorType = Record<string, string>;
 
@@ -24,8 +25,8 @@ const MissingDataToolContainer = () => {
   const { value } = useContext(UserContext);
 
   const [period, setPeriod] = useState<IPeriod>(getDatePeriod("month"));
-
-  const [currentType, setCurrentType] = useState<"E" | "G" | "EE">("E");
+  
+  const { currentType, Tabs } = useTypeTabs();
 
   const hasEImport = !!(value.ESerialNo && value.MPAN);
   const hasEExport = !!(value.EESerialNo && value.EMPAN);
@@ -79,6 +80,7 @@ const MissingDataToolContainer = () => {
       : period.to;
 
   /* loading while waiting */
+  if (!hasEImport && !hasEExport && !hasGImport) return <Loading />;
   if (hasEImport && !dataEImport) return <Loading />;
   if (hasEExport && !dataEExport) return <Loading />;
   if (hasGImport && !dataGImport) return <Loading />;
@@ -93,44 +95,7 @@ const MissingDataToolContainer = () => {
         />
       </div>
       <div className="flex flex-col">
-        <div className="flex pl-6 z-30 sticky top-0 pt-4 bg-theme-950/70 backdrop-blur-md border-b border-accentPink-900">
-          {hasEExport && (
-            <Button
-              className={`border-t border-l border-r rounded-t-xl rounded-b-none ${
-                currentType === "EE"
-                  ? " border-accentPink-500 bg-accentPink-600 text-white"
-                  : "border-slate-300 hover:text-accentPink-500 hover:border-accentPink-500"
-              }`}
-              clickHandler={() => setCurrentType("EE")}
-            >
-              Electricity (Export)
-            </Button>
-          )}
-          {hasEImport && (
-            <Button
-              className={`border-t border-l border-r rounded-t-xl rounded-b-none ${
-                currentType === "E"
-                  ? " border-accentPink-500 bg-accentPink-600 text-white"
-                  : "border-slate-300 hover:text-accentPink-500 hover:border-accentPink-500"
-              }`}
-              clickHandler={() => setCurrentType("E")}
-            >
-              Electricity
-            </Button>
-          )}
-          {hasGImport && (
-            <Button
-              className={`border-t border-l border-r rounded-t-xl rounded-b-none ${
-                currentType === "G"
-                  ? " border-accentPink-500 bg-accentPink-600 text-white"
-                  : "border-slate-300 hover:text-accentPink-500 hover:border-accentPink-500"
-              }`}
-              clickHandler={() => setCurrentType("G")}
-            >
-              Gas
-            </Button>
-          )}
-        </div>
+        <Tabs />
         <div className="flex w-full border-l border-r border-b border-accentPink-900 rounded-b-xl p-6">
           {currentType === "EE" && (
             <MissingDataToolChart
