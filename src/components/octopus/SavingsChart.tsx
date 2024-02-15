@@ -394,7 +394,8 @@ const SavingsChart = ({
               className="w-16 h-16"
             />
             <span className="text-sm font-light text-center">
-              Please select another meter no. from the box above.
+              Octo is working hard to calculate your savings. Please re-visit
+              this page later.
             </span>
           </div>
         )}
