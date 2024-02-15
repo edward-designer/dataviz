@@ -64,7 +64,7 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
     apiKey: value.apiKey,
   });
 
-  /* Important this should be removed from 15Feb */
+  /* Important this should be removed when the new tariffs covers over 1/2 years */
   const tariff =
     inputTariff === "SILVER-23-12-06" && results === "yearly"
       ? "SILVER-FLEX-BB-23-02-08"
@@ -72,7 +72,6 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
       ? "AGILE-FLEX-22-11-25"
       : inputTariff;
 
-  /* Important this should be removed from 15Feb */
 
   const queryFnStandingChargeData = async () => {
     try {
@@ -813,6 +812,7 @@ export const calculatePrice = (
         (totalStandingCharge * periodLength) / consumptionDataResults.length;
     }
   }
+
   totalPrice = evenRound(totalPrice / 100, 2);
   totalStandingCharge = evenRound(totalStandingCharge / 100, 2);
 
