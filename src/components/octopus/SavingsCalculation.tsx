@@ -9,17 +9,21 @@ import { PiSunDimFill } from "react-icons/pi";
 
 import SavingsChart from "./SavingsChart";
 import TariffDetails from "./TariffDetails";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { UserContext } from "@/context/user";
-import { getCategory } from "@/utils/helpers";
+import { getCategory, getDatePeriod } from "@/utils/helpers";
 import Link from "next/link";
 import EarningChart from "./EarningChart";
 import Notice from "./Notice";
 import { TbBulb } from "react-icons/tb";
 import useTypeTabs from "@/hooks/useTypeTabs";
+import SavingPeriodSelector from "./SavingPeriodSelector";
+import { IPeriod } from "@/data/source";
 
 const SavingsCalculation = () => {
   const { value, setValue } = useContext(UserContext);
+
+  const [period, setPeriod] = useState<IPeriod>(getDatePeriod("year"));
 
   const { currentType, Tabs } = useTypeTabs();
 
@@ -74,8 +78,8 @@ const SavingsCalculation = () => {
         <>
           <div className="flex gap-2 md:flex-col lg:flex-row">
             <div className="flex-grow">
-              Monthly savings of current tariff vs Octopus Flexible (i.e. Ofgem
-              Standard Variable Tariff), standing charges & VAT inclusive.
+              Savings of current tariff vs Octopus Flexible (i.e. Ofgem Standard
+              Variable Tariff), standing charges & VAT inclusive.
               <Remark>
                 Approximations and assumptions are used in the calculations. The
                 actual savings are likely to differ because of missing data and
@@ -95,6 +99,7 @@ const SavingsCalculation = () => {
               </Remark>
             </div>
           </div>
+          {false && <SavingPeriodSelector period={period} setPeriod={setPeriod} />}
           <Tabs />
           {currentType === "EE" &&
             value.EMPAN &&
@@ -105,12 +110,14 @@ const SavingsCalculation = () => {
                   <PiSunDimFill className="w-8 h-8 fill-accentPink-900 inline-block mr-2" />
                   Electricity Export Earnings
                 </h2>
-                <TariffDetails
-                  valid_from={value.currentEEContract.valid_from}
-                  valid_to={value.currentEEContract.valid_to}
-                  tariff_code={value.currentEETariff}
-                  type="E"
-                />
+                {period.duration === "year" && (
+                  <TariffDetails
+                    valid_from={value.currentEEContract.valid_from}
+                    valid_to={value.currentEEContract.valid_to}
+                    tariff_code={value.currentEETariff}
+                    type="E"
+                  />
+                )}
                 <EarningChart
                   tariff={value.currentEETariff}
                   fromDate={EEfromDate}
@@ -124,13 +131,15 @@ const SavingsCalculation = () => {
           {currentType === "EE" &&
             value.EMPAN &&
             value.EESerialNo &&
-            typeof value.previousEEContract !== "undefined" && (
+            typeof value.previousEEContract !== "undefined" &&
+            period.duration === "year" && (
               <>
                 <TariffDetails
                   valid_from={value.previousEEContract.valid_from}
                   valid_to={value.previousEEContract.valid_to}
                   tariff_code={value.previousEEContract.tariff_code}
                   type="E"
+                  isCurrent={false}
                 />
                 <EarningChart
                   tariff={value.previousEEContract.tariff_code.slice(5, -2)}
@@ -152,12 +161,14 @@ const SavingsCalculation = () => {
                   <BsLightningChargeFill className="w-8 h-8 fill-accentPink-900 inline-block mr-2" />
                   Electricity Savings
                 </h2>
-                <TariffDetails
-                  valid_from={value.currentEContract.valid_from}
-                  valid_to={value.currentEContract.valid_to}
-                  tariff_code={value.currentETariff}
-                  type="E"
-                />
+                {period.duration === "year" && (
+                  <TariffDetails
+                    valid_from={value.currentEContract.valid_from}
+                    valid_to={value.currentEContract.valid_to}
+                    tariff_code={value.currentETariff}
+                    type="E"
+                  />
+                )}
                 {isESVT ? (
                   <div>
                     You are currently on the Octopus Flexible Tariff.
@@ -179,6 +190,9 @@ const SavingsCalculation = () => {
                     compareTo="SVT"
                     deviceNumber={value.MPAN}
                     serialNo={value.ESerialNo}
+                    selectedPeriod={
+                      period.duration === "month" ? period : undefined
+                    }
                   />
                 )}
               </>
@@ -186,13 +200,15 @@ const SavingsCalculation = () => {
           {currentType === "E" &&
             value.MPAN &&
             value.ESerialNo &&
-            typeof value.previousEContract !== "undefined" && (
+            typeof value.previousEContract !== "undefined" &&
+            period.duration === "year" && (
               <>
                 <TariffDetails
                   valid_from={value.previousEContract.valid_from}
                   valid_to={value.previousEContract.valid_to}
                   tariff_code={value.previousEContract.tariff_code}
                   type="E"
+                  isCurrent={false}
                 />
                 {isEPrevSVT ? (
                   <div>You were on the Octopus Flexible Tariff.</div>
@@ -219,12 +235,14 @@ const SavingsCalculation = () => {
                   <AiFillFire className="w-8 h-8 fill-accentPink-900 inline-block mr-2" />
                   Gas Savings
                 </h2>
-                <TariffDetails
-                  valid_from={value.currentGContract.valid_from}
-                  valid_to={value.currentGContract.valid_to}
-                  tariff_code={value.currentGTariff}
-                  type="G"
-                />
+                {period.duration === "year" && (
+                  <TariffDetails
+                    valid_from={value.currentGContract.valid_from}
+                    valid_to={value.currentGContract.valid_to}
+                    tariff_code={value.currentGTariff}
+                    type="G"
+                  />
+                )}
                 {isGSVT ? (
                   <div>
                     You are currently on the Octopus Flexible Tariff.
@@ -253,13 +271,15 @@ const SavingsCalculation = () => {
           {currentType === "G" &&
             value.MPRN &&
             value.GSerialNo &&
-            typeof value.previousGContract !== "undefined" && (
+            typeof value.previousGContract !== "undefined" &&
+            period.duration === "year" && (
               <>
                 <TariffDetails
                   valid_from={value.previousGContract.valid_from}
                   valid_to={value.previousGContract.valid_to}
                   tariff_code={value.previousGContract.tariff_code}
                   type="G"
+                  isCurrent={false}
                 />
                 {isGPrevSVT ? (
                   <div>You were on the Octopus Flexible Tariff.</div>

@@ -2,7 +2,12 @@
 
 import Badge from "@/components/octopus/Badge";
 import Comparison from "@/components/octopus/Comparison";
-import { ENERGY_TYPE, SVT_ETARIFF, TariffCategory } from "@/data/source";
+import {
+  ENERGY_TYPE,
+  IPeriod,
+  SVT_ETARIFF,
+  TariffCategory,
+} from "@/data/source";
 
 import { saveAs } from "file-saver";
 import html2canvas from "html2canvas";
@@ -35,6 +40,7 @@ const SavingsChart = ({
   compareTo,
   deviceNumber,
   serialNo,
+  selectedPeriod,
 }: {
   tariff: string;
   type: "E" | "G";
@@ -44,6 +50,7 @@ const SavingsChart = ({
   compareTo: TariffCategory | string;
   deviceNumber: string;
   serialNo: string;
+  selectedPeriod?: IPeriod;
 }) => {
   const imageRef = useRef<HTMLDivElement | null>(null);
 
@@ -64,13 +71,17 @@ const SavingsChart = ({
     error,
   } = useConsumptionCalculation({
     tariff,
-    fromDate,
-    toDate,
+    fromDate: selectedPeriod ? selectedPeriod.from.toISOString() : fromDate,
+    toDate: selectedPeriod ? selectedPeriod.to.toISOString() : toDate,
     type,
     category,
     deviceNumber,
     serialNo,
-    results: "monthly",
+    results: selectedPeriod
+      ? selectedPeriod.duration === "month"
+        ? "daily"
+        : "monthly"
+      : "monthly",
   });
 
   const {
@@ -79,13 +90,17 @@ const SavingsChart = ({
     totalStandingCharge: totalStandingChargeSVT,
   } = useConsumptionCalculation({
     tariff: compareTo === "SVT" ? SVT_ETARIFF : compareTo,
-    fromDate,
-    toDate,
+    fromDate: selectedPeriod ? selectedPeriod.from.toISOString() : fromDate,
+    toDate: selectedPeriod ? selectedPeriod.to.toISOString() : toDate,
     type,
     category: compareToCategory,
     deviceNumber,
     serialNo,
-    results: "monthly",
+    results: selectedPeriod
+      ? selectedPeriod.duration === "month"
+        ? "daily"
+        : "monthly"
+      : "monthly",
   });
 
   if (isLoading)
@@ -360,7 +375,7 @@ const SavingsChart = ({
                   applied approximations and assumptions in the calculations.
                   Reasons for the differences may be missing data, rounding or,
                   in the case of gas, the conversion of reading of gas volume to
-                  kWh (the unit used in our daily quote) because
+                  kWh (the unit used in our daily quote) because{" "}
                   <strong>gas cost calculation is very complex.</strong> The
                   unit of readings from smart meters differ depending on the
                   generation of meter (i.e. SMETS1 meters have the consumption

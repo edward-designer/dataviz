@@ -286,7 +286,7 @@ const EnergyShiftSimContainer = () => {
             isExport={true}
           />
         )}
-        {!hasExport && (
+        {false && !hasExport && (
           <div className="flex flex-row gap-2 items-center">
             <FormSolar open={solarFormOpen} setOpen={setSolarFormOpen} />
             <FormBattery open={batteryFormOpen} setOpen={setBatteryFormOpen} />

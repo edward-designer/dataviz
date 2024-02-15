@@ -15,7 +15,7 @@ import { useContext } from "react";
 import usePriceCapQuery from "./usePriceCapQuery";
 import useConsumptionData from "./useConsumptionData";
 
-export type IConsumptionCalculator = {
+export type IConsumptionCalculation = {
   deviceNumber: string;
   serialNo: string;
   tariff: string;
@@ -23,10 +23,10 @@ export type IConsumptionCalculator = {
   toDate: string;
   type: Exclude<TariffType, "EG">;
   category: TariffCategory;
-  results?: "monthly" | "yearly";
+  results?: "monthly" | "yearly" | "daily";
 };
 
-const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
+const useConsumptionCalculation = (inputs: IConsumptionCalculation) => {
   const { value } = useContext(UserContext);
 
   const {
@@ -71,7 +71,6 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
       : inputTariff === "AGILE-23-12-06" && results === "yearly"
       ? "AGILE-FLEX-22-11-25"
       : inputTariff;
-
 
   const queryFnStandingChargeData = async () => {
     try {
@@ -172,7 +171,21 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
     isStandingChargeDataSuccess &&
     caps.data
   ) {
-    if (results === "monthly") {
+    if (results === "daily") {
+      const results = calculateDailyPrices(
+        type,
+        category,
+        value.gasConversionFactor,
+        fromISODate,
+        toISODate,
+        caps.data.filter((d) => d.Region === `_${value.gsp}`),
+        consumptionData,
+        flattenedRateData,
+        standingChargeData,
+        currentGSP
+      );
+      return results;
+    } else if (results === "monthly") {
       const results = calculateMonthlyPrices(
         type,
         category,
@@ -205,7 +218,7 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
   }
   return {
     cost: null,
-    monthlyUnits: null,
+    units: null,
     totalUnit: 0,
     totalPrice: 0,
     totalStandingCharge: 0,
@@ -216,6 +229,299 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
 };
 
 export default useConsumptionCalculation;
+
+export const calculateDailyPrices = (
+  type: Exclude<TariffType, "EG">,
+  category: string,
+  gasConversionFactor: number,
+  fromDate: string,
+  toDate: string,
+  caps: CapsTSVResult[],
+  consumptionData: {
+    results: {
+      consumption: number;
+      interval_start: string;
+      interval_end: string;
+    }[];
+  },
+  rateData: {
+    results: {
+      value_inc_vat: number;
+      valid_from: string;
+      valid_to: string;
+      payment_method: null | string;
+    }[];
+  },
+  standingChargeData: {
+    results: {
+      value_inc_vat: number;
+      valid_from: string;
+      valid_to: null | string;
+      payment_method: null | string;
+    }[];
+  },
+  gsp: gsp
+) => {
+  let dailyPricesInPound = [];
+  let dailyUnits = [];
+  let monthUnit = 0;
+  let totalPrice = 0;
+  let dailyStandingCharge = 0;
+  let totalStandingCharge = 0;
+  let totalUnit = 0;
+  let rateDataOffset = 0; // since there are GAPS in the consumption data (possibly due to consumption data not synced to the server), we need to check if the consumption data matches the following rate period with the offset
+  let currentDay = 0;
+  let currentPeriod = new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+  }).format(new Date(toDate));
+  let currentRateIndex = 0;
+  const consumptionMultiplier = type === "G" ? gasConversionFactor : 1;
+  const filteredRateDataResults = rateData.results.filter(
+    (d) => d.payment_method !== "NON_DIRECT_DEBIT"
+  );
+
+  const consumptionDataResults = consumptionData.results.filter(
+    (d) =>
+      new Date(d.interval_start) >= new Date(fromDate) &&
+      new Date(d.interval_start) <= new Date(toDate)
+  );
+
+  for (let i = 0; i < consumptionDataResults.length; i++) {
+    if (
+      new Intl.DateTimeFormat("en-GB", {
+        day: "numeric",
+      }).format(new Date(consumptionDataResults[i].interval_start)) !==
+      currentPeriod
+    ) {
+      totalStandingCharge += dailyStandingCharge;
+      const dailyCostPlusStandingChargeInPound: number =
+        evenRound(totalPrice / 100, 2) +
+        evenRound(totalStandingCharge / 100, 2) -
+        dailyPricesInPound.reduce((acc, cur) => {
+          return acc + Object.values(cur)[0];
+        }, 0);
+      if (dailyCostPlusStandingChargeInPound > 0) {
+        dailyPricesInPound.push({
+          [currentPeriod]: evenRound(dailyCostPlusStandingChargeInPound, 2),
+        });
+        dailyUnits.push({
+          [currentPeriod]: evenRound(monthUnit, 2),
+        });
+        monthUnit = 0;
+      }
+      currentPeriod = new Intl.DateTimeFormat("en-GB", {
+        day: "numeric",
+      }).format(new Date(consumptionDataResults[i].interval_start));
+      dailyStandingCharge = 0;
+    }
+
+    totalUnit += consumptionDataResults[i].consumption * consumptionMultiplier;
+    monthUnit += consumptionDataResults[i].consumption * consumptionMultiplier;
+
+    if (category === "Fixed") {
+      const currentPeriodTariff = filteredRateDataResults[0];
+      totalPrice +=
+        (currentPeriodTariff?.value_inc_vat ?? 0) *
+        consumptionDataResults[i].consumption *
+        consumptionMultiplier;
+    } else if (category === "SVT") {
+      const currentPeriodTariff = filteredRateDataResults.find(
+        (d) =>
+          new Date(d.valid_from) <=
+            new Date(consumptionDataResults[i].interval_start) &&
+          (d.valid_to === null ||
+            new Date(d.valid_to) >=
+              new Date(consumptionDataResults[i].interval_start))
+      );
+
+      const currentPeriodTariffCap = caps.find(
+        (cap) =>
+          new Date(consumptionDataResults[i].interval_start) >=
+          new Date(cap.Date)
+      );
+
+      const currentUnitRate =
+        (currentPeriodTariff?.value_inc_vat ?? 0) >
+        Number(currentPeriodTariffCap?.[type] ?? 0)
+          ? Number(currentPeriodTariffCap?.[type] ?? 0)
+          : currentPeriodTariff?.value_inc_vat ?? 0;
+
+      totalPrice +=
+        currentUnitRate *
+        consumptionDataResults[i].consumption *
+        consumptionMultiplier;
+    } else if (
+      category === "IGo" ||
+      category === "Go" ||
+      category === "Cosy" ||
+      category === "Flux" ||
+      category === "IFlux"
+    ) {
+      for (let j = currentRateIndex; j < filteredRateDataResults.length; j++) {
+        const currentRateEntry = filteredRateDataResults[j];
+        if (
+          new Date(currentRateEntry.valid_from) <=
+            new Date(consumptionDataResults[i].interval_start) &&
+          (filteredRateDataResults[j].valid_to === null ||
+            new Date(currentRateEntry.valid_to) >=
+              new Date(consumptionDataResults[i].interval_start))
+        ) {
+          totalPrice +=
+            (currentRateEntry?.value_inc_vat ?? 0) *
+            consumptionDataResults[i].consumption *
+            consumptionMultiplier;
+          break;
+        }
+        currentRateIndex++;
+      }
+    } else if (category === "Tracker") {
+      const currentResultStartDateTime = new Date(
+        consumptionDataResults[i].interval_start
+      );
+      currentResultStartDateTime.setHours(0, 0, 0, 0);
+      const currentResultStartDateTimestamp =
+        currentResultStartDateTime.valueOf();
+      const currentRateStartDateTime = new Date(
+        filteredRateDataResults[i + rateDataOffset]?.valid_from
+      );
+      currentRateStartDateTime.setHours(0, 0, 0, 0);
+      const currentRateStartDateTimestamp = currentRateStartDateTime.valueOf();
+      /* check the same start time OR difference of 1 hour in daylight saving time */
+
+      if (currentRateStartDateTimestamp === currentResultStartDateTimestamp) {
+        totalPrice +=
+          filteredRateDataResults[i + rateDataOffset].value_inc_vat *
+          consumptionDataResults[i].consumption *
+          consumptionMultiplier;
+      } else {
+        for (
+          let j = 1;
+          j < filteredRateDataResults.length - rateDataOffset;
+          j++
+        ) {
+          const nextTime = new Date(
+            filteredRateDataResults[i + rateDataOffset + j]?.valid_from
+          );
+          nextTime.setHours(0, 0, 0, 0);
+          const nextTimestamp = nextTime.valueOf();
+
+          if (nextTimestamp === currentResultStartDateTimestamp) {
+            totalPrice +=
+              filteredRateDataResults[i + rateDataOffset + j].value_inc_vat *
+              consumptionDataResults[i].consumption *
+              consumptionMultiplier;
+            rateDataOffset += j;
+            break;
+          }
+        }
+      }
+    } else if (category === "Agile") {
+      // Agile
+      const currentResultStartDateTimestamp = new Date(
+        consumptionDataResults[i].interval_start
+      ).valueOf();
+      const currentRateStartDateTimestamp = new Date(
+        filteredRateDataResults[i + rateDataOffset]?.valid_from
+      ).valueOf();
+      /* check the same start time OR difference of 1 hour in daylight saving time */
+
+      if (
+        currentRateStartDateTimestamp === currentResultStartDateTimestamp ||
+        currentRateStartDateTimestamp ===
+          currentResultStartDateTimestamp - 3600000
+      ) {
+        totalPrice +=
+          filteredRateDataResults[i + rateDataOffset].value_inc_vat *
+          consumptionDataResults[i].consumption *
+          consumptionMultiplier;
+      } else {
+        for (let j = 1; j < filteredRateDataResults.length; j++) {
+          const nextTimestamp = new Date(
+            filteredRateDataResults[i + rateDataOffset + j]?.valid_from
+          ).valueOf();
+
+          if (
+            nextTimestamp === currentResultStartDateTimestamp ||
+            nextTimestamp === currentResultStartDateTimestamp - 3600000
+          ) {
+            totalPrice +=
+              filteredRateDataResults[i + rateDataOffset + j].value_inc_vat *
+              consumptionDataResults[i].consumption *
+              consumptionMultiplier;
+            rateDataOffset += j;
+            break;
+          }
+        }
+      }
+    }
+
+    if (
+      new Date(consumptionDataResults[i].interval_start).setHours(
+        0,
+        0,
+        0,
+        0
+      ) !== currentDay
+    ) {
+      currentDay = new Date(consumptionDataResults[i].interval_start).setHours(
+        0,
+        0,
+        0,
+        0
+      );
+      let standingCharge = 0;
+      if (category === "Fixed") {
+        standingCharge = standingChargeData.results[0]?.value_inc_vat ?? 0;
+      } else {
+        // for newer tariffs with starting date earlier than consumption date
+        if (standingChargeData.results.length === 1) {
+          standingCharge = standingChargeData.results[0]?.value_inc_vat ?? 0;
+        } else {
+          standingCharge =
+            standingChargeData.results
+              .filter((d) => d.payment_method !== "NON_DIRECT_DEBIT")
+              .find(
+                (d) =>
+                  new Date(d.valid_from) <= new Date(currentDay) &&
+                  (d.valid_to === null ||
+                    new Date(d.valid_to) >= new Date(currentDay))
+              )?.value_inc_vat ?? 0;
+        }
+      }
+
+      dailyStandingCharge += standingCharge;
+    }
+  }
+
+  totalStandingCharge += dailyStandingCharge;
+  const dailyCostPlusStandingChargeInPound: number =
+    evenRound(totalPrice / 100, 2) +
+    evenRound(totalStandingCharge / 100, 2) -
+    dailyPricesInPound.reduce((acc, cur) => {
+      return acc + Object.values(cur)[0];
+    }, 0);
+  dailyPricesInPound.push({
+    [currentPeriod]: evenRound(dailyCostPlusStandingChargeInPound, 2),
+  });
+  dailyUnits.push({
+    [currentPeriod]: evenRound(monthUnit, 2),
+  });
+  totalStandingCharge = evenRound(totalStandingCharge, 2);
+
+  dailyPricesInPound.reverse();
+
+  return {
+    cost: dailyPricesInPound,
+    units: dailyUnits,
+    totalUnit,
+    totalPrice,
+    totalStandingCharge,
+    isLoading: false,
+    lastDate: consumptionData?.results[0]?.interval_end ?? "",
+    error: "",
+    newTracker: true,
+  };
+};
 
 export const calculateMonthlyPrices = (
   type: Exclude<TariffType, "EG">,
@@ -500,7 +806,7 @@ export const calculateMonthlyPrices = (
 
   return {
     cost: monthlyPricesInPound,
-    monthlyUnits,
+    units: monthlyUnits,
     totalUnit,
     totalPrice,
     totalStandingCharge,
@@ -839,7 +1145,7 @@ export const calculatePrice = (
 
   return {
     cost: totalPrice + totalStandingCharge,
-    monthlyUnits: null,
+    units: null,
     totalUnit,
     totalPrice,
     totalStandingCharge,

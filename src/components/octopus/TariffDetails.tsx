@@ -13,12 +13,16 @@ import {
 } from "../ui/select";
 import { IoMdArrowDropright } from "react-icons/io";
 import { TbPlayerTrackNextFilled } from "react-icons/tb";
+import { MdOutlineHistory } from "react-icons/md";
+import { MdElectricMeter } from "react-icons/md";
+import { MdGasMeter } from "react-icons/md";
 
 interface ITariffDetails {
   tariff_code: string;
   valid_to: string;
   valid_from: string;
   type: TariffType;
+  isCurrent?: boolean;
 }
 
 const TariffDetails = ({
@@ -26,6 +30,7 @@ const TariffDetails = ({
   valid_from,
   valid_to,
   type,
+  isCurrent = true,
 }: ITariffDetails) => {
   const { value, setValue } = useContext(UserContext);
   const { data, isSuccess, isLoading } = useTariffQuery<{
@@ -38,63 +43,79 @@ const TariffDetails = ({
   const currentSelect = type === "E" ? "ESerialNo" : "GSerialNo";
   const meterSelection = type === "E" ? "ESerialNos" : "GSerialNos";
   return (
-    <div className="bg-theme-900/40 p-1 flex flex-row md:p-2 md:flex-col gap-1 justify-between">
-      <div className="flex flex-col md:flex-row items-start md:items-center text-sm md:text-base">
-        <span className="inline-block md:w-[90px] text-accentBlue-500 text-[12px] font-bold">
-          Meter No.:
-        </span>
-        {value[meterSelection].length > 1 ? (
-          <Select
-            onValueChange={(newSelection: string) =>
-              setValue({ ...value, [currentSelect]: newSelection })
-            }
-            value={value[currentSelect]}
-          >
-            <SelectTrigger className="w-auto flex items-center justify-center p-0 m-0 h-5 md:h-7 text-sm md:text-base [&>svg]:ml-0">
-              <SelectValue placeholder="" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {value[meterSelection].map((serialNo) => (
-                  <SelectItem key={serialNo} value={serialNo}>
-                    {serialNo}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        ) : (
-          value[currentSelect]
-        )}
-      </div>
-      <div className="flex flex-col md:flex-row items-start md:items-center text-sm md:text-base">
-        <span className="inline-block md:w-[90px] text-accentBlue-500 text-[12px] font-bold">
-          Tariff:
-        </span>
-        {isSuccess ? data[0]?.display_name ?? tariff_code : tariff_code}
-      </div>
-      <div className="flex flex-col md:flex-row items-start md:items-center text-sm md:text-base">
-        <span className="inline-block md:w-[90px] text-accentBlue-500 text-[12px] font-bold">
-          Duration:
-        </span>
-        {new Date(valid_from).toLocaleDateString("en-GB")}
-        {valid_to ? (
+    <>
+      <div className="-mb-5 text-accentBlue-700 font-bold flex items-center gap-1">
+        {isCurrent ? (
           <>
-            <IoMdArrowDropright />
-            <span className="text-accentPink-300">
-              {new Date(valid_to).toLocaleDateString("en-GB")}
-            </span>
+            {type === "G" ? <MdGasMeter /> : <MdElectricMeter />}
+            Current
           </>
         ) : (
           <>
-            <TbPlayerTrackNextFilled className="w-3 h-3 mx-1" />
-            <em className="text-xs font-light relative -top-[2px] text-accentBlue-300">
-              ongoing
-            </em>
+            <MdOutlineHistory />
+            Previous
           </>
-        )}
+        )}{" "}
+        Tariff
       </div>
-    </div>
+      <div className="bg-theme-900/40 p-1 flex flex-row md:p-2 md:flex-col gap-1 justify-between">
+        <div className="flex flex-col md:flex-row items-start md:items-center text-sm md:text-base">
+          <span className="inline-block md:w-[90px] text-accentBlue-500 text-[12px] font-bold">
+            Meter No.:
+          </span>
+          {value[meterSelection].length > 1 ? (
+            <Select
+              onValueChange={(newSelection: string) =>
+                setValue({ ...value, [currentSelect]: newSelection })
+              }
+              value={value[currentSelect]}
+            >
+              <SelectTrigger className="w-auto flex items-center justify-center p-0 m-0 h-5 md:h-7 text-sm md:text-base [&>svg]:ml-0">
+                <SelectValue placeholder="" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {value[meterSelection].map((serialNo) => (
+                    <SelectItem key={serialNo} value={serialNo}>
+                      {serialNo}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          ) : (
+            value[currentSelect]
+          )}
+        </div>
+        <div className="flex flex-col md:flex-row items-start md:items-center text-sm md:text-base">
+          <span className="inline-block md:w-[90px] text-accentBlue-500 text-[12px] font-bold">
+            Tariff:
+          </span>
+          {isSuccess ? data[0]?.display_name ?? tariff_code : tariff_code}
+        </div>
+        <div className="flex flex-col md:flex-row items-start md:items-center text-sm md:text-base">
+          <span className="inline-block md:w-[90px] text-accentBlue-500 text-[12px] font-bold">
+            Duration:
+          </span>
+          {new Date(valid_from).toLocaleDateString("en-GB")}
+          {valid_to ? (
+            <>
+              <IoMdArrowDropright />
+              <span className="text-accentPink-300">
+                {new Date(valid_to).toLocaleDateString("en-GB")}
+              </span>
+            </>
+          ) : (
+            <>
+              <TbPlayerTrackNextFilled className="w-3 h-3 mx-1" />
+              <em className="text-xs font-light relative -top-[2px] text-accentBlue-300">
+                ongoing
+              </em>
+            </>
+          )}
+        </div>
+      </div>
+    </>
   );
 };
 
