@@ -75,7 +75,7 @@ const PeriodSelector = ({
           </Remark>
         </div>
       </div>
-      <div className="flex justify-center lg:justify-start gap-x-2 gap-y-1 flex-wrap">
+      <div className="flex justify-center lg:justify-start gap-x-2 gap-y-1">
         <SelectPeriodButton
           isActive={period.duration === "year"}
           clickHandler={selectPeriodHandler("year")}

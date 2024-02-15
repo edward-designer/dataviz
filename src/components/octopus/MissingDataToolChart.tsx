@@ -187,7 +187,7 @@ const MissingDataToolChart = ({
       <div className="flex flex-col flex-1">
         <div className="text-accentPink-700 text-2xl flex">{children}</div>
         <div
-          className="flex-1 max-w-[calc(100vw_-_100px)] overflow-auto"
+          className="flex-1 max-w-[calc(100vw_-_80px)] overflow-auto"
           id="svgContainer"
         >
           <svg ref={svgRef}>
