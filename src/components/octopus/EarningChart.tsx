@@ -1,36 +1,23 @@
 "use client";
 
 import Badge from "@/components/octopus/Badge";
-import Comparison from "@/components/octopus/Comparison";
-import { ENERGY_TYPE, SVT_ETARIFF, TariffCategory } from "@/data/source";
 
-import { toBlob, toJpeg } from "html-to-image";
-import { saveAs } from "file-saver";
-import html2canvas from "html2canvas";
-
-import { evenRound, getCategory } from "../../utils/helpers";
+import { getCategory } from "../../utils/helpers";
 
 import useConsumptionCalculation from "@/hooks/useConsumptionCalculation";
 import Lottie from "lottie-react";
 import octopusIcon from "../../../public/lottie/octopus.json";
-import FormattedPrice from "./FormattedPrice";
 import EarningMonthlyChart from "./EarningMonthlyChart";
+import FormattedPrice from "./FormattedPrice";
 
 import { LiaBalanceScaleSolid } from "react-icons/lia";
-import { TbMoneybag, TbPigMoney } from "react-icons/tb";
-import { GrMoney } from "react-icons/gr";
 import { RiMoneyPoundCircleLine } from "react-icons/ri";
 
-import { useEffect, useRef } from "react";
-import logo from "../../../public/octoprice-sm.svg";
+import { useRef } from "react";
 
-import { RxShare2 } from "react-icons/rx";
-import { PiDownloadSimple } from "react-icons/pi";
-import { BsLightningChargeFill } from "react-icons/bs";
-import { AiFillFire } from "react-icons/ai";
 import { PiQuestion } from "react-icons/pi";
-import Remark from "./Remark";
 import Loading from "../Loading";
+import Remark from "./Remark";
 
 const EarningChart = ({
   tariff,
@@ -58,7 +45,7 @@ const EarningChart = ({
 
   const {
     cost,
-    monthlyUnits,
+    units,
     totalUnit,
     totalPrice,
     totalStandingCharge,
@@ -128,7 +115,7 @@ const EarningChart = ({
                 cost={cost}
                 lastDate={contractToDate ? null : lastDate}
                 type={type}
-                units={monthlyUnits}
+                units={units}
               />
               <div className="flex flex-col font-normal justify-start divide-y [&>div]:border-accentBlue-900 gap-3">
                 <div className="flex flex-wrap justify-between items-start md:block text-[#85cbf9] bg-theme-900/30">
