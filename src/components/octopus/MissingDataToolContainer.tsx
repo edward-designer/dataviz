@@ -93,7 +93,7 @@ const MissingDataToolContainer = () => {
         />
       </div>
       <div className="flex flex-col">
-        <div className="flex ml-6 z-30 relative">
+        <div className="flex pl-6 z-30 sticky top-0 pt-4 bg-theme-950/70 backdrop-blur-md border-b border-accentPink-900">
           {hasEExport && (
             <Button
               className={`border-t border-l border-r rounded-t-xl rounded-b-none ${
@@ -131,7 +131,7 @@ const MissingDataToolContainer = () => {
             </Button>
           )}
         </div>
-        <div className="flex w-full border border-accentPink-900 rounded-2xl p-6">
+        <div className="flex w-full border-l border-r border-b border-accentPink-900 rounded-b-xl p-6">
           {currentType === "EE" && (
             <MissingDataToolChart
               fromDate={fromDateWithin1Year}
