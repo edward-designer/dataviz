@@ -99,7 +99,9 @@ const SavingsCalculation = () => {
               </Remark>
             </div>
           </div>
-          {false && <SavingPeriodSelector period={period} setPeriod={setPeriod} />}
+          {false && (
+            <SavingPeriodSelector period={period} setPeriod={setPeriod} />
+          )}
           <Tabs />
           {currentType === "EE" &&
             value.EMPAN &&

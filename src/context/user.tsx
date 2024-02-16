@@ -7,7 +7,6 @@ import {
   PropsWithChildren,
   createContext,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useState,
@@ -308,17 +307,14 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
   );
   const currentEETariff = currentEEContract?.tariff_code.slice(5, -2) ?? "";
 
-  const currentGContract = useMemo(
-    () =>
-      currentProperty?.gas_meter_points
-        ?.at(-1)
-        ?.agreements.filter(
-          (agreement) =>
-            agreement.valid_to === null ||
-            new Date(agreement.valid_to).valueOf() > new Date().valueOf()
-        )?.[0],
-    [currentProperty]
-  );
+  const currentGContract = currentProperty?.gas_meter_points
+    ?.at(-1)
+    ?.agreements.filter(
+      (agreement) =>
+        agreement.valid_to === null ||
+        new Date(agreement.valid_to).valueOf() > new Date().valueOf()
+    )?.[0];
+
   const previousGContract = useMemo(
     () =>
       currentProperty?.gas_meter_points
