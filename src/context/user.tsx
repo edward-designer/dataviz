@@ -157,9 +157,7 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
       queryFn,
       enabled:
         !!value.accountNumber &&
-        !!value.apiKey &&
-        !value.ESerialNo &&
-        !value.GSerialNo,
+        !!value.apiKey,
       retry: false,
     });
 
@@ -307,14 +305,17 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
   );
   const currentEETariff = currentEEContract?.tariff_code.slice(5, -2) ?? "";
 
-  const currentGContract = currentProperty?.gas_meter_points
-    ?.at(-1)
-    ?.agreements.filter(
-      (agreement) =>
-        agreement.valid_to === null ||
-        new Date(agreement.valid_to).valueOf() > new Date().valueOf()
-    )?.[0];
-
+  const currentGContract = useMemo(
+    () =>
+      currentProperty?.gas_meter_points
+        ?.at(-1)
+        ?.agreements.filter(
+          (agreement) =>
+            agreement.valid_to === null ||
+            new Date(agreement.valid_to).valueOf() > new Date().valueOf()
+        )?.[0],
+    [currentProperty]
+  );
   const previousGContract = useMemo(
     () =>
       currentProperty?.gas_meter_points
