@@ -187,14 +187,12 @@ const useDailyAmountCalculation = (inputs: IDailyAmountCalculation) => {
       );
       const tariffRates = resultsWithUnitAndStandardCharge[
         tariffIndexInArray * 2
-      ].data[0]?.results as ITariffResults[];
+      ]?.data?.[0]?.results as ITariffResults[];
       const tariffStandingCharges = resultsWithUnitAndStandardCharge[
         tariffIndexInArray * 2 + 1
-      ].data?.results as ITariffResults[];
-      const SVTrates = resultsWithUnitAndStandardCharge[0].data[0]
-        .results as ITariffResults[];
-      const SVTstandingCharges = resultsWithUnitAndStandardCharge[1].data
-        .results as ITariffResults[];
+      ]?.data?.results as ITariffResults[];
+      const SVTrates = resultsWithUnitAndStandardCharge[0].data?.[0]?.results as ITariffResults[];
+      const SVTstandingCharges = resultsWithUnitAndStandardCharge[1]?.data?.results as ITariffResults[];
 
       const dailyResults = calculateDailyResults({
         type,
