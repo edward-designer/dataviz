@@ -32,8 +32,7 @@ const SavingsCalculation = () => {
         <>
           <div className="flex gap-2 md:flex-col lg:flex-row">
             <div className="flex-grow">
-              Savings of current tariff vs Octopus Flexible (i.e. Ofgem Standard
-              Variable Tariff), standing charges & VAT inclusive.
+              Inclusive of standing charge & VAT.
               <Remark>
                 Approximations and assumptions are used in the calculations. The
                 actual savings are likely to differ because of missing data and
