@@ -886,7 +886,7 @@ export const calculatePrice = (
         consumptionDataResults[i].consumption *
         consumptionMultiplier;
       audit.push({
-        date: currentRateEntry.valid_from,
+        date: currentRateEntry?.valid_from,
         rate: currentRateEntry?.value_inc_vat,
         cost:
           (currentRateEntry?.value_inc_vat ?? 0) *
@@ -1045,7 +1045,7 @@ export const calculatePrice = (
         }
       }
       audit.push({
-        date: filteredRateDataResults[i + rateDataOffset].valid_from,
+        date: filteredRateDataResults[i + rateDataOffset]?.valid_from,
         rate: filteredRateDataResults[i + rateDataOffset]?.value_inc_vat,
         cost:
           (filteredRateDataResults[i + rateDataOffset]?.value_inc_vat ?? 0) *

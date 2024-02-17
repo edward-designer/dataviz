@@ -1,6 +1,6 @@
 "use client";
 
-import { IUserApiResult } from "@/data/source";
+import { IMeterPointE, IMeterPointG, IUserApiResult } from "@/data/source";
 import { getGsp } from "@/utils/helpers";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -13,7 +13,7 @@ import {
 } from "react";
 import toast from "react-hot-toast";
 
-type TContract =
+export type TContract =
   | {
       tariff_code: string;
       valid_from: string;
@@ -50,6 +50,9 @@ export interface IUserValue {
   contractGStartDate: undefined | string;
   contractEStartDate: undefined | string;
   contractEEStartDate: undefined | string;
+  agreementsEE: undefined | IMeterPointE["agreements"];
+  agreementsE: undefined | IMeterPointE["agreements"];
+  agreementsG: undefined | IMeterPointG["agreements"];
   configBattery: {
     hasBattery: boolean;
     capacity: number;
@@ -107,6 +110,9 @@ export const initialValue = {
     contractGStartDate: undefined,
     contractEStartDate: undefined,
     contractEEStartDate: undefined,
+    agreementsE: undefined,
+    agreementsEE: undefined,
+    agreementsG: undefined,
     configBattery: {
       hasBattery: false,
       capacity: 0,
@@ -155,9 +161,7 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
     useQuery<IUserApiResult>({
       queryKey: ["user", value.accountNumber, value.apiKey],
       queryFn,
-      enabled:
-        !!value.accountNumber &&
-        !!value.apiKey,
+      enabled: !!value.accountNumber && !!value.apiKey,
       retry: false,
     });
 
@@ -167,6 +171,27 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
         (property) => property.moved_out_at === null
       )?.[0],
     [data]
+  );
+
+  const agreementsE = useMemo(
+    () =>
+      currentProperty?.electricity_meter_points
+        ?.filter((meter_point) => !meter_point.is_export)
+        ?.at(-1)?.agreements,
+    [currentProperty]
+  );
+
+  const agreementsEE = useMemo(
+    () =>
+      currentProperty?.electricity_meter_points
+        ?.filter((meter_point) => meter_point.is_export)
+        ?.at(-1)?.agreements,
+    [currentProperty]
+  );
+
+  const agreementsG = useMemo(
+    () => currentProperty?.gas_meter_points?.at(-1)?.agreements,
+    [currentProperty]
   );
 
   const currentEContract = useMemo(
@@ -407,6 +432,9 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
         contractEStartDate,
         contractEEStartDate,
         contractGStartDate,
+        agreementsE,
+        agreementsEE,
+        agreementsG,
         trackerCode: currentETariff.includes("SILVER")
           ? currentETariff
           : value.trackerCode,
@@ -438,6 +466,9 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
     previousEContract,
     previousGContract,
     previousEEContract,
+    agreementsE,
+    agreementsEE,
+    agreementsG,
   ]);
 
   // need to handle existing users with saved data

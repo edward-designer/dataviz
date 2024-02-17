@@ -77,11 +77,7 @@ const SavingsChart = ({
     category,
     deviceNumber,
     serialNo,
-    results: selectedPeriod
-      ? selectedPeriod.duration === "month"
-        ? "daily"
-        : "monthly"
-      : "monthly",
+    results: "monthly",
   });
 
   const {
@@ -96,11 +92,7 @@ const SavingsChart = ({
     category: compareToCategory,
     deviceNumber,
     serialNo,
-    results: selectedPeriod
-      ? selectedPeriod.duration === "month"
-        ? "daily"
-        : "monthly"
-      : "monthly",
+    results: "monthly",
   });
 
   if (isLoading)

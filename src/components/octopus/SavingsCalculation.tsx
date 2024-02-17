@@ -1,74 +1,28 @@
 "use client";
 
+import Link from "next/link";
+import { useContext, useState } from "react";
+import { UserContext } from "@/context/user";
+import { IPeriod } from "@/data/source";
+import useTypeTabs from "@/hooks/useTypeTabs";
+import { getDatePeriod } from "@/utils/helpers";
 import NotCurrentlySupported from "./NotCurrentlySupported";
 import Remark from "./Remark";
+import Notice from "./Notice";
+import SavingPeriodSelector from "./SavingPeriodSelector";
+import SavingsCalculationType from "./SavingsCalculationType";
 
 import { AiFillFire } from "react-icons/ai";
 import { BsLightningChargeFill } from "react-icons/bs";
 import { PiSunDimFill } from "react-icons/pi";
-
-import SavingsChart from "./SavingsChart";
-import TariffDetails from "./TariffDetails";
-import { useContext, useState } from "react";
-import { UserContext } from "@/context/user";
-import { getCategory, getDatePeriod } from "@/utils/helpers";
-import Link from "next/link";
-import EarningChart from "./EarningChart";
-import Notice from "./Notice";
 import { TbBulb } from "react-icons/tb";
-import useTypeTabs from "@/hooks/useTypeTabs";
-import SavingPeriodSelector from "./SavingPeriodSelector";
-import { IPeriod } from "@/data/source";
 
 const SavingsCalculation = () => {
-  const { value, setValue } = useContext(UserContext);
+  const { value } = useContext(UserContext);
 
   const [period, setPeriod] = useState<IPeriod>(getDatePeriod("year"));
 
   const { currentType, Tabs } = useTypeTabs();
-
-  const yesterday = new Date(
-    new Date(new Date().setHours(23, 59, 59, 999)).setDate(
-      new Date().getDate() - 1
-    )
-  ).toISOString();
-  const oneYearEarlier = new Date(
-    new Date(new Date().setHours(0, 0, 0, 0)).setFullYear(
-      new Date().getFullYear() - 1
-    )
-  ).toISOString();
-
-  // shows a max of 1 year data
-  let EfromDate = "";
-  if (typeof value.currentEContract !== "undefined") {
-    EfromDate =
-      new Date(value.currentEContract.valid_from) < new Date(oneYearEarlier)
-        ? oneYearEarlier
-        : value.currentEContract.valid_from;
-  }
-
-  let EEfromDate = "";
-  if (typeof value.currentEEContract !== "undefined") {
-    EEfromDate =
-      new Date(value.currentEEContract.valid_from) < new Date(oneYearEarlier)
-        ? oneYearEarlier
-        : value.currentEEContract.valid_from;
-  }
-
-  let GfromDate = "";
-  if (typeof value.currentGContract !== "undefined") {
-    GfromDate =
-      new Date(value.currentGContract.valid_from) < new Date(oneYearEarlier)
-        ? oneYearEarlier
-        : value.currentGContract.valid_from;
-  }
-
-  const isESVT = getCategory(value.currentETariff ?? "") === "SVT";
-  const isGSVT = getCategory(value.currentGTariff ?? "") === "SVT";
-  const isEPrevSVT =
-    getCategory(value.previousEContract?.tariff_code ?? "") === "SVT";
-  const isGPrevSVT =
-    getCategory(value.previousGContract?.tariff_code ?? "") === "SVT";
 
   return (
     <div className="flex gap-4 flex-col relative">
@@ -103,202 +57,60 @@ const SavingsCalculation = () => {
             <SavingPeriodSelector period={period} setPeriod={setPeriod} />
           )}
           <Tabs />
-          {currentType === "EE" &&
-            value.EMPAN &&
-            value.EESerialNo &&
-            typeof value.currentEEContract !== "undefined" && (
-              <>
-                <h2 className="font-display text-accentPink-500 text-4xl flex items-center mt-4">
-                  <PiSunDimFill className="w-8 h-8 fill-accentPink-900 inline-block mr-2" />
-                  Electricity Export Earnings
-                </h2>
-                {period.duration === "year" && (
-                  <TariffDetails
-                    valid_from={value.currentEEContract.valid_from}
-                    valid_to={value.currentEEContract.valid_to}
-                    tariff_code={value.currentEETariff}
-                    type="E"
-                  />
-                )}
-                <EarningChart
-                  tariff={value.currentEETariff}
-                  fromDate={EEfromDate}
-                  gsp={value.gsp}
-                  type="E"
-                  deviceNumber={value.EMPAN}
-                  serialNo={value.EESerialNo}
-                />
-              </>
-            )}
-          {currentType === "EE" &&
-            value.EMPAN &&
-            value.EESerialNo &&
-            typeof value.previousEEContract !== "undefined" &&
-            period.duration === "year" && (
-              <>
-                <TariffDetails
-                  valid_from={value.previousEEContract.valid_from}
-                  valid_to={value.previousEEContract.valid_to}
-                  tariff_code={value.previousEEContract.tariff_code}
-                  type="E"
-                  isCurrent={false}
-                />
-                <EarningChart
-                  tariff={value.previousEEContract.tariff_code.slice(5, -2)}
-                  fromDate={value.previousEEContract.valid_from}
-                  contractToDate={value.previousEEContract.valid_to}
-                  gsp={value.gsp}
-                  type="E"
-                  deviceNumber={value.EMPAN}
-                  serialNo={value.EESerialNo}
-                />
-              </>
-            )}
-          {currentType === "E" &&
-            value.MPAN &&
-            value.ESerialNo &&
-            typeof value.currentEContract !== "undefined" && (
-              <>
-                <h2 className="font-display text-accentPink-500 text-4xl flex items-center mt-4">
-                  <BsLightningChargeFill className="w-8 h-8 fill-accentPink-900 inline-block mr-2" />
-                  Electricity Savings
-                </h2>
-                {period.duration === "year" && (
-                  <TariffDetails
-                    valid_from={value.currentEContract.valid_from}
-                    valid_to={value.currentEContract.valid_to}
-                    tariff_code={value.currentETariff}
-                    type="E"
-                  />
-                )}
-                {isESVT ? (
-                  <div>
-                    You are currently on the Octopus Flexible Tariff.
-                    <br />
-                    <Link
-                      href="/compare"
-                      className="underline text-accentBlue-500 hover:no-underline"
-                    >
-                      Check whether you can save money by switching to another
-                      tariff.
-                    </Link>
-                  </div>
-                ) : (
-                  <SavingsChart
-                    tariff={value.currentETariff}
-                    fromDate={EfromDate}
-                    gsp={value.gsp}
-                    type="E"
-                    compareTo="SVT"
-                    deviceNumber={value.MPAN}
-                    serialNo={value.ESerialNo}
-                    selectedPeriod={
-                      period.duration === "month" ? period : undefined
-                    }
-                  />
-                )}
-              </>
-            )}
-          {currentType === "E" &&
-            value.MPAN &&
-            value.ESerialNo &&
-            typeof value.previousEContract !== "undefined" &&
-            period.duration === "year" && (
-              <>
-                <TariffDetails
-                  valid_from={value.previousEContract.valid_from}
-                  valid_to={value.previousEContract.valid_to}
-                  tariff_code={value.previousEContract.tariff_code}
-                  type="E"
-                  isCurrent={false}
-                />
-                {isEPrevSVT ? (
-                  <div>You were on the Octopus Flexible Tariff.</div>
-                ) : (
-                  <SavingsChart
-                    tariff={value.previousEContract.tariff_code.slice(5, -2)}
-                    fromDate={value.previousEContract.valid_from}
-                    contractToDate={value.previousEContract.valid_to}
-                    gsp={value.gsp}
-                    type="E"
-                    compareTo="SVT"
-                    deviceNumber={value.MPAN}
-                    serialNo={value.ESerialNo}
-                  />
-                )}
-              </>
-            )}
-          {currentType === "G" &&
-            value.MPRN &&
-            value.GSerialNo &&
-            typeof value.currentGContract !== "undefined" && (
-              <>
-                <h2 className="font-display text-accentPink-500 text-4xl flex items-center mt-8">
-                  <AiFillFire className="w-8 h-8 fill-accentPink-900 inline-block mr-2" />
-                  Gas Savings
-                </h2>
-                {period.duration === "year" && (
-                  <TariffDetails
-                    valid_from={value.currentGContract.valid_from}
-                    valid_to={value.currentGContract.valid_to}
-                    tariff_code={value.currentGTariff}
-                    type="G"
-                  />
-                )}
-                {isGSVT ? (
-                  <div>
-                    You are currently on the Octopus Flexible Tariff.
-                    <br />
-                    <Link
-                      href="/compare"
-                      className="underline text-accentBlue-500 hover:no-underline"
-                    >
-                      Check whether you can save money by switching to another
-                      tariff.
-                    </Link>
-                  </div>
-                ) : (
-                  <SavingsChart
-                    tariff={value.currentGTariff}
-                    fromDate={GfromDate}
-                    gsp={value.gsp}
-                    type="G"
-                    compareTo="SVT"
-                    deviceNumber={value.MPRN}
-                    serialNo={value.GSerialNo}
-                  />
-                )}
-              </>
-            )}
-          {currentType === "G" &&
-            value.MPRN &&
-            value.GSerialNo &&
-            typeof value.previousGContract !== "undefined" &&
-            period.duration === "year" && (
-              <>
-                <TariffDetails
-                  valid_from={value.previousGContract.valid_from}
-                  valid_to={value.previousGContract.valid_to}
-                  tariff_code={value.previousGContract.tariff_code}
-                  type="G"
-                  isCurrent={false}
-                />
-                {isGPrevSVT ? (
-                  <div>You were on the Octopus Flexible Tariff.</div>
-                ) : (
-                  <SavingsChart
-                    tariff={value.previousGContract.tariff_code.slice(5, -2)}
-                    fromDate={value.previousGContract.valid_from}
-                    contractToDate={value.previousGContract.valid_to}
-                    gsp={value.gsp}
-                    type="G"
-                    compareTo="SVT"
-                    deviceNumber={value.MPRN}
-                    serialNo={value.GSerialNo}
-                  />
-                )}
-              </>
-            )}
+          {currentType === "EE" && (
+            <SavingsCalculationType
+              deviceNumber={value.EMPAN}
+              serialNumber={value.EESerialNo}
+              currentContract={value.currentEEContract}
+              previousContract={value.previousEEContract}
+              gsp={value.gsp}
+              period={period}
+              agreements={value.agreementsEE}
+              type="EE"
+              apiKey={value.apiKey}
+            >
+              <h2 className="font-display text-accentPink-500 text-4xl flex items-center">
+                <PiSunDimFill className="w-8 h-8 fill-accentPink-900 inline-block mr-2" />
+                Electricity Export Earnings
+              </h2>
+            </SavingsCalculationType>
+          )}
+          {currentType === "E" && (
+            <SavingsCalculationType
+              deviceNumber={value.MPAN}
+              serialNumber={value.ESerialNo}
+              currentContract={value.currentEContract}
+              previousContract={value.previousEContract}
+              gsp={value.gsp}
+              period={period}
+              agreements={value.agreementsE}
+              type="E"
+              apiKey={value.apiKey}
+            >
+              <h2 className="font-display text-accentPink-500 text-4xl flex items-center">
+                <BsLightningChargeFill className="w-8 h-8 fill-accentPink-900 inline-block mr-2" />
+                Electricity Savings
+              </h2>
+            </SavingsCalculationType>
+          )}
+          {currentType === "G" && (
+            <SavingsCalculationType
+              deviceNumber={value.MPRN}
+              serialNumber={value.GSerialNo}
+              currentContract={value.currentGContract}
+              previousContract={value.previousGContract}
+              gsp={value.gsp}
+              period={period}
+              agreements={value.agreementsG}
+              type="G"
+              apiKey={value.apiKey}
+            >
+              <h2 className="font-display text-accentPink-500 text-4xl flex items-center">
+                <AiFillFire className="w-8 h-8 fill-accentPink-900 inline-block mr-2" />
+                Gas Savings
+              </h2>
+            </SavingsCalculationType>
+          )}
         </>
       )}
       <Notice>

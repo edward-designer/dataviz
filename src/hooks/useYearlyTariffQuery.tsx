@@ -6,8 +6,7 @@ import {
 } from "@tanstack/react-query";
 
 import { ENERGY_TYPE, TariffCategory, TariffType } from "@/data/source";
-
-import { fetchApi } from "../utils/helpers";
+import createTariffQuery from "@/utils/createTariffQuery";
 
 function useYearlyTariffQuery<T>({
   tariff,
@@ -26,88 +25,20 @@ function useYearlyTariffQuery<T>({
   category: TariffCategory;
   enabled: boolean;
 }): UseQueryResult<T[], Error> {
-  const queryClient = useQueryClient();
-
-  const numberOfPages = Math.ceil(
-    (((new Date(toDate).valueOf() - new Date(fromDate).valueOf()) /
-      1000 /
-      60 /
-      60) *
-      2) /
-      1500
-  );
-  const agilePageArray = Array.from({ length: numberOfPages }, (_, i) => i + 1);
-  const queryFnArray = {
-    Chart: fetchApi([
-      {
-        tariffType: type,
-        url: `https://api.octopus.energy/v1/products/${tariff}/${ENERGY_TYPE[type]}-tariffs/${type}-1R-${tariff}-${gsp}/standard-unit-rates/?page_size=1500&period_from=${fromDate}&period_to=${toDate}`,
-      },
-    ]),
-    Agile: fetchApi(
-      agilePageArray.map((num) => {
-        return {
-          tariffType: type,
-          url: `https://api.octopus.energy/v1/products/${tariff}/${ENERGY_TYPE[type]}-tariffs/${type}-1R-${tariff}-${gsp}/standard-unit-rates/?page_size=1500&period_from=${fromDate}&period_to=${toDate}&page=${num}`,
-        };
-      })
-    ),
-    Go: fetchApi([
-      {
-        tariffType: type,
-        url: `https://api.octopus.energy/v1/products/${tariff}/${ENERGY_TYPE[type]}-tariffs/${type}-1R-${tariff}-${gsp}/standard-unit-rates/?page_size=1500&period_from=${fromDate}&period_to=${toDate}`,
-      },
-    ]),
-    IGo: fetchApi([
-      {
-        tariffType: type,
-        url: `https://api.octopus.energy/v1/products/${tariff}/${ENERGY_TYPE[type]}-tariffs/${type}-1R-${tariff}-${gsp}/standard-unit-rates/?page_size=1500&period_from=${fromDate}&period_to=${toDate}`,
-      },
-    ]),
-    Cosy: fetchApi(
-      [1, 2].map((num) => {
-        return {
-          tariffType: type,
-          url: `https://api.octopus.energy/v1/products/${tariff}/${ENERGY_TYPE[type]}-tariffs/${type}-1R-${tariff}-${gsp}/standard-unit-rates/?page_size=1500&period_from=${fromDate}&period_to=${toDate}&page=${num}`,
-        };
-      })
-    ),
-    Tracker: fetchApi([
-      {
-        tariffType: type,
-        url: `https://api.octopus.energy/v1/products/${tariff}/${ENERGY_TYPE[type]}-tariffs/${type}-1R-${tariff}-${gsp}/standard-unit-rates/?page_size=1500&period_from=${fromDate}&period_to=${toDate}`,
-      },
-    ]),
-    SVT: fetchApi([
-      {
-        tariffType: type,
-        url: `https://api.octopus.energy/v1/products/${tariff}/${ENERGY_TYPE[type]}-tariffs/${type}-1R-${tariff}-${gsp}/standard-unit-rates/?page_size=1500&period_from=${fromDate}&period_to=${toDate}`,
-      },
-    ]),
-    Fixed: fetchApi([
-      {
-        tariffType: type,
-        url: `https://api.octopus.energy/v1/products/${tariff}/${ENERGY_TYPE[type]}-tariffs/${type}-1R-${tariff}-${gsp}/standard-unit-rates/?page_size=1500&period_from=${fromDate}&period_to=${toDate}`,
-      },
-    ]),
-    Flux: fetchApi([
-      {
-        tariffType: type,
-        url: `https://api.octopus.energy/v1/products/${tariff}/${ENERGY_TYPE[type]}-tariffs/${type}-1R-${tariff}-${gsp}/standard-unit-rates/?page_size=1500&period_from=${fromDate}&period_to=${toDate}`,
-      },
-    ]),
-    IFlux: fetchApi([
-      {
-        tariffType: type,
-        url: `https://api.octopus.energy/v1/products/${tariff}/${ENERGY_TYPE[type]}-tariffs/${type}-1R-${tariff}-${gsp}/standard-unit-rates/?page_size=1500&period_from=${fromDate}&period_to=${toDate}`,
-      },
-    ]),
-  };
+  const queryFn = createTariffQuery({
+    tariff,
+    type,
+    gsp,
+    fromDate,
+    toDate,
+    category,
+    enabled,
+  });
 
   const query = useQuery<T[]>({
     enabled,
     queryKey: ["getYearlyTariff", tariff, type, gsp, fromDate, toDate],
-    queryFn: queryFnArray[category],
+    queryFn,
   });
   return query;
 }
