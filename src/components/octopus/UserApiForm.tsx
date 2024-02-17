@@ -230,11 +230,14 @@ const UserApiForm = ({ open, setOpen }: IUserApiForm) => {
             <Remark variant="badge">
               Calculating actual gas costs is very complex. If you find the
               calculation is off by a lot, please find out your gas conversion
-              factor <span className="underline">from your Octopus bills</span>
-              <Remark>
+              factor{" "}
+              <span className="underline">
+                from the formula of your Octopus bills
+              </span>
+              <Remark variant="badge">
                 <Image
                   className="block my-2"
-                  src="/images/gas-factor.jpg"
+                  src="/images/gas-factor2.jpg"
                   width={320}
                   height={401}
                   alt="get your gas conversion figure"
