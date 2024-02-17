@@ -56,7 +56,7 @@ const EarningMonthlyChart = ({
                 period: periodAccessor(monthlyCost),
                 ind,
                 lastDate,
-                unit: valueAccessor(units && units[ind]),
+                reading: valueAccessor(units && units[ind]),
               };
               return (
                 <EarningMonthlyChartBar

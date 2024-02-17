@@ -4,11 +4,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { HiOutlineCurrencyPound } from "react-icons/hi2";
-import FormattedPrice from "./FormattedPrice";
 import { evenRound } from "@/utils/helpers";
 import { TooltipArrow } from "@radix-ui/react-tooltip";
 import { CSSProperties, useState } from "react";
+import FormattedPrice from "./FormattedPrice";
 
 import { RiMoneyPoundCircleLine } from "react-icons/ri";
 import { TbSunElectricity } from "react-icons/tb";
@@ -19,8 +18,9 @@ interface IEarningMonthlyChartBar {
   period: string;
   monthlycostCurrent: number;
   ind: number;
-  lastDate: null | string;
-  unit: null | number;
+  lastDate?: null | string;
+  tariff?: string | undefined;
+  reading?: null | number;
 }
 
 const EarningMonthlyChartBar = ({
@@ -30,7 +30,8 @@ const EarningMonthlyChartBar = ({
   monthlycostCurrent,
   ind,
   lastDate,
-  unit,
+  tariff,
+  reading,
 }: IEarningMonthlyChartBar) => {
   const [open, setOpen] = useState(false);
 
@@ -61,6 +62,11 @@ const EarningMonthlyChartBar = ({
                   }`}
                 >
                   {period}
+                  {tariff && (
+                    <span className="rounded-full inline-block ml-2 bg-accentBlue-900 px-2 text-[8px] sm:hidden text-white whitespace-nowrap">
+                      {tariff}
+                    </span>
+                  )}
                 </span>
                 <span
                   className={`flex leading-tight w-18 font-bold text-xl md:font-extralight md:text-4xl items-center`}
@@ -81,6 +87,11 @@ const EarningMonthlyChartBar = ({
                     <FormattedPrice price={monthlycostCurrent} value="pound" />
                   </span>
                 </span>
+                {tariff && (
+                  <span className="rounded-full ml-2 bg-accentBlue-900 px-2 py-[2px] leading-tight text-[8px] hidden sm:inline-block text-white whitespace-nowrap">
+                    {tariff}
+                  </span>
+                )}
               </span>
             </span>
           </TooltipTrigger>
@@ -90,13 +101,13 @@ const EarningMonthlyChartBar = ({
                 (latest reading: {new Date(lastDate).toLocaleString("en-GB")})
               </div>
             )}
-            {unit && (
+            {reading && (
               <div
                 className={`flex items-center gap-1 text-theme-300
                `}
               >
                 <TbSunElectricity />
-                Export : {evenRound(unit, 2, true)} kWh
+                Export : {evenRound(reading, 2, true)} kWh
               </div>
             )}
             <div

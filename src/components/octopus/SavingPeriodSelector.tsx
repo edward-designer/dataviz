@@ -13,24 +13,13 @@ import { MdOutlineDoubleArrow } from "react-icons/md";
 import DatePickerWithRange from "./DatePickerWithRange";
 import SelectPeriodButton from "./SelectPeriodButton";
 
-const weekName = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
 export const getDatePeriod = (duration: TDuration = "month") => {
   const from = new Date();
   const to = new Date();
   from.setHours(0, 0, 0, 0);
   to.setHours(23, 59, 59, 999);
-  if (duration === "month") {
-    from.setDate(1);
-    from.setMonth(from.getMonth() - 1);
-    to.setDate(1);
-    to.setDate(to.getDate() - 1);
-  }
-  if (duration === "week") {
-    const dayOfWeek = from.getDay();
-    from.setDate(from.getDate() - dayOfWeek - 7);
-    to.setDate(from.getDate() + 6);
-  }
+
+  from.setDate(1);
 
   return {
     duration,
@@ -94,8 +83,7 @@ const SavingPeriodSelector = ({
           Smart Meter Data Period{" "}
           <Remark>
             Only the most recent two tariffs are displayed for the
-            &quot;Monthly&quot; selection and the most recent for
-            &quot;Daily&quot;.
+            &quot;Monthly&quot; selection.
           </Remark>
         </div>
       </div>
@@ -112,94 +100,28 @@ const SavingPeriodSelector = ({
         >
           Daily
         </SelectPeriodButton>
-        {false && (
-          <SelectPeriodButton
-            isActive={period.duration === "custom"}
-            clickHandler={() =>
-              setPeriod((period) => ({ ...period, duration: "custom" }))
-            }
-          >
-            Custom
-          </SelectPeriodButton>
-        )}
-        {hasDaysOfWeek && setDaysOfWeek && daysOfWeek && (
-          <>
-            <div className="md:flex items-center self-stretch hidden">
-              <MdOutlineDoubleArrow className="h-4 w-4" />
-            </div>
-            <div className="flex flex-row items-center gap-3 text-xs mt-1">
-              {weekName.map((day, i) => (
-                <button
-                  key={day}
-                  onClick={() =>
-                    setDaysOfWeek((prevDaysOfWeek) => {
-                      if (
-                        prevDaysOfWeek.includes(i) &&
-                        prevDaysOfWeek.length < 2
-                      )
-                        return [0, 1, 2, 3, 4, 5, 6];
-                      return prevDaysOfWeek.includes(i)
-                        ? [...prevDaysOfWeek].filter((day) => day !== i)
-                        : [...prevDaysOfWeek, i];
-                    })
-                  }
-                  className={`p-2 border rounded-xl ${
-                    daysOfWeek.includes(i)
-                      ? "text-accentPink-500 border-accentPink-500 bg-accentPink-900/30"
-                      : "hover:text-accentPink-500 hover:border-accentPink-500 border-slate-300"
-                  }`}
-                >
-                  {day}
-                </button>
-              ))}
-            </div>
-          </>
-        )}
       </div>
 
       <div className="h-[40px] sm:w-full mt-0 md:-mt-1">
-        {period.duration !== "custom" ? (
-          <div className="mt-1 flex sm:justify-start gap-2 items-center w-full justify-between sm:w-fit">
-            <button
-              onClick={() => getPeriod(true)}
-              disabled={outOfAYear(period.from)}
-              className="disabled:opacity-30"
-            >
-              <IoCaretBackOutline className="w-8 h-8" />
-            </button>
-            <div className="text-center min-w-[210px] grow sm:grow-0">{`${period.from.toLocaleDateString(
-              "en-GB"
-            )} - ${period.to.toLocaleDateString("en-GB")}`}</div>
-            <button
-              onClick={() => getPeriod(false)}
-              disabled={outOfAYear(period.to)}
-              className="disabled:opacity-30"
-            >
-              <IoCaretForward className="w-8 h-8" />
-            </button>
-          </div>
-        ) : (
-          <DatePickerWithRange
-            date={period}
-            setDate={(dateRange: DateRange | undefined) => {
-              if (!dateRange) return;
-              let { from, to } = dateRange;
-              if (typeof from === "undefined" && typeof to === "undefined")
-                return;
-              if (typeof from === "undefined" && to instanceof Date) {
-                from = new Date(to);
-              }
-              if (typeof to === "undefined" && from instanceof Date) {
-                to = new Date(from);
-              }
-              if (from instanceof Date && to instanceof Date) {
-                from.setHours(0, 0, 0, 0);
-                to.setHours(23, 59, 59, 999);
-                setPeriod({ ...period, from, to });
-              }
-            }}
-          />
-        )}
+        <div className="mt-1 flex sm:justify-start gap-2 items-center w-full justify-between sm:w-fit">
+          <button
+            onClick={() => getPeriod(true)}
+            disabled={outOfAYear(period.from)}
+            className="disabled:opacity-30"
+          >
+            <IoCaretBackOutline className="w-8 h-8" />
+          </button>
+          <div className="text-center min-w-[210px] grow sm:grow-0">{`${period.from.toLocaleDateString(
+            "en-GB"
+          )} - ${period.to.toLocaleDateString("en-GB")}`}</div>
+          <button
+            onClick={() => getPeriod(false)}
+            disabled={outOfAYear(period.to)}
+            className="disabled:opacity-30"
+          >
+            <IoCaretForward className="w-8 h-8" />
+          </button>
+        </div>
       </div>
     </div>
   );

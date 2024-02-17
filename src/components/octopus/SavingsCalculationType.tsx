@@ -8,6 +8,7 @@ import SavingsChart from "./SavingsChart";
 import { getCategory } from "@/utils/helpers";
 import Link from "next/link";
 import SavingsChartDaily from "./SavingsChartDaily";
+import EarningChartDaily from "./EarningChartDaily";
 
 interface ISavingsCalculatorType extends PropsWithChildren {
   deviceNumber: string;
@@ -81,14 +82,27 @@ const SavingsCalculationType = ({
               />
             )}
             {type === "EE" ? (
-              <EarningChart
-                tariff={currentContract.tariff_code.slice(5, -2)}
-                fromDate={currentFromDate}
-                gsp={gsp}
-                type={energyType}
-                deviceNumber={deviceNumber}
-                serialNo={serialNumber}
-              />
+              period.duration === "year" ? (
+                <EarningChart
+                  tariff={currentContract.tariff_code.slice(5, -2)}
+                  fromDate={currentFromDate}
+                  gsp={gsp}
+                  type={energyType}
+                  deviceNumber={deviceNumber}
+                  serialNo={serialNumber}
+                />
+              ) : (
+                <EarningChartDaily
+                  period={period}
+                  agreements={agreements}
+                  gsp={gsp}
+                  type={energyType}
+                  deviceNumber={deviceNumber}
+                  serialNo={serialNumber}
+                  compareTo=""
+                  apiKey={apiKey}
+                />
+              )
             ) : isCurrentSVT ? (
               <div>
                 You are currently on the Octopus Flexible Tariff.{" "}
@@ -148,6 +162,7 @@ const SavingsCalculationType = ({
               <SavingsChart
                 tariff={previousContract.tariff_code.slice(5, -2)}
                 fromDate={previousFromDate}
+                contractToDate={previousContract.valid_to}
                 gsp={gsp}
                 type={energyType}
                 deviceNumber={deviceNumber}

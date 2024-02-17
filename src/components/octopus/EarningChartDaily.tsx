@@ -20,6 +20,7 @@ import Remark from "./Remark";
 
 import useDailyAmountCalculation from "@/hooks/useDailyAmountCalculation";
 import DailyChart from "./DailyChart";
+import { RiMoneyPoundCircleLine } from "react-icons/ri";
 
 const getPeriodArray = (fromDate: Date, toDate: Date) => {
   const diffInDays = Math.round(
@@ -31,7 +32,7 @@ const getPeriodArray = (fromDate: Date, toDate: Date) => {
   );
 };
 
-const SavingsChartDaily = ({
+const EarningChartDaily = ({
   type,
   gsp,
   deviceNumber,
@@ -110,23 +111,11 @@ const SavingsChartDaily = ({
     );
   }
 
-  const totalPriceSVT = results.reduce((acc, cur) => cur.SVTcost + acc, 0);
-  const totalStandingChargeSVT = results.reduce(
-    (acc, cur) => cur.SVTstandingCharge + acc,
-    0
-  );
   const totalPrice = results.reduce((acc, cur) => cur.cost + acc, 0);
-  const totalStandingCharge = results.reduce(
-    (acc, cur) => cur.standingCharge + acc,
-    0
-  );
-  const totalUnit = results.reduce((acc, cur) => cur.reading + acc, 0);
 
-  const totalSVT = (totalPriceSVT + totalStandingChargeSVT) / 100;
-  const totalCost = (totalPrice + totalStandingCharge) / 100;
-  const totalSaving = totalSVT - totalCost;
+  const totalUnit = results.reduce((acc, cur) => cur.reading + acc, 0);
+  const totalSaving = totalPrice / 100;
   const unitRateAverage = totalPrice / totalUnit;
-  const unitRateAverageSVT = totalPriceSVT / totalUnit;
 
   return (
     <>
@@ -140,35 +129,18 @@ const SavingsChartDaily = ({
           <div className="flex flex-1 flex-col md:flex-row justify-between gap-4 max-h-full overflow-hidden mb-8">
             <DailyChart
               data={results}
-              type={type}
+              type="EE"
               month={fromDate.toLocaleDateString("en-GB", { month: "short" })}
             />
             <div className="flex flex-col font-normal justify-start divide-y [&>div]:border-accentBlue-900 gap-3">
               <div className="flex flex-wrap justify-between items-start md:block text-[#85cbf9] bg-theme-900/30">
                 <Badge
-                  label={`Total ${
-                    totalCost - totalSVT < 0 ? `Saving` : `Increase`
-                  }`}
-                  icon={
-                    totalCost - totalSVT < 0 ? (
-                      <TbPigMoney className="stroke-[#85cbf9]" />
-                    ) : (
-                      <GrMoney className="stroke-[#85cbf9]" />
-                    )
-                  }
+                  label={`Total Earning`}
+                  icon={<RiMoneyPoundCircleLine className="text-[#85cbf9]" />}
                   variant="item"
                 />
                 <div className="font-digit text-4xl flex flex-col items-end justify-start">
                   <FormattedPrice price={Math.abs(totalSaving)} value="pound" />
-                  <div className="text-xs">
-                    <Comparison
-                      change={evenRound(
-                        ((totalCost - totalSVT) / totalSVT) * 100,
-                        0
-                      )}
-                      compare={`Variable Tariff`}
-                    />
-                  </div>
                 </div>
               </div>
 
@@ -180,41 +152,6 @@ const SavingsChartDaily = ({
                 />
                 <div className="font-digit text-4xl flex flex-col items-end justify-start">
                   <FormattedPrice price={unitRateAverage} value="pence" />
-                  <div className="text-xs">
-                    <Comparison
-                      change={evenRound(
-                        ((unitRateAverage - unitRateAverageSVT) /
-                          unitRateAverageSVT) *
-                          100,
-                        0
-                      )}
-                      compare={`Variable Tariff`}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div
-                className={`flex flex-wrap justify-between items-start md:block text-white`}
-              >
-                <Badge
-                  label={`Total Cost`}
-                  icon={<TbMoneybag className="stroke-white" />}
-                  variant="item"
-                />
-                <div className="font-digit text-4xl flex flex-col items-end justify-start font-medium">
-                  <FormattedPrice price={totalCost} value="pound" />
-                </div>
-              </div>
-              <div
-                className={`flex flex-wrap justify-between items-start md:block text-accentPink-500`}
-              >
-                <Badge
-                  label={`Total SVT Cost`}
-                  icon={<TbMoneybag className="text-accentPink-500" />}
-                  variant="item"
-                />
-                <div className="font-digit text-4xl flex flex-col items-end justify-start">
-                  <FormattedPrice price={totalSVT} value="pound" />
                 </div>
               </div>
             </div>
@@ -246,4 +183,4 @@ const SavingsChartDaily = ({
   );
 };
 
-export default SavingsChartDaily;
+export default EarningChartDaily;

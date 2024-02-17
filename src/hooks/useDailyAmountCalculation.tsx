@@ -1,28 +1,43 @@
 "use client";
 import { UserContext } from "@/context/user";
 import {
-  CapsTSVResult,
-  ENERGY_TYPE,
-  TariffCategory,
-  TariffType,
-  gsp,
+    ENERGY_TYPE,
+    ETARIFFS,
+    GTARIFFS,
+    gsp
 } from "@/data/source";
-import useYearlyTariffQuery from "@/hooks/useYearlyTariffQuery";
-import { evenRound, fetchApi, getCategory, getDate } from "@/utils/helpers";
-import { QueryKey, useQueries, useQuery } from "@tanstack/react-query";
-import usePriceCapQuery from "./usePriceCapQuery";
-import useConsumptionData from "./useConsumptionData";
-import createTariffQuery from "../utils/createTariffQuery";
+import { getCategory } from "@/utils/helpers";
+import { useQueries } from "@tanstack/react-query";
 import { useContext } from "react";
+import createTariffQuery from "../utils/createTariffQuery";
+import useConsumptionData from "./useConsumptionData";
+import usePriceCapQuery from "./usePriceCapQuery";
 
-interface meterData {
+interface IMeterData {
   consumption: number;
   interval_start: string;
   interval_end: string;
 }
 
+interface IDailyResult {
+  reading: number;
+  cost: number;
+  SVTcost: number;
+  standingCharge: number;
+  SVTstandingCharge: number;
+}
+
+interface ICaps {
+  Region: gsp;
+  Date: string;
+  E: number;
+  G: number;
+  ES: number;
+  GS: number;
+}
+
 export type IDailyAmountCalculation = {
-  type: "E" | "G";
+  type: "E" | "G" | "EE";
   periodWithTariff: {
     date: Date;
     tariff: string;
@@ -47,19 +62,36 @@ const useDailyAmountCalculation = (inputs: IDailyAmountCalculation) => {
 
   const { value } = useContext(UserContext);
 
-  // avoid unnecessary refetching of meter data if range is narrower
   const fromISODate = periodWithTariff.at(0)!.date.toISOString();
-  const toISODate = periodWithTariff.at(-1)!.date.toISOString();
+  const lastDateStart = periodWithTariff.at(-1)!.date;
 
-  const fromDataISODate = getDate(new Date(), "year", true).toISOString();
   const todayDate = new Date();
-  todayDate.setHours(0, 0, 0, 0);
-  const toDataISODate = todayDate.toISOString();
+  todayDate.setHours(23, 59, 59, 999);
+  todayDate.setDate(todayDate.getDate() - 1);
 
-  const uniqueTariffCodes: string[] = [periodWithTariff.at(0)!.tariff];
+  const toISODate =
+    lastDateStart.valueOf() > todayDate.valueOf()
+      ? todayDate.toISOString()
+      : new Date(
+          new Date(lastDateStart).setHours(23, 59, 59, 999)
+        ).toISOString();
+
+  const uniqueTariffCodes: string[] = [];
+
+  const SVTtariff =
+    type === "E"
+      ? ETARIFFS.find((tariff) => tariff.category === "SVT")?.tariff
+      : type === "G"
+      ? GTARIFFS.find((tariff) => tariff.category === "SVT")?.tariff
+      : null;
+
+  if (SVTtariff) uniqueTariffCodes.push(SVTtariff);
+
   periodWithTariff.forEach(({ tariff }) => {
     if (!uniqueTariffCodes.includes(tariff)) uniqueTariffCodes.push(tariff);
   });
+
+  const typeEorG = type === "EE" ? "E" : type;
 
   // get readings
   const {
@@ -69,7 +101,7 @@ const useDailyAmountCalculation = (inputs: IDailyAmountCalculation) => {
   } = useConsumptionData({
     fromISODate: fromISODate,
     toISODate: toISODate,
-    type,
+    type: typeEorG,
     category: "Agile",
     deviceNumber,
     serialNo,
@@ -81,8 +113,8 @@ const useDailyAmountCalculation = (inputs: IDailyAmountCalculation) => {
     try {
       const response = await fetch(
         `https://api.octopus.energy/v1/products/${tariff}/${
-          ENERGY_TYPE[type]
-        }-tariffs/${type}-1R-${tariff}-${gsp}/standing-charges/?page_size=1500&period_from=${fromISODate.replace(
+          ENERGY_TYPE[typeEorG]
+        }-tariffs/${typeEorG}-1R-${tariff}-${gsp}/standing-charges/?page_size=1500&period_from=${fromISODate.replace(
           ".000",
           ""
         )}`
@@ -100,7 +132,7 @@ const useDailyAmountCalculation = (inputs: IDailyAmountCalculation) => {
   const rateQueries = uniqueTariffCodes.map((tariff) => {
     const queryFn = createTariffQuery({
       tariff,
-      type,
+      type: typeEorG,
       gsp,
       fromDate: fromISODate,
       toDate: toISODate,
@@ -137,22 +169,33 @@ const useDailyAmountCalculation = (inputs: IDailyAmountCalculation) => {
     queries: rateQueries.flat(),
   });
 
+  /* OFGEM caps */
   const currentGSP = `_${gsp}` as gsp;
   const caps = usePriceCapQuery({ gsp: currentGSP });
+  const capsCurrentCSP = caps.data?.filter(
+    (cap) => cap.Region === currentGSP
+  ) as ICaps[] | undefined;
 
   if (meterData?.results) {
-    const meterDataResult = meterData.results as meterData[];
+    const meterDataResult = meterData.results as IMeterData[];
 
-    return periodWithTariff.map(({ date, tariff }) => {
+    const dailyResultArray = periodWithTariff.map(({ date, tariff }) => {
       const periodFrom = date;
-      const periodTo = new Date(date.setHours(date.getHours() + 24));
+      const periodTo = new Date(new Date(date).setDate(date.getDate() + 1));
       const tariffIndexInArray = uniqueTariffCodes.findIndex(
         (tariffCode) => tariffCode === tariff
       );
-      const tariffRates =
-        resultsWithUnitAndStandardCharge[tariffIndexInArray].data.results;
-      const tariffStandingCharges =
-        resultsWithUnitAndStandardCharge[tariffIndexInArray + 1].data.results;
+      const tariffRates = resultsWithUnitAndStandardCharge[
+        tariffIndexInArray * 2
+      ].data[0]?.results as ITariffResults[];
+      const tariffStandingCharges = resultsWithUnitAndStandardCharge[
+        tariffIndexInArray * 2 + 1
+      ].data?.results as ITariffResults[];
+      const SVTrates = resultsWithUnitAndStandardCharge[0].data[0]
+        .results as ITariffResults[];
+      const SVTstandingCharges = resultsWithUnitAndStandardCharge[1].data
+        .results as ITariffResults[];
+
       const dailyResults = calculateDailyResults({
         type,
         periodFrom,
@@ -164,26 +207,46 @@ const useDailyAmountCalculation = (inputs: IDailyAmountCalculation) => {
             new Date(d.interval_start).valueOf() >= periodFrom.valueOf() &&
             new Date(d.interval_start).valueOf() < periodTo.valueOf()
         ),
+        SVTrates,
+        SVTstandingCharges,
+        cap: capsCurrentCSP,
         gasConversionFactor: value.gasConversionFactor,
+        tariff,
       });
 
       return dailyResults;
     });
+    return {
+      isLoading: false,
+      isSuccess: true,
+      results: dailyResultArray,
+    };
   } else {
-    return { isLoading: true };
+    return { isLoading: true, isSuccess: false, results: null };
   }
 };
 
 export default useDailyAmountCalculation;
 
 interface ICalculateDailyResults {
-  type: "E" | "G";
+  type: "E" | "G" | "EE";
   periodFrom: Date;
   periodTo: Date;
-  meterData: meterData[];
+  meterData: IMeterData[];
   gasConversionFactor: number;
-  tariffRates: unknown;
-  tariffStandingCharges: unknown;
+  tariffRates: ITariffResults[];
+  tariffStandingCharges: ITariffResults[];
+  SVTrates: ITariffResults[];
+  SVTstandingCharges: ITariffResults[];
+  cap: ICaps[] | undefined;
+  tariff: string;
+}
+
+interface ITariffResults {
+  value_inc_vat: number;
+  valid_from: string;
+  valid_to: string | null;
+  payment_method: string | null;
 }
 
 export const calculateDailyResults = ({
@@ -194,14 +257,74 @@ export const calculateDailyResults = ({
   gasConversionFactor,
   tariffRates,
   tariffStandingCharges,
+  SVTrates,
+  SVTstandingCharges,
+  cap,
+  tariff,
 }: ICalculateDailyResults) => {
   const consumptionMultiplier = type === "G" ? gasConversionFactor : 1;
 
+  const reading = meterData.reduce(
+    (acc, cur) => cur.consumption * consumptionMultiplier + acc,
+    0
+  );
+
+  const SVTrate = SVTrates.find(
+    (tariff) =>
+      new Date(tariff.valid_from).valueOf() <= periodFrom.valueOf() &&
+      (tariff.valid_to === null ||
+        new Date(tariff.valid_to).valueOf() >= periodTo.valueOf())
+  )?.value_inc_vat;
+  const capRate = type === "EE" ? Infinity : cap?.[0][type] ?? Infinity;
+  const SVTcost = SVTrate
+    ? SVTrate > capRate
+      ? reading * capRate
+      : reading * SVTrate
+    : undefined;
+  const SVTstandingCharge = SVTstandingCharges.find(
+    (tariff) =>
+      new Date(tariff.valid_from).valueOf() <= periodFrom.valueOf() &&
+      (tariff.valid_to === null ||
+        new Date(tariff.valid_to).valueOf() >= periodTo.valueOf())
+  )?.value_inc_vat;
+
+  const standingCharge = tariffStandingCharges.find(
+    (tariff) =>
+      new Date(tariff.valid_from).valueOf() <= periodFrom.valueOf() &&
+      (tariff.valid_to === null ||
+        new Date(tariff.valid_to).valueOf() >= periodTo.valueOf())
+  )?.value_inc_vat;
+
+  const sessionCosts = [];
+  const cost: number = meterData.reduce((acc, cur) => {
+    const currentSessionRate = tariffRates.find(
+      (tariff) =>
+        new Date(tariff.valid_from) <= new Date(cur.interval_start) &&
+        (tariff.valid_to === null ||
+          new Date(tariff.valid_to) >= new Date(cur.interval_end))
+    )?.value_inc_vat;
+    if (currentSessionRate && acc !== null) {
+      sessionCosts.push(currentSessionRate);
+      return acc + cur.consumption * consumptionMultiplier * currentSessionRate;
+    } else {
+      throw new Error("Error calculating");
+    }
+  }, 0);
+
+  if (
+    SVTcost === undefined ||
+    SVTstandingCharge === undefined ||
+    standingCharge === undefined ||
+    cost === undefined ||
+    reading === undefined
+  )
+    throw new Error("Error calculating");
   return {
-    reading: 0,
-    cost: 0,
-    SVTcost: 0,
-    standingCharge: 0,
-    SVTstandingCharge: 0,
+    reading,
+    cost,
+    SVTcost,
+    standingCharge,
+    SVTstandingCharge,
+    tariff,
   };
 };
