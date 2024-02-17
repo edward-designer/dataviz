@@ -80,11 +80,11 @@ const MonthlyChartBar = ({
             >
               <span className="flex sm:items-center flex-col sm:flex-row overflow-visible ">
                 <span
-                  className={`text-xs md:text-base font-bold whitespace-nowrap sm:whitespace-normal flex items-center leading-tight min-w-20 sm:w-14 shrink-0 md:mix-blend-normal md:text-black `}
+                  className={`text-xs md:text-base font-extrabold whitespace-nowrap sm:whitespace-normal flex items-center leading-tight min-w-20 sm:w-14 shrink-0 md:mix-blend-normal md:text-black `}
                 >
                   {period}
                   {tariff && (
-                    <span className="rounded-full inline-block ml-2 bg-accentBlue-900 px-2 text-[8px] sm:hidden text-white whitespace-nowrap">
+                    <span className="font-sans font-normal rounded-lg text-black bg-accentBlue-800/20 ml-1 -mt-[3px] px-1 py-[1px] leading-tight text-[8px]  sm:hidden whitespace-nowrap">
                       {tariff}
                     </span>
                   )}
@@ -94,19 +94,11 @@ const MonthlyChartBar = ({
                 >
                   {getCategory(tariff ?? "") === "SVT" ? (
                     <TiEquals
-                      className={`md:text-white ${
-                        widthCurrent < 40
-                          ? "mix-blend-normal text-white"
-                          : "text-black"
-                      } w-4 h-4 md:w-6 md:h-6 flex-shrink-0`}
+                      className={`md:text-white mix-blend-normal text-white w-4 h-4 md:w-6 md:h-6 flex-shrink-0`}
                     />
                   ) : saving > 0 ? (
                     <TbPigMoney
-                      className={`md:text-white ${
-                        widthCurrent < 40
-                          ? "mix-blend-normal text-white"
-                          : "text-black"
-                      } w-4 h-4 md:w-6 md:h-6 flex-shrink-0`}
+                      className={`md:text-white mix-blend-normal text-white w-4 h-4 md:w-6 md:h-6 flex-shrink-0`}
                     />
                   ) : (
                     <IoMdTrendingUp
@@ -122,7 +114,7 @@ const MonthlyChartBar = ({
                   </span>
                 </span>
                 {tariff && (
-                  <span className="rounded-full ml-2 bg-accentBlue-900 px-2 py-[2px] leading-tight text-[8px] hidden sm:inline-block text-white whitespace-nowrap">
+                  <span className="font-sans font-normal rounded-full ml-2 bg-accentBlue-900 px-2 py-[2px] leading-tight text-[8px] hidden sm:inline-block text-white whitespace-nowrap">
                     {tariff}
                   </span>
                 )}
