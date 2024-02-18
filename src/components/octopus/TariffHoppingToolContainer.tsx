@@ -160,7 +160,7 @@ const TariffHoppingToolContainer = () => {
       </div>
       <h2 className="text-accentPink-600 font-display text-4xl flex items-center gap-3 mb-3">
         <TbChartInfographic className="w-8 h-8" />
-        Net Monthly Energy Cost
+        Net Energy Cost
       </h2>
       <EnergyShiftSimSwitchChart
         importTariff={importTariff}
