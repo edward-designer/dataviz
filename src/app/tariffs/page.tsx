@@ -7,6 +7,7 @@ import { TbSunElectricity } from "react-icons/tb";
 import { GrStatusGood } from "react-icons/gr";
 import { RxCross2 } from "react-icons/rx";
 import { FiAlertTriangle } from "react-icons/fi";
+import { FaListCheck } from "react-icons/fa6";
 
 export const metadata: Metadata = {
   title: "Octopus Tariff Selector and Requirements | Octoprice",
@@ -55,13 +56,17 @@ const About = () => {
           Octopus Tariffs at a Glance
         </h1>
         <h2 className="text-accentBlue-400 font-display font-medium text-lg lg:text-2xl mb-8">
-          - help you pick Octopus Energy tariffs giving you best value
+          - pick best Octopus Energy tariff combination
         </h2>
+        <div className="-z-10 absolute top-0 right-0 overflow-hidden">
+          <FaListCheck className="relative -top-1 -right-6 text-theme-700/20  w-[180px] h-[180px] md:hidden pointer-events-none" />
+        </div>
+
         <h3 className="flex font-display text-3xl text-accentBlue-500 mb-2">
           <TbSunElectricity className="w-8 h-8 text-accentBlue-700 inline-block mr-2" />
-          Electricity and Solar Generation
+          Electricity Import & Export
         </h3>
-        <p className="text-base my-4">
+        <p className="text-sm md:text-base my-4">
           In addition to the standard flexible (SVT), Economy-7 and fixed
           electicity tariffs, Octopus Energy innovates a lot of smart and
           intelligent tariffs, while some are experimental in nature but most of
@@ -69,7 +74,7 @@ const About = () => {
           table summarizes the various electricity import and export tariffs and
           their requirements.
         </p>
-        <table className="my-2">
+        <table className="my-2 text-xs md:text:base table-fixed">
           <tbody>
             <tr className="flex [&>td]:flex-1 [&>td]:p-1 [&>td]:py-4 [&>td]:flex [&>td]:leading-tight [&>td]:text-center [&>td]:items-center [&>td]:justify-center [&>td]:min-h-16">
               <td></td>
@@ -175,7 +180,7 @@ const About = () => {
                   className=" text-accentPink-500 hover:text-accentBlue-500"
                 >
                   Fixed Import
-                  <span className="flex text-xs text-theme-300 gap-1 items-center">
+                  <span className="hidden md:flex text-xs text-theme-300 gap-1 items-center">
                     <FiAlertTriangle className="w-3 h-3 min-w-3 shrink-0 text-yellow-500" />
                     NO exit fee from Feb 2024
                   </span>
@@ -195,7 +200,7 @@ const About = () => {
                   className=" text-accentPink-500 hover:text-accentBlue-500"
                 >
                   Octopus Flux
-                  <span className="flex text-xs text-theme-300 gap-1 items-center">
+                  <span className="hidden md:flex text-xs text-theme-300 gap-1 items-center">
                     <FiAlertTriangle className="w-3 h-3 min-w-3 shrink-0 text-yellow-500" />
                     solar battery system
                   </span>
@@ -215,7 +220,7 @@ const About = () => {
                   className=" text-accentPink-500 hover:text-accentBlue-500"
                 >
                   Intelligent Flux
-                  <span className="flex text-xs text-theme-300 gap-1 items-center">
+                  <span className="hidden md:flex text-xs text-theme-300 gap-1 items-center">
                     <FiAlertTriangle className="w-3 h-3 min-w-3 shrink-0 text-yellow-500" />
                     compatible solar + battery
                   </span>
@@ -235,7 +240,7 @@ const About = () => {
                   className=" text-accentPink-500 hover:text-accentBlue-500"
                 >
                   Octopus Go
-                  <span className="flex text-xs text-theme-300 gap-1 items-center">
+                  <span className="hidden md:flex text-xs text-theme-300 gap-1 items-center">
                     <FiAlertTriangle className="w-3 h-3 min-w-3 shrink-0 text-yellow-500" />
                     EV and charger
                   </span>
@@ -255,7 +260,7 @@ const About = () => {
                   className=" text-accentPink-500 hover:text-accentBlue-500"
                 >
                   Intelligent Go
-                  <span className="flex text-xs text-theme-300 gap-1 items-center">
+                  <span className="hidden md:flex text-xs text-theme-300 gap-1 items-center">
                     <FiAlertTriangle className="w-3 h-3 min-w-3 shrink-0 text-yellow-500" />
                     compatible EV and charger
                   </span>
@@ -275,7 +280,7 @@ const About = () => {
                   className=" text-accentPink-500 hover:text-accentBlue-500"
                 >
                   Octopus Cosy{" "}
-                  <span className="flex text-xs text-theme-300 gap-1 items-center">
+                  <span className="hidden md:flex text-xs text-theme-300 gap-1 items-center">
                     <FiAlertTriangle className="w-3 h-3 min-w-3 shrink-0 text-yellow-500" />
                     heat pump
                   </span>

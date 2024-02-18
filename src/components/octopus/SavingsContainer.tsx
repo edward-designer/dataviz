@@ -26,7 +26,9 @@ const SavingsContainer = () => {
       <h2 className="text-accentBlue-400 font-display font-medium text-lg lg:text-2xl mb-8">
         - How much have you saved?
       </h2>
-      <LiaPiggyBankSolid className="text-accentBlue-500/20 -z-10 absolute top-[80px] right-0 w-[100px] h-[100px] md:hidden pointer-events-none" />
+      <div className="-z-10 absolute top-0 right-0 overflow-hidden">
+        <LiaPiggyBankSolid className="relative -top-12 -right-12 text-theme-700/20  w-[240px] h-[240px] md:hidden pointer-events-none" />
+      </div>
 
       {hasApiInfo ? (
         <SavingsCalculation />

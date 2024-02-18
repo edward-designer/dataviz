@@ -25,7 +25,9 @@ const TariffHoppingTool = () => {
       <h2 className="text-accentBlue-400 font-display font-medium text-lg lg:text-2xl mb-8">
         - when best to hop Octopus tariffs
       </h2>
-      <TbSwitch3 className="text-accentBlue-500/20 -z-10 absolute top-[100px] right-2 w-[65px] h-[65px] md:hidden pointer-events-none" />
+      <div className="-z-10 absolute top-0 right-0 overflow-hidden">
+        <TbSwitch3 className="relative -top-5 -right-8 text-theme-700/20  w-[200px] h-[200px] md:hidden pointer-events-none" />
+      </div>
 
       {hasApiInfo ? (
         <TariffHoppingToolContainer />
