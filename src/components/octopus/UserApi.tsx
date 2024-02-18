@@ -1,18 +1,17 @@
 "use client";
 
-import { useContext, useState } from "react";
+import { useState } from "react";
 
-import { UserContext } from "@/context/user";
 import Remark from "./Remark";
 
-import UserApiForm from "./UserApiForm";
 import Lottie from "lottie-react";
+import UserApiForm from "./UserApiForm";
 
 import { ImGift } from "react-icons/im";
 import { MdOutlineCalculate } from "react-icons/md";
 
-import Saving from "../../../public/lottie/saving.json";
 import Link from "next/link";
+import Saving from "../../../public/lottie/saving.json";
 
 export type ErrorType = Record<string, string>;
 

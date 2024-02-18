@@ -58,12 +58,12 @@ const PeriodSelector = ({
   };
 
   return (
-    <div className="flex flex-col gap-2 bg-black/30 p-4">
-      <div className="flex gap-2 flex-col-reverse sm:flex-col lg:flex-row mb-2">
-        <div className="flex items-center flex-grow text-xl gap-2 text-accentBlue-500">
+    <div className="flex flex-col gap-2 bg-black/50 p-2 md:p-4 text-sm md:text-base">
+      <div className="flex gap-2 flex-col-reverse sm:flex-col lg:flex-row md:mb-2">
+        <div className="flex items-center flex-grow text-lg md:text-xl gap-2 text-accentBlue-500">
           <LiaCalendarAlt className="w-6 h-6" />
           Smart Meter Data Period
-          <Remark variant="badge">
+          <Remark variant="heading">
             Selecting a longer period will provide more accurate comparisons.
             The figures presented here are an approximation of your annual
             energy costs. If you have not been with Octopus for over a year, the
@@ -137,7 +137,7 @@ const PeriodSelector = ({
         )}
       </div>
 
-      <div className="h-[40px] sm:w-full mt-0 md:-mt-1">
+      <div className="md:h-[40px] sm:w-full md:-mt-1">
         {period.duration !== "custom" ? (
           <div className="mt-1 flex sm:justify-start gap-2 items-center w-full justify-between sm:w-fit">
             <button

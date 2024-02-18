@@ -324,7 +324,7 @@ export type QueryAgileResults = QuerySingleAgileGSPResult[];
 
 export type ApiTariffType = keyof typeof ENERGY_TYPE;
 export type TariffType = ApiTariffType | "EG";
-export type TVariant = "default" | "badge";
+export type TVariant = "default" | "badge" | "heading";
 
 export const FETCH_ERROR = "Sorry. Cannot fetch data. Please try again.";
 

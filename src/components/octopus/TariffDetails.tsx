@@ -59,7 +59,7 @@ const TariffDetails = ({
         Tariff
       </div>
       <div className="bg-theme-900/40 p-1 flex flex-row md:p-2 md:flex-col gap-1 justify-between">
-        <div className="flex flex-col md:flex-row items-start md:items-center text-sm md:text-base">
+        <div className="flex flex-col md:flex-row items-start md:items-center text-xs md:text-base">
           <span className="inline-block md:w-[90px] text-accentBlue-500 text-[12px] font-bold">
             Meter No.:
           </span>
@@ -70,7 +70,7 @@ const TariffDetails = ({
               }
               value={value[currentSelect]}
             >
-              <SelectTrigger className="w-auto flex items-center justify-center p-0 m-0 h-5 md:h-7 text-sm md:text-base [&>svg]:ml-0">
+              <SelectTrigger className="w-auto flex items-center justify-center p-0 m-0 h-5 md:h-7 text-xs md:text-base [&>svg]:ml-0">
                 <SelectValue placeholder="" />
               </SelectTrigger>
               <SelectContent>
@@ -87,23 +87,25 @@ const TariffDetails = ({
             value[currentSelect]
           )}
         </div>
-        <div className="flex flex-col md:flex-row items-start md:items-center text-sm md:text-base">
+        <div className="flex flex-col md:flex-row items-start md:items-center text-xs md:text-base">
           <span className="inline-block md:w-[90px] text-accentBlue-500 text-[12px] font-bold">
             Tariff:
           </span>
           {isSuccess ? data[0]?.display_name ?? tariff_code : tariff_code}
         </div>
-        <div className="flex flex-col md:flex-row items-start md:items-center text-sm md:text-base">
+        <div className="flex flex-col md:flex-row items-start md:items-center text-xs md:text-base">
           <span className="inline-block md:w-[90px] text-accentBlue-500 text-[12px] font-bold">
             Duration:
           </span>
           {new Date(valid_from).toLocaleDateString("en-GB")}
           {valid_to ? (
             <>
-              <IoMdArrowDropright />
-              <span className="text-accentPink-300">
-                {new Date(valid_to).toLocaleDateString("en-GB")}
-              </span>
+              <div>
+                <IoMdArrowDropright className="inline-block" />
+                <span className="text-accentPink-300">
+                  {new Date(valid_to).toLocaleDateString("en-GB")}
+                </span>
+              </div>
             </>
           ) : (
             <>

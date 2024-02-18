@@ -7,6 +7,8 @@ import UserApiResult from "./UserApiResult";
 import UserApi from "./UserApi";
 import Image from "next/image";
 
+import { FaRankingStar } from "react-icons/fa6";
+
 import compareGif from "../../../public/images/compare.gif";
 
 export type ErrorType = Record<string, string>;
@@ -23,6 +25,7 @@ const CompareTariffs = () => {
       <h2 className="text-accentBlue-400 font-display font-medium text-lg lg:text-2xl mb-8">
         - based on your actual consumption data
       </h2>
+      <FaRankingStar className="text-accentBlue-500/20 -z-10 absolute top-[100px] right-2 w-[70px] h-[70px] md:hidden pointer-events-none" />
 
       {hasApiInfo ? (
         <UserApiResult />

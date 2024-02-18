@@ -1,23 +1,19 @@
 "use client";
 
 import { UserContext } from "@/context/user";
-import { useContext, useRef, useState } from "react";
+import { useContext, useState } from "react";
 
 import PeriodMonthSelector, { getDatePeriod } from "./PeriodMonthSelector";
 
 import Loading from "@/app/loading";
 
-import { TbChartInfographic, TbZoomMoney } from "react-icons/tb";
-import { TfiLayoutGrid4Alt } from "react-icons/tfi";
-
 import { IPeriod } from "@/data/source";
 import useConsumptionData from "@/hooks/useConsumptionData";
+import useTypeTabs from "@/hooks/useTypeTabs";
 import { AiFillFire } from "react-icons/ai";
 import { BsLightningChargeFill } from "react-icons/bs";
 import { PiSunDimFill } from "react-icons/pi";
 import MissingDataToolChart from "./MissingDataToolChart";
-import Button from "./Button";
-import useTypeTabs from "@/hooks/useTypeTabs";
 
 export type ErrorType = Record<string, string>;
 
@@ -25,7 +21,7 @@ const MissingDataToolContainer = () => {
   const { value } = useContext(UserContext);
 
   const [period, setPeriod] = useState<IPeriod>(getDatePeriod("month"));
-  
+
   const { currentType, Tabs } = useTypeTabs();
 
   const hasEImport = !!(value.ESerialNo && value.MPAN);
@@ -106,7 +102,7 @@ const MissingDataToolContainer = () => {
               contractFrom={value.contractEEStartDate}
             >
               <PiSunDimFill className="w-8 h-8 fill-accentPink-700 inline-block mr-2" />
-              Electricity (export) Smart Meter Data
+              Electricity (Export) Data
             </MissingDataToolChart>
           )}
           {currentType === "E" && (

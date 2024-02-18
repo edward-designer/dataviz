@@ -79,15 +79,15 @@ const PeriodMonthSelector = ({
   };
 
   return (
-    <div className="flex flex-col gap-2  bg-black/30 p-4 w-full">
-      <div className="flex gap-2 flex-col-reverse sm:flex-col lg:flex-row mb-2">
-        <div className="flex items-center flex-grow text-xl gap-2 text-accentBlue-500">
+    <div className="flex flex-col gap-2 bg-black/50 p-2 md:p-4 text-sm md:text-base w-full">
+      <div className="flex gap-2 flex-col-reverse sm:flex-col lg:flex-row md:mb-2">
+        <div className="flex items-center flex-grow text-lg md:text-xl gap-2 text-accentBlue-500">
           <LiaCalendarAlt className="w-6 h-6" />
           Smart Meter Data Period
         </div>
       </div>
 
-      <div className="h-[40px] sm:w-full mt-0 md:-mt-1">
+      <div className="md:h-[40px] sm:w-full -mt-1">
         <div className="mt-1 flex sm:justify-start gap-2 items-center w-full justify-between sm:w-fit">
           <button
             onClick={() => getPeriod(true)}

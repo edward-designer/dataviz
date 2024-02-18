@@ -49,21 +49,21 @@ const DashboardTariffDetails = ({
 
   return (
     <>
-      <div className="bg-theme-900/40 p-1 flex flex-col md:p-2 gap-1 justify-between">
-        <div className="flex flex-row items-center text-base">
-          <span className="inline-block w-[100px] text-accentBlue-500 text-[12px] font-light">
+      <div className="bg-theme-900/40 p-1 flex flex-col md:p-2 gap-1 justify-between text-xs md:text-base">
+        <div className="flex flex-row items-center whitespace-nowrap overflow-hidden">
+          <span className="inline-block w-[100px] text-accentBlue-500 font-light">
             Current Tariff:
           </span>
           {isSuccess ? data[0]?.full_name : tariff_code}
         </div>
-        <div className="flex flex-row items-center text-base">
-          <span className="inline-block w-[100px] text-accentBlue-500 text-[12px] font-light">
+        <div className="flex flex-row items-center whitespace-nowrap overflow-hidden">
+          <span className="inline-block w-[100px] text-accentBlue-500 font-light">
             Tariff Code:
           </span>
           {tariff_code}
         </div>
-        <div className="flex flex-row items-center text-base">
-          <span className="inline-block w-[100px] text-accentBlue-500 text-[12px] font-light">
+        <div className="flex flex-row items-center whitespace-nowrap overflow-hidden">
+          <span className="inline-block w-[100px] text-accentBlue-500 font-light">
             Duration:
           </span>
           {new Date(valid_from).toLocaleDateString("en-GB")}
@@ -83,8 +83,8 @@ const DashboardTariffDetails = ({
             </>
           )}
         </div>
-        <div className="flex flex-row items-center text-base">
-          <span className="inline-block w-[100px] text-accentBlue-500 text-[12px] font-light">
+        <div className="flex flex-row items-center whitespace-nowrap overflow-hidden">
+          <span className="inline-block w-[100px] text-accentBlue-500 font-light">
             Meter No.:
           </span>
           {value[meterSelection].length > 1 ? (

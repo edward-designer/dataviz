@@ -27,7 +27,7 @@ const TrafficHoppingToolSelector = ({
   isExporting = true,
 }: ITrafficHoppingToolSelector) => {
   return (
-    <div className="flex flex-row justify-start items-center gap-5 flex-wrap bg-black/30 rounded-2xl p-4">
+    <div className="flex flex-row justify-start items-center gap-1 md:gap-5 flex-wrap bg-black/50 rounded-2xl p-2 md:p-4">
       <div
         className={`text-2xl font-bold text-accentBlue-500 font-display ${
           lineColor === "green" ? "text-green-700" : "text-slate-500"
@@ -40,7 +40,7 @@ const TrafficHoppingToolSelector = ({
           lineColor === "green" ? "border-green-700" : "border-slate-500"
         }`}
       />
-      <div className="flex flex-row flex-wrap gap-5 flex-grow">
+      <div className="flex flex-row flex-wrap gap-1 md:gap-5 flex-grow">
         <EnergyShiftSimTariffSelector
           isExport={false}
           tariff={importTariff}

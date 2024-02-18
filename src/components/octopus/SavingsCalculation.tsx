@@ -68,7 +68,7 @@ const SavingsCalculation = () => {
             >
               <h2 className="font-display text-accentPink-500 text-4xl flex items-center">
                 <PiSunDimFill className="w-8 h-8 fill-accentPink-900 inline-block mr-2" />
-                Electricity Export Earnings
+                Electricity Export
               </h2>
             </SavingsCalculationType>
           )}

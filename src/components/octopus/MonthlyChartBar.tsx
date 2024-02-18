@@ -84,7 +84,7 @@ const MonthlyChartBar = ({
                 >
                   {period}
                   {tariff && (
-                    <span className="font-sans font-normal rounded-lg text-black bg-accentBlue-800/20 ml-1 -mt-[3px] px-1 py-[1px] leading-tight text-[8px]  sm:hidden whitespace-nowrap">
+                    <span className="font-sans font-normal rounded-lg text-black bg-accentBlue-200/70 ml-1 -mt-[3px] px-1 py-[1px] leading-tight text-[8px]  sm:hidden whitespace-nowrap">
                       {tariff}
                     </span>
                   )}

@@ -125,20 +125,15 @@ const TariffHoppingToolContainer = () => {
   return (
     <div className="flex flex-col justify-between gap-4">
       <div>
-        This tool helps you to optimize tariff hopping by taking advantage of
-        zero tariff exit fee!{" "}
+        Take full advantage of FREE tariff switching!
         <Remark>
           [BEST for Octopus users with both import and export tariffs] It is
-          absolutely FREE and fast to switch between various Octopus smart
-          tariffs (you only have to wait 1 month before swithing again - with
-          the execption of Tracker which you have to wait 9 months before
-          switching back).{" "}
+          free and fast to switch between various Octopus smart tariffs (you
+          only have to wait 1 month before swithing again - with the execption
+          of Tracker for which you have to wait 9 months before switching back).{" "}
         </Remark>
       </div>
-      <h2 className="text-accentPink-600 font-display text-4xl flex items-center gap-3 mb-3">
-        <TbChartInfographic className="w-8 h-8" />
-        My Net Energy Cost
-      </h2>
+
       <div className="flex flex-col gap-2">
         <TrafficHoppingToolSelector
           importTariff={importTariff}
@@ -163,6 +158,10 @@ const TariffHoppingToolContainer = () => {
           isExporting={isExporting}
         />
       </div>
+      <h2 className="text-accentPink-600 font-display text-4xl flex items-center gap-3 mb-3">
+        <TbChartInfographic className="w-8 h-8" />
+        Net Monthly Energy Cost
+      </h2>
       <EnergyShiftSimSwitchChart
         importTariff={importTariff}
         exportTariff={exportTariff}

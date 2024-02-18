@@ -117,6 +117,8 @@ const DataArtContainer = () => {
     error,
     currentEContract,
     currentGContract,
+    agreementsE,
+    agreementsG,
   } = value;
   const chartRef = useRef<null | SVGSVGElement>(null);
 
@@ -133,6 +135,24 @@ const DataArtContainer = () => {
       "M11.251.068a.5.5 0 0 1 .227.58L9.677 6.5H13a.5.5 0 0 1 .364.843l-8 8.5a.5.5 0 0 1-.842-.49L6.323 9.5H3a.5.5 0 0 1-.364-.843l8-8.5a.5.5 0 0 1 .615-.09z",
   };
 
+  const thenETariff =
+    agreementsE
+      ?.find(
+        (agreement) =>
+          new Date(agreement.valid_to).valueOf() >=
+          new Date("2023-12-31").valueOf()
+      )
+      ?.tariff_code.slice(5, -2) ?? currentETariff;
+
+  const thenGTariff =
+    agreementsG
+      ?.findLast(
+        (agreement) =>
+          new Date(agreement.valid_to).valueOf() >=
+          new Date("2023-12-31").valueOf()
+      )
+      ?.tariff_code.slice(5, -2) ?? currentGTariff;
+
   const {
     data: tariffEData,
     isSuccess: tariffEIsSuccess,
@@ -140,7 +160,7 @@ const DataArtContainer = () => {
   } = useTariffQuery<{
     display_name: string;
   }>({
-    tariff: currentETariff,
+    tariff: thenETariff,
     type: "E",
   });
   const {
@@ -150,11 +170,11 @@ const DataArtContainer = () => {
   } = useTariffQuery<{
     display_name: string;
   }>({
-    tariff: currentGTariff,
+    tariff: thenGTariff,
     type: "G",
   });
 
-  const categoryE = getCategory(currentETariff);
+  const categoryE = getCategory(thenETariff);
   const {
     data: rateEData,
     isSuccess: isRateEDataSuccess,
@@ -167,7 +187,7 @@ const DataArtContainer = () => {
       payment_method: null | string;
     }[];
   }>({
-    tariff: currentETariff,
+    tariff: thenETariff,
     type: "E",
     gsp: value.gsp,
     fromDate: fromISODate,
@@ -176,7 +196,7 @@ const DataArtContainer = () => {
     enabled: !!MPAN && !!ESerialNo,
   });
 
-  const categoryG = getCategory(currentGTariff);
+  const categoryG = getCategory(thenGTariff);
   const {
     data: rateGData,
     isSuccess: isRateGDataSuccess,
@@ -189,7 +209,7 @@ const DataArtContainer = () => {
       payment_method: null | string;
     }[];
   }>({
-    tariff: currentGTariff,
+    tariff: thenGTariff,
     type: "G",
     gsp: value.gsp,
     fromDate: fromISODate,
@@ -1039,7 +1059,7 @@ const DataArtContainer = () => {
     if (
       !chartRef.current ||
       (!tariffEIsSuccess && !tariffGIsSuccess) ||
-      (!tariffEData?.[0].display_name && !tariffGData?.[0].display_name)
+      (!tariffEData?.[0]?.display_name && !tariffGData?.[0]?.display_name)
     )
       return;
 
@@ -1071,7 +1091,7 @@ const DataArtContainer = () => {
         .style("fill", colorScheme.gasIcon)
         .attr("transform", "translate(20 650), scale(2.2)");
     }
-    if (tariffEData?.[0].display_name) {
+    if (tariffEData?.[0]?.display_name) {
       infoContainer
         .append("text")
         .attr("font-size", "40px")
@@ -1114,10 +1134,8 @@ const DataArtContainer = () => {
   useEffect(() => {
     if (
       !chartRef.current ||
-      (currentETariff &&
-        !consumptionEIsSuccess &&
-        !consumptionEData?.results) ||
-      (currentGTariff && !consumptionGIsSuccess && !consumptionGData?.results)
+      (thenETariff && !consumptionEIsSuccess && !consumptionEData?.results) ||
+      (thenGTariff && !consumptionGIsSuccess && !consumptionGData?.results)
     )
       return;
 
@@ -1613,6 +1631,8 @@ const DataArtContainer = () => {
     colorScheme.textCumulative,
     currentETariff,
     currentGTariff,
+    thenGTariff,
+    thenETariff,
   ]);
 
   useEffect(() => {
@@ -1982,8 +2002,7 @@ const DataArtContainer = () => {
     <>
       <div className="flex gap-2 items-center mb-4 flex-col-reverse md:flex-col lg:flex-row">
         <div className="flex-grow">
-          Your energy consumption visualization over {chartYear} in relation to
-          weather.
+          Visualization of energy consumption in {chartYear}.
           <Remark>
             Kindly note that this page is still in beta version and may not be
             able to cater to all Octopus customer accounts. Should you encounter
@@ -1997,31 +2016,35 @@ const DataArtContainer = () => {
       </div>
       <div className="flex flex-row gap-2 mb-4 flex-wrap [&>*]:flex-1">
         {value.currentEContract && value.currentETariff && (
-          <div>
+          <div className="flex flex-col">
             <h2 className="font-display text-accentPink-500 text-4xl flex items-center">
               <BsLightningChargeFill className="w-8 h-8 fill-accentPink-900 inline-block mr-2" />
               Electricity
             </h2>
-            <TariffDetails
-              valid_from={value.currentEContract.valid_from}
-              valid_to={value.currentEContract.valid_to}
-              tariff_code={value.currentETariff}
-              type="E"
-            />
+            <div className="flex flex-col gap-4">
+              <TariffDetails
+                valid_from={value.currentEContract.valid_from}
+                valid_to={value.currentEContract.valid_to}
+                tariff_code={value.currentETariff}
+                type="E"
+              />
+            </div>
           </div>
         )}
         {value.currentGContract && value.currentGTariff && (
-          <div>
+          <div className="flex flex-col">
             <h2 className="font-display text-accentPink-500 text-4xl flex items-center">
               <AiFillFire className="w-8 h-8 fill-accentPink-900 inline-block mr-2" />
               Gas
             </h2>
-            <TariffDetails
-              valid_from={value.currentGContract.valid_from}
-              tariff_code={value.currentGTariff}
-              valid_to={value.currentGContract.valid_to}
-              type="G"
-            />
+            <div className="flex flex-col gap-4">
+              <TariffDetails
+                valid_from={value.currentGContract.valid_from}
+                tariff_code={value.currentGTariff}
+                valid_to={value.currentGContract.valid_to}
+                type="G"
+              />
+            </div>
           </div>
         )}
       </div>

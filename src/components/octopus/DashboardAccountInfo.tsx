@@ -68,7 +68,9 @@ const DashboardAccountInfo = () => {
       <div className="font-normal flex flex-col gap-2">
         <div className="flex flex-row gap-4 items-center">
           <span className="w-[120px] text-xs">Account No.:</span>
-          <span className="flex-grow">{value.accountNumber}</span>
+          <span className="flex-grow text-xs md:text-base">
+            {value.accountNumber}
+          </span>
         </div>
         <div className="flex flex-row gap-4 items-center">
           <span className="w-[120px] text-xs">API Key:</span>
@@ -87,7 +89,7 @@ const DashboardAccountInfo = () => {
         </div>
         <div className="flex flex-row gap-4 items-center">
           <span className="w-[120px] text-xs">Grid Supply Point / GSP:</span>
-          <span className="flex-grow">{value.gsp}</span>
+          <span className="flex-grow text-xs md:text-base">{value.gsp}</span>
         </div>
         {value.EMPAN && (
           <>
@@ -97,11 +99,15 @@ const DashboardAccountInfo = () => {
             </div>
             <div className="flex flex-row gap-4 items-center">
               <span className="w-[120px] text-xs">MPAN:</span>
-              <span className="flex-grow">{value.EMPAN}</span>
+              <span className="flex-grow text-xs md:text-base">
+                {value.EMPAN}
+              </span>
             </div>
             <div className="flex flex-row gap-4 items-center">
               <span className="w-[120px] text-xs">Meter Serial No.:</span>
-              <span className="flex-grow">{value.EESerialNo}</span>
+              <span className="flex-grow text-xs md:text-base">
+                {value.EESerialNo}
+              </span>
             </div>
           </>
         )}
@@ -113,11 +119,15 @@ const DashboardAccountInfo = () => {
             </div>
             <div className="flex flex-row gap-4 items-center">
               <span className="w-[120px] text-xs">MPAN:</span>
-              <span className="flex-grow">{value.MPAN}</span>
+              <span className="flex-grow text-xs md:text-base">
+                {value.MPAN}
+              </span>
             </div>
             <div className="flex flex-row gap-4 items-center">
               <span className="w-[120px] text-xs">Meter Serial No.:</span>
-              <span className="flex-grow">{value.ESerialNo}</span>
+              <span className="flex-grow text-xs md:text-base">
+                {value.ESerialNo}
+              </span>
             </div>
           </>
         )}
@@ -129,11 +139,15 @@ const DashboardAccountInfo = () => {
             </div>
             <div className="flex flex-row gap-4 items-center">
               <span className="w-[120px] text-xs">MPRN:</span>
-              <span className="flex-grow">{value.MPRN}</span>
+              <span className="flex-grow text-xs md:text-base">
+                {value.MPRN}
+              </span>
             </div>
             <div className="flex flex-row gap-4 items-center">
               <span className="w-[120px] text-xs">Meter Serial No.:</span>
-              <span className="flex-grow">{value.GSerialNo}</span>
+              <span className="flex-grow text-xs md:text-base">
+                {value.GSerialNo}
+              </span>
             </div>
           </>
         )}

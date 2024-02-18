@@ -59,7 +59,7 @@ const DashboardOctopusHistory = () => {
         <SiOctopusdeploy className="w-8 h-8" />
         Your Octopus History
       </h2>
-      <div className="font-normal">
+      <div className="font-normal leading-tight text-sm md:text-base">
         {dateDiff(new Date(properties?.at(-1)?.moved_in_at ?? ""), new Date())}
       </div>
       {properties &&

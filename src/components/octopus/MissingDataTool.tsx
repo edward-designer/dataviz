@@ -9,6 +9,8 @@ import Image from "next/image";
 import compareGif from "../../../public/images/compare.gif";
 import MissingDataToolContainer from "./MissingDataToolContainer";
 
+import { BsUiChecksGrid } from "react-icons/bs";
+
 export type ErrorType = Record<string, string>;
 
 const MissingDataTool = () => {
@@ -23,6 +25,7 @@ const MissingDataTool = () => {
       <h2 className="text-accentBlue-400 font-display font-medium text-lg lg:text-2xl mb-8">
         - find gaps in your smart meter data
       </h2>
+      <BsUiChecksGrid className="text-accentBlue-500/20 -z-10 absolute top-[105px] right-2 w-[65px] h-[65px] md:hidden pointer-events-none" />
 
       {hasApiInfo ? (
         <MissingDataToolContainer />

@@ -471,19 +471,19 @@ const TariffHoppingChart = ({
   return (
     <>
       {hasEmptyValues && (
-        <div className="flex flex-col min-h-[400px] justify-center items-center text-center">
+        <div className="flex flex-col min-h-[200px] text-xs md:text-base justify-center items-center text-center">
           <Lottie
             animationData={emojiSad}
             aria-hidden={true}
-            className="w-20 h-20 mb-4"
+            className="w-10 h-10 mb-4"
           />
           <span>
-            We know it is so frustrating... but sorry, please wait for at least
+            We know it is frustrating... but sorry, please wait at least
             one year with Octopus to get accurate results.
           </span>
           <Link
             href="/compare"
-            className="text-accentBlue-500 underline hover:text-accentPink-500 hover:no-underline"
+            className="text-base text-accentBlue-500 underline hover:text-accentPink-500 hover:no-underline"
           >
             Do check out other tools to help you save money!
           </Link>
