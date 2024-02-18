@@ -125,7 +125,7 @@ const TariffHoppingToolContainer = () => {
   return (
     <div className="flex flex-col justify-between gap-4">
       <div>
-        Take full advantage of FREE tariff switching!
+        Take full advantage of tariff switching!
         <Remark>
           [BEST for Octopus users with both import and export tariffs] It is
           free and fast to switch between various Octopus smart tariffs (you
