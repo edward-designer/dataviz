@@ -85,10 +85,13 @@ const Header = ({
           <button
             onClick={() => setHiViz(!hiViz)}
             className={`flex flex-col items-center justify-center ${
-              hiViz ? "text-yellow-300" : "text-slate-500"
+              hiViz ? "text-yellow-300" : "text-slate-300"
             }`}
           >
-            <IoIosContrast aria-hidden={true} className="w-8 h-8 min-w-8 min-h-8 pb-1" />
+            <IoIosContrast
+              aria-hidden={true}
+              className="w-8 h-8 min-w-8 min-h-8 pb-1"
+            />
             <span className="text-[8px] leading-tight">Hi Contrast</span>
             <span className="sr-only">Toggle High Contrast Mode</span>
           </button>

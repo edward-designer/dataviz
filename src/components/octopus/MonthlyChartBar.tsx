@@ -128,7 +128,9 @@ const MonthlyChartBar = ({
                 {tariff && (
                   <span
                     className={`${
-                      hiViz ? "bg-black border border-slate-700" : "bg-accentBlue-900"
+                      hiViz
+                        ? "bg-black border border-slate-700"
+                        : "bg-accentBlue-900"
                     } font-sans font-normal rounded-full ml-2 px-2 py-[2px] leading-tight text-[8px] hidden sm:inline-block text-white whitespace-nowrap`}
                   >
                     {tariff}
@@ -137,7 +139,11 @@ const MonthlyChartBar = ({
               </span>
             </span>
           </TooltipTrigger>
-          <TooltipContent className="bg-theme-900 text-base font-sans">
+          <TooltipContent
+            className={`${
+              hiViz ? "bg-black" : "bg-theme-900"
+            } text-base font-sans`}
+          >
             {ind === 0 && lastDate && (
               <div className={`text-xs font-sans text-theme-300 mb-1`}>
                 (latest reading: {new Date(lastDate).toLocaleString("en-GB")})

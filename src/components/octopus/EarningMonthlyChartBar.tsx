@@ -100,7 +100,11 @@ const EarningMonthlyChartBar = ({
               </span>
             </span>
           </TooltipTrigger>
-          <TooltipContent className="bg-theme-900 text-base font-sans">
+          <TooltipContent
+            className={`${
+              hiViz ? "bg-black" : "bg-theme-900"
+            } text-base font-sans`}
+          >
             {ind === 0 && lastDate && (
               <div className={`text-xs font-sans text-theme-300 mb-1`}>
                 (latest reading: {new Date(lastDate).toLocaleString("en-GB")})
