@@ -131,7 +131,7 @@ const AgileTariff = () => {
       <section className="flex justify-center items-center gap-4 my-4 flex-col bg-black/30 rounded-xl p-4 lg:p-10">
         <h3 className="font-bold text-accentBlue-700">About Octopus Agile</h3>
         <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="item-0a" className="border-b-accentBlue-600/50">
+          <AccordionItem value="item-0a" className="border-b-accentBlue-900">
             <AccordionTrigger>
               I can only see the prices for electricity. Is there an Agile
               tariff for gas?
@@ -152,7 +152,7 @@ const AgileTariff = () => {
               short-term demand is low.
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value="item-0b" className="border-b-accentBlue-600/50">
+          <AccordionItem value="item-0b" className="border-b-accentBlue-900">
             <AccordionTrigger>
               What have the Ofgem price caps to do with Agile?
             </AccordionTrigger>
@@ -171,7 +171,7 @@ const AgileTariff = () => {
               rate for any individual period.
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value="item-0c" className="border-b-accentBlue-600/50">
+          <AccordionItem value="item-0c" className="border-b-accentBlue-900">
             <AccordionTrigger>
               I am currently on Octopus Tracker/Go/flexible/fixed. Will I save
               more by switching to Agile?
@@ -191,7 +191,7 @@ const AgileTariff = () => {
               deemded appropriate.
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value="item-0d" className="border-b-accentBlue-600/50">
+          <AccordionItem value="item-0d" className="border-b-accentBlue-900">
             <AccordionTrigger>
               Why do the unit rates different depending on where I live?
             </AccordionTrigger>
@@ -207,7 +207,7 @@ const AgileTariff = () => {
         </Accordion>
         <h3 className="font-bold text-accentBlue-700 mt-6">Joining Agile</h3>
         <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="item-1a" className="border-b-accentBlue-600/50">
+          <AccordionItem value="item-1a" className="border-b-accentBlue-900">
             <AccordionTrigger>
               How long does it take to join the Octopus Agile tariff?
             </AccordionTrigger>
@@ -219,7 +219,7 @@ const AgileTariff = () => {
               an Octopus client or do not have a smart meters.
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value="item-1b" className="border-b-accentBlue-600/50">
+          <AccordionItem value="item-1b" className="border-b-accentBlue-900">
             <AccordionTrigger>
               How do I sign up for the Octopus Agile tariff?
             </AccordionTrigger>
@@ -231,7 +231,7 @@ const AgileTariff = () => {
               and sign up there.
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value="item-1c" className="border-b-accentBlue-600/50">
+          <AccordionItem value="item-1c" className="border-b-accentBlue-900">
             <AccordionTrigger>
               What if I do not have a smart meter?
             </AccordionTrigger>
@@ -243,7 +243,7 @@ const AgileTariff = () => {
               your smart meter is installed and running properly.
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value="item-1d" className="border-b-accentBlue-600/50">
+          <AccordionItem value="item-1d" className="border-b-accentBlue-900">
             <AccordionTrigger>
               I have submitted my application for over 2 weeks but still have
               not heard from Octopus. What to do now?
@@ -256,7 +256,7 @@ const AgileTariff = () => {
               social media messages.
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value="item-1e" className="border-b-accentBlue-600/50">
+          <AccordionItem value="item-1e" className="border-b-accentBlue-900">
             <AccordionTrigger>
               When is the best time to make the switch?
             </AccordionTrigger>
@@ -269,7 +269,7 @@ const AgileTariff = () => {
         </Accordion>
         <h3 className="font-bold text-accentBlue-700 mt-6">Quitting Agile</h3>
         <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="item-2a" className="border-b-accentBlue-600/50">
+          <AccordionItem value="item-2a" className="border-b-accentBlue-900">
             <AccordionTrigger>
               Are there any penalties or exit fees for leaving Agile?
             </AccordionTrigger>
@@ -284,7 +284,7 @@ const AgileTariff = () => {
               provider.
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value="item-2b" className="border-b-accentBlue-600/50">
+          <AccordionItem value="item-2b" className="border-b-accentBlue-900">
             <AccordionTrigger>
               Can I switch to flexible plan in winter when the unit rate is high
               and back to Agile in spring?

@@ -1,8 +1,9 @@
 import { IoMdTrendingDown } from "react-icons/io";
 import { IoMdTrendingUp } from "react-icons/io";
 import { CgMathEqual } from "react-icons/cg";
-import { ReactNode } from "react";
+import { ReactNode, useContext } from "react";
 import { evenRound } from "@/utils/helpers";
+import { HiVizContext } from "@/context/hiViz";
 
 const Comparison = ({
   change,
@@ -15,6 +16,8 @@ const Comparison = ({
   isExport?: boolean;
   children?: ReactNode;
 }) => {
+  const { hiViz } = useContext(HiVizContext);
+
   if (change === null) return;
   const ChangeIcon =
     change === 0 ? CgMathEqual : change > 0 ? IoMdTrendingUp : IoMdTrendingDown;
@@ -23,7 +26,9 @@ const Comparison = ({
       <span
         className={`font-display text-base inline-block  pr-[4px] rounded-md leading-[1] ${
           (change > 15 && !isExport) || (change < -15 && isExport)
-            ? "text-red-500"
+            ? hiViz
+              ? "text-yellow-300"
+              : "text-red-500"
             : (change < -15 && !isExport) || (change > 15 && isExport)
             ? "text-green-500"
             : "text-white"
@@ -32,7 +37,9 @@ const Comparison = ({
         <ChangeIcon
           className={`w-3 h-3 inline-block mr-1 ${
             (change > 0 && !isExport) || (change < 0 && isExport)
-              ? "text-red-500"
+              ? hiViz
+                ? "text-yellow-300"
+                : "text-red-500"
               : "text-green-500"
           }`}
         />

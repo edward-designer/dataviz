@@ -26,7 +26,10 @@ const YearInReviewContainer = () => {
       <h2 className="text-accentBlue-400 font-display font-medium text-lg lg:text-2xl mb-8">
         - See how your energy consumption shapes up
       </h2>
-      <div className="-z-10 absolute top-0 right-0 overflow-hidden">
+      <div
+        className="-z-10 absolute top-0 right-0 overflow-hidden"
+        aria-hidden={true}
+      >
         <BiRadar className="relative -top-12 -right-10 text-theme-700/20  w-[220px] h-[220px] md:hidden pointer-events-none" />
       </div>
 

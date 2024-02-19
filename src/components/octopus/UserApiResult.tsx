@@ -12,6 +12,7 @@ import Link from "next/link";
 import Notice from "./Notice";
 import { TbBulb } from "react-icons/tb";
 import useTypeTabs from "@/hooks/useTypeTabs";
+import Remark from "./Remark";
 
 const UserApiResult = () => {
   const { value } = useContext(UserContext);
@@ -36,6 +37,19 @@ const UserApiResult = () => {
         <NotCurrentlySupported>{value.error}</NotCurrentlySupported>
       ) : (
         <>
+          <div className="flex-grow mb-3">
+            Inclusive of standing charge & VAT.
+            <Remark>
+              Approximations and assumptions are used in the calculations. The
+              actual savings are likely to differ because of missing data and
+              rounding. Should you encounter any issues while using
+              this page, please contact Edward at{" "}
+              <a href="mailto:edward.chung.dev@gmail.com" className="underline">
+                edward.chung.dev@gmail.com
+              </a>
+              . Thanks a lot!
+            </Remark>
+          </div>
           <PeriodSelector period={period} setPeriod={setPeriod} />
           <Tabs />
           {currentType === "EE" && (

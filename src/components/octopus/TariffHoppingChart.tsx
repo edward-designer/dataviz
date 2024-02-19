@@ -21,7 +21,7 @@ import {
 } from "d3";
 import { useContext, useEffect, useRef } from "react";
 import { LuArrowUpDown } from "react-icons/lu";
-import { TbZoomMoney } from "react-icons/tb";
+import { TbChartInfographic, TbZoomMoney } from "react-icons/tb";
 
 import Loading from "../Loading";
 import EnergyShiftSimCostContainer from "./EnergyShiftSimCostContainer";
@@ -30,6 +30,7 @@ import emojiSad from "../../../public/lottie/emojiSad.json";
 
 import Link from "next/link";
 import { WindowResizeContext } from "@/context/windowResize";
+import { BsLightningChargeFill } from "react-icons/bs";
 
 const xAxisLabels = [
   "Jan",
@@ -354,13 +355,16 @@ const TariffHoppingChart = ({
             enter
               .append<SVGPathElement>("path")
               .attr("fill", "none")
-              .attr("stroke", color)
+              .attr("stroke", color === "green" ? "#16a34a" : "#e5e7eb")
               .attr("stroke-width", 1.5),
           (update) => update.transition().duration(500),
           (exit) => exit.remove()
         )
         .attr("d", lineGenerator)
         .attr("stroke", color);
+      if (color === "grey") {
+        line.attr("stroke-dasharray", "5, 3");
+      }
 
       if (drawAnimate) {
         /* Line animation - simulate draw from left to rigth NOTE: for first time only */
@@ -371,7 +375,12 @@ const TariffHoppingChart = ({
           .transition()
           .duration(500)
           .ease(easeLinear)
-          .attr("stroke-dashoffset", 0);
+          .attr("stroke-dashoffset", 0)
+          .on("end", () => {
+            if (color === "grey") {
+              line.attr("stroke-dasharray", "5, 3");
+            }
+          });
       }
 
       return line;
@@ -478,8 +487,8 @@ const TariffHoppingChart = ({
             className="w-10 h-10 mb-4"
           />
           <span>
-            We know it is frustrating... but sorry, please wait at least
-            one year with Octopus to get accurate results.
+            We know it is frustrating... but sorry, please wait at least one
+            year with Octopus to get accurate results.
           </span>
           <Link
             href="/compare"
@@ -489,157 +498,163 @@ const TariffHoppingChart = ({
           </Link>
         </div>
       )}
-      <div className="flex flex-col flex-wrap-reverse md:flex-row md:flex-nowrap gap-4">
-        <div
-          id="tariffHoppingContainer"
-          className="flex basis-3/4 flex-col flex-grow border border-accentPink-900 rounded-2xl items-between justity-between p-4"
-        >
-          <div className="flex flex-col gap-2">
-            <svg ref={svgRef}>
-              <g className="lines" />
-              <g className="chartContainer">
-                <g className="grid" />
-                <g className="xAxis" />
-                <g className="yAxis" />
-              </g>
-            </svg>
-            <div className="flex justify-center">
-              <table
-                cellPadding={4}
-                className="w-full lg:w-1/2 border-t-2 border-b-2 border-dotted border-slate-800"
-              >
-                <caption className="font-display text-3xl text-accentPink-500 mb-3">
-                  Comparision of Costs of Tariff Sets{" "}
-                  <span className="block font-sans text-base text-accentBlue-500">
-                    (&quot;-£&quot; means credit)
-                  </span>
-                </caption>
-                <thead>
-                  <tr className="border-b-2 border-dotted border-slate-800">
-                    <th>Month</th>
-                    <th className="font-display text-2xl text-green-700 border-l-4 border-l-green-700">
-                      Set 1
-                    </th>
-                    <th className="font-display text-2xl text-slate-500 border-l-4 border-l-slate-500">
-                      Set 2
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {xAxisLabels.map((month, i) => (
-                    <tr
-                      key={month}
-                      className="border-b-2 border-dotted border-slate-800"
-                    >
-                      <td className="text-center">{month}</td>
-                      <td
-                        className={`text-center border-l-4 border-l-green-700 ${
-                          dataByTimeResultsInPounds[i] <
-                          dataByTimeResultsInPounds2[i]
-                            ? "bg-green-700"
-                            : ""
-                        }`}
-                      >
-                        {formatPriceChangeWithSign(
-                          dataByTimeResultsInPounds[i],
-                          false
-                        )}
-                      </td>
-                      <td
-                        className={`text-center border-l-4 border-l-slate-500 ${
-                          dataByTimeResultsInPounds[i] >
-                          dataByTimeResultsInPounds2[i]
-                            ? "bg-slate-500"
-                            : ""
-                        }`}
-                      >
-                        {formatPriceChangeWithSign(
-                          dataByTimeResultsInPounds2[i],
-                          false
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-        <div className="flex flex-col flex-grow basis-1/4 border border-accentPink-900 rounded-2xl items-between justity-between">
-          <div>
-            <div className="flex w-full flex-col justify-between items-center px-4 py-4 gap-1 border-b-2 border-dotted border-accentPink-800">
-              <div className="flex w-full justify-between items-center">
-                <h3 className="flex flex-col gap-1 ">
-                  <div className="flex flex-row items-center gap-1">
-                    <TbZoomMoney className="w-6 h-6 " />
-                    Potential Saving
-                  </div>
-                  {savingCondition}
-                </h3>
-                <div
-                  className={`flex flex-1 flex-row items-center text-right min-h-[40px] ${
-                    typeof difference === "number"
-                      ? formatNumberToDisplay(difference) > 0
-                        ? "text-[#85f9ad]"
-                        : formatNumberToDisplay(difference) < 0
-                        ? "text-[#f985c5]"
-                        : "text-white"
-                      : "text-white"
-                  }`}
+      <>
+        <h2 className="text-accentPink-600 font-display text-4xl flex items-center gap-3">
+          <BsLightningChargeFill aria-label="Electricity" className="w-8 h-8" />
+          Net Energy Cost
+        </h2>
+        <div className="flex flex-col flex-wrap-reverse md:flex-row md:flex-nowrap gap-4">
+          <div
+            id="tariffHoppingContainer"
+            className="flex basis-3/4 flex-col flex-grow border border-accentPink-950 rounded-2xl items-between justity-between p-4"
+          >
+            <div className="flex flex-col gap-2">
+              <svg ref={svgRef}>
+                <g className="chartContainer">
+                  <g className="grid" />
+                  <g className="xAxis" />
+                  <g className="yAxis" />
+                </g>
+                <g className="lines" />
+              </svg>
+              <div className="flex justify-center">
+                <table
+                  cellPadding={4}
+                  className="w-full lg:w-1/2 border-t-2 border-b-2 border-dotted border-slate-800"
                 >
-                  <span
-                    className={`flex-1 text-3xl font-bold flex justify-end whitespace-nowrap`}
-                  >
-                    {typeof difference === "number"
-                      ? formatPriceChangeWithSign(difference)
-                      : difference}
-                  </span>
-                </div>
+                  <caption className="font-display text-3xl text-accentPink-500 mb-3">
+                    Comparision of Costs of Tariff Sets{" "}
+                    <span className="block font-sans text-base text-accentBlue-500">
+                      (&quot;-£&quot; means credit)
+                    </span>
+                  </caption>
+                  <thead>
+                    <tr className="border-b-2 border-dotted border-slate-800">
+                      <th>Month</th>
+                      <th className="font-display text-2xl text-green-600 border-l-4 border-l-green-600">
+                        Set 1
+                      </th>
+                      <th className="font-display text-2xl text-slate-500 border-l-4 border-l-slate-400">
+                        Set 2
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {xAxisLabels.map((month, i) => (
+                      <tr
+                        key={month}
+                        className="border-b-2 border-dotted border-slate-800"
+                      >
+                        <td className="text-center">{month}</td>
+                        <td
+                          className={`text-center border-l-4 border-l-green-600 ${
+                            dataByTimeResultsInPounds[i] <
+                            dataByTimeResultsInPounds2[i]
+                              ? "bg-green-600"
+                              : ""
+                          }`}
+                        >
+                          {formatPriceChangeWithSign(
+                            dataByTimeResultsInPounds[i],
+                            false
+                          )}
+                        </td>
+                        <td
+                          className={`text-center border-l-4 border-l-slate-500 ${
+                            dataByTimeResultsInPounds[i] >
+                            dataByTimeResultsInPounds2[i]
+                              ? "bg-slate-500"
+                              : ""
+                          }`}
+                        >
+                          {formatPriceChangeWithSign(
+                            dataByTimeResultsInPounds2[i],
+                            false
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
-
-            <EnergyShiftSimCostContainer
-              label="Set 1 Tariffs"
-              importTariff={importTariff}
-              importCost={cost}
-              exportTariff={exportTariff}
-              exportEarning={earning}
-              hasExport={isExporting}
-              variant="current"
-            />
-            <div className="flex justify-center h-3">
-              <LuArrowUpDown className="h-8 w-8 relative -top-1 text-accentPink-500" />
-            </div>
-            <EnergyShiftSimCostContainer
-              label="Set 2 Tariffs"
-              importTariff={importTariff2}
-              importCost={cost2}
-              exportTariff={exportTariff2}
-              exportEarning={earning2}
-              hasExport={isExporting}
-            />
           </div>
-          <div className="flex-grow flex flex-col justify-end p-4 gap-1 text-slate-400">
-            <div className="text-sm text-accentPink-500">Remarks:</div>
-            <div className="text-xs">
-              <strong>Flux/Intelligent Flux</strong>: a tariff for both import
-              and export at the same time, must have a (compatible) solar system
-              and home battery
+          <div className="flex flex-col flex-grow basis-1/4 border border-accentPink-950 rounded-2xl items-between justity-between">
+            <div>
+              <div className="flex w-full flex-col justify-between items-center px-4 py-4 gap-1 border-b-2 border-dotted border-accentPink-900">
+                <div className="flex w-full justify-between items-center">
+                  <h3 className="flex flex-col gap-1 ">
+                    <div className="flex flex-row items-center gap-1">
+                      <TbZoomMoney className="w-6 h-6 " />
+                      Potential Saving
+                    </div>
+                    {savingCondition}
+                  </h3>
+                  <div
+                    className={`flex flex-1 flex-row items-center text-right min-h-[40px] ${
+                      typeof difference === "number"
+                        ? formatNumberToDisplay(difference) > 0
+                          ? "text-[#85f9ad]"
+                          : formatNumberToDisplay(difference) < 0
+                          ? "text-[#f985c5]"
+                          : "text-white"
+                        : "text-white"
+                    }`}
+                  >
+                    <span
+                      className={`flex-1 text-3xl font-bold flex justify-end whitespace-nowrap`}
+                    >
+                      {typeof difference === "number"
+                        ? formatPriceChangeWithSign(difference)
+                        : difference}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <EnergyShiftSimCostContainer
+                label="Set 1 Tariffs"
+                importTariff={importTariff}
+                importCost={cost}
+                exportTariff={exportTariff}
+                exportEarning={earning}
+                hasExport={isExporting}
+                variant="current"
+              />
+              <div className="flex justify-center h-3">
+                <LuArrowUpDown className="h-8 w-8 relative -top-1 text-accentPink-500" />
+              </div>
+              <EnergyShiftSimCostContainer
+                label="Set 2 Tariffs"
+                importTariff={importTariff2}
+                importCost={cost2}
+                exportTariff={exportTariff2}
+                exportEarning={earning2}
+                hasExport={isExporting}
+              />
             </div>
-            <div className="text-xs">
-              <strong>Go</strong>: must have EV and (compatible) home charger,
-              can only select Fixed Lite Export
-            </div>
-            <div className="text-xs">
-              <strong>Cosy</strong>: must have a heat pump
-            </div>
-            <div className="text-xs">
-              Figures above are estimations only. Past results do not guarantee
-              future performance.
+            <div className="flex-grow flex flex-col justify-end p-4 gap-1 text-slate-400">
+              <div className="text-sm text-accentPink-500">Remarks:</div>
+              <div className="text-xs">
+                <strong>Flux/Intelligent Flux</strong>: a tariff for both import
+                and export at the same time, must have a (compatible) solar
+                system and home battery
+              </div>
+              <div className="text-xs">
+                <strong>Go</strong>: must have EV and (compatible) home charger,
+                can only select Fixed Lite Export
+              </div>
+              <div className="text-xs">
+                <strong>Cosy</strong>: must have a heat pump
+              </div>
+              <div className="text-xs">
+                Figures above are estimations only. Past results do not
+                guarantee future performance.
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </>
     </>
   );
 };

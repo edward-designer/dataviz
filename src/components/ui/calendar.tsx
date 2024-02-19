@@ -6,6 +6,7 @@ import { DayPicker } from "react-day-picker";
 
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
+import { HiVizContext } from "@/context/hiViz";
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
@@ -15,6 +16,8 @@ function Calendar({
   showOutsideDays = false,
   ...props
 }: CalendarProps) {
+  const { hiViz } = React.useContext(HiVizContext);
+
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
@@ -41,16 +44,21 @@ function Calendar({
           buttonVariants({ variant: "ghost" }),
           "h-9 w-9 p-0 font-normal aria-selected:opacity-100"
         ),
-        day_range_end: "day-range-end rounded-r-full",
-        day_range_start: "rounded-l-full",
+        day_range_end: hiViz
+          ? "day-range-end rounded-r-full aria-selected:text-theme-950"
+          : "day-range-end rounded-r-full",
+        day_range_start: hiViz
+          ? "rounded-l-full aria-selected:text-theme-950"
+          : "rounded-l-full",
         day_selected:
           "rounded-none bg-accentPink-700 text-accent-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
         day_today: "bg-accentBlue-900 text-accent-foreground rounded-full",
         day_outside:
           "day-outside text-muted-foreground opacity-50 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30",
         day_disabled: "text-muted-foreground opacity-50",
-        day_range_middle:
-          "aria-selected:bg-accentPink-700 aria-selected:text-accentPink-300",
+        day_range_middle: hiViz
+          ? "aria-selected:bg-accentPink-700 aria-selected:text-theme-950"
+          : "aria-selected:bg-accentPink-700 aria-selected:text-accentPink-300",
         day_hidden: "invisible",
         ...classNames,
       }}

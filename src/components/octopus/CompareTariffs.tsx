@@ -25,7 +25,10 @@ const CompareTariffs = () => {
       <h2 className="text-accentBlue-400 font-display font-medium text-lg lg:text-2xl mb-8">
         - based on your actual consumption data
       </h2>
-      <div className="-z-10 absolute top-0 right-0 overflow-hidden">
+      <div
+        className="-z-10 absolute top-0 right-0 overflow-hidden"
+        aria-hidden={true}
+      >
         <FaRankingStar className="relative -top-7 -right-8 text-theme-700/20  w-[180px] h-[180px] md:hidden pointer-events-none" />
       </div>
 

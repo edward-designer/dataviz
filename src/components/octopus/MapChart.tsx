@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
 
 import Loading from "../Loading";
 
@@ -36,6 +36,7 @@ import {
 import { EnergyIcon } from "./EnergyIcon";
 import ErrorMessage from "./ErrorMessage";
 import usePriceCapQuery from "@/hooks/usePriceCapQuery";
+import { HiVizContext } from "@/context/hiViz";
 
 interface IMapChart {
   tariff: string;
@@ -50,6 +51,8 @@ const MapChart = ({
   rate = "standard_unit_rate_inc_vat",
   gsp,
 }: IMapChart) => {
+  const { hiViz } = useContext(HiVizContext);
+
   const svgRef = useRef<SVGSVGElement>(null);
   const mapData = useUkGspMapData();
 
@@ -139,7 +142,7 @@ const MapChart = ({
       valueExtent = [0, TRACKER[0].cap.E];
     }
     const colorScale = scaleSequential(
-      interpolate("#FFFFFF", "#ce2cb9")
+      interpolate("#FFFFFF", hiViz ? "#FFFFFF" : "#ce2cb9")
     ).domain(valueExtent);
 
     const valueExtentasPoint = valueExtent.map((value) =>
@@ -211,13 +214,18 @@ const MapChart = ({
       .join("path")
       .attr("d", (d) => path(d.geometry) ?? null)
       .attr("fill", (d) =>
-        d.properties?.Name === `_${gsp}` ? "#13357e" : "#03155e"
+        d.properties?.Name === `_${gsp}`
+          ? hiViz
+            ? "#3a63ba"
+            : "#13357e"
+          : hiViz
+          ? "#00187a"
+          : "#03155e"
       )
       .attr("data-zone", (d) => d.properties?.Name)
       .attr("data-zoneName", (d) => d.properties?.LongName)
       .on("pointerenter pointermove", function (e) {
-        select(this).attr("fill", "#092287");
-
+        select(this).attr("fill", hiViz ? "#1b1d29" : "#092287");
         const coordinates = pointer(e);
         const gsp = select(this).attr("data-zone") as gsp;
         const capToCompare =
@@ -278,7 +286,13 @@ const MapChart = ({
       .on("pointerleave", function (d) {
         select(this).attr(
           "fill",
-          select(this).attr("data-zone") === `_${gsp}` ? "#13357e" : "#03155e"
+          select(this).attr("data-zone") === `_${gsp}`
+            ? hiViz
+              ? "#3a63ba"
+              : "#13357e"
+            : hiViz
+            ? "#00187a"
+            : "#03155e"
         );
       })
       .on("pointerleave.zoom", null);
@@ -372,10 +386,11 @@ const MapChart = ({
     width,
     caps.data,
     isLoading,
+    hiViz,
   ]);
 
   return (
-    <div className="mapDiv relative h-[450px] flex-1 flex items-center justify-center flex-col rounded-xl bg-black/30 border border-accentPink-700/50 shadow-inner overflow-hidden">
+    <div className="mapDiv relative h-[450px] flex-1 flex items-center justify-center flex-col rounded-xl bg-black/30 border border-accentPink-950 shadow-inner overflow-hidden">
       {isLoading && <Loading />}
       {isError && <ErrorMessage error={error} errorHandler={() => refetch()} />}
       {isSuccess && mapData && (
@@ -432,7 +447,7 @@ const MapChart = ({
                   </g>
                 </g>
               </g>
-              <g className="legend"></g>
+              {!hiViz && <g className="legend"></g>}
               <text
                 className="info font-display font-bold fill-white/60 text-lg"
                 x="10"

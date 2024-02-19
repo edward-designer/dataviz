@@ -125,15 +125,22 @@ const TariffHoppingToolContainer = () => {
   return (
     <div className="flex flex-col justify-between gap-4">
       <div>
-        Take full advantage of tariff switching!
+        Inclusive of standing charge & VAT.
         <Remark>
-          [BEST for Octopus users with both import and export tariffs] It is
-          free and fast to switch between various Octopus smart tariffs (you
-          only have to wait 1 month before swithing again - with the execption
-          of Tracker for which you have to wait 9 months before switching back).{" "}
+          [BEST for Octopus users with both import and export tariffs to take
+          full advantage of tariff switching!] It is free and fast to switch
+          between various Octopus smart tariffs (you only have to wait 1 month
+          before swithing again - with the execption of Tracker for which you
+          have to wait 9 months before switching back). Approximations and
+          assumptions are used in the calculations. The actual savings are
+          likely to differ because of missing data and rounding. Should you
+          encounter any issues while using this page, please contact Edward at{" "}
+          <a href="mailto:edward.chung.dev@gmail.com" className="underline">
+            edward.chung.dev@gmail.com
+          </a>
+          . Thanks a lot!
         </Remark>
       </div>
-
       <div className="flex flex-col gap-2">
         <TrafficHoppingToolSelector
           importTariff={importTariff}
@@ -158,10 +165,6 @@ const TariffHoppingToolContainer = () => {
           isExporting={isExporting}
         />
       </div>
-      <h2 className="text-accentPink-600 font-display text-4xl flex items-center gap-3 mb-3">
-        <TbChartInfographic className="w-8 h-8" />
-        Net Energy Cost
-      </h2>
       <EnergyShiftSimSwitchChart
         importTariff={importTariff}
         exportTariff={exportTariff}

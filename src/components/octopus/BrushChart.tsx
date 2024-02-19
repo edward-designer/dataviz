@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useId, useRef } from "react";
+import { useContext, useEffect, useId, useRef } from "react";
 
 import {
   BaseType,
@@ -53,6 +53,7 @@ import {
 import Loading from "@/components/Loading";
 import usePriceCapQuery from "@/hooks/usePriceCapQuery";
 import ErrorMessage from "./ErrorMessage";
+import { HiVizContext } from "@/context/hiViz";
 
 const BrushChart = ({
   tariff,
@@ -67,6 +68,8 @@ const BrushChart = ({
   duration?: DurationType;
   height?: number;
 }) => {
+  const { hiViz } = useContext(HiVizContext);
+
   const svgRef = useRef<SVGSVGElement | null>(null);
   const timeIdRef = useRef<number | undefined>(undefined);
   const id = useId();
@@ -523,7 +526,7 @@ const BrushChart = ({
           .join("path")
           .transition()
           .duration(500)
-          .attr("stroke", "#aa33cc99")
+          .attr("stroke", hiViz ? "white" : "#aa33cc99")
           .attr("stroke-width", 1)
           .attr("fill", "none")
           .attr("stroke-dasharray", "2 2")
@@ -538,10 +541,10 @@ const BrushChart = ({
           .join("path")
           .transition()
           .duration(500)
-          .attr("stroke", "#FF000080")
+          .attr("stroke", hiViz ? "yellow" : "#FF000080")
           .attr("stroke-width", 1)
           .attr("fill", "none")
-          .attr("stroke-dasharray", "2 2")
+          .attr("stroke-dasharray", "6 2")
           .attr("d", capLineGenerator("G"));
       }
     };
@@ -561,7 +564,9 @@ const BrushChart = ({
           "timelineTriangle",
           timelineG
         ) as Selection<SVGPolygonElement, unknown, null, undefined>;
-        timelineTriangle.attr("points", "0,0 10,0 5,8").attr("fill", "#ce2cb9");
+        timelineTriangle
+          .attr("points", "0,0 10,0 5,8")
+          .attr("fill", hiViz ? "yellow" : "#ce2cb9");
         const timeline = selectOrAppend(
           "line",
           "timeline",
@@ -572,7 +577,7 @@ const BrushChart = ({
           .attr("x2", padding.left)
           .attr("y1", 0)
           .attr("y2", widgetHeight - padding.bottom - padding.top)
-          .attr("stroke", "#ce2cb9")
+          .attr("stroke", hiViz ? "yellow" : "#ce2cb9")
           .attr("stroke-width", 1);
         const setTimelinePosition = () => {
           const xPos = xScale(new Date());
@@ -898,12 +903,12 @@ const BrushChart = ({
         .attr("text-anchor", "end")
         .attr("alignment-basline", "baseline")
         .attr("font-size", "10")
-        .attr("fill", "#aa33cc")
+        .attr("fill", hiViz ? "white" : "#aa33cc")
         .attr("x", widgetWidth - padding.right - padding.left)
         .attr("y", fontSize);
       chart
         .select(".capELine")
-        .attr("stroke", "#aa33cc99")
+        .attr("stroke", hiViz ? "white" : "#aa33cc99")
         .attr("stroke-width", 1)
         .attr("stroke-dasharray", "2 2")
         .attr("x1", widgetWidth - padding.right - padding.left + 50)
@@ -919,14 +924,14 @@ const BrushChart = ({
         .attr("text-anchor", "end")
         .attr("alignment-basline", "baseline")
         .attr("font-size", "10")
-        .attr("fill", "#FF000099")
+        .attr("fill", hiViz ? "yellow" : "#FF000080")
         .attr("x", widgetWidth - padding.right - padding.left)
         .attr("y", fontSize);
       chart
         .select(".capGLine")
-        .attr("stroke", "#ff000080")
+        .attr("stroke", hiViz ? "yellow" : "#FF000080")
         .attr("stroke-width", 1)
-        .attr("stroke-dasharray", "2 2")
+        .attr("stroke-dasharray", "6 2")
         .attr("x1", widgetWidth - padding.right - padding.left + 50)
         .attr("y1", (3 * fontSize) / 2 + 5)
         .attr("x2", widgetWidth - padding.right - padding.left)
@@ -934,6 +939,7 @@ const BrushChart = ({
     }
     chart.call(zoomBehavior);
   }, [
+    hiViz,
     caps.data,
     rawData,
     gsp,
@@ -953,7 +959,7 @@ const BrushChart = ({
   return (
     <div
       id={`chart-${id}`}
-      className={`h-[${height}px] min-h-[300px] chartDiv relative w-full flex-1 flex items-center justify-center flex-col rounded-xl bg-theme-950 border border-accentPink-700/50 shadow-inner overflow-hidden`}
+      className={`h-[${height}px] min-h-[300px] chartDiv relative w-full flex-1 flex items-center justify-center flex-col rounded-xl bg-theme-950 border border-accentPink-950 shadow-inner overflow-hidden`}
     >
       {isLoading && <Loading />}
       {isError && <ErrorMessage error={error} errorHandler={() => refetch()} />}
@@ -962,14 +968,14 @@ const BrushChart = ({
         <svg ref={svgRef} key={category}>
           <defs>
             <linearGradient id="electricity" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#aa33cc" />
-              <stop offset="50%" stopColor="#3377bb" />
-              <stop offset="100%" stopColor="#aaffdd" />
+              <stop offset="0%" stopColor={hiViz ? "white" : "#aa33cc"} />
+              <stop offset="50%" stopColor={hiViz ? "white" : "#3377bb"} />
+              <stop offset="100%" stopColor={hiViz ? "white" : "#aaffdd"} />
             </linearGradient>
             <linearGradient id="gas" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="red" />
-              <stop offset="50%" stopColor="green" />
-              <stop offset="100%" stopColor="yellow" />
+              <stop offset="0%" stopColor={hiViz ? "yellow" : "red"} />
+              <stop offset="50%" stopColor={hiViz ? "yellow" : "green"} />
+              <stop offset="100%" stopColor={hiViz ? "yellow" : "yellow"} />
             </linearGradient>
             <clipPath id={`clip-${id}`}>
               <rect x="0" y="0"></rect>

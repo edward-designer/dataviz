@@ -32,7 +32,7 @@ const EnergyShiftSimCostContainer = ({
     <div
       className={`flex w-full flex-col bg-theme-900 px-4 py-4 ${
         hasExport ? "min-h-[140px]" : "min-h-[100px]"
-      } ${variant === "current" ? "bg-theme-950" : "bg-theme-900"}`}
+      } ${variant === "current" ? "bg-theme-950/50" : "bg-theme-900/50"}`}
     >
       {importCost === undefined ||
       (hasExport && exportEarning === undefined) ? (
@@ -43,9 +43,7 @@ const EnergyShiftSimCostContainer = ({
         <div className="flex w-full flex-col pt-2">
           <h4
             className={`${
-              variant === "current"
-                ? "text-accentPink-600"
-                : "text-accentBlue-500"
+              variant === "current" ? "text-green-300" : "text-slate-400"
             } text-sm`}
           >
             {label}

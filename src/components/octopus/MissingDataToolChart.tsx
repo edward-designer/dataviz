@@ -9,9 +9,16 @@ import {
   axisBottom,
   axisTop,
 } from "d3";
-import { PropsWithChildren, useEffect, useRef, useState } from "react";
+import {
+  PropsWithChildren,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import Loading from "../Loading";
 import Remark from "./Remark";
+import { HiVizContext } from "@/context/hiViz";
 
 interface IMissingDataToolChart extends PropsWithChildren {
   fromDate: Date;
@@ -29,6 +36,8 @@ const MissingDataToolChart = ({
   contractFrom,
   children,
 }: IMissingDataToolChart) => {
+  const { hiViz } = useContext(HiVizContext);
+
   const svgRef = useRef<null | SVGSVGElement>(null);
   const [missingDataCount, setMissingDataCount] = useState(0);
 
@@ -81,10 +90,9 @@ const MissingDataToolChart = ({
     const dataExtent = extent(filteredData, (d) => d.consumption);
     const dataMin = dataExtent[0]!;
     const dataMax = dataExtent[1]!;
-    const colorScale = scaleSequential(interpolateRdYlGn).domain([
-      dataMax,
-      dataMin,
-    ]);
+    const colorScale = hiViz
+      ? scaleSequential(interpolateRdYlGn).domain([dataMax, dataMin])
+      : scaleSequential(interpolateRdYlGn).domain([dataMax, dataMin]);
 
     const svg = select(svgRef.current)
       .attr("width", width)
@@ -139,7 +147,13 @@ const MissingDataToolChart = ({
           : "url(#diagonalHatch)"
       )
       .attr("stroke", (d, i) =>
-        d === undefined ? "#002453" : d !== null ? "#000433" : "white"
+        d === undefined
+          ? "#22426b"
+          : d !== null
+          ? hiViz
+            ? "#000000"
+            : "#000433"
+          : "white"
       )
       .transition()
       .duration(500)
@@ -178,7 +192,7 @@ const MissingDataToolChart = ({
         .flat()
         .filter((data) => data === null).length
     );
-  }, [contractFrom, data, fromDate, height, noOfDays, toDate, width]);
+  }, [contractFrom, data, fromDate, height, hiViz, noOfDays, toDate, width]);
 
   if (!data) return <Loading />;
 
@@ -213,11 +227,11 @@ const MissingDataToolChart = ({
             </defs>
             <g id="chart" />
             <g transform={` translate(0,${cellLength})`}>
-              <text fill="#4f72b8" x={cellLength * 2} y={12} fontSize={12}>
+              <text fill="#8daef0" x={cellLength * 2} y={12} fontSize={12}>
                 00:00
               </text>
               <text
-                fill="#4f72b8"
+                fill="#8daef0"
                 x={cellLength * 25.5}
                 y={12}
                 fontSize={12}
@@ -226,7 +240,7 @@ const MissingDataToolChart = ({
                 12:00
               </text>
               <text
-                fill="#4f72b8"
+                fill="#8daef0"
                 x={cellLength * 50}
                 y={12}
                 fontSize={12}
@@ -281,7 +295,13 @@ const MissingDataToolChart = ({
           </svg>
         </div>
       </div>
-      <div className="relative md:sticky md:top-20 flex flex-col items-center justify-center bg-accentPink-800 rounded-xl p-4">
+      <div
+        className={`${
+          hiViz
+            ? "bg-accentPink-950 border border-white/50"
+            : "bg-accentPink-800"
+        } relative md:sticky md:top-20 flex flex-col items-center justify-center  rounded-xl p-4`}
+      >
         <span className="text-4xl">{missingDataCount}</span>
         <span className="text-xs flex items-end whitespace-nowrap">
           missing data{" "}

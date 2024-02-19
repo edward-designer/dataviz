@@ -8,7 +8,7 @@ import { HiOutlineCurrencyPound } from "react-icons/hi2";
 import FormattedPrice from "./FormattedPrice";
 import { evenRound, getCategory } from "@/utils/helpers";
 import { TooltipArrow } from "@radix-ui/react-tooltip";
-import { CSSProperties, useState } from "react";
+import { CSSProperties, useContext, useState } from "react";
 
 import { LiaBalanceScaleSolid } from "react-icons/lia";
 import { TbPigMoney } from "react-icons/tb";
@@ -17,6 +17,7 @@ import { GrMoney } from "react-icons/gr";
 import { IoMdTrendingUp } from "react-icons/io";
 import { BsSpeedometer2 } from "react-icons/bs";
 import { TiEquals } from "react-icons/ti";
+import { HiVizContext } from "@/context/hiViz";
 
 interface IMonthlyChartBar {
   widthSVT: number;
@@ -45,7 +46,10 @@ const MonthlyChartBar = ({
   tariff = undefined,
   reading = undefined,
 }: IMonthlyChartBar) => {
+  const { hiViz } = useContext(HiVizContext);
+
   const [open, setOpen] = useState(false);
+
   const isCheaper = monthlycostSVT - monthlycostCurrent > 0;
 
   return (
@@ -94,15 +98,23 @@ const MonthlyChartBar = ({
                 >
                   {getCategory(tariff ?? "") === "SVT" ? (
                     <TiEquals
-                      className={`md:text-white mix-blend-normal text-white w-4 h-4 md:w-6 md:h-6 flex-shrink-0`}
+                      className={`${
+                        hiViz ? "text-theme-950" : "text-white"
+                      } mix-blend-normal  w-4 h-4 md:w-6 md:h-6 flex-shrink-0`}
                     />
                   ) : saving > 0 ? (
                     <TbPigMoney
-                      className={`md:text-white mix-blend-normal text-white w-4 h-4 md:w-6 md:h-6 flex-shrink-0`}
+                      className={`${
+                        hiViz ? "text-theme-950" : "text-white"
+                      } mix-blend-normal tw-4 h-4 md:w-6 md:h-6 flex-shrink-0`}
                     />
                   ) : (
                     <IoMdTrendingUp
-                      className={`md:text-accentPink-500 w-4 h-4 md:w-6 md:h-6 flex-shrink-0`}
+                      className={`${
+                        hiViz
+                          ? "text-theme-950"
+                          : "text-white md:text-accentPink-500"
+                      } w-4 h-4 md:w-6 md:h-6 flex-shrink-0`}
                     />
                   )}
                   <span
@@ -114,7 +126,11 @@ const MonthlyChartBar = ({
                   </span>
                 </span>
                 {tariff && (
-                  <span className="font-sans font-normal rounded-full ml-2 bg-accentBlue-900 px-2 py-[2px] leading-tight text-[8px] hidden sm:inline-block text-white whitespace-nowrap">
+                  <span
+                    className={`${
+                      hiViz ? "bg-black border border-slate-700" : "bg-accentBlue-900"
+                    } font-sans font-normal rounded-full ml-2 px-2 py-[2px] leading-tight text-[8px] hidden sm:inline-block text-white whitespace-nowrap`}
+                  >
                     {tariff}
                   </span>
                 )}

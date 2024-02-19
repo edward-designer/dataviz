@@ -4,6 +4,7 @@ import { PointerEvent, useContext, useEffect, useRef, useState } from "react";
 import { formatLocaleTimePeriod } from "../../utils/helpers";
 import FormattedPrice from "./FormattedPrice";
 import { WindowVisibilityContext } from "@/context/windowVisibility";
+import { HiVizContext } from "@/context/hiViz";
 
 export interface IHalfHourlyChart {
   rates: TariffResult[];
@@ -20,6 +21,8 @@ const HalfHourlyChart = ({
   priceAverage,
   showTicker = true,
 }: IHalfHourlyChart) => {
+  const { hiViz } = useContext(HiVizContext);
+
   const currentPeriodRef = useRef<null | HTMLLIElement>(null);
   const scrollContainerRef = useRef<null | HTMLDivElement>(null);
   const listContainerRef = useRef<null | HTMLOListElement>(null);
@@ -119,7 +122,11 @@ const HalfHourlyChart = ({
     ])
     .range([0, width]);
   const colorScale = scaleSequential(
-    interpolateRgbBasis(["#aaffdd", "#3377bb", "#aa33cc"])
+    interpolateRgbBasis(
+      hiViz
+        ? ["#c7fce7", "#82c1ff", "#f0bdff"]
+        : ["#aaffdd", "#3377bb", "#aa33cc"]
+    )
   ).domain([rates[min]?.value_inc_vat ?? 0, rates[max]?.value_inc_vat ?? 0]);
 
   const priceNowIndex = reversedRates.findIndex((data) => {
@@ -134,10 +141,16 @@ const HalfHourlyChart = ({
       {showTicker && (
         <>
           <div
-            className="border-t border-accentPink-400 w-full absolute top-0 left-0 z-20"
+            className={`border-t ${
+              hiViz ? "border-yellow-600" : "border-accentPink-400"
+            } w-full absolute top-0 left-0 z-20`}
             ref={timeLineContainerRef}
           >
-            <div className="relative -top-2 h-0 w-0 border-t-8 border-l-8 border-b-8 border-solid border-t-transparent border-b-transparent border-l-accentPink-400" />
+            <div
+              className={`relative -top-2 h-0 w-0 border-t-8 border-l-8 border-b-8 border-solid border-t-transparent border-b-transparent ${
+                hiViz ? "border-l-yellow-600" : "border-l-accentPink-400"
+              }`}
+            />
           </div>
           <div
             ref={currentPeriodIndicatorRef}

@@ -167,7 +167,7 @@ const PricePaneAgile = ({
     <div className="pricePane relative flex-1">
       <div
         ref={containerRef}
-        className="flex flex-col gap-8 max-h-[300px] min-h-[300px] rounded-xl p-4 bg-theme-950 border border-accentPink-800/60 shadow-inner bg-gradient-to-br from-transparent via-theme-800/20 to-purple-600/30 bg-cover"
+        className="flex flex-col gap-8 max-h-[300px] min-h-[300px] rounded-xl p-4 bg-theme-950 border border-accentPink-950 shadow-inner bg-cover"
       >
         {isLoading && <Loading />}
         {isError && (

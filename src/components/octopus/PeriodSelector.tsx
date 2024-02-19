@@ -75,7 +75,7 @@ const PeriodSelector = ({
           </Remark>
         </div>
       </div>
-      <div className="flex justify-center lg:justify-start gap-x-2 gap-y-1">
+      <div className="flex justify-center lg:justify-start gap-x-1 gap-y-1 flex-wrap">
         <SelectPeriodButton
           isActive={period.duration === "year"}
           clickHandler={selectPeriodHandler("year")}
@@ -107,7 +107,7 @@ const PeriodSelector = ({
             <div className="md:flex items-center self-stretch hidden">
               <MdOutlineDoubleArrow className="h-4 w-4" />
             </div>
-            <div className="flex flex-row items-center gap-3 text-xs mt-1">
+            <div className="flex flex-row items-center gap-1 md:gap-1 text-xs mt-1 font-normal">
               {weekName.map((day, i) => (
                 <button
                   key={day}
@@ -123,10 +123,10 @@ const PeriodSelector = ({
                         : [...prevDaysOfWeek, i];
                     })
                   }
-                  className={`p-2 border rounded-xl ${
+                  className={`p-2 border rounded-lg ${
                     daysOfWeek.includes(i)
-                      ? "text-accentPink-500 border-accentPink-500 bg-accentPink-900/30"
-                      : "hover:text-accentPink-500 hover:border-accentPink-500 border-slate-300"
+                      ? "text-theme-950 border-accentPink-500 bg-accentPink-500 bg-accentPink-900/30"
+                      : "border-slate-300 hover:text-accentPink-500 hover:border-accentPink-500"
                   }`}
                 >
                   {day}

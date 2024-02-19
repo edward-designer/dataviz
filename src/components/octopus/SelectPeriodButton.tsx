@@ -15,9 +15,9 @@ const SelectPeriodButton = ({
 }: ISelectPeriodButton) => {
   return (
     <Button
-      className={`border rounded-xl ${
+      className={`border rounded-lg font-normal ${
         isActive
-          ? "text-accentPink-500 border-accentPink-500 bg-accentPink-900/30"
+          ? "text-theme-950 border-accentPink-500 bg-accentPink-500 bg-accentPink-900/30"
           : "border-slate-300 hover:text-accentPink-500 hover:border-accentPink-500"
       } ${className}`}
       clickHandler={clickHandler}

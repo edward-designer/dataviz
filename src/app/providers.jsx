@@ -7,6 +7,7 @@ import { UserContextProvider } from "@/context/user";
 import { WindowResizeProvider } from "@/context/windowResize";
 import { WindowVisibilityProvider } from "@/context/windowVisibility";
 import { LastShownProvider } from "@/context/lastShownDates";
+import { HiVizContextProvider } from "@/context/hiViz";
 
 const Providers = ({ children }) => {
   const [queryClient] = useState(
@@ -23,11 +24,13 @@ const Providers = ({ children }) => {
   return (
     <WindowVisibilityProvider>
       <WindowResizeProvider>
-        <QueryClientProvider client={queryClient}>
-          <UserContextProvider>
-            <LastShownProvider>{children}</LastShownProvider>
-          </UserContextProvider>
-        </QueryClientProvider>
+        <HiVizContextProvider>
+          <QueryClientProvider client={queryClient}>
+            <UserContextProvider>
+              <LastShownProvider>{children}</LastShownProvider>
+            </UserContextProvider>
+          </QueryClientProvider>
+        </HiVizContextProvider>
       </WindowResizeProvider>
     </WindowVisibilityProvider>
   );

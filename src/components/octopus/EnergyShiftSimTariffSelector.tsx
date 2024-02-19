@@ -91,7 +91,7 @@ const EnergyShiftSimTariffSelector = ({
         }}
         value={tariff}
       >
-        <SelectTrigger className="w-auto flex items-center justify-center p-0 m-0 h-5 md:h-7 text-sm md:text-base [&>svg]:ml-0">
+        <SelectTrigger className="w-auto flex items-center justify-center p-0 m-0 h-5 md:h-7 text-sm md:text-base [&>svg]:ml-0 [&>h1]:max-w-[170px] md:[&>h1]:max-w-fit">
           <SelectValue placeholder="" />
         </SelectTrigger>
         <SelectContent>

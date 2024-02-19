@@ -63,7 +63,7 @@ const TariffComparisionCard = ({
     if (rank === 1) {
       return (
         <div
-          className="px-4 py-16 lg:py-20 relative flex-1 flex flex-col gap-8 rounded-xl bg-theme-950 border border-accentPink-800/60 shadow-inner bg-gradient-to-br from-transparent via-theme-800/20 to-purple-600/30 bg-cover"
+          className="px-4 py-16 lg:py-20 relative flex-1 flex flex-col gap-8 rounded-xl bg-theme-950 border border-accentPink-950 shadow-inner bg-gradient-to-br from-transparent via-theme-800 to-purple-600 bg-cover"
           style={{
             backgroundImage: `linear-gradient(0deg, rgba(0,3,35,0.7) 30% , rgba(0,3,35,0.9) 70%, rgba(0,4,51,1) 100% )`,
           }}
@@ -85,7 +85,7 @@ const TariffComparisionCard = ({
     <motion.div
       transition={{ delay: 1 }}
       layoutId={`${type}-${category}-${tariff}`}
-      className={`relative flex-1 border border-accentPink-500/30 min-h-[200px] lg:h-[300px] rounded-2xl flex flex-col justify-center items-center gap-2 bg-cover bg-tops ${
+      className={`relative flex-1 border border-accentPink-950 min-h-[200px] lg:h-[300px] rounded-2xl flex flex-col justify-center items-center gap-2 bg-cover bg-tops ${
         cost !== null ? `first:border-accentPink-500 first:bg-tariffWinner` : ""
       }`}
     >

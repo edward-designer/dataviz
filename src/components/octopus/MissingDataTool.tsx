@@ -25,7 +25,10 @@ const MissingDataTool = () => {
       <h2 className="text-accentBlue-400 font-display font-medium text-lg lg:text-2xl mb-8">
         - find gaps in your smart meter data
       </h2>
-      <div className="-z-10 absolute top-0 right-0 overflow-hidden">
+      <div
+        className="-z-10 absolute top-0 right-0 overflow-hidden"
+        aria-hidden={true}
+      >
         <BsUiChecksGrid className="relative -top-5 -right-10 text-theme-700/20  w-[170px] h-[170px] md:hidden pointer-events-none" />
       </div>
 

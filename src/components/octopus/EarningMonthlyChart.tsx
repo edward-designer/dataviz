@@ -10,6 +10,7 @@ import { useContext, useRef } from "react";
 
 import EarningMonthlyChartBar from "./EarningMonthlyChartBar";
 import { UserContext } from "@/context/user";
+import { HiVizContext } from "@/context/hiViz";
 
 export interface IEarningMonthlyChart {
   cost: { [x: string]: number }[];
@@ -25,6 +26,8 @@ const EarningMonthlyChart = ({
   units,
 }: IEarningMonthlyChart) => {
   const { value } = useContext(UserContext);
+  const { hiViz } = useContext(HiVizContext);
+
   const scrollContainerRef = useRef<null | HTMLDivElement>(null);
 
   const valueAccessor = (d: { [x: string]: number } | null) =>
@@ -39,7 +42,7 @@ const EarningMonthlyChart = ({
     .domain([0, valueAccessor(cost[max]) ?? 0])
     .range([10, width]);
   const colorScale = scaleSequential(
-    interpolateRgbBasis(["#e1eb96", "#f5b567"])
+    interpolateRgbBasis(hiViz ? ["#f0faaa", "#ffca8a"] : ["#e1eb96", "#f5b567"])
   ).domain([valueAccessor(cost[min]) ?? 0, valueAccessor(cost[max]) ?? 0]);
 
   return (

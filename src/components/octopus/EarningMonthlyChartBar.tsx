@@ -6,11 +6,12 @@ import {
 } from "@/components/ui/tooltip";
 import { evenRound } from "@/utils/helpers";
 import { TooltipArrow } from "@radix-ui/react-tooltip";
-import { CSSProperties, useState } from "react";
+import { CSSProperties, useContext, useState } from "react";
 import FormattedPrice from "./FormattedPrice";
 
 import { RiMoneyPoundCircleLine } from "react-icons/ri";
 import { TbSunElectricity } from "react-icons/tb";
+import { HiVizContext } from "@/context/hiViz";
 
 interface IEarningMonthlyChartBar {
   widthCurrent: number;
@@ -33,6 +34,8 @@ const EarningMonthlyChartBar = ({
   tariff,
   reading,
 }: IEarningMonthlyChartBar) => {
+  const { hiViz } = useContext(HiVizContext);
+
   const [open, setOpen] = useState(false);
 
   return (
@@ -70,7 +73,9 @@ const EarningMonthlyChartBar = ({
                   className={`flex leading-tight w-18 font-bold text-xl md:font-extralight md:text-4xl items-center`}
                 >
                   <RiMoneyPoundCircleLine
-                    className={`text-white w-4 h-4 md:w-6 md:h-6 flex-shrink-0`}
+                    className={`${
+                      hiViz ? "text-theme-950" : "text-white"
+                    } w-4 h-4 md:w-6 md:h-6 flex-shrink-0`}
                   />
 
                   <span
@@ -82,7 +87,13 @@ const EarningMonthlyChartBar = ({
                   </span>
                 </span>
                 {tariff && (
-                  <span className="rounded-full ml-2 bg-accentPink-900 px-2 py-[2px] leading-tight text-[8px] hidden sm:inline-block text-white whitespace-nowrap">
+                  <span
+                    className={`${
+                      hiViz
+                        ? "bg-black border border-slate-700"
+                        : "bg-accentPink-950"
+                    } font-sans font-normal rounded-full ml-2 px-2 py-[2px] leading-tight text-[8px] hidden sm:inline-block text-white whitespace-nowrap`}
+                  >
                     {tariff}
                   </span>
                 )}

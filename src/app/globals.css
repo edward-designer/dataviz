@@ -47,11 +47,78 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9;
+    --accentPink-50: hsl(305, 100%, 98%);
+    --accentPink-100: hsl(303, 91%, 95%);
+    --accentPink-200: hsl(303, 88%, 91%);
+    --accentPink-300: hsl(306, 86%, 83%);
+    --accentPink-400: hsl(307, 84%, 73%);
+    --accentPink-500: hsl(307, 78%, 55%);
+    --accentPink-600: hsl(308, 65%, 49%);
+    --accentPink-700: hsl(310, 67%, 40%);
+    --accentPink-800: hsl(310, 65%, 33%);
+    --accentPink-900: hsl(311, 59%, 28%);
+    --accentPink-950: hsl(312, 83%, 16%);
+    --accentBlue-50: hsl(180, 100%, 96%);
+    --accentBlue-100: hsl(184, 100%, 90%);
+    --accentBlue-200: hsl(185, 100%, 81%);
+    --accentBlue-300: hsl(186, 100%, 68%);
+    --accentBlue-400: hsl(189, 97%, 53%);
+    --accentBlue-500: hsl(190, 100%, 44%);
+    --accentBlue-600: hsl(193, 100%, 37%);
+    --accentBlue-700: hsl(194, 93%, 30%);
+    --accentBlue-800: hsl(196, 80%, 27%);
+    --accentBlue-900: hsl(197, 72%, 24%);
+    --accentBlue-950: hsl(198, 89%, 15%);
+  }
+
+  .hiContrast {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9;
+    --accentPink-50: hsl(305, 100%, 98%);
+    --accentPink-100: hsl(303, 91%, 95%);
+    --accentPink-200: hsl(303, 88%, 91%);
+    --accentPink-300: hsl(303, 88%, 91%);
+    --accentPink-400: hsl(303, 88%, 91%);
+    --accentPink-500: hsl(306, 86%, 83%);
+    --accentPink-600: hsl(306, 86%, 83%);
+    --accentPink-700: hsl(307, 84%, 73%);
+    --accentPink-800: hsl(307, 84%, 73%);
+    --accentPink-900: hsl(307, 78%, 55%);
+    --accentPink-950: hsl(312, 83%, 16%);
+    --accentBlue-50: hsl(180, 100%, 100%);
+    --accentBlue-100: hsl(180, 100%, 96%);
+    --accentBlue-200: hsl(184, 100%, 90%);
+    --accentBlue-300: hsl(185, 100%, 81%);
+    --accentBlue-400: hsl(185, 100%, 81%);
+    --accentBlue-500: hsl(186, 100%, 68%);
+    --accentBlue-600: hsl(186, 100%, 68%);
+    --accentBlue-700: hsl(193, 100%, 37%);
+    --accentBlue-800: hsl(193, 100%, 37%);
+    --accentBlue-900: hsl(193, 100%, 37%);
+    --accentBlue-950: hsl(198, 89%, 15%);
   }
 }
 
 input[type="range"] {
   -webkit-appearance: none;
+  appearance: none;
   margin: 0;
   width: 100%;
   background: transparent;
@@ -207,3 +274,7 @@ input[type="range"]:focus::-webkit-slider-runnable-track {
   }
 }
 */
+
+html body.hiContrast {
+  background-color: #0c090a;
+}

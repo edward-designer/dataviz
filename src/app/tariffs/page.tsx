@@ -58,11 +58,14 @@ const About = () => {
         <h2 className="text-accentBlue-400 font-display font-medium text-lg lg:text-2xl mb-8">
           - pick best Octopus Energy tariff combination
         </h2>
-        <div className="-z-10 absolute top-0 right-0 overflow-hidden">
+        <div
+          className="-z-10 absolute top-0 right-0 overflow-hidden"
+          aria-hidden={true}
+        >
           <FaListCheck className="relative -top-1 -right-6 text-theme-700/20  w-[180px] h-[180px] md:hidden pointer-events-none" />
         </div>
 
-        <h3 className="flex font-display text-3xl font-normal text-accentBlue-500 mb-2">
+        <h3 className="flex font-display text-3xl text-accentBlue-500 mb-2">
           <TbSunElectricity className="w-8 h-8 text-accentBlue-700 inline-block mr-2" />
           Electricity Import & Export
         </h3>
@@ -294,7 +297,7 @@ const About = () => {
             </tr>
           </tbody>
         </table>
-        <h3 className="flex font-display font-normal text-3xl text-accentPink-500 mt-8 mb-2 pt-6 border-dotted border-t-4 border-t-accentBlue-800">
+        <h3 className="flex font-display text-3xl text-accentPink-500 mt-8 mb-2 pt-6 border-dotted border-t-4 border-t-accentBlue-800">
           <AiFillFire className="w-8 h-8 fill-accentPink-900 inline-block mr-2" />
           Gas
         </h3>

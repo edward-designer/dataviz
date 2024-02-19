@@ -45,6 +45,7 @@ import EnergyShiftSimCostContainer from "./EnergyShiftSimCostContainer";
 import EnergyShiftSimTariffSelector from "./EnergyShiftSimTariffSelector";
 import EnergyShiftSimTariffWithTotal from "./EnergyShiftSimTariffWithTotal";
 import SimpleLoading from "./SimpleLoading";
+import { BsLightningChargeFill } from "react-icons/bs";
 
 export type ErrorType = Record<string, string>;
 
@@ -256,10 +257,6 @@ const EnergyShiftSimContainer = () => {
 
   return (
     <div className="flex flex-col justify-between gap-4">
-      <h2 className="text-accentPink-600 font-display text-4xl flex items-center gap-3 mb-3">
-        <TbChartInfographic className="w-8 h-8" />
-        My Electricity Profile (Daily Average)
-      </h2>
       <div className="flex items-start flex-wrap">
         <PeriodSelector
           period={period}
@@ -269,11 +266,15 @@ const EnergyShiftSimContainer = () => {
           setDaysOfWeek={setDaysOfWeek}
         />
       </div>
-      <h3 className="flex items-center gap-3 text-accentBlue-500">
-        <HiMiniAdjustmentsVertical className="w-6 h-6" /> Shift daily energy use
-        pattern to maximize saving! VAT inclusive; standing charge excluded.
-      </h3>
-      <div className="flex flex-row justify-between items-center gap-5 flex-wrap bg-theme-900 rounded-2xl p-4">
+      <div className="text-sm md:text-base leading-tight">
+        Shift daily energy use pattern to maximize saving! VAT inclusive;
+        standing charge excluded.
+      </div>
+      <h2 className="text-accentPink-600 font-display text-4xl flex items-center gap-3 mt-2 -mb-2">
+        <BsLightningChargeFill aria-label="electricity" className="w-8 h-8" />
+        Daily Average
+      </h2>
+      <div className="flex flex-row justify-between items-center gap-2 md:gap-5 flex-wrap bg-theme-900/50 rounded-2xl p-2 md:p-4">
         <EnergyShiftSimEnergyCounter
           use={totalAllocated}
           total={totalConsumption}
@@ -293,7 +294,7 @@ const EnergyShiftSimContainer = () => {
           </div>
         )}
       </div>
-      <div className="flex flex-row justify-between items-center gap-5 flex-wrap bg-black/60 rounded-2xl p-4">
+      <div className="flex flex-row justify-between items-center gap-3 md:gap-5 flex-wrap bg-black/60 rounded-2xl p-2 md:p-4">
         <EnergyShiftSimTariffSelector
           isExport={false}
           tariff={importTariff}
@@ -345,7 +346,7 @@ const EnergyShiftSimContainer = () => {
         </div>
       </div>
       <div className="flex flex-col-reverse md:flex-row gap-3">
-        <div className="basis-1 md:basis-3/4 grid grid-cols-[repeat(8,_minmax(0,_1fr))] sm:grid-cols-[repeat(12,_minmax(0,_1fr))] xl:grid-cols-[repeat(16,_minmax(0,_1fr))] 2xl:grid-cols-[repeat(24,_minmax(0,_1fr))] flex-wrap gap-y-10 border border-accentPink-900 rounded-2xl pl-7 pr-5 pt-8 pb-14">
+        <div className="basis-1 md:basis-3/4 grid grid-cols-[repeat(8,_minmax(0,_1fr))] sm:grid-cols-[repeat(12,_minmax(0,_1fr))] xl:grid-cols-[repeat(16,_minmax(0,_1fr))] 2xl:grid-cols-[repeat(24,_minmax(0,_1fr))] flex-wrap gap-y-10 border border-accentPink-950 rounded-2xl pl-7 pr-5 pt-8 pb-14">
           {adjustedImport.map((data, i) => (
             <div
               className="flex flex-col justify-center items-center gap-y-8"
@@ -428,9 +429,9 @@ const EnergyShiftSimContainer = () => {
             adjustedExportDispatch={adjustedExportDispatch}
           />
         </div>
-        <div className="flex flex-col flex-grow basis-1 md:basis-1/4 border border-accentPink-900 rounded-2xl items-between justity-between">
+        <div className="flex flex-col flex-grow basis-1 md:basis-1/4 border border-accentPink-950 rounded-2xl items-between justity-between">
           <div>
-            <div className="flex w-full flex-col justify-between items-center px-4 py-4 gap-1 border-b-2 border-dotted border-accentPink-800">
+            <div className="flex w-full flex-col justify-between items-center px-4 py-4 gap-1 border-b-2 border-dotted border-accentPink-950">
               <div className="flex w-full justify-between">
                 <h3 className="flex items-center gap-1 ">
                   <TbZoomMoney className="w-6 h-6 " /> {calculationDuration}{" "}

@@ -125,7 +125,7 @@ const VariableTariff = () => {
           About Octopus Variable
         </h3>
         <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="item-0a" className="border-b-accentBlue-600/50">
+          <AccordionItem value="item-0a" className="border-b-accentBlue-900">
             <AccordionTrigger>
               What have the Ofgem price caps to do with Variable?
             </AccordionTrigger>
@@ -135,7 +135,7 @@ const VariableTariff = () => {
               than the maximum allowed, often in the order of 10% less.
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value="item-0b" className="border-b-accentBlue-600/50">
+          <AccordionItem value="item-0b" className="border-b-accentBlue-900">
             <AccordionTrigger>
               I am currently on Octopus Agile/Tracker/Go/fixed. Will I save more
               by switching to Variable?
@@ -154,7 +154,7 @@ const VariableTariff = () => {
               extremely high rates continue for a prolonged period of time.
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value="item-0c" className="border-b-accentBlue-600/50">
+          <AccordionItem value="item-0c" className="border-b-accentBlue-900">
             <AccordionTrigger>
               Why do the unit rates different depending on where I live?
             </AccordionTrigger>
@@ -170,7 +170,7 @@ const VariableTariff = () => {
         </Accordion>
         <h3 className="font-bold text-accentBlue-700 mt-6">Joining Variable</h3>
         <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="item-1a" className="border-b-accentBlue-600/50">
+          <AccordionItem value="item-1a" className="border-b-accentBlue-900">
             <AccordionTrigger>
               How long does it take to join the Octopus Variable tariff?
             </AccordionTrigger>
@@ -182,7 +182,7 @@ const VariableTariff = () => {
               client.
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value="item-1b" className="border-b-accentBlue-600/50">
+          <AccordionItem value="item-1b" className="border-b-accentBlue-900">
             <AccordionTrigger>
               How do I sign up for the Octopus Variable tariff?
             </AccordionTrigger>
@@ -194,7 +194,7 @@ const VariableTariff = () => {
               and sign up there.
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value="item-1c" className="border-b-accentBlue-600/50">
+          <AccordionItem value="item-1c" className="border-b-accentBlue-900">
             <AccordionTrigger>
               What if I do not have a smart meter?
             </AccordionTrigger>
@@ -204,7 +204,7 @@ const VariableTariff = () => {
               you sign up at no costs to you.
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value="item-1d" className="border-b-accentBlue-600/50">
+          <AccordionItem value="item-1d" className="border-b-accentBlue-900">
             <AccordionTrigger>
               I have submitted my application for over 2 weeks but still have
               not heard from Octopus. What to do now?
@@ -222,7 +222,7 @@ const VariableTariff = () => {
           Quitting Variable
         </h3>
         <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="item-2a" className="border-b-accentBlue-600/50">
+          <AccordionItem value="item-2a" className="border-b-accentBlue-900">
             <AccordionTrigger>
               Are there any penalties for leaving Variable?
             </AccordionTrigger>

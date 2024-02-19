@@ -44,7 +44,7 @@ const TariffDetails = ({
   const meterSelection = type === "E" ? "ESerialNos" : "GSerialNos";
   return (
     <>
-      <div className="-mb-5 text-accentBlue-700 font-bold flex items-center gap-1">
+      <div className="-mb-5 text-theme-400/70 font-bold flex items-center gap-1">
         {isCurrent ? (
           <>
             {type === "G" ? <MdGasMeter /> : <MdElectricMeter />}

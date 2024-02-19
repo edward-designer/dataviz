@@ -1,26 +1,16 @@
 "use client";
 
-import { ReactNode, useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 
-import { CURRENT_VARIABLE_CODE, ETARIFFS, TRACKER } from "@/data/source";
+import { ETARIFFS } from "@/data/source";
 
-import { UserContext } from "@/context/user";
-import BrushChart from "./BrushChart";
-import PricePane from "./PricePane";
-import Remark from "./Remark";
-import TariffSelect from "./TariffSelect";
 import MapChart from "@/components/octopus/MapChart";
+import { UserContext } from "@/context/user";
 import { WindowResizeContext } from "@/context/windowResize";
 import { WindowVisibilityContext } from "@/context/windowVisibility";
 import PricePaneVariable from "./PricePaneVariable";
-import useGetTariffCode from "@/hooks/useGetTariffCode";
+import Remark from "./Remark";
 
 const FixedTariff = () => {
   const [tariff, setTariff] = useState(
@@ -44,7 +34,7 @@ const FixedTariff = () => {
             <Remark variant="badge">
               <span className="text-accentPink-500">
                 [Important: Each of the fixed electicity and gas tariff has a
-                £75 early exit fee!]
+                £75 early exit fee if you have signed up before Feb 2024!]
               </span>{" "}
               This tariff will save a typical customer around £70 a year
               compared to the Ofgem Price Cap level. The fixed prices are based

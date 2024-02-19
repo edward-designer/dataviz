@@ -17,7 +17,7 @@ import "./globals.css";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 
 const font = Advent_Pro({
-  weight: ["100", "400", "700"],
+  weight: ["300", "400", "700"],
   subsets: ["latin"],
   variable: "--display-font",
 });
@@ -89,7 +89,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <Providers>
+    <>
       <head>
         <link
           rel="apple-touch-icon"
@@ -114,50 +114,53 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       </head>
       <html lang="en">
         <body
-          className={`dark ${font.variable} ${font2.variable} ${font3.variable} bg-theme-950 text-white/80`}
+          className={`dark ${font.variable} ${font2.variable} ${font3.variable} bg-theme-950 text-white/90`}
+          suppressHydrationWarning
         >
-          <Toast>
-            <ReactQueryDevtools initialIsOpen={false} />
-            <div className="min-h-screen p-4 lg:grid grid-rows-[100px_1fr_200px] lg:py-0 lg:p-0 lg:grid-cols-[[fullwidth_start]_minmax(0,5%)_[breakout_start]_minmax(0,5%)_[content_start]_minmax(1000px,_1fr)_[content_end]_minmax(0,5%)_[breakout_end]_minmax(0,5%)_[fullwidth_end]]">
-              <Header className="lg:col-[content]" />
-              {children}
-              <Analytics />
-              <GoogleAnalytics ga_id="G-NQX4NLSBPE" />
-              <footer className="lg:col-[content] text-sm font-light text-white/60 mt-16">
-                <a
-                  href="https://www.buymeacoffee.com/octopriceuk"
-                  target="_blank"
-                >
-                  <Image
-                    src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
-                    alt="Buy Me A Coffee"
-                    width="108"
-                    height="35"
-                    className="w-[108px] h-[35px] pb-2 relative hover:shadow-lg hover:translate-x-1 hover:translate-y-1 hover:opacity-70"
-                  />
-                </a>
-                &copy; {new Date().getFullYear()} Octoprice. Made with{" "}
-                {<IoMdHeart className="w-4 h-4 inline-block" />} by{" "}
-                <a href="https://edward-designer.github.io/" target="_blank">
-                  Edward
-                </a>
-                . This app does not collect personal information. <br />
-                Your Octopus info is stored on your browser only for retrieving
-                pricing and consumption data. <br />
-                <span className="text-accentBlue-500">
-                  <em>[ver 2024.02.17]</em> Bugs report & enquiries:{" "}
+          <Providers>
+            <Toast>
+              <ReactQueryDevtools initialIsOpen={false} />
+              <div className="min-h-screen p-4 lg:grid grid-rows-[100px_1fr_200px] lg:py-0 lg:p-0 lg:grid-cols-[[fullwidth_start]_minmax(0,5%)_[breakout_start]_minmax(0,5%)_[content_start]_minmax(1000px,_1fr)_[content_end]_minmax(0,5%)_[breakout_end]_minmax(0,5%)_[fullwidth_end]]">
+                <Header className="lg:col-[content]" />
+                {children}
+                <Analytics />
+                <GoogleAnalytics ga_id="G-NQX4NLSBPE" />
+                <footer className="lg:col-[content] text-sm font-light text-white/60 mt-16">
                   <a
-                    href="mailto:edward.chung.dev@gmail.com"
-                    className="underline"
+                    href="https://www.buymeacoffee.com/octopriceuk"
+                    target="_blank"
                   >
-                    edward.chung.dev@gmail.com
+                    <Image
+                      src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+                      alt="Buy Me A Coffee"
+                      width="108"
+                      height="35"
+                      className="w-[108px] h-[35px] pb-2 relative hover:shadow-lg hover:translate-x-1 hover:translate-y-1 hover:opacity-70"
+                    />
                   </a>
-                </span>
-              </footer>
-            </div>
-          </Toast>
+                  &copy; {new Date().getFullYear()} Octoprice. Made with{" "}
+                  {<IoMdHeart className="w-4 h-4 inline-block" />} by{" "}
+                  <a href="https://edward-designer.github.io/" target="_blank">
+                    Edward
+                  </a>
+                  . This app does not collect personal information. <br />
+                  Your Octopus info is stored on your browser only for
+                  retrieving pricing and consumption data. <br />
+                  <span className="text-accentBlue-500">
+                    <em>[ver 2024.02.19]</em> Bugs report & enquiries:{" "}
+                    <a
+                      href="mailto:edward.chung.dev@gmail.com"
+                      className="underline"
+                    >
+                      edward.chung.dev@gmail.com
+                    </a>
+                  </span>
+                </footer>
+              </div>
+            </Toast>
+          </Providers>
         </body>
       </html>
-    </Providers>
+    </>
   );
 }
