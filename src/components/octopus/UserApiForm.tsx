@@ -111,14 +111,12 @@ const UserApiForm = ({ open, setOpen }: IUserApiForm) => {
   return (
     <Dialog open={open} onOpenChange={handleDialogOpenChange}>
       {hasApiInfo ? (
-        <DialogTrigger className="text-accentPink-600 flex group ">
+        <DialogTrigger className="text-accentPink-600 flex flex-col items-center">
           <IoLocationOutline
-            className="w-6 h-6 text-accentPink-600 group-hover:text-accentPink-300"
+            className="w-8 h-8 text-accentPink-600 min-w-8 min-h-8"
             aria-label="click to enter postcode"
           />
-          <span className="group-hover:text-accentPink-300">
-            {value.postcode}
-          </span>
+          <span className="text-[8px]">{value.postcode}</span>
         </DialogTrigger>
       ) : (
         <DialogTrigger className="text-accentPink-600 inline-flex group">

@@ -4,7 +4,7 @@ import { ComponentPropsWithoutRef, useContext } from "react";
 
 import UserInfo from "./octopus/UserInfo";
 
-import { ImContrast } from "react-icons/im";
+import { IoIosContrast } from "react-icons/io";
 
 import Menu from "./octopus/Menu";
 import Link from "next/link";
@@ -84,11 +84,12 @@ const Header = ({
         <div className="flex items-center gap-4">
           <button
             onClick={() => setHiViz(!hiViz)}
-            className={`${
+            className={`flex flex-col items-center justify-center ${
               hiViz ? "text-yellow-300" : "text-slate-500"
             }`}
           >
-            <ImContrast aria-hidden={true} />
+            <IoIosContrast aria-hidden={true} className="w-8 h-8 min-w-8 min-h-8 pb-1" />
+            <span className="text-[8px] leading-tight">Hi Contrast</span>
             <span className="sr-only">Toggle High Contrast Mode</span>
           </button>
           <UserInfo />

@@ -85,12 +85,12 @@ const UserInfo = () => {
   return (
     <div className="flex items-center justify-center">
       <Dialog open={open} onOpenChange={handleDialogOpenChange}>
-        <DialogTrigger className="text-accentPink-600 flex">
+        <DialogTrigger className="text-accentPink-600 flex flex-col items-center">
           <IoLocationOutline
-            className="w-6 h-6 text-accentPink-600"
+            className="w-8 h-8 text-accentPink-600 min-w-8 min-h-8"
             aria-label="click to enter postcode"
           />
-          {value.postcode}
+          <span className="text-[8px]">{value.postcode}</span>
         </DialogTrigger>
         <DialogContent className="text-white">
           <DialogHeader>
