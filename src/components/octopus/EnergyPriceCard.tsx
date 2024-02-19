@@ -16,6 +16,7 @@ import { min } from "d3";
 import useCurrentLocationPriceCapQuery from "@/hooks/useCurrentLocationPriceCapQuery";
 import { UserContext } from "@/context/user";
 import { useContext } from "react";
+import { HiVizContext } from "@/context/hiViz";
 
 export interface IEnergyPriceCard {
   type: Exclude<TariffType, "EG">;
@@ -46,6 +47,7 @@ type CheapestTariffResult =
     };
 
 const EnergyPriceCard = ({ type, plan }: IEnergyPriceCard) => {
+  const { hiViz } = useContext(HiVizContext);
   const {
     value: { gsp },
   } = useContext(UserContext);
@@ -98,7 +100,11 @@ const EnergyPriceCard = ({ type, plan }: IEnergyPriceCard) => {
     }
   }
   return (
-    <div className="relative flex flex-1 flex-col bg-black/50 p-4 min-w-[250px] min-h-[100px] backdrop-blur-sm lg:backdrop-blur-lg">
+    <div
+      className={`${
+        hiViz ? "bg-theme-950/80" : "bg-black/50"
+      } relative flex flex-1 flex-col  p-4 min-w-[250px] min-h-[100px] backdrop-blur-sm lg:backdrop-blur-lg`}
+    >
       {isLoading && <Loading />}
       {isError && <ErrorMessage error={error} errorHandler={() => refetch()} />}
       {isSuccess && caps && (

@@ -298,7 +298,7 @@ const About = () => {
           </tbody>
         </table>
         <h3 className="flex font-display text-3xl text-accentPink-500 mt-8 mb-2 pt-6 border-dotted border-t-4 border-t-accentBlue-800">
-          <AiFillFire className="w-8 h-8 fill-accentPink-900 inline-block mr-2" />
+          <AiFillFire className="w-8 h-8 fill-accentPink-800 inline-block mr-2" />
           Gas
         </h3>
         <p className="text-base my-4">
