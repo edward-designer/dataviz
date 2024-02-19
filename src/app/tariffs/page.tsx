@@ -62,7 +62,7 @@ const About = () => {
           <FaListCheck className="relative -top-1 -right-6 text-theme-700/20  w-[180px] h-[180px] md:hidden pointer-events-none" />
         </div>
 
-        <h3 className="flex font-display text-3xl text-accentBlue-500 mb-2">
+        <h3 className="flex font-display text-3xl font-normal text-accentBlue-500 mb-2">
           <TbSunElectricity className="w-8 h-8 text-accentBlue-700 inline-block mr-2" />
           Electricity Import & Export
         </h3>
@@ -74,7 +74,7 @@ const About = () => {
           table summarizes the various electricity import and export tariffs and
           their requirements.
         </p>
-        <table className="my-2 text-xs md:text:base table-fixed">
+        <table className="my-2 text-sm md:text:base table-fixed">
           <tbody>
             <tr className="flex [&>td]:flex-1 [&>td]:p-1 [&>td]:py-4 [&>td]:flex [&>td]:leading-tight [&>td]:text-center [&>td]:items-center [&>td]:justify-center [&>td]:min-h-16">
               <td></td>
@@ -82,7 +82,7 @@ const About = () => {
                 <a
                   target="_blank"
                   href="/agileOutgoing"
-                  className=" text-accentPink-500 hover:text-accentBlue-500"
+                  className=" text-accentPink-400 hover:text-accentBlue-500"
                 >
                   Agile Outgoing
                 </a>
@@ -91,7 +91,7 @@ const About = () => {
                 <a
                   target="_blank"
                   href="/flux"
-                  className=" text-accentPink-500 hover:text-accentBlue-500"
+                  className=" text-accentPink-400 hover:text-accentBlue-500"
                 >
                   Octopus Flux
                 </a>
@@ -100,7 +100,7 @@ const About = () => {
                 <a
                   target="_blank"
                   href="/iflux"
-                  className=" text-accentPink-500 hover:text-accentBlue-500"
+                  className=" text-accentPink-400 hover:text-accentBlue-500"
                 >
                   Intelligent Octopus Flux
                 </a>
@@ -109,7 +109,7 @@ const About = () => {
                 <a
                   target="_blank"
                   href="/fixedOutgoing"
-                  className=" text-accentPink-500 hover:text-accentBlue-500"
+                  className=" text-accentPink-400 hover:text-accentBlue-500"
                 >
                   Fixed Outgoing
                 </a>
@@ -118,7 +118,7 @@ const About = () => {
                 <a
                   target="_blank"
                   href="/fixedOutgoing"
-                  className=" text-accentPink-500 hover:text-accentBlue-500"
+                  className=" text-accentPink-400 hover:text-accentBlue-500"
                 >
                   Fixed Outgoing Lite
                 </a>
@@ -129,7 +129,7 @@ const About = () => {
                 <a
                   target="_blank"
                   href="/agile"
-                  className=" text-accentPink-500 hover:text-accentBlue-500"
+                  className=" text-accentPink-400 hover:text-accentBlue-500"
                 >
                   Agile Import
                 </a>
@@ -145,7 +145,7 @@ const About = () => {
                 <a
                   target="_blank"
                   href="/tracker"
-                  className=" text-accentPink-500 hover:text-accentBlue-500"
+                  className=" text-accentPink-400 hover:text-accentBlue-500"
                 >
                   Tracker Import
                 </a>
@@ -161,7 +161,7 @@ const About = () => {
                 <a
                   target="_blank"
                   href="/variable"
-                  className=" text-accentPink-500 hover:text-accentBlue-500"
+                  className=" text-accentPink-400 hover:text-accentBlue-500"
                 >
                   Flexible Import
                 </a>
@@ -177,7 +177,7 @@ const About = () => {
                 <a
                   target="_blank"
                   href="/fixed"
-                  className=" text-accentPink-500 hover:text-accentBlue-500"
+                  className=" text-accentPink-400 hover:text-accentBlue-500"
                 >
                   Fixed Import
                   <span className="hidden md:flex text-xs text-theme-300 gap-1 items-center">
@@ -197,7 +197,7 @@ const About = () => {
                 <a
                   target="_blank"
                   href="/flux"
-                  className=" text-accentPink-500 hover:text-accentBlue-500"
+                  className=" text-accentPink-400 hover:text-accentBlue-500"
                 >
                   Octopus Flux
                   <span className="hidden md:flex text-xs text-theme-300 gap-1 items-center">
@@ -217,7 +217,7 @@ const About = () => {
                 <a
                   target="_blank"
                   href="/flux"
-                  className=" text-accentPink-500 hover:text-accentBlue-500"
+                  className=" text-accentPink-400 hover:text-accentBlue-500"
                 >
                   Intelligent Flux
                   <span className="hidden md:flex text-xs text-theme-300 gap-1 items-center">
@@ -237,7 +237,7 @@ const About = () => {
                 <a
                   target="_blank"
                   href="/go"
-                  className=" text-accentPink-500 hover:text-accentBlue-500"
+                  className=" text-accentPink-400 hover:text-accentBlue-500"
                 >
                   Octopus Go
                   <span className="hidden md:flex text-xs text-theme-300 gap-1 items-center">
@@ -257,7 +257,7 @@ const About = () => {
                 <a
                   target="_blank"
                   href="/igo"
-                  className=" text-accentPink-500 hover:text-accentBlue-500"
+                  className=" text-accentPink-400 hover:text-accentBlue-500"
                 >
                   Intelligent Go
                   <span className="hidden md:flex text-xs text-theme-300 gap-1 items-center">
@@ -277,7 +277,7 @@ const About = () => {
                 <a
                   target="_blank"
                   href="/cosy"
-                  className=" text-accentPink-500 hover:text-accentBlue-500"
+                  className=" text-accentPink-400 hover:text-accentBlue-500"
                 >
                   Octopus Cosy{" "}
                   <span className="hidden md:flex text-xs text-theme-300 gap-1 items-center">
@@ -294,7 +294,7 @@ const About = () => {
             </tr>
           </tbody>
         </table>
-        <h3 className="flex font-display text-3xl text-accentPink-500 mt-8 mb-2 pt-6 border-dotted border-t-4 border-t-accentBlue-800">
+        <h3 className="flex font-display font-normal text-3xl text-accentPink-500 mt-8 mb-2 pt-6 border-dotted border-t-4 border-t-accentBlue-800">
           <AiFillFire className="w-8 h-8 fill-accentPink-900 inline-block mr-2" />
           Gas
         </h3>
@@ -304,7 +304,7 @@ const About = () => {
           <a
             target="_blank"
             href="/variable"
-            className="text-xl text-accentPink-500 hover:text-accentBlue-500"
+            className="text-xl text-accentPink-400 hover:text-accentBlue-500"
           >
             standard flexible (SVT)
           </a>{" "}
@@ -312,7 +312,7 @@ const About = () => {
           <a
             target="_blank"
             href="/fixed"
-            className="text-xl text-accentPink-500 hover:text-accentBlue-500"
+            className="text-xl text-accentPink-400 hover:text-accentBlue-500"
           >
             fixed
           </a>{" "}
@@ -320,7 +320,7 @@ const About = () => {
           <a
             target="_blank"
             href="/tracker"
-            className="text-xl text-accentPink-500 hover:text-accentBlue-500"
+            className="text-xl text-accentPink-400 hover:text-accentBlue-500"
           >
             tracker
           </a>{" "}
