@@ -2,41 +2,34 @@
 
 import Loading from "@/components/Loading";
 import Badge from "@/components/octopus/Badge";
-import Comparison from "@/components/octopus/Comparison";
 import Remark from "./Remark";
 
 import {
-  CapsTSVResult,
-  ENERGY_TYPE,
-  QueryTariffResult,
-  TariffResult,
-  TariffType,
-  gsp,
+    CapsTSVResult,
+    QueryTariffResult,
+    TariffResult,
+    TariffType,
+    gsp
 } from "@/data/source";
 
 import useTariffQuery from "../../hooks/useTariffQuery";
 
 import {
-  calculateChangePercentage,
-  evenRound,
-  getTariffName,
-  isSameDate,
-  isToday,
-  priceAccessor,
+    calculateChangePercentage,
+    evenRound,
+    getTariffName,
+    isSameDate,
+    isToday,
+    priceAccessor,
 } from "../../utils/helpers";
 
+import useCurrentLocationPriceCapQuery from "@/hooks/useCurrentLocationPriceCapQuery";
+import { max, maxIndex, mean, min, minIndex } from "d3";
 import backgroundE from "../../../public/images/E.jpg";
 import backgroundG from "../../../public/images/G.jpg";
-import ErrorMessage from "./ErrorMessage";
 import { EnergyIcon } from "./EnergyIcon";
-import { useContext, useEffect, useRef, useState } from "react";
-import toast from "react-hot-toast";
-import { WindowVisibilityContext } from "@/context/windowVisibility";
-import { LastShownContext } from "@/context/lastShownDates";
-import useCurrentLocationPriceCapQuery from "@/hooks/useCurrentLocationPriceCapQuery";
-import PricePaneAgile2 from "./PricePaneAgile2";
+import ErrorMessage from "./ErrorMessage";
 import HalfHourlyChart from "./HalfHourlyChart";
-import { max, maxIndex, mean, min, minIndex } from "d3";
 
 const DashboardPricePane = ({
   tariff,
@@ -137,7 +130,7 @@ const DashboardPricePane = ({
   return (
     <div className="pricePane relative flex-1">
       <div
-        className="flex flex-col gap-4 p-4 min-h-[250px] md:min-h-[250px] rounded-xl bg-theme-950 border border-accentPink-800/60 shadow-inner bg-gradient-to-br from-transparent via-theme-800/20 to-purple-600/30 bg-cover"
+        className="flex flex-col gap-4 p-4 min-h-[250px] md:min-h-[250px] rounded-xl bg-theme-950 border border-accentPink-950 shadow-inner bg-cover"
         style={{
           backgroundImage: `linear-gradient(0deg, rgba(0,3,35,0.7) 30% , rgba(0,3,35,0.9) 70%, rgba(0,4,51,1) 100% ),url(${
             type === "E" ? backgroundE.src : backgroundG.src

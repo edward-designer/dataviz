@@ -16,6 +16,7 @@ import { TbPlayerTrackNextFilled } from "react-icons/tb";
 import { MdOutlineHistory } from "react-icons/md";
 import { MdElectricMeter } from "react-icons/md";
 import { MdGasMeter } from "react-icons/md";
+import { getTariffName } from "@/utils/helpers";
 
 interface ITariffDetails {
   tariff_code: string;
@@ -91,7 +92,12 @@ const TariffDetails = ({
           <span className="inline-block md:w-[90px] text-accentBlue-500 text-[12px] font-bold">
             Tariff:
           </span>
-          {isSuccess ? data[0]?.display_name ?? tariff_code : tariff_code}
+          {isSuccess && (
+            <span>
+              {getTariffName(tariff_code)}
+              <span className="text-[10px]"> ({tariff_code.slice(5, -2)})</span>
+            </span>
+          )}
         </div>
         <div className="flex flex-col md:flex-row items-start md:items-center text-xs md:text-base">
           <span className="inline-block md:w-[90px] text-accentBlue-500 text-[12px] font-bold">

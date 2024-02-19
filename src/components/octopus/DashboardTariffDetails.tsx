@@ -14,6 +14,8 @@ import {
 import { IoMdArrowDropright } from "react-icons/io";
 import { TbPlayerTrackNextFilled } from "react-icons/tb";
 import DashboardPricePane from "./DashboardPricePane";
+import { HiVizContext } from "@/context/hiViz";
+import { getCategory, getTariffName } from "@/utils/helpers";
 
 interface IDashboardTariffDetails {
   tariff_code: string;
@@ -28,6 +30,7 @@ const DashboardTariffDetails = ({
   valid_to,
   type,
 }: IDashboardTariffDetails) => {
+  const { hiViz } = useContext(HiVizContext);
   const { value, setValue } = useContext(UserContext);
   const { data, isSuccess, isLoading } = useTariffQuery<{
     display_name: string;
@@ -49,7 +52,10 @@ const DashboardTariffDetails = ({
 
   return (
     <>
-      <div className="bg-theme-900/40 p-1 flex flex-col md:p-2 gap-1 justify-between text-xs md:text-base">
+      <div
+        className={`${hiViz ? "bg-black" : "bg-theme-900/40"}
+        } p-1 flex flex-col md:p-2 gap-1 justify-between text-xs md:text-base`}
+      >
         <div className="flex flex-row items-center whitespace-nowrap overflow-hidden">
           <span className="inline-block w-[100px] text-accentBlue-500 font-light">
             Current Tariff:
@@ -60,7 +66,9 @@ const DashboardTariffDetails = ({
           <span className="inline-block w-[100px] text-accentBlue-500 font-light">
             Tariff Code:
           </span>
-          {tariff_code}
+          <span>
+            {getTariffName(tariff_code)} ({tariff_code})
+          </span>
         </div>
         <div className="flex flex-row items-center whitespace-nowrap overflow-hidden">
           <span className="inline-block w-[100px] text-accentBlue-500 font-light">
