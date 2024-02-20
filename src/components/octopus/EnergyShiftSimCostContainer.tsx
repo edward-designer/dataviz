@@ -48,7 +48,7 @@ const EnergyShiftSimCostContainer = ({
           >
             {label}
           </h4>
-          {exportTariff && exportEarning !== undefined ? (
+          {hasExport && exportTariff && exportEarning !== undefined ? (
             <>
               <div className="flex-1 flex flex-row items-center justify-between gap-1 text-white text-2xl">
                 <span className="flex gap-1 items-center">
@@ -60,6 +60,7 @@ const EnergyShiftSimCostContainer = ({
                 </span>
                 <span className="whitespace-nowrap">
                   {formatPriceChangeWithSign(importCost - exportEarning, false)}
+                  *
                 </span>
               </div>
               <div className="flex-1 flex flex-row items-center justify-between gap-1 text-sm">
@@ -97,12 +98,13 @@ const EnergyShiftSimCostContainer = ({
                 </span>
               </span>
               <span className="whitespace-nowrap">
-                {formatPriceChangeWithSign(importCost, false)}
+                {formatPriceChangeWithSign(importCost, false)}*
               </span>
             </div>
           )}
         </div>
       )}
+      <span className="text-accentBlue-400 text-[10px]">* standing charge NOT included</span>
     </div>
   );
 };

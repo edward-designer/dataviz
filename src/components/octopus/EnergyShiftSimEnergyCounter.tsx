@@ -21,7 +21,7 @@ const EnergyShiftSimEnergyCounter = ({
         <BiImport className="w-8 h-8" aria-label="import" />
       )}
       <div
-        className={`flex flex-wrap justify-between items-start md:block bg-theme-900/30 
+        className={`flex flex-col md:flex-row flex-wrap justify-between items-start md:block bg-theme-900/30 
           ${use <= total ? "text-[#85f9ad]" : "text-[#f985c5]"}`}
       >
         <Badge label={label} variant="item" />
@@ -29,14 +29,14 @@ const EnergyShiftSimEnergyCounter = ({
           {use}
         </div>
         <div className="text-xs text-slate-300 h-4 -mt-1">
-          vs avg: {use - total}
+          {total !== Infinity && `vs avg: ${use - total}`}
         </div>
       </div>
       <span className="text-6xl text-center self-start">/</span>
-      <div className="flex flex-wrap justify-between items-start md:block text-[#85cbf9] bg-theme-900/30">
+      <div className="flex flex-col md:flex-row flex-wrap justify-between items-start md:block text-[#85cbf9] bg-theme-900/30">
         <Badge label={`Avg. ${label}`} variant="item" />
         <div className="font-digit text:3xl md:text-4xl flex flex-col items-end justify-start">
-          {total}
+          {total === Infinity ? "--" : total}
         </div>
         <div className="text-sm text-white h-4 -mt-1"></div>
       </div>

@@ -90,10 +90,10 @@ const useTariffQueryYearlyAverage = ({
           let sessionNumber = currentIntervalStart.getHours() * 2;
           if (currentIntervalStart.getMinutes() === 30) sessionNumber++;
 
-          const { price: prevPrict, count: prevCount } =
+          const { price: prevPrice, count: prevCount } =
             newDataByTime[currentMonthIndex][sessionNumber];
           newDataByTime[currentMonthIndex][sessionNumber] = {
-            price: prevPrict + result.value_inc_vat,
+            price: prevPrice + result.value_inc_vat,
             count: prevCount + 1,
           };
         }
@@ -191,6 +191,7 @@ const useTariffQueryYearlyAverage = ({
     const dataByTimeYearlyValueArray = newDataByTime.map((dataset) =>
       dataset.map((data) => (data.count === 0 ? 0 : data.price / data.count))
     );
+
     return dataByTimeYearlyValueArray;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, tariff, type, value.gsp, fromDate, toDate, category]);

@@ -86,7 +86,7 @@ const FormBattery = ({ open, setOpen }: IFormBattery) => {
           <span className="block absolute h-14 w-1 bg-slate-900/90 rotate-45 -top-1 group-hover:hidden"></span>
         )}
         <span className="group-hover:text-white text-xs">Battery Storage</span>
-        {hasBattery && (
+        {hasBattery && batteryCapacity !== 0 && (
           <span className="text-sm font-bold group-hover:text-white">
             {batteryCapacity} kWh
           </span>

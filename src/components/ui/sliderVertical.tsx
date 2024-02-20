@@ -76,8 +76,8 @@ const Slider = React.forwardRef<
           className,
           isExport ? "border-t-4" : "border-b-4",
           isExport && highPricedPeriod ? "border-t-4 border-lime-500" : "",
-          isExport && lowPricedPeriod ? "border-t-4 border-red-500" : "",
-          !isExport && highPricedPeriod ? "border-b-4 border-red-500" : "",
+          isExport && lowPricedPeriod ? "border-t-4 border-red-700" : "",
+          !isExport && highPricedPeriod ? "border-b-4 border-red-700" : "",
           !isExport && lowPricedPeriod ? "border-b-4 border-lime-500" : ""
         )}
         value={[value]}

@@ -1,5 +1,5 @@
 import useCalculateSimPrice from "@/hooks/useCalculateSimPrice";
-import { formatPriceChangeWithSign } from "@/utils/helpers";
+import { formatPriceChangeWithSign, getTariffName } from "@/utils/helpers";
 
 interface IEnergyShiftSimTariffWithTotal {
   tariff: string;
@@ -30,11 +30,17 @@ const EnergyShiftSimTariffWithTotal = ({
     consumption,
   });
 
-  return `${
-    typeof total === "number" && !isNaN(total)
-      ? `[${formatPriceChangeWithSign(total, false)}] `
-      : `[N/A] `
-  }${tariff}`;
+  return typeof total === "number" && !isNaN(total) ? (
+    <>
+      [{formatPriceChangeWithSign(total, false)}] {getTariffName(tariff)}{" "}
+      <span className="text-[10px]">({tariff})</span>
+    </>
+  ) : (
+    <>
+      [N/A] {getTariffName(tariff)}{" "}
+      <span className="text-[10px]">({tariff})</span>
+    </>
+  );
 };
 
 export default EnergyShiftSimTariffWithTotal;

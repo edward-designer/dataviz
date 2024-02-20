@@ -66,9 +66,7 @@ const DashboardTariffDetails = ({
           <span className="inline-block w-[100px] text-accentBlue-500 font-light">
             Tariff Code:
           </span>
-          <span>
-            {getTariffName(tariff_code)} ({tariff_code})
-          </span>
+          <span>{tariff_code}</span>
         </div>
         <div className="flex flex-row items-center whitespace-nowrap overflow-hidden">
           <span className="inline-block w-[100px] text-accentBlue-500 font-light">

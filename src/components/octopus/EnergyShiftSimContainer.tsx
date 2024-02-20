@@ -46,6 +46,7 @@ import EnergyShiftSimTariffSelector from "./EnergyShiftSimTariffSelector";
 import EnergyShiftSimTariffWithTotal from "./EnergyShiftSimTariffWithTotal";
 import SimpleLoading from "./SimpleLoading";
 import { BsLightningChargeFill } from "react-icons/bs";
+import EnergyShiftSimBatteryState from "./EnergyShiftSimBatteryState";
 
 export type ErrorType = Record<string, string>;
 
@@ -54,29 +55,50 @@ const EnergyShiftSimContainer = () => {
   const { value } = useContext(UserContext);
 
   const [period, setPeriod] = useState<IPeriod>(getDatePeriod);
-  const [daysOfWeek, setDaysOfWeek] = useState([1, 2, 3, 4, 5]);
+  const [daysOfWeek, setDaysOfWeek] = useState([0, 1, 2, 3, 4, 5, 6]);
 
   const [adjustedImport, adjustedImportDispatch] = useReducer(
     energyShiftReducer,
-    []
+    [
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    ]
   );
   const [adjustedExport, adjustedExportDispatch] = useReducer(
     energyShiftReducer,
-    []
+    [
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    ]
+  );
+
+  const [batteryImport, batteryImportDispatch] = useReducer(
+    energyShiftReducer,
+    [
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    ]
+  );
+  const [batteryExport, batteryExportDispatch] = useReducer(
+    energyShiftReducer,
+    [
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    ]
   );
 
   const [importTariff, setImportTariff] = useState<string>("");
-  const [exportTariff, setExportTariff] = useState<string>("");
+  const [exportTariff, setExportTariff] = useState<string>(EETARIFFS[0].tariff);
 
   const [hasExport, setHasExport] = useState(false);
-  const [hasBattery, setHasBattery] = useState(false);
-  const [hasSolar, setHasSolar] = useState(false);
 
   const [batteryFormOpen, setBatteryFormOpen] = useState(false);
   const [solarFormOpen, setSolarFormOpen] = useState(false);
 
   /* derived states */
   const isExporting = !!(value.EESerialNo && value.EMPAN);
+
+  const addedBattery = value.configBattery.hasBattery;
 
   const importTariffs = useMemo(
     () => getAllTariffsWithCurrentTariff(ETARIFFS, value.currentETariff),
@@ -139,15 +161,16 @@ const EnergyShiftSimContainer = () => {
     numOfDays,
     consumption: dataByTimeImport ?? [],
   });
-  const earning = useCalculateSimPrice({
-    tariff: value.currentEETariff,
-    gsp: value.gsp,
-    fromDate: period.from.toISOString(),
-    toDate: period.to.toISOString(),
-    daysOfWeek,
-    numOfDays,
-    consumption: dataByTimeExport ?? [],
-  });
+  const earning =
+    useCalculateSimPrice({
+      tariff: value.currentEETariff,
+      gsp: value.gsp,
+      fromDate: period.from.toISOString(),
+      toDate: period.to.toISOString(),
+      daysOfWeek,
+      numOfDays,
+      consumption: dataByTimeExport ?? [],
+    }) ?? 0;
 
   /* effect to sync state and context from localstorage */
   useEffect(() => {
@@ -181,8 +204,35 @@ const EnergyShiftSimContainer = () => {
   }, [dataByTimeExport]);
 
   useEffect(() => {
-    setHasExport(isExporting);
-  }, [isExporting]);
+    setHasExport(
+      value.configBattery.hasBattery ||
+        value.configSolar.hasSolar ||
+        isExporting
+    );
+    if (
+      value.configBattery.hasBattery &&
+      value.configSolar.hasSolar &&
+      !isExporting
+    )
+      return;
+  }, [isExporting, value.configBattery.hasBattery, value.configSolar.hasSolar]);
+
+  useEffect(() => {
+    adjustedExportDispatch({
+      type: "Add Solar",
+      payload: {
+        addSolar: value.configSolar.hasSolar,
+        totalCapacity: Math.round(
+          (value.configSolar.annualProduction * 1000) / 365
+        ),
+      },
+    });
+  }, [
+    period.from,
+    period.to,
+    value.configSolar.annualProduction,
+    value.configSolar.hasSolar,
+  ]);
 
   /* handlers */
   const valueCommitHandler = (index: number) => (value: number[]) => {
@@ -207,10 +257,47 @@ const EnergyShiftSimContainer = () => {
     []
   );
 
+  const batteryImportCommitHandler = (index: number) => (value: number[]) => {
+    adjustedImportDispatch({
+      type: "Update A Single Value With Battery",
+      payload: {
+        index,
+        value: value[0],
+        from: batteryImport,
+        to: adjustedImport,
+      },
+    });
+    batteryImportDispatch({
+      type: "Update A Single Value",
+      payload: { index, value: value[0] },
+    });
+  };
+  const batteryImportCommitHandlerArray = Array.from({ length: 48 }).map(
+    (_, i) => batteryImportCommitHandler(i)
+  );
+  const batteryExportCommitHandler = (index: number) => (value: number[]) => {
+    adjustedExportDispatch({
+      type: "Update A Single Value With Battery",
+      payload: {
+        index,
+        value: value[0],
+        from: batteryExport,
+        to: adjustedExport,
+      },
+    });
+    batteryExportDispatch({
+      type: "Update A Single Value",
+      payload: { index, value: value[0] },
+    });
+  };
+  const batteryExportCommitHandlerArray = Array.from({ length: 48 }).map(
+    (_, i) => batteryExportCommitHandler(i)
+  );
+
   /* loading while waiting */
   if (!dataByTimeImport) return <Loading />;
   if (
-    hasExport &&
+    isExporting &&
     (!dataByTimeExport ||
       maxExport === undefined ||
       adjustedImport.length === 0)
@@ -240,7 +327,7 @@ const EnergyShiftSimContainer = () => {
     numOfDays
   );
 
-  const difference = isExporting ? (
+  const difference = hasExport ? (
     cost !== undefined &&
     earning !== undefined &&
     adjustedEarning !== undefined &&
@@ -283,11 +370,21 @@ const EnergyShiftSimContainer = () => {
         {hasExport && (
           <EnergyShiftSimEnergyCounter
             use={totalAllocatedExport}
-            total={totalExport}
+            total={
+              isExporting
+                ? totalExport
+                : Math.round((value.configSolar.annualProduction * 1000) / 365)
+            }
             isExport={true}
           />
         )}
-        {false && !hasExport && (
+        {addedBattery && (
+          <EnergyShiftSimBatteryState
+            batteryImport={batteryImport}
+            batteryExport={batteryExport}
+          />
+        )}
+        {!isExporting && (
           <div className="flex flex-row gap-2 items-center">
             <FormSolar open={solarFormOpen} setOpen={setSolarFormOpen} />
             <FormBattery open={batteryFormOpen} setOpen={setBatteryFormOpen} />
@@ -304,15 +401,17 @@ const EnergyShiftSimContainer = () => {
         >
           {importTariffs.map(({ tariff }) => (
             <SelectItem key={tariff} value={tariff}>
-              <EnergyShiftSimTariffWithTotal
-                tariff={tariff}
-                gsp={value.gsp}
-                fromDate={period.from.toISOString()}
-                toDate={period.to.toISOString()}
-                daysOfWeek={daysOfWeek}
-                numOfDays={numOfDays}
-                consumption={adjustedImport}
-              />
+              <>
+                <EnergyShiftSimTariffWithTotal
+                  tariff={tariff}
+                  gsp={value.gsp}
+                  fromDate={period.from.toISOString()}
+                  toDate={period.to.toISOString()}
+                  daysOfWeek={daysOfWeek}
+                  numOfDays={numOfDays}
+                  consumption={adjustedImport}
+                />
+              </>
             </SelectItem>
           ))}
         </EnergyShiftSimTariffSelector>
@@ -342,48 +441,19 @@ const EnergyShiftSimContainer = () => {
         <div className="flex items-center gap-1 text-sm">
           <h3 className="font-bold text-slate-500 mr-2">Price Reference:</h3>
           <span className="w-4 h-2 bg-lime-500 inline-block"></span>Best
-          <span className="w-4 h-2 bg-red-500 inline-block ml-3"></span>Worst
+          <span className="w-4 h-2 bg-red-700 inline-block ml-3"></span>Worst
         </div>
       </div>
       <div className="flex flex-col-reverse md:flex-row gap-3">
-        <div className="basis-1 md:basis-3/4 grid grid-cols-[repeat(8,_minmax(0,_1fr))] sm:grid-cols-[repeat(12,_minmax(0,_1fr))] xl:grid-cols-[repeat(16,_minmax(0,_1fr))] 2xl:grid-cols-[repeat(24,_minmax(0,_1fr))] flex-wrap gap-y-10 border border-accentPink-950 rounded-2xl pl-7 pr-5 pt-8 pb-14">
-          {adjustedImport.map((data, i) => (
-            <div
-              className="flex flex-col justify-center items-center gap-y-8"
-              key={i}
-            >
-              <SliderVertical
-                defaultValue={Math.round(1000 * data)}
-                max={Math.round(absoluteMax * 1.5 * 1000)}
-                min={0}
-                step={1}
-                orientation="vertical"
-                slot={new Date(
-                  new Date().setHours(
-                    Math.floor(i / 2),
-                    i % 2 === 1 ? 30 : 0,
-                    0,
-                    0
-                  )
-                ).toLocaleTimeString("en-GB", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-                onValueCommit={valueCommitHandlerArray[i]}
-                disabled={false}
-                avgPrice={avgImportPrice}
-                price={dataByTimeImportTariff?.[i]}
-                category={getCategory(importTariff)}
-                indicator={checkGoodBadTime(
-                  false,
-                  getCategory(importTariff),
-                  dataByTimeImportTariff?.[i],
-                  avgImportPrice
-                )}
-              />
-              {hasExport && (
+        <div className="basis-1 md:basis-3/4 ">
+          <div className="grid grid-cols-[repeat(8,_minmax(0,_1fr))] sm:grid-cols-[repeat(12,_minmax(0,_1fr))] xl:grid-cols-[repeat(16,_minmax(0,_1fr))] 2xl:grid-cols-[repeat(24,_minmax(0,_1fr))] flex-wrap gap-y-10 border border-accentPink-950 rounded-2xl pl-7 pr-5 pt-8 pb-14">
+            {adjustedImport.map((data, i) => (
+              <div
+                className="flex flex-col justify-center items-center gap-y-8"
+                key={i}
+              >
                 <SliderVertical
-                  defaultValue={Math.round(adjustedExport[i] * 1000)}
+                  defaultValue={Math.round(1000 * data)}
                   max={Math.round(absoluteMax * 1.5 * 1000)}
                   min={0}
                   step={1}
@@ -399,35 +469,152 @@ const EnergyShiftSimContainer = () => {
                     hour: "2-digit",
                     minute: "2-digit",
                   })}
-                  onValueCommit={exportValueCommitHandlerArray[i]}
+                  onValueCommit={valueCommitHandlerArray[i]}
                   disabled={false}
-                  isExport={true}
-                  inverted={true}
-                  avgPrice={avgExportPrice}
-                  price={dataByTimeExportTariff?.[i]}
-                  category={getCategory(exportTariff)}
+                  avgPrice={avgImportPrice}
+                  price={dataByTimeImportTariff?.[i]}
+                  category={getCategory(importTariff)}
                   indicator={checkGoodBadTime(
-                    true,
-                    getCategory(exportTariff),
-                    dataByTimeExportTariff?.[i],
-                    avgExportPrice
+                    false,
+                    getCategory(importTariff),
+                    dataByTimeImportTariff?.[i],
+                    avgImportPrice
                   )}
                 />
-              )}
-            </div>
-          ))}
-          <EnergyShiftSimAction
-            hasExport={hasExport}
-            importTariff={importTariff}
-            avgImportPrice={avgImportPrice}
-            dataByTimeImportTariff={dataByTimeImportTariff}
-            dataByTimeImport={dataByTimeImport}
-            dataByTimeExport={dataByTimeExport}
-            adjustedImport={adjustedImport}
-            adjustedExport={adjustedExport}
-            adjustedImportDispatch={adjustedImportDispatch}
-            adjustedExportDispatch={adjustedExportDispatch}
-          />
+                {hasExport && (
+                  <SliderVertical
+                    defaultValue={Math.round(adjustedExport[i] * 1000)}
+                    max={Math.round(absoluteMax * 1.5 * 1000)}
+                    min={0}
+                    step={1}
+                    orientation="vertical"
+                    slot={new Date(
+                      new Date().setHours(
+                        Math.floor(i / 2),
+                        i % 2 === 1 ? 30 : 0,
+                        0,
+                        0
+                      )
+                    ).toLocaleTimeString("en-GB", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                    onValueCommit={exportValueCommitHandlerArray[i]}
+                    disabled={false}
+                    isExport={true}
+                    inverted={true}
+                    avgPrice={avgExportPrice}
+                    price={dataByTimeExportTariff?.[i]}
+                    category={getCategory(exportTariff)}
+                    indicator={checkGoodBadTime(
+                      true,
+                      getCategory(exportTariff),
+                      dataByTimeExportTariff?.[i],
+                      avgExportPrice
+                    )}
+                  />
+                )}
+              </div>
+            ))}
+            <EnergyShiftSimAction
+              hasExport={hasExport}
+              importTariff={importTariff}
+              avgImportPrice={avgImportPrice}
+              dataByTimeImportTariff={dataByTimeImportTariff}
+              dataByTimeImport={dataByTimeImport}
+              dataByTimeExport={dataByTimeExport}
+              adjustedImport={adjustedImport}
+              adjustedExport={adjustedExport}
+              adjustedImportDispatch={adjustedImportDispatch}
+              adjustedExportDispatch={adjustedExportDispatch}
+            />
+          </div>
+          <div>Battery Control (included in the chart above)</div>
+          <div className="grid grid-cols-[repeat(8,_minmax(0,_1fr))] sm:grid-cols-[repeat(12,_minmax(0,_1fr))] xl:grid-cols-[repeat(16,_minmax(0,_1fr))] 2xl:grid-cols-[repeat(24,_minmax(0,_1fr))] flex-wrap gap-y-10 border border-accentPink-950 rounded-2xl pl-7 pr-5 pt-8 pb-14">
+            {addedBattery && batteryImport && (
+              <>
+                {batteryImport.map((data, i) => (
+                  <div
+                    className="flex flex-col justify-center items-center gap-y-8"
+                    key={i}
+                  >
+                    <SliderVertical
+                      defaultValue={Math.round(1000 * data)}
+                      max={Math.round(absoluteMax * 1.5 * 1000)}
+                      min={0}
+                      step={1}
+                      orientation="vertical"
+                      slot={new Date(
+                        new Date().setHours(
+                          Math.floor(i / 2),
+                          i % 2 === 1 ? 30 : 0,
+                          0,
+                          0
+                        )
+                      ).toLocaleTimeString("en-GB", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                      onValueCommit={batteryImportCommitHandlerArray[i]}
+                      disabled={false}
+                      avgPrice={avgImportPrice}
+                      price={dataByTimeImportTariff?.[i]}
+                      category={getCategory(importTariff)}
+                      indicator={checkGoodBadTime(
+                        false,
+                        getCategory(importTariff),
+                        dataByTimeImportTariff?.[i],
+                        avgImportPrice
+                      )}
+                    />
+                    <SliderVertical
+                      defaultValue={Math.round(batteryExport[i] * 1000)}
+                      max={Math.round(absoluteMax * 1.5 * 1000)}
+                      min={0}
+                      step={1}
+                      orientation="vertical"
+                      slot={new Date(
+                        new Date().setHours(
+                          Math.floor(i / 2),
+                          i % 2 === 1 ? 30 : 0,
+                          0,
+                          0
+                        )
+                      ).toLocaleTimeString("en-GB", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                      onValueCommit={batteryExportCommitHandlerArray[i]}
+                      disabled={false}
+                      isExport={true}
+                      inverted={true}
+                      avgPrice={avgExportPrice}
+                      price={dataByTimeExportTariff?.[i]}
+                      category={getCategory(exportTariff)}
+                      indicator={checkGoodBadTime(
+                        true,
+                        getCategory(exportTariff),
+                        dataByTimeExportTariff?.[i],
+                        avgExportPrice
+                      )}
+                    />
+                  </div>
+                ))}
+                <EnergyShiftSimAction
+                  hasExport={hasExport}
+                  importTariff={importTariff}
+                  avgImportPrice={avgImportPrice}
+                  dataByTimeImportTariff={dataByTimeImportTariff}
+                  dataByTimeImport={dataByTimeImport}
+                  dataByTimeExport={dataByTimeExport}
+                  adjustedImport={adjustedImport}
+                  adjustedExport={adjustedExport}
+                  adjustedImportDispatch={adjustedImportDispatch}
+                  adjustedExportDispatch={adjustedExportDispatch}
+                />
+              </>
+            )}
+          </div>
         </div>
         <div className="flex flex-col flex-grow basis-1 md:basis-1/4 border border-accentPink-950 rounded-2xl items-between justity-between">
           <div>
@@ -443,7 +630,7 @@ const EnergyShiftSimContainer = () => {
                       ? formatNumberToDisplay(difference) > 0
                         ? "text-[#85f9ad]"
                         : formatNumberToDisplay(difference) < 0
-                        ? "text-[#f985c5]"
+                        ? "text-[#722843]"
                         : "text-white"
                       : "text-white"
                   }`}
@@ -463,9 +650,9 @@ const EnergyShiftSimContainer = () => {
               label="Current Tariffs"
               importTariff={value.currentETariff}
               importCost={cost}
-              exportTariff={value.currentEETariff}
+              exportTariff={value.currentEETariff ?? null}
               exportEarning={earning}
-              hasExport={hasExport}
+              hasExport={isExporting}
               variant="current"
             />
             <div className="flex justify-center h-3">

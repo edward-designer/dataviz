@@ -24,9 +24,7 @@ const FormSolar = ({ open, setOpen }: IFormSolar) => {
 
   const [error, setError] = useState<Record<string, string>>({});
   const [hasSolar, setHasSolar] = useState(false);
-  const [annualProduction, setAnnualProduction] = useState<
-    IUserValue["configSolar"]["annualProduction"]
-  >([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+  const [annualProduction, setAnnualProduction] = useState<number>(0);
   const [rate, setRate] = useState<number>(0);
 
   useEffect(() => {
@@ -67,18 +65,6 @@ const FormSolar = ({ open, setOpen }: IFormSolar) => {
     setOpen(state);
   };
 
-  const updatePowerGeneration = (i: number) => (value: number) => {
-    setAnnualProduction((prevValues) => {
-      const curValues = [
-        ...prevValues,
-      ] as IUserValue["configSolar"]["annualProduction"];
-      curValues[i] = value;
-      return curValues;
-    });
-  };
-
-  const total = annualProduction.reduce((acc, cur) => acc + cur, 0);
-
   return (
     <Dialog open={open} onOpenChange={handleDialogOpenChange}>
       <DialogTrigger
@@ -94,9 +80,9 @@ const FormSolar = ({ open, setOpen }: IFormSolar) => {
           <span className="block absolute h-14 w-1 bg-slate-900/90 rotate-45 -top-1 group-hover:hidden"></span>
         )}
         <span className="group-hover:text-white text-xs">Solar Generation</span>
-        {total > 0 && hasSolar && (
+        {annualProduction > 0 && hasSolar && (
           <span className="text-sm font-bold group-hover:text-white">
-            {total} kWh/yr
+            {annualProduction} kWh/yr
           </span>
         )}
       </DialogTrigger>
@@ -129,26 +115,17 @@ const FormSolar = ({ open, setOpen }: IFormSolar) => {
                 pattern="^\d+(?:\.\d{1,2})?$"
                 step={0.01}
               />
-              <div className="text-accentBlue-600 text-xl">
-                Power Generation (in kWh) - total: {total} kWh
-              </div>
-              {annualProduction.map((production, i) => (
-                <InfoInput
-                  key={i}
-                  label={`${new Date(new Date().setMonth(i)).toLocaleDateString(
-                    "en-GB",
-                    { month: "long" }
-                  )}:`}
-                  type="number"
-                  placeHolder="Please enter the monthly production"
-                  min={0}
-                  error={error}
-                  value={production}
-                  setValue={updatePowerGeneration(i)}
-                  pattern="^\d+(?:\.\d{1,1})?$"
-                  step={0.1}
-                />
-              ))}
+              <InfoInput
+                label="Annual Power Generation (in kWh) "
+                type="number"
+                placeHolder="Please enter the annual generation"
+                min={0}
+                error={error}
+                value={annualProduction}
+                setValue={setAnnualProduction}
+                pattern="^\d+(?:\.\d{1})?$"
+                step={1}
+              />
             </div>
           )}
 

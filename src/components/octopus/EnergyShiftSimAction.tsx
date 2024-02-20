@@ -69,7 +69,6 @@ const EnergyShiftSimAction = ({
       {hasExport && adjustedExportDispatch && (
         <ActionButton
           clickHandler={() => {
-            if (dataByTimeExport)
               adjustedExportDispatch({
                 type: "Reset",
                 payload: dataByTimeExport,

@@ -115,15 +115,8 @@ const Header = ({
                 </p>
               </TooltipContent>
             </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <UserInfo />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Enter your postcode for correct tariffs</p>
-              </TooltipContent>
-            </Tooltip>
           </TooltipProvider>
+          <UserInfo />
           <Menu />
         </div>
       </header>

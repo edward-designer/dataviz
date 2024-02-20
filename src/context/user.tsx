@@ -61,20 +61,7 @@ export interface IUserValue {
   };
   configSolar: {
     hasSolar: boolean;
-    annualProduction: [
-      number,
-      number,
-      number,
-      number,
-      number,
-      number,
-      number,
-      number,
-      number,
-      number,
-      number,
-      number
-    ];
+    annualProduction: number;
     rate: number;
   };
 }
@@ -116,12 +103,12 @@ export const initialValue = {
     configBattery: {
       hasBattery: false,
       capacity: 0,
-      efficiency: 0,
+      efficiency: 0.9,
       rate: 0,
     },
     configSolar: {
       hasSolar: false,
-      annualProduction: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      annualProduction: 0,
       rate: 0,
     },
   } as IUserValue,
