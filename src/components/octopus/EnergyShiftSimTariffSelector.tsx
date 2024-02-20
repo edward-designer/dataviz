@@ -39,8 +39,8 @@ const EnergyShiftSimTariffSelector = ({
         </>
       ) : (
         <>
-          <BiExport className="w-4 h-4 text-orange-700" />
-          <span className="text-sm text-orange-700">Export:</span>
+          <BiExport className="w-4 h-4 text-orange-400" />
+          <span className="text-sm text-orange-400">Export:</span>
         </>
       )}
 

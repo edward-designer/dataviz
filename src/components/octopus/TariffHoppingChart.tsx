@@ -219,6 +219,17 @@ const TariffHoppingChart = ({
         padding.right -
         20;
     }
+    const currentMonthYear = new Date().toLocaleDateString("en-GB", {
+      month: "short",
+      year: "numeric",
+    });
+    const fromMonthYear = new Date(
+      new Date().setFullYear(new Date().getFullYear() - 1)
+    ).toLocaleDateString("en-GB", {
+      month: "short",
+      year: "numeric",
+    });
+    const period = `${fromMonthYear} - ${currentMonthYear}`;
     const chart = select(svgRef.current) as Selection<
       SVGSVGElement,
       unknown,
@@ -296,6 +307,21 @@ const TariffHoppingChart = ({
         .attr("x2", widgetWidth - padding.left - padding.right);
 
       xAxisGroup.transition().call(xAxis);
+      chart.select(".xAxisText").remove();
+      chart
+        .select(".xAxis")
+        .append("text")
+        .classed("xAxisText", true)
+        .classed("axisText", true)
+        .text(`Data Period: ${period}`)
+        .attr("transform", `translate(${widgetWidth / 2} ${leadingSize * 2.5})`)
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("text-anchor", "center")
+        .attr("alignment-basline", "baseline")
+        .attr("font-size", "14")
+        .attr("font-weight", "bold")
+        .attr("fill", axisColor);
       chart
         .select<SVGSVGElement>("g.yAxis")
         .attr("color", axisColor)
@@ -319,6 +345,7 @@ const TariffHoppingChart = ({
         .attr("text-anchor", "start")
         .attr("alignment-basline", "baseline")
         .attr("font-size", "14")
+        .attr("font-weight", "bold")
         .attr("fill", axisColor);
     };
 
@@ -501,7 +528,7 @@ const TariffHoppingChart = ({
       <>
         <h2 className="text-accentPink-600 font-display text-4xl flex items-center gap-3">
           <BsLightningChargeFill aria-label="Electricity" className="w-8 h-8" />
-          Net Energy Cost
+          Year-round Trends
         </h2>
         <div className="flex flex-col flex-wrap-reverse md:flex-row md:flex-nowrap gap-4">
           <div
@@ -523,7 +550,7 @@ const TariffHoppingChart = ({
                   className="w-full lg:w-1/2 border-t-2 border-b-2 border-dotted border-slate-800"
                 >
                   <caption className="font-display text-3xl text-accentPink-500 mb-3">
-                    Comparision of Costs of Tariff Sets{" "}
+                    Comparision of Tariff Sets{" "}
                     <span className="block font-sans text-base text-accentBlue-500">
                       (&quot;-£&quot; means credit)
                     </span>

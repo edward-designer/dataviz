@@ -8,6 +8,7 @@ import {
   daysDiff,
   getAllTariffsWithCurrentTariff,
   getDatePeriod,
+  getTariffName,
 } from "@/utils/helpers";
 import {
   useContext,
@@ -29,7 +30,7 @@ import { energyShiftReducer } from "@/reducers/energyShift";
 import Link from "next/link";
 import Remark from "./Remark";
 import EnergyShiftSimSwitchChart from "./TariffHoppingChart";
-import TrafficHoppingToolSelector from "./TrafficHoppingToolSelector";
+import TariffHoppingToolSelector from "./TariffHoppingToolSelector";
 
 export type ErrorType = Record<string, string>;
 
@@ -125,6 +126,7 @@ const TariffHoppingToolContainer = () => {
   return (
     <div className="flex flex-col justify-between gap-4">
       <div>
+        Calculation based on your actual meter readings over the past year.
         Inclusive of standing charge & VAT.
         <Remark>
           [BEST for Octopus users with both import and export tariffs to take
@@ -142,7 +144,23 @@ const TariffHoppingToolContainer = () => {
         </Remark>
       </div>
       <div className="flex flex-col gap-2">
-        <TrafficHoppingToolSelector
+        <div className="text-sm border-b border-t border-dotted border-theme-800 p-1 flex flex-col md:flex-row gap-x-6">
+          {value.currentETariff && (
+            <span className="text-accentBlue-400 ">
+              Current Import Tariff:{" "}
+              <strong>{getTariffName(value.currentETariff)}</strong>{" "}
+              <span className="text-[10px]">({value.currentETariff})</span>
+            </span>
+          )}
+          {value.currentEETariff && (
+            <span className="text-orange-400">
+              Current Export Tariff:{" "}
+              <strong>{getTariffName(value.currentEETariff)}</strong>{" "}
+              <span className="text-[10px]">({value.currentEETariff})</span>
+            </span>
+          )}
+        </div>
+        <TariffHoppingToolSelector
           importTariff={importTariff}
           importTariffs={importTariffs}
           setImportTariff={setImportTariff}
@@ -153,7 +171,7 @@ const TariffHoppingToolContainer = () => {
           label="Set 1"
           isExporting={isExporting}
         />
-        <TrafficHoppingToolSelector
+        <TariffHoppingToolSelector
           importTariff={importTariff2}
           importTariffs={importTariffs}
           setImportTariff={setImportTariff2}

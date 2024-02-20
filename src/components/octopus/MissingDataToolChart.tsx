@@ -8,6 +8,8 @@ import {
   scaleLinear,
   axisBottom,
   axisTop,
+  interpolateRgb,
+  interpolateRgbBasis,
 } from "d3";
 import {
   PropsWithChildren,
@@ -90,16 +92,15 @@ const MissingDataToolChart = ({
     const dataExtent = extent(filteredData, (d) => d.consumption);
     const dataMin = dataExtent[0]!;
     const dataMax = dataExtent[1]!;
-    const colorScale = hiViz
-      ? scaleSequential(interpolateRdYlGn).domain([dataMax, dataMin])
-      : scaleSequential(interpolateRdYlGn).domain([dataMax, dataMin]);
-
+    const colorScale = scaleSequential(
+      interpolateRgbBasis(["#910000", "#a35400", "#b3edb2"])
+    ).domain([dataMax, dataMin]);
     const svg = select(svgRef.current)
       .attr("width", width)
       .attr("height", height);
     const chartGroup = svg
       .select("g#chart")
-      .attr("transform", `translate(0,${cellLength * 1.5})`)
+      .attr("transform", `translate(0,${cellLength * 4.5})`)
       .selectAll("g.day")
       .data(groupedData)
       .join(
@@ -164,7 +165,7 @@ const MissingDataToolChart = ({
       .range([0, 100]);
     const legendAxis = axisTop(legendScale)
       .tickValues([dataMin, dataMax])
-      .tickPadding(10)
+      .tickPadding(6)
       .tickSize(10);
 
     if (filteredData.length > 0)
@@ -197,7 +198,7 @@ const MissingDataToolChart = ({
   if (!data) return <Loading />;
 
   return (
-    <div className="flex w-full items-end flex-wrap-reverse gap-y-4">
+    <div className="flex w-full items-end flex-wrap-reverse gap-y-4 mb-4">
       <div className="flex flex-col flex-1">
         <div className="text-accentPink-700 text-2xl flex">{children}</div>
         <div
@@ -207,9 +208,9 @@ const MissingDataToolChart = ({
           <svg ref={svgRef}>
             <defs>
               <linearGradient id="legendGradient">
-                <stop offset="0%" stopColor="#006837" />
-                <stop offset="50%" stopColor="#fcf4ab" />
-                <stop offset="100%" stopColor="#a50026" />
+                <stop offset="0%" stopColor="#a1cfa2" />
+                <stop offset="50%" stopColor="#b8742c" />
+                <stop offset="100%" stopColor="#910000" />
               </linearGradient>
               <pattern
                 id="diagonalHatch"
@@ -226,7 +227,7 @@ const MissingDataToolChart = ({
               </pattern>
             </defs>
             <g id="chart" />
-            <g transform={` translate(0,${cellLength})`}>
+            <g transform={` translate(0,${cellLength * 4})`}>
               <text fill="#8daef0" x={cellLength * 2} y={12} fontSize={12}>
                 00:00
               </text>
@@ -249,7 +250,7 @@ const MissingDataToolChart = ({
                 24:00
               </text>
             </g>
-            <g transform={` translate(0,${height - cellLength * 1.5})`}>
+            <g transform={` translate(0,${cellLength * 1.5})`}>
               <rect
                 width={cellLength}
                 height={cellLength}
@@ -263,7 +264,7 @@ const MissingDataToolChart = ({
                 <rect
                   width={cellLength}
                   height={cellLength}
-                  stroke="#002453"
+                  stroke="#22426b"
                   fill="#000433"
                 />
                 <text fill="white" x={cellLength * 1.5} y={12} fontSize={12}>
@@ -272,17 +273,15 @@ const MissingDataToolChart = ({
               </g>
             </g>
             <g
-              transform={` translate(${cellLength * 14},${
-                height - cellLength * 0.5
-              })`}
+              transform={` translate(${cellLength * 14},${cellLength * 3})`}
               className="legend"
             >
               <text
                 fill="white"
                 x={cellLength * 1.5}
                 y={12}
-                fontSize={12}
-                transform="translate(103,-32)"
+                fontSize={10}
+                transform="translate(100,-28)"
               >
                 {type === "G" ? `m` : "kWh"}
                 {type === "G" && (

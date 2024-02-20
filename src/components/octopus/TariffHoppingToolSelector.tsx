@@ -3,6 +3,7 @@ import { Dispatch, SetStateAction } from "react";
 import { SelectItem } from "../ui/select";
 import EnergyShiftSimTariffSelector from "./EnergyShiftSimTariffSelector";
 import { BsLightningChargeFill } from "react-icons/bs";
+import { getTariffName } from "@/utils/helpers";
 
 interface ITrafficHoppingToolSelector {
   importTariff: string;
@@ -55,7 +56,8 @@ const TrafficHoppingToolSelector = ({
         >
           {importTariffs.map(({ tariff }) => (
             <SelectItem key={tariff} value={tariff}>
-              {tariff}
+              {getTariffName(tariff)}{" "}
+              <span className="text-[10px]">({tariff})</span>
             </SelectItem>
           ))}
         </EnergyShiftSimTariffSelector>
@@ -70,7 +72,8 @@ const TrafficHoppingToolSelector = ({
           >
             {exportTariffs.flatMap(({ tariff }) => [
               <SelectItem key={tariff} value={tariff}>
-                {tariff}
+                {getTariffName(tariff)}{" "}
+                <span className="text-[10px]">({tariff})</span>
               </SelectItem>,
             ])}
           </EnergyShiftSimTariffSelector>

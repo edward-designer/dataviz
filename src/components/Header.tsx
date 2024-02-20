@@ -6,6 +6,13 @@ import UserInfo from "./octopus/UserInfo";
 
 import { IoIosContrast } from "react-icons/io";
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
 import Menu from "./octopus/Menu";
 import Link from "next/link";
 import { HiVizContext } from "@/context/hiViz";
@@ -82,20 +89,41 @@ const Header = ({
           </svg>
         </Link>
         <div className="flex items-center gap-4">
-          <button
-            onClick={() => setHiViz(!hiViz)}
-            className={`flex flex-col items-center justify-center ${
-              hiViz ? "text-yellow-300" : "text-slate-300"
-            }`}
-          >
-            <IoIosContrast
-              aria-hidden={true}
-              className="w-8 h-8 min-w-8 min-h-8 pb-1"
-            />
-            <span className="text-[8px] leading-tight">Hi Contrast</span>
-            <span className="sr-only">Toggle High Contrast Mode</span>
-          </button>
-          <UserInfo />
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={() => setHiViz(!hiViz)}
+                  className={`flex flex-col items-center justify-center ${
+                    hiViz ? "text-yellow-300" : "text-slate-300"
+                  }`}
+                >
+                  <IoIosContrast
+                    aria-hidden={true}
+                    className="w-8 h-8 min-w-8 min-h-8 pb-1"
+                  />
+                  <span className="text-[8px] leading-tight">Hi Contrast</span>
+                  <span className="sr-only">Toggle High Contrast Mode</span>
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>
+                  Switch to{" "}
+                  {hiViz
+                    ? "normal color scheme"
+                    : "high contrast mode for color-blind / low-vision users"}
+                </p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <UserInfo />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Enter your postcode for correct tariffs</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           <Menu />
         </div>
       </header>
