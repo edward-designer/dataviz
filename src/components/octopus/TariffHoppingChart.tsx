@@ -314,7 +314,10 @@ const TariffHoppingChart = ({
         .classed("xAxisText", true)
         .classed("axisText", true)
         .text(`Data Period: ${period}`)
-        .attr("transform", `translate(${widgetWidth / 2} ${leadingSize * 2.5})`)
+        .attr(
+          "transform",
+          `translate(${widgetWidth / 2 - padding.left} ${leadingSize * 2.5})`
+        )
         .attr("x", 0)
         .attr("y", 0)
         .attr("text-anchor", "center")
