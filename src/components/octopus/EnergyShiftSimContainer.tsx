@@ -457,8 +457,10 @@ const EnergyShiftSimContainer = () => {
         )}
         <div className="flex items-center gap-1 text-sm">
           <h3 className="font-bold text-slate-500 mr-2">Price Reference:</h3>
-          <span className="w-4 h-2 bg-lime-400 inline-block"></span>Best
-          <span className="w-4 h-2 bg-red-800 inline-block ml-3"></span>Worst
+          <span className="w-5 h-0 border-t-4 border-lime-400 inline-block"></span>
+          Best
+          <span className="w-5 h-o border-t-4 border-dashed border-red-800 inline-block ml-3"></span>
+          Worst
         </div>
       </div>
       <div className="flex flex-col-reverse md:flex-row gap-3">
