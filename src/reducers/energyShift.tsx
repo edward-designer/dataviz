@@ -1,3 +1,5 @@
+import { Battery } from "lucide-react";
+
 export type TEnergyShiftReducerAction =
   | {
       type: "Update A Single Value";
@@ -13,7 +15,7 @@ export type TEnergyShiftReducerAction =
     }
   | {
       type: "Reset";
-      payload: number[] | undefined;
+      payload?: number[] | undefined;
     }
   | {
       type: "Remove All Peak Use";
@@ -33,7 +35,17 @@ export type TEnergyShiftReducerAction =
     }
   | {
       type: "Add Solar";
-      payload: { addSolar: boolean; totalCapacity: number };
+      payload: {
+        addSolar: boolean;
+        batteryLevel: number[];
+        totalCapacity?: number;
+      };
+    }
+  | {
+      type: "Remove Battery";
+      payload: {
+        batteryLevel: number[];
+      };
     };
 
 export const energyShiftReducer = (
@@ -57,7 +69,6 @@ export const energyShiftReducer = (
     }
     case "Update A Single Value With Battery": {
       const nextState = [...state];
-      console.log( payload.from[payload.index])
       nextState[payload.index] =
         nextState[payload.index] +
         payload.value / 1000 -
@@ -79,12 +90,17 @@ export const energyShiftReducer = (
           0
         );
         const ratio = payload.totalCapacity / defaultProfileTotal / 1000;
-        return defaultProfile.map((value) => value * ratio);
+        return defaultProfile.map(
+          (value, i) => value * ratio + payload.batteryLevel[i]
+        );
       }
-      return [
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      ];
+      return [...payload.batteryLevel];
+    }
+    case "Remove Battery": {
+      const nextState = [...state].map(
+        (value, i) => value - payload.batteryLevel[i]
+      );
+      return nextState;
     }
     case "Remove All Peak Use": {
       if (payload) return state.map((data, i) => (payload[i] ? 0 : data));

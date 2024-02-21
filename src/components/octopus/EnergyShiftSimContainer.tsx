@@ -49,6 +49,7 @@ import { BsLightningChargeFill } from "react-icons/bs";
 import EnergyShiftSimBatteryState from "./EnergyShiftSimBatteryState";
 import { GiBattery75 } from "react-icons/gi";
 import { FaChartLine } from "react-icons/fa6";
+import { RiBattery2ChargeFill } from "react-icons/ri";
 
 export type ErrorType = Record<string, string>;
 
@@ -211,12 +212,6 @@ const EnergyShiftSimContainer = () => {
         value.configSolar.hasSolar ||
         isExporting
     );
-    if (
-      value.configBattery.hasBattery &&
-      value.configSolar.hasSolar &&
-      !isExporting
-    )
-      return;
   }, [isExporting, value.configBattery.hasBattery, value.configSolar.hasSolar]);
 
   useEffect(() => {
@@ -227,6 +222,7 @@ const EnergyShiftSimContainer = () => {
         totalCapacity: Math.round(
           (value.configSolar.annualProduction * 1000) / 365
         ),
+        batteryLevel: batteryExport,
       },
     });
   }, [
@@ -235,6 +231,29 @@ const EnergyShiftSimContainer = () => {
     value.configSolar.annualProduction,
     value.configSolar.hasSolar,
   ]);
+
+  useEffect(() => {
+    if (!value.configBattery.hasBattery) {
+      adjustedImportDispatch({
+        type: "Remove Battery",
+        payload: {
+          batteryLevel: batteryImport,
+        },
+      });
+      adjustedExportDispatch({
+        type: "Remove Battery",
+        payload: {
+          batteryLevel: batteryExport,
+        },
+      });
+      batteryImportDispatch({
+        type: "Reset",
+      });
+      batteryExportDispatch({
+        type: "Reset",
+      });
+    }
+  }, [period.from, period.to, value.configBattery.hasBattery]);
 
   /* handlers */
   const valueCommitHandler = (index: number) => (value: number[]) => {
@@ -382,12 +401,6 @@ const EnergyShiftSimContainer = () => {
             isExport={true}
           />
         )}
-        {addedBattery && (
-          <EnergyShiftSimBatteryState
-            batteryImport={batteryImport}
-            batteryExport={batteryExport}
-          />
-        )}
         {!isExporting && (
           <div className="flex flex-row gap-2 items-center">
             <FormSolar open={solarFormOpen} setOpen={setSolarFormOpen} />
@@ -444,12 +457,12 @@ const EnergyShiftSimContainer = () => {
         )}
         <div className="flex items-center gap-1 text-sm">
           <h3 className="font-bold text-slate-500 mr-2">Price Reference:</h3>
-          <span className="w-4 h-2 bg-lime-500 inline-block"></span>Best
-          <span className="w-4 h-2 bg-red-700 inline-block ml-3"></span>Worst
+          <span className="w-4 h-2 bg-lime-400 inline-block"></span>Best
+          <span className="w-4 h-2 bg-red-800 inline-block ml-3"></span>Worst
         </div>
       </div>
       <div className="flex flex-col-reverse md:flex-row gap-3">
-        <div className="basis-1 md:basis-3/4 border border-accentPink-950 rounded-2xl mt-4 pl-7 pr-5 pt-6 pb-7 gap-y-6">
+        <div className="basis-1 md:basis-3/4 border border-accentPink-950 rounded-2xl pl-7 pr-5 pt-6 pb-7 gap-y-6">
           <div className="text-accentPink-500 flex items-center gap-2 text-2xl mb-4">
             <FaChartLine className="w-6 h-6" />
             Overall Energy Import/Export
@@ -539,13 +552,22 @@ const EnergyShiftSimContainer = () => {
           </div>
           {addedBattery && (
             <div className="flex flex-col border border-theme-500 rounded-lg mt-4 p-4 gap-y-4 bg-black/30">
-              <div className="text-white flex items-center gap-2 text-lg">
-                <GiBattery75 className="w-6 h-6" />
+              <div className="text-white flex items-center gap-1 text-base">
+                <RiBattery2ChargeFill className="w-4 h-4" />
                 Battery Charging/Discharging Control{" "}
                 <span className="text-xs">
-                  (already reflected in the chart above)
+                  (included in the overall energy import/export above)
                 </span>
               </div>
+
+              {addedBattery && (
+                <div className="flex bg-theme-900/50 flex-grow p-2">
+                  <EnergyShiftSimBatteryState
+                    batteryImport={batteryImport}
+                    batteryExport={batteryExport}
+                  />
+                </div>
+              )}
               <div className="grid grid-cols-[repeat(8,_minmax(0,_1fr))] sm:grid-cols-[repeat(12,_minmax(0,_1fr))] xl:grid-cols-[repeat(16,_minmax(0,_1fr))] 2xl:grid-cols-[repeat(24,_minmax(0,_1fr))] flex-wrap gap-y-10">
                 {batteryImport.map((data, i) => (
                   <div

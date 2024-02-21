@@ -104,17 +104,19 @@ const FormSolar = ({ open, setOpen }: IFormSolar) => {
           </div>
           {hasSolar && (
             <div className="flex flex-col p-4 gap-2  bg-slate-900 rounded-2xl">
-              <InfoInput
-                label="Inverter Charge/Discharge Rate (in kW)"
-                type="number"
-                placeHolder="Please enter your charge/discharge rate"
-                error={error}
-                value={rate}
-                setValue={setRate}
-                min={0}
-                pattern="^\d+(?:\.\d{1,2})?$"
-                step={0.01}
-              />
+              {false && (
+                <InfoInput
+                  label="Inverter Charge/Discharge Rate (in kW)"
+                  type="number"
+                  placeHolder="Please enter your charge/discharge rate"
+                  error={error}
+                  value={rate}
+                  setValue={setRate}
+                  min={0}
+                  pattern="^\d+(?:\.\d{1,2})?$"
+                  step={0.01}
+                />
+              )}
               <InfoInput
                 label="Annual Power Generation (in kWh) "
                 type="number"

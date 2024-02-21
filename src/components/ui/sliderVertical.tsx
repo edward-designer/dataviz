@@ -18,7 +18,7 @@ const Slider = React.forwardRef<
     avgPrice?: number;
     price?: number;
     category: string;
-    indicator: "good" | "bad" | ""
+    indicator: "good" | "bad" | "";
   }
 >(
   (
@@ -75,10 +75,10 @@ const Slider = React.forwardRef<
           "relative flex touch-none select-none items-center flex-col w-5 h-[130px] border-transparent",
           className,
           isExport ? "border-t-4" : "border-b-4",
-          isExport && highPricedPeriod ? "border-t-4 border-lime-500" : "",
-          isExport && lowPricedPeriod ? "border-t-4 border-red-700" : "",
-          !isExport && highPricedPeriod ? "border-b-4 border-red-700" : "",
-          !isExport && lowPricedPeriod ? "border-b-4 border-lime-500" : ""
+          isExport && highPricedPeriod ? "border-t-4 border-lime-400" : "",
+          isExport && lowPricedPeriod ? "border-t-4 border-red-800" : "",
+          !isExport && highPricedPeriod ? "border-b-4 border-red-800" : "",
+          !isExport && lowPricedPeriod ? "border-b-4 border-lime-400" : ""
         )}
         value={[value]}
         defaultValue={[value]}

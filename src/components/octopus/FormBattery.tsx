@@ -119,29 +119,33 @@ const FormBattery = ({ open, setOpen }: IFormBattery) => {
                 setValue={setBatteryCapacity}
                 min={0}
               />
-              <InfoInput
-                label="Rount-trip Efficiency (in %)"
-                type="number"
-                placeHolder="Please enter your rount-trip efficiency"
-                max={100}
-                min={0}
-                error={error}
-                value={efficiency}
-                setValue={setEfficiency}
-                pattern="^\d+(?:\.\d{1,2})?$"
-                step={0.01}
-              />
-              <InfoInput
-                label="Inverter Charge/Discharge Rate (in kW)"
-                type="number"
-                placeHolder="Please enter your charge/discharge rate"
-                error={error}
-                value={rate}
-                setValue={setRate}
-                min={0}
-                pattern="^\d+(?:\.\d{1,2})?$"
-                step={0.01}
-              />
+              {false && (
+                <>
+                  <InfoInput
+                    label="Rount-trip Efficiency (in %)"
+                    type="number"
+                    placeHolder="Please enter your rount-trip efficiency"
+                    max={100}
+                    min={0}
+                    error={error}
+                    value={efficiency}
+                    setValue={setEfficiency}
+                    pattern="^\d+(?:\.\d{1,2})?$"
+                    step={0.01}
+                  />
+                  <InfoInput
+                    label="Inverter Charge/Discharge Rate (in kW)"
+                    type="number"
+                    placeHolder="Please enter your charge/discharge rate"
+                    error={error}
+                    value={rate}
+                    setValue={setRate}
+                    min={0}
+                    pattern="^\d+(?:\.\d{1,2})?$"
+                    step={0.01}
+                  />
+                </>
+              )}
             </div>
           )}
 

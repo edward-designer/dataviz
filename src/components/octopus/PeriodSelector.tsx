@@ -65,13 +65,16 @@ const PeriodSelector = ({
           Smart Meter Data Period
           <Remark variant="heading">
             Selecting a longer period will provide more accurate comparisons.
-            The figures presented here are an approximation of your annual
-            energy costs. If you have not been with Octopus for over a year, the
-            costs here will be proportionally expanded to one full year.
-            However, this would make the costs less reflective of the year-round
-            conditions. Approximations and assumptions are used in the
-            calculations. The actual costs may vary a lot depending on the
-            prevailing unit rates and change of energy usage patterns.
+            The figures presented here are an approximation of your energy
+            costs. Picking particular days of week (if available) just affect
+            the daily average for that period but not the total number of days
+            to be counted for the overall costs/earning. If you have not been
+            with Octopus for over a year, the costs here will be proportionally
+            expanded to one full year. However, this would make the costs less
+            reflective of the year-round conditions. Approximations and
+            assumptions are used in the calculations. The actual costs may vary
+            a lot depending on the prevailing unit rates and change of energy
+            usage patterns.
           </Remark>
         </div>
       </div>

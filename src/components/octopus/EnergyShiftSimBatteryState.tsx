@@ -19,16 +19,25 @@ const EnergyShiftSimBatteryState = ({
   const maxCapacity = value.configBattery.capacity;
 
   let batteryPower = 0;
-  let minBattery = 0;
+  let batteryPowerByTimeArray: number[] = [];
 
-  let i = 0;
+  let errorInterval = 0;
+  let interval = 0;
+
   for (const value of batteryImport) {
-    batteryPower += value - batteryExport[i];
-    if (batteryPower > maxCapacity) break;
-    if (batteryPower < 0) break;
-    i++;
+    const batteryLevel =
+      (batteryPowerByTimeArray[interval - 1] ?? 0) +
+      batteryImport[interval] -
+      batteryExport[interval];
+    batteryPowerByTimeArray.push(batteryLevel);
+    if (batteryPower < maxCapacity && batteryPower >= 0) {
+      batteryPower += value - batteryExport[errorInterval];
+      errorInterval++;
+    }
+    interval++;
   }
 
+  const lowestBatteryLevel = Math.min(...batteryPowerByTimeArray);
   const batteryNormal = batteryPower <= maxCapacity && batteryPower >= 0;
 
   return (
@@ -39,14 +48,18 @@ const EnergyShiftSimBatteryState = ({
         className={`flex flex-col md:flex-row flex-wrap justify-between items-start md:block bg-theme-900/30 
           ${batteryNormal ? "text-[#85f9ad]" : "text-[#f985c5]"}`}
       >
-        <Badge label="Battery Power" variant="item" />
+        <Badge label="Battery Level" variant="item" />
         <div className="font-digit text:3xl md:text-4xl flex flex-col items-end justify-start">
-          {Math.round(batteryPower)}
+          {Math.round(
+            lowestBatteryLevel < 0 ? lowestBatteryLevel : batteryPower
+          )}
         </div>
         <div className="text-xs text-[#f985c5] h-4 -mt-1">
           {batteryNormal
             ? " "
-            : `error @ ${Math.floor(i / 2)}:${i % 2 === 1 ? "30" : "00"}`}
+            : `error from ${Math.floor((errorInterval - 1) / 2)}:${
+                (errorInterval - 1) % 2 === 1 ? "30" : "00"
+              }`}
         </div>
       </div>
       <span className="text-6xl text-center self-start">/</span>
