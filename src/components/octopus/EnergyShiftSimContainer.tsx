@@ -47,6 +47,8 @@ import EnergyShiftSimTariffWithTotal from "./EnergyShiftSimTariffWithTotal";
 import SimpleLoading from "./SimpleLoading";
 import { BsLightningChargeFill } from "react-icons/bs";
 import EnergyShiftSimBatteryState from "./EnergyShiftSimBatteryState";
+import { GiBattery75 } from "react-icons/gi";
+import { FaChartLine } from "react-icons/fa6";
 
 export type ErrorType = Record<string, string>;
 
@@ -373,7 +375,9 @@ const EnergyShiftSimContainer = () => {
             total={
               isExporting
                 ? totalExport
-                : Math.round((value.configSolar.annualProduction * 1000) / 365)
+                : value.configSolar.hasSolar
+                ? Math.round((value.configSolar.annualProduction * 1000) / 365)
+                : totalExport
             }
             isExport={true}
           />
@@ -445,8 +449,12 @@ const EnergyShiftSimContainer = () => {
         </div>
       </div>
       <div className="flex flex-col-reverse md:flex-row gap-3">
-        <div className="basis-1 md:basis-3/4 ">
-          <div className="grid grid-cols-[repeat(8,_minmax(0,_1fr))] sm:grid-cols-[repeat(12,_minmax(0,_1fr))] xl:grid-cols-[repeat(16,_minmax(0,_1fr))] 2xl:grid-cols-[repeat(24,_minmax(0,_1fr))] flex-wrap gap-y-10 border border-accentPink-950 rounded-2xl pl-7 pr-5 pt-8 pb-14">
+        <div className="basis-1 md:basis-3/4 border border-accentPink-950 rounded-2xl mt-4 pl-7 pr-5 pt-6 pb-7 gap-y-6">
+          <div className="text-accentPink-500 flex items-center gap-2 text-2xl mb-4">
+            <FaChartLine className="w-6 h-6" />
+            Overall Energy Import/Export
+          </div>
+          <div className="grid grid-cols-[repeat(8,_minmax(0,_1fr))] sm:grid-cols-[repeat(12,_minmax(0,_1fr))] xl:grid-cols-[repeat(16,_minmax(0,_1fr))] 2xl:grid-cols-[repeat(24,_minmax(0,_1fr))] flex-wrap gap-y-10">
             {adjustedImport.map((data, i) => (
               <div
                 className="flex flex-col justify-center items-center gap-y-8"
@@ -529,10 +537,16 @@ const EnergyShiftSimContainer = () => {
               adjustedExportDispatch={adjustedExportDispatch}
             />
           </div>
-          <div>Battery Control (included in the chart above)</div>
-          <div className="grid grid-cols-[repeat(8,_minmax(0,_1fr))] sm:grid-cols-[repeat(12,_minmax(0,_1fr))] xl:grid-cols-[repeat(16,_minmax(0,_1fr))] 2xl:grid-cols-[repeat(24,_minmax(0,_1fr))] flex-wrap gap-y-10 border border-accentPink-950 rounded-2xl pl-7 pr-5 pt-8 pb-14">
-            {addedBattery && batteryImport && (
-              <>
+          {addedBattery && (
+            <div className="flex flex-col border border-theme-500 rounded-lg mt-4 p-4 gap-y-4 bg-black/30">
+              <div className="text-white flex items-center gap-2 text-lg">
+                <GiBattery75 className="w-6 h-6" />
+                Battery Charging/Discharging Control{" "}
+                <span className="text-xs">
+                  (already reflected in the chart above)
+                </span>
+              </div>
+              <div className="grid grid-cols-[repeat(8,_minmax(0,_1fr))] sm:grid-cols-[repeat(12,_minmax(0,_1fr))] xl:grid-cols-[repeat(16,_minmax(0,_1fr))] 2xl:grid-cols-[repeat(24,_minmax(0,_1fr))] flex-wrap gap-y-10">
                 {batteryImport.map((data, i) => (
                   <div
                     className="flex flex-col justify-center items-center gap-y-8"
@@ -600,21 +614,9 @@ const EnergyShiftSimContainer = () => {
                     />
                   </div>
                 ))}
-                <EnergyShiftSimAction
-                  hasExport={hasExport}
-                  importTariff={importTariff}
-                  avgImportPrice={avgImportPrice}
-                  dataByTimeImportTariff={dataByTimeImportTariff}
-                  dataByTimeImport={dataByTimeImport}
-                  dataByTimeExport={dataByTimeExport}
-                  adjustedImport={adjustedImport}
-                  adjustedExport={adjustedExport}
-                  adjustedImportDispatch={adjustedImportDispatch}
-                  adjustedExportDispatch={adjustedExportDispatch}
-                />
-              </>
-            )}
-          </div>
+              </div>
+            </div>
+          )}
         </div>
         <div className="flex flex-col flex-grow basis-1 md:basis-1/4 border border-accentPink-950 rounded-2xl items-between justity-between">
           <div>
