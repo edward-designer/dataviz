@@ -8,6 +8,7 @@ import Badge from "./Badge";
 import { LiaInfoCircleSolid } from "react-icons/lia";
 import { MdOutlineInstallMobile } from "react-icons/md";
 import { MdExpandCircleDown } from "react-icons/md";
+import { FaOctopusDeploy } from "react-icons/fa";
 
 const Menu = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -346,6 +347,16 @@ const Menu = () => {
               }`}
             >
               <LiaInfoCircleSolid /> About
+            </Link>
+            <Link
+              href="/whyOctopus"
+              className={`flex items-center gap-1 my-4 text-base  ${
+                pathname === "/whyOctopus"
+                  ? "cursor-default text-accentBlue-900"
+                  : "hover:text-accentPink-500"
+              }`}
+            >
+              <FaOctopusDeploy /> Switch to Octopus Energy
             </Link>
           </div>
         </nav>

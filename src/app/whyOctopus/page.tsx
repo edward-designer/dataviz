@@ -65,6 +65,7 @@ const WhyOctopus = () => {
           <a
             className="underline text-accentPink-500 hover:no-underline hover:text-accentBlue-500"
             href="https://share.octopus.energy/sky-heron-134"
+            target="_blank"
           >
             our exclusive referral link
           </a>
