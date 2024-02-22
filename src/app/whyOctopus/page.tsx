@@ -150,9 +150,9 @@ const WhyOctopus = () => {
         energy, Intelligent Octopus represents a new era of home energy
         solutions.
       </p>
-      <h4>
+      <h3 className="relative text-theme-300 font-display text-lg font-semibold pl-6 before:block before:w-2 before:h-6 before:bg-accentPink-500 before:top-1 before:left-0 before:absolute before:-skew-x-12">
         How the Tracker and Agile Tariff Keeps You Ahead in the Energy Market
-      </h4>
+      </h3>
       <p>
         The innovative <Link href="/tracker">Tracker</Link> and{" "}
         <Link href="/agile">Agile</Link> tariffs offer a dynamic way to manage
@@ -164,17 +164,40 @@ const WhyOctopus = () => {
         energy use.
       </p>
       <h3 className="relative text-theme-300 font-display text-lg font-semibold pl-6 before:block before:w-2 before:h-6 before:bg-accentPink-500 before:top-1 before:left-0 before:absolute before:-skew-x-12">
-        Solar PV and Battery Storage: The Octopus Go / Intelligent Go and Flux /
-        Intelligent Flux Tariffs
+        Solar PV and Battery Storage: Octopus Flux and Intelligent Flux Tariffs
       </h3>
       <p>
         With solar panels and battery storage installed, customers can harness
         solar energy, reducing reliance on the grid and decreasing energy bills.
-        Octopus Energy&apos;s Go and Flux tariffs are designed to maximize the
-        benefits of solar power, making renewable energy more accessible and
-        affordable for homeowners. Octopus Energy also buys back your excessive
-        generated or stored energy from you with very favorable rates during
-        peak hours.
+        Octopus Energy&apos;s <Link href="/flux">Flux</Link> and
+        <Link href="/iflux">intelligent Flux</Link> tariffs are designed to
+        maximize the benefits of solar power, making renewable energy more
+        accessible and affordable for homeowners. Octopus Energy also buys back
+        your excessive generated or stored energy from you with very favorable
+        rates during peak hours.
+      </p>
+      <h3 className="relative text-theme-300 font-display text-lg font-semibold pl-6 before:block before:w-2 before:h-6 before:bg-accentPink-500 before:top-1 before:left-0 before:absolute before:-skew-x-12">
+        Electric Vehicle: Octopus Go and Intelligent Go Tariffs
+      </h3>
+      <p>
+        For electric vehicle owners, Octopus Energy offers tailored solutions
+        that make charging at home both easy and cost-effective. With the
+        Octopus tariff designed specifically for electric vehicle charging, you
+        can take advantage of cheaper electricity rates during off-peak hours,
+        making EV ownership more affordable and convenient than ever. Take a
+        look at prices of the <Link href="/go">Go</Link> and{" "}
+        <Link href="/igo">intelligent Go</Link> tariffs and you will know what I
+        mean.
+      </p>
+      <h3 className="relative text-theme-300 font-display text-lg font-semibold pl-6 before:block before:w-2 before:h-6 before:bg-accentPink-500 before:top-1 before:left-0 before:absolute before:-skew-x-12">
+        Heat Pump / Immersion Heater: Octopus Cosy Tariff
+      </h3>
+      <p>
+        The <Link href="/cosy">Cosy tariff</Link> allows users to heat up their
+        houses with 2 cosy periods of super cheap rates between 0400 - 0700 and
+        1300 - 1600 every day, which is 40% cheaper than the Octopus Flexible
+        rate! That means you can schedule your heat pump or immersion heater to
+        only run during the cheap periods and get instant savings!
       </p>
       <LottieIcon icon="save" />
       <h2 className="font-display text-2xl text-accentPink-500 font-semibold">
@@ -247,16 +270,6 @@ const WhyOctopus = () => {
         is designed to be seamless and rewarding.&nbsp;It&apos;s not just an
         energy switch; it&apos;s a lifestyle change towards a more sustainable
         future.
-      </p>
-      <h3 className="relative text-theme-300 font-display text-lg font-semibold pl-6 before:block before:w-2 before:h-6 before:bg-accentPink-500 before:top-1 before:left-0 before:absolute before:-skew-x-12">
-        Supporting Electric Vehicle Owners with Intelligent Solutions
-      </h3>
-      <p>
-        For electric vehicle owners, Octopus Energy offers tailored solutions
-        that make charging at home both easy and cost-effective. With the
-        Octopus tariff designed specifically for electric vehicle charging, you
-        can take advantage of cheaper electricity rates during off-peak hours,
-        making EV ownership more affordable and convenient than ever.
       </p>
       <h3 className="relative text-theme-300 font-display text-lg font-semibold pl-6 before:block before:w-2 before:h-6 before:bg-accentPink-500 before:top-1 before:left-0 before:absolute before:-skew-x-12">
         Community: How Octopus Engages Customers
