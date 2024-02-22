@@ -149,6 +149,9 @@ const EnergyShiftSimContainer = () => {
   const maxExport = max(adjustedExport);
   const absoluteMax = Math.max(maxImport ?? 0, maxExport ?? 0);
 
+  const fromDate = period.from.toISOString();
+  const toDate = period.to.toISOString();
+
   const numOfDays = daysDiff(period.from, period.to);
   const calculationDuration =
     capitalize(period.duration) === "Custom"
@@ -192,19 +195,20 @@ const EnergyShiftSimContainer = () => {
     if (dataByTimeImport) {
       adjustedImportDispatch({
         type: "Update All Values",
-        payload: dataByTimeImport,
+        payload: { meter: dataByTimeImport, battery: batteryImport },
       });
     }
-  }, [dataByTimeImport]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dataByTimeImport, fromDate, toDate]);
 
   useLayoutEffect(() => {
     if (dataByTimeExport) {
       adjustedExportDispatch({
         type: "Update All Values",
-        payload: dataByTimeExport,
+        payload: { meter: dataByTimeExport },
       });
     }
-  }, [dataByTimeExport]);
+  }, [dataByTimeExport, fromDate, toDate]);
 
   useEffect(() => {
     setHasExport(
@@ -225,6 +229,7 @@ const EnergyShiftSimContainer = () => {
         batteryLevel: batteryExport,
       },
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     period.from,
     period.to,
@@ -253,7 +258,8 @@ const EnergyShiftSimContainer = () => {
         type: "Reset",
       });
     }
-  }, [period.from, period.to, value.configBattery.hasBattery]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value.configBattery.hasBattery]);
 
   /* handlers */
   const valueCommitHandler = (index: number) => (value: number[]) => {

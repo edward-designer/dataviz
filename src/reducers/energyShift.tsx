@@ -11,7 +11,7 @@ export type TEnergyShiftReducerAction =
     }
   | {
       type: "Update All Values";
-      payload: number[];
+      payload: { meter: number[]; battery?: number[] };
     }
   | {
       type: "Reset";
@@ -76,7 +76,13 @@ export const energyShiftReducer = (
       return nextState;
     }
     case "Update All Values": {
-      return [...payload];
+      console.log(payload.battery);
+      if (payload.battery !== undefined) {
+        return payload.meter.map(
+          (value, i) => value + (payload.battery?.[i] ?? 0)
+        );
+      }
+      return [...payload.meter];
     }
     case "Add Solar": {
       if (payload.addSolar && payload.totalCapacity) {
