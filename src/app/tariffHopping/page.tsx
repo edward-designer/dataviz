@@ -4,7 +4,7 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Get the Best Time to Hop Octopus Smart Tariffs | Octoprice",
   description:
-    "The missing tool to help you tariff hopping between various Octopus smart tariffs during the year helps you to save even more!",
+    "The missing tool to help you tariff hopping between various Octopus smart tariffs (in particular Flux) during the year!",
   keywords: [
     "Octopus Energy",
     "Compare Tariffs",
@@ -21,10 +21,9 @@ export const metadata: Metadata = {
     canonical: `/tariffHopping`,
   },
   openGraph: {
-    title:
-      "Advanced Energy Shift Simulator to Maximize Electricity Savings | Octoprice",
+    title: "Get the Best Time to Hop Octopus Smart Tariffs | Octoprice",
     description:
-      "Play with this advanced tool to visualize how much money you can save by shifting your energy use pattern.",
+      "The missing tool to help you tariff hopping between various Octopus smart tariffs (in particular Flux) during the year!",
     url: "https://octopriceuk.app/tariffHopping",
     siteName: "Octoprice App",
     images: [
