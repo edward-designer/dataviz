@@ -57,7 +57,7 @@ const ElectricityForecast = ({
   if (isLoading)
     return (
       <div
-        className={`bg-black/80 ${
+        className={`bg-accentBlue-900 ${
           standalone ? "rounded-xl" : "rounded-b-xl"
         } flex items-center justify-end min-h-[40px] p-2`}
       >
@@ -89,9 +89,11 @@ const ElectricityForecast = ({
       return (
         <div
           className={`flex flex-col ${
-            delta < 0 ? "bg-accentPink-950" : "bg-accentBlue-700"
+            delta < 0 ? "bg-accentPink-950" : "bg-accentBlue-900"
           } h-10 w-14 items-center justify-center
-          ${hiViz && delta > 0 ? "text-black" : "text-white"}`}
+          ${
+            hiViz && delta > 0 ? "text-black !bg-accentBlue-600" : "text-white"
+          }`}
         >
           <HiMiniArrowLongRight
             role="img"
@@ -134,13 +136,19 @@ const ElectricityForecast = ({
 
   return (
     <div
-      className={`font-display  ${
+      className={`font-display  
+      ${hiViz ? "bg-accentBlue-700" : "bg-accentBlue-950"}
+      ${
         standalone
           ? "rounded-xl bg-black/20 divide-slate-800 border border-accentPink-950"
-          : "rounded-b-xl bg-accentBlue-700 divide-black/80 border-l border-r border-b border-accentPink-950"
+          : "rounded-b-xl divide-black/80 border-l border-r border-b border-accentPink-950"
       } flex min-h-[30px]  divide-x  items-center justify-center overflow-hidden`}
     >
-      <span className={`flex text-base text-right leading-none ${hiViz? 'text-black':'text-slate-300'}`}>
+      <span
+        className={`flex text-sm text-right leading-none ${
+          hiViz ? "text-black" : "text-slate-300"
+        }`}
+      >
         <span className="">Trend Forecast</span>
         <Remark variant="badge">
           Based on the predicted amonut of wind electricity generation derived
