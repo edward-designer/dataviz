@@ -94,7 +94,7 @@ const GraphQLContainer = () => {
     queryKey: ["testing2"],
     queryFn: async () =>
       await graphQLClient.request(getJwtMutation, {
-        input: { APIKey: "sk_live_4BI03o44WGHDztCW1u0nCx6Z" },
+        input: { APIKey: "" },
       }),
   });
 
