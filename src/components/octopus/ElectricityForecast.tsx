@@ -89,7 +89,7 @@ const ElectricityForecast = ({
       return (
         <div
           className={`flex flex-col ${
-            delta < 0 ? "bg-accentPink-950" : "bg-accentBlue-900"
+            delta < 0 ? "bg-accentPink-950" : "bg-theme-950"
           } h-10 w-14 items-center justify-center
           ${
             hiViz && delta > 0 ? "text-black !bg-accentBlue-600" : "text-white"
@@ -137,11 +137,11 @@ const ElectricityForecast = ({
   return (
     <div
       className={`font-display  
-      ${hiViz ? "bg-accentBlue-700" : "bg-accentBlue-950"}
+      ${hiViz ? "bg-accentBlue-700" : "bg-black/20"}
       ${
         standalone
           ? "rounded-xl bg-black/20 divide-slate-800 border border-accentPink-950"
-          : "rounded-b-xl divide-black/80 border-l border-r border-b border-accentPink-950"
+          : "rounded-b-xl divide-slate-800 border-l border-r border-b border-accentPink-950"
       } flex min-h-[30px]  divide-x  items-center justify-center overflow-hidden`}
     >
       <span
