@@ -57,7 +57,7 @@ const ElectricityForecast = ({
   if (isLoading)
     return (
       <div
-        className={`bg-accentBlue-900 ${
+        className={`bg-theme-950 ${
           standalone ? "rounded-xl" : "rounded-b-xl"
         } flex items-center justify-end min-h-[40px] p-2`}
       >
@@ -66,8 +66,11 @@ const ElectricityForecast = ({
     );
 
   if (!data?.greennessForecast) return;
-
-  const referenceGreennessIndex = data.greennessForecast.at(0)?.greennessScore;
+  const forecastFromTomorrow = data.greennessForecast.filter(
+    (forecast) =>
+      new Date(forecast.validFrom).valueOf() >=
+      new Date(new Date().setDate(new Date().getDate() + 1)).valueOf()
+  );
   const validTo = data.greennessForecast.at(-1)?.validTo;
   const numOfDays = validTo
     ? Math.round(
@@ -77,9 +80,8 @@ const ElectricityForecast = ({
     : 0;
 
   const getTrend = (currentIndex: number) => {
-    const currentScore =
-      data.greennessForecast.at(currentIndex)?.greennessScore;
-    const previousScore = data.greennessForecast.at(
+    const currentScore = forecastFromTomorrow.at(currentIndex)?.greennessScore;
+    const previousScore = forecastFromTomorrow.at(
       currentIndex - 1
     )?.greennessScore;
     if (currentScore && previousScore) {
@@ -119,10 +121,10 @@ const ElectricityForecast = ({
             } than pervious day`}
           />
           <span className="text-xs">
-            {currentIndex === 1
-              ? rtf.format(currentIndex, "day")
+            {currentIndex === 0
+              ? rtf.format(1, "day")
               : new Date(
-                  data.greennessForecast.at(currentIndex)?.validFrom ?? ""
+                  forecastFromTomorrow.at(currentIndex)?.validFrom ?? ""
                 ).toLocaleDateString("en-gb", {
                   day: "2-digit",
                   month: "2-digit",
@@ -156,8 +158,8 @@ const ElectricityForecast = ({
           the less reliable the prediction would be.
         </Remark>
       </span>
-      {Array.from({ length: numOfDays - 1 }).map((_, i) => (
-        <Fragment key={i}>{getTrend(i + 1)}</Fragment>
+      {Array.from({ length: numOfDays }).map((_, i) => (
+        <Fragment key={i}>{getTrend(i)}</Fragment>
       ))}
     </div>
   );
