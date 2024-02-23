@@ -153,7 +153,7 @@ const ElectricityForecast = ({
       >
         <span className="">Trend Forecast</span>
         <Remark variant="badge">
-          Based on the predicted amonut of wind electricity generation derived
+          Based on the predicted amount of wind electricity generation derived
           from weather forecast. Please note that the further away from today,
           the less reliable the prediction would be.
         </Remark>
