@@ -170,7 +170,7 @@ const PricePane = ({
                   {typeof priceChangeTodayVsPriceCap === "number" && (
                     <Comparison
                       change={priceChangeTodayVsPriceCap}
-                      compare="SVT cap"
+                      compare={`SVT cap ${evenRound(Number(caps[type]), 2)}p`}
                     >
                       <Remark variant="badge">
                         The{" "}
@@ -182,7 +182,7 @@ const PricePane = ({
                         </a>{" "}
                         for this quarter is{" "}
                         <strong className="text-bold">
-                          {`${caps[type]}p`}
+                          {`${evenRound(Number(caps[type]), 2)}p`}
                         </strong>{" "}
                         . This cap is reviewed every quarter. Please note that
                         the Ofgem caps are not applicable to Tracker tariffs
