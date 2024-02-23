@@ -20,6 +20,7 @@ import PricePaneAgile2 from "./PricePaneAgile2";
 import MapChartAgile from "./MapChartAgile";
 import { WindowResizeContext } from "@/context/windowResize";
 import { WindowVisibilityContext } from "@/context/windowVisibility";
+import ElectricityForecast from "./ElectricityForecast";
 
 const AgileTariff = () => {
   const [tariff, setTariff] = useState(AGILE[0].code);
@@ -93,7 +94,8 @@ const AgileTariff = () => {
           />
         </div>
       </section>
-      <div className="flex-0 text-lg font-bold text-center translate-y-3 text-accentPink-600">
+      <ElectricityForecast standalone={true} />
+      <div className="mt-6 flex-0 text-lg font-bold text-center translate-y-3 text-accentPink-600">
         Changes over the past month
       </div>
       <section className="flex justify-center items-center gap-4 my-4">

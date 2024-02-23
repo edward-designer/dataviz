@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import {
   Accordion,
@@ -11,17 +11,14 @@ import {
 
 import { TRACKER } from "@/data/source";
 
+import MapChart from "@/components/octopus/MapChart";
 import { UserContext } from "@/context/user";
+import { WindowResizeContext } from "@/context/windowResize";
+import { WindowVisibilityContext } from "@/context/windowVisibility";
 import BrushChart from "./BrushChart";
 import PricePane from "./PricePane";
 import Remark from "./Remark";
 import TariffSelect from "./TariffSelect";
-import MapChart from "@/components/octopus/MapChart";
-import { WindowResizeContext } from "@/context/windowResize";
-import { WindowVisibilityContext } from "@/context/windowVisibility";
-import { TbAlertOctagonFilled } from "react-icons/tb";
-import Link from "next/link";
-import Notice from "./Notice";
 
 const TrackerTariff = () => {
   const [tariff, setTariff] = useState("SILVER-23-12-06");
@@ -59,7 +56,7 @@ const TrackerTariff = () => {
           </Remark>
         </TariffSelect>
       </section>
-      <section className="flex flex-col sm:flex-row items-stretch sm:justify-center sm:items-center gap-4 my-4">
+      <section className="flex flex-col sm:flex-row items-stretch sm:justify-center sm:items-start gap-4 my-4">
         <PricePane tariff={tariff} type="E" gsp={gsp} />
         <PricePane tariff={tariff} type="G" gsp={gsp} />
       </section>

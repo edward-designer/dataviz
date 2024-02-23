@@ -33,6 +33,7 @@ import toast from "react-hot-toast";
 import { WindowVisibilityContext } from "@/context/windowVisibility";
 import { LastShownContext } from "@/context/lastShownDates";
 import useCurrentLocationPriceCapQuery from "@/hooks/useCurrentLocationPriceCapQuery";
+import ElectricityForecast from "./ElectricityForecast";
 
 const PricePane = ({
   tariff,
@@ -139,7 +140,9 @@ const PricePane = ({
   return (
     <div className="pricePane relative flex-1">
       <div
-        className="flex flex-col gap-8 p-4 min-h-[250px] md:min-h-[300px] rounded-xl bg-theme-950 border border-accentPink-950 shadow-inner bg-gradient-to-br from-transparent via-theme-800/20 to-purple-600/30 bg-cover"
+        className={`${
+          type === "E" ? "rounded-t-xl" : "rounded-xl"
+        } flex flex-col gap-8 p-4 min-h-[250px] md:min-h-[300px] bg-theme-950 border border-accentPink-950 shadow-inner bg-gradient-to-br from-transparent via-theme-800/20 to-purple-600/30 bg-cover`}
         style={{
           backgroundImage: `linear-gradient(0deg, rgba(0,3,35,0.7) 30% , rgba(0,3,35,0.9) 70%, rgba(0,4,51,1) 100% ),url(${
             type === "E" ? backgroundE.src : backgroundG.src
@@ -211,6 +214,7 @@ const PricePane = ({
           </>
         )}
       </div>
+      {type === "E" && <ElectricityForecast />}
     </div>
   );
 };

@@ -1,5 +1,7 @@
 import { TDuration } from "@/utils/helpers";
 
+export const gqlEndPoint = "https://api.octopus.energy/v1/graphql/";
+
 export type ENERGY_PLAN = "agile" | "tracker";
 
 export interface ITariffPlan {
