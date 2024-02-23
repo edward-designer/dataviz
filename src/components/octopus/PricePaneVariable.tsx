@@ -64,10 +64,13 @@ const PricePane = ({
   const caps = useCurrentLocationPriceCapQuery({
     gsp: `_${gsp}` as gsp,
   });
+  const nextCaps = useCurrentLocationPriceCapQuery({
+    gsp: `_${gsp}` as gsp,
+    next: true,
+  });
 
   const noPriceTomorrowMessage =
-    "The rate of tomorrow is usually available between 11.00am and 6.00pm. Please revisit this page later to get the updates.";
-
+    "The price for next period is usually available one month before the next change.";
   const [priceTodayDisplay, __, priceToday] = getPriceDisplay({
     priceTodayIndex,
     priceDisplayDate: "today",
@@ -152,7 +155,7 @@ const PricePane = ({
                   </div>
                 </div>
               )}
-              {priceNextPeriodIndex !== null && (
+              {priceNextPeriodIndex !== null ? (
                 <div className="flex justify-center items-start flex-col">
                   <Badge
                     label={`From ${new Date(
@@ -176,6 +179,33 @@ const PricePane = ({
                     />
                   </div>
                 </div>
+              ) : (
+                !isExport &&
+                nextCaps && (
+                  <div className="flex justify-center items-end flex-col">
+                    <Badge
+                      label={`${new Date(nextCaps.Date).toLocaleDateString(
+                        "en-GB",
+                        { month: "short", year: "numeric" }
+                      )} price cap`}
+                      variant="secondary"
+                    />
+                    <div className="flex items-center">
+                      <div className="font-digit font-thin text-center text-3xl text-white flex justify-center items-end">
+                        {`${evenRound(Number(nextCaps[type]), 2)}p`}
+                      </div>
+                      <Comparison
+                        change={
+                          ((evenRound(Number(nextCaps[type]), 2) -
+                            evenRound(Number(caps[type]), 2)) /
+                            evenRound(Number(caps[type]), 2)) *
+                          100
+                        }
+                        compare="current"
+                      />
+                    </div>
+                  </div>
+                )
               )}
             </div>
           </>

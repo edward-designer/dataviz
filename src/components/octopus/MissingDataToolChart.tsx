@@ -90,7 +90,7 @@ const MissingDataToolChart = ({
     });
 
     const dataExtent = extent(filteredData, (d) => d.consumption);
-    const dataMin = dataExtent[0]!;
+    const dataMin = 0;
     const dataMax = dataExtent[1]!;
     const colorScale = scaleSequential(
       interpolateRgbBasis(["#910000", "#a35400", "#b3edb2"])
