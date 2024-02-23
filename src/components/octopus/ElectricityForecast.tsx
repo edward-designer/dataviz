@@ -144,8 +144,8 @@ const ElectricityForecast = ({
         <span className="">Trend Forecast</span>
         <Remark variant="badge">
           Based on the predicted amonut of wind electricity generation derived
-          from weather forecast. Please note that further away from today, the
-          less reliable the prediction would be.
+          from weather forecast. Please note that the further away from today,
+          the less reliable the prediction would be.
         </Remark>
       </span>
       {Array.from({ length: numOfDays - 1 }).map((_, i) => (
