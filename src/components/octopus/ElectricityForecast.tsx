@@ -89,7 +89,7 @@ const ElectricityForecast = ({
       return (
         <div
           className={`flex flex-col ${
-            delta < 0 ? "bg-accentPink-950" : "bg-accentBlue-600"
+            delta < 0 ? "bg-accentPink-950" : "bg-accentBlue-700"
           } h-10 w-14 items-center justify-center
           ${hiViz && delta > 0 ? "text-black" : "text-white"}`}
         >
@@ -137,10 +137,10 @@ const ElectricityForecast = ({
       className={`font-display  ${
         standalone
           ? "rounded-xl bg-black/20 divide-slate-800 border border-accentPink-950"
-          : "rounded-b-xl bg-black/40 divide-black/80 border-l border-r border-b border-accentPink-950"
+          : "rounded-b-xl bg-accentBlue-700 divide-black/80 border-l border-r border-b border-accentPink-950"
       } flex min-h-[30px]  divide-x  items-center justify-center overflow-hidden`}
     >
-      <span className="flex text-base text-right leading-none text-accentPink-500">
+      <span className={`flex text-base text-right leading-none ${hiViz? 'text-black':'text-slate-300'}`}>
         <span className="">Trend Forecast</span>
         <Remark variant="badge">
           Based on the predicted amonut of wind electricity generation derived
