@@ -14,6 +14,7 @@ import backgroundE from "../../../public/images/E.jpg";
 import backgroundG from "../../../public/images/G.jpg";
 import Comparison from "./Comparison";
 import { HiVizContext } from "@/context/hiViz";
+import MapChartCapsChange from "./MapChartCapsChange";
 
 const PriceCapContainer = () => {
   const { value } = useContext(UserContext);
@@ -43,7 +44,7 @@ const PriceCapContainer = () => {
         <div className="flex items-center justify-center font-display">
           <div className="h-14 rounded-md px-3 py-2 ring-offset-background focus:outline-none [&amp;>h1>span]:line-clamp-1 [&amp;>span]:line-clamp-1 w-auto max-w-full text-[clamp(20px,7vw,80px)] text-accentBlue-400 flex items-center justify-center">
             <h1 className="overflow-hidden [&amp;>*]:whitespace-pre  [&amp;>*]:text-ellipsis  [&amp;>*]:overflow-hidden  [&amp;>*]:block! [&amp;>*]:max-w-full">
-              <span>My Ofgem Price Caps</span>
+              <span>2024 Apr Ofgem Price Caps</span>
             </h1>
             <Remark variant="badge">
               We often hear the news telling us &quot;Households are set to pay
@@ -99,7 +100,7 @@ const PriceCapContainer = () => {
                   )} Price Caps`}
                   variant="secondary"
                 />
-                <div className="flex justify-start items-start flex-wrap gap-4">
+                <div className="flex justify-start items-start flex-wrap gap-x-4 gap-y-1">
                   <div className="flex justify-center items-start flex-col">
                     <div className="font-digit font-thin text-center text-3xl text-white flex justify-center items-end">
                       {evenRound(Number(nextCaps.E), 2, true)}
@@ -184,7 +185,7 @@ const PriceCapContainer = () => {
                   )} Price Caps`}
                   variant="secondary"
                 />
-                <div className="flex justify-start items-start flex-wrap gap-4">
+                <div className="flex justify-start items-start flex-wrap gap-x-4 gap-y-1">
                   <div className="flex justify-center items-start flex-col">
                     <div className="font-digit font-thin text-center text-3xl text-white flex justify-center items-end">
                       {evenRound(Number(nextCaps.G), 2, true)}
@@ -226,6 +227,20 @@ const PriceCapContainer = () => {
             )}
           </div>
         </div>
+      </section>
+      <h2 className="flex-0 text-lg font-bold text-center translate-y-3 text-accentPink-600 mt-10">
+        Regional Energy Unit Rates Caps Change
+      </h2>
+      <section className="flex flex-col sm:flex-row items-stretch sm:justify-center sm:items-center gap-4 my-4">
+        <MapChartCapsChange type="E" gsp={value.gsp} rate="E" />
+        <MapChartCapsChange type="G" gsp={value.gsp} rate="G" />
+      </section>
+      <h2 className="flex-0 text-lg font-bold text-center translate-y-3 text-accentPink-600">
+        Regional Standing Charge Caps Change
+      </h2>
+      <section className="flex flex-col sm:flex-row items-stretch sm:justify-center sm:items-center gap-4 my-4">
+        <MapChartCapsChange type="E" gsp={value.gsp} rate="ES" />
+        <MapChartCapsChange type="G" gsp={value.gsp} rate="GS" />
       </section>
     </div>
   );

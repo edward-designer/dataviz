@@ -5,6 +5,7 @@ import Loading from "../Loading";
 import { IUkMapData, useUkGspMapData } from "@/hooks/useUkGspMap";
 
 import {
+  CapsTSVResult,
   ENERGY_TYPE,
   ENERGY_TYPE_ICON,
   QuerySingleTariffPlanResult,
@@ -17,6 +18,7 @@ import {
 import useTariffQuery from "@/hooks/useTariffQuery";
 import { addSign, calculateChangePercentage, evenRound } from "@/utils/helpers";
 import {
+  DSVParsedArray,
   axisRight,
   extent,
   geoIdentity,
@@ -37,21 +39,13 @@ import { EnergyIcon } from "./EnergyIcon";
 import ErrorMessage from "./ErrorMessage";
 import usePriceCapQuery from "@/hooks/usePriceCapQuery";
 
-interface IMapChart {
-  tariff: string;
-  compareTo: string; // must be the same tariff type
+interface IMapChartCapsChart {
   type: keyof typeof ENERGY_TYPE;
-  rate?: Single_tariff_gsp_record_charge_type;
+  rate: "E" | "G" | "ES" | "GS";
   gsp: string;
 }
 
-const MapChart = ({
-  tariff,
-  compareTo,
-  type,
-  rate = "standard_unit_rate_inc_vat",
-  gsp,
-}: IMapChart) => {
+const MapChartCapsChart = ({ type, rate, gsp }: IMapChartCapsChart) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const mapData = useUkGspMapData();
 
@@ -64,23 +58,15 @@ const MapChart = ({
       ?.getBoundingClientRect().width;
     width = currentChartWidth === undefined ? width : currentChartWidth;
   }
-
-  const { isLoading, isError, isSuccess, refetch, data, error } =
-    useTariffQuery<QuerySingleTariffPlanResult>({
-      tariff,
-      type,
-    });
-
   const {
-    isLoading: isLoadingCompare,
-    isError: isErrorCompare,
-    isSuccess: isSuccessCompare,
-    refetch: refetchCompare,
-    data: dataCompare,
-    error: errorCompare,
-  } = useTariffQuery<QuerySingleTariffPlanResult>({
-    tariff: compareTo,
-    type,
+    data: priceCapsData,
+    isLoading,
+    isError,
+    error,
+    isSuccess,
+    refetch,
+  } = usePriceCapQuery({
+    gsp: `_${gsp}` as gsp,
   });
 
   let path = geoPath();
@@ -92,66 +78,33 @@ const MapChart = ({
   }
 
   useEffect(() => {
-    if (
-      !svgRef.current ||
-      !mapData ||
-      !mapData?.districts ||
-      !data ||
-      !dataCompare ||
-      isLoading ||
-      isLoadingCompare
-    )
+    if (!svgRef.current || !mapData || !mapData?.districts || !priceCapsData)
       return;
+
+    const orderedDates: string[] = [];
+    priceCapsData.forEach(
+      (caps) =>
+        !orderedDates.includes(caps.Date) && orderedDates.push(caps.Date)
+    );
+
+    const prevCaps = priceCapsData
+      .filter((cap) => cap.Date === orderedDates[1] && cap.Region !== "GB")
+      .sort();
+    const newCaps = priceCapsData
+      .filter((cap) => cap.Date === orderedDates[0] && cap.Region !== "GB")
+      .sort();
+
+    const differenceCaps = newCaps.map(
+      (cap, i) => Number(cap[rate]) - Number(prevCaps[i][rate])
+    );
 
     let scale = 1;
     const svg = select(svgRef.current);
     const tooltip = svg.select(".tooltipContainer");
     const defs = svg.append("defs");
 
-    /*if (rate === "standard_unit_rate_inc_vat") {
-      const validDate = new Date(
-        data[0].tariffs_active_at as string
-      ).toLocaleDateString("en-GB");
-      const updateDate =
-        validDate === new Date().toLocaleDateString("en-GB")
-          ? `Today (${validDate})`
-          : validDate ===
-            new Date(
-              new Date().setDate(new Date().getDate() - 1)
-            ).toLocaleDateString("en-GB")
-          ? `Yesterday (${validDate})`
-          : `Updated at ${validDate}`;
-      svg.select(".info").text(updateDate);
-    }*/
+    const valueExtent = extent(differenceCaps, (d) => d) as [number, number];
 
-    const tariffTypeKey =
-      `single_register_${ENERGY_TYPE[type]}_tariffs` as keyof QuerySingleTariffPlanResult;
-    const singleTariffByGsp = (data[0]?.[tariffTypeKey] ?? []) as Single_tariff;
-    const singleTariffToCompareByGsp = (dataCompare[0]?.[tariffTypeKey] ??
-      []) as Single_tariff;
-
-    const allValues = Object.values(
-      singleTariffByGsp
-    ) as Single_tariff_gsp_record[];
-    const allToCompareValues = Object.values(
-      singleTariffToCompareByGsp
-    ) as Single_tariff_gsp_record[];
-
-    const allValuesDifferences = allValues.map((value, i) => {
-      if ("direct_debit_monthly" in value)
-        return evenRound(
-          value["direct_debit_monthly"][rate] -
-            allToCompareValues[i]["direct_debit_monthly"][rate]
-        );
-      if ("varying" in value)
-        return value["varying"][rate] - allToCompareValues[i]["varying"][rate];
-    });
-
-    let valueExtent = extent(allValuesDifferences, (d) => d);
-
-    if (!valueExtent[0] && !valueExtent[1]) {
-      valueExtent = [0, TRACKER[0].cap.E];
-    }
     const colorScale = scaleSequential(
       interpolate("#FFFFFF", "#ce2cb9")
     ).domain(valueExtent);
@@ -159,6 +112,7 @@ const MapChart = ({
     const valueExtentasPoint = valueExtent.map((value) =>
       evenRound(value, 2, true)
     );
+
     const legendScale = scalePoint()
       .domain(valueExtentasPoint)
       .range([height / 2, 0]);
@@ -199,23 +153,9 @@ const MapChart = ({
       .attr("font-size", 10)
       .attr("fill", "#FFFFFF80");
 
-    const getPrice = (tariffDetails: Single_tariff_gsp_record) => {
-      if (tariffDetails) {
-        let key = "";
-        if ("direct_debit_monthly" in tariffDetails)
-          key = "direct_debit_monthly";
-        if ("varying" in tariffDetails) key = "varying";
-        if (key === "") return;
-
-        return tariffDetails[key as keyof Single_tariff_gsp_record][rate] ===
-          null
-          ? "--"
-          : evenRound(
-              tariffDetails[key as keyof Single_tariff_gsp_record][rate],
-              2
-            ) + "p";
-      }
-      return;
+    const getPrice = (gsp: string, priceCapsData: CapsTSVResult[]) => {
+      const currentGSPCap = priceCapsData.find((cap) => cap.Region === gsp);
+      return evenRound(Number(currentGSPCap?.[rate]), 2, true) + "p";
     };
 
     svg
@@ -266,33 +206,21 @@ const MapChart = ({
         tooltip.select(".zoneName").text(select(this).attr("data-zoneName"));
         tooltip
           .select(".zonePrice")
-          .text(
-            `🆕 ${ENERGY_TYPE_ICON[type]} ${getPrice(singleTariffByGsp[gsp])}`
-          );
+          .text(`🆕 ${ENERGY_TYPE_ICON[type]} ${getPrice(gsp, newCaps)}`);
         tooltip
           .select(".zonePriceOld")
-          .text(
-            `⏹️ ${ENERGY_TYPE_ICON[type]} ${getPrice(
-              singleTariffToCompareByGsp[gsp]
-            )}`
-          );
+          .text(`🔚 ${ENERGY_TYPE_ICON[type]} ${getPrice(gsp, prevCaps)}`);
         tooltip
           .select(".zoneCompareT1")
           .text(
-            `🆚 ${
-              getPrice(singleTariffByGsp[gsp]) === "--"
-                ? "--"
-                : addSign(
-                    Number(
-                      calculateChangePercentage(
-                        parseFloat(getPrice(singleTariffByGsp[gsp]) ?? "--"),
-                        parseFloat(
-                          getPrice(singleTariffToCompareByGsp[gsp]) ?? "--"
-                        )
-                      )
-                    )
-                  )
-            }%`
+            `🆚 ${addSign(
+              Number(
+                calculateChangePercentage(
+                  parseFloat(getPrice(gsp, newCaps)),
+                  parseFloat(getPrice(gsp, prevCaps))
+                )
+              )
+            )}%`
           );
       })
       .on("pointerleave", function (d) {
@@ -318,8 +246,8 @@ const MapChart = ({
           return (
             addSign(
               evenRound(
-                parseFloat(getPrice(singleTariffByGsp[gsp]) ?? "--") -
-                  parseFloat(getPrice(singleTariffToCompareByGsp[gsp]) ?? "--"),
+                parseFloat(getPrice(gsp, newCaps)) -
+                  parseFloat(getPrice(gsp, prevCaps)),
                 2
               )
             ) + "p"
@@ -330,8 +258,11 @@ const MapChart = ({
           return `translate(${coords[0]} ${coords[1]})`;
         })
         .attr("text-anchor", "middle")
-        .attr("fill", (_, i) => {
-          const value = allValuesDifferences[i];
+        .attr("fill", (d) => {
+          const gsp = d?.properties?.Name as gsp;
+          const value =
+            parseFloat(getPrice(gsp, newCaps)) -
+            parseFloat(getPrice(gsp, prevCaps));
           return colorScale(value ?? 0);
         })
         .attr("font-weight", "bold")
@@ -379,19 +310,7 @@ const MapChart = ({
         zoomIdentity,
         zoomTransform(svg.node()!).invert([width / 2, height / 2])
       );
-  }, [
-    mapData,
-    data,
-    type,
-    path,
-    height,
-    gsp,
-    rate,
-    width,
-    isLoading,
-    dataCompare,
-    isLoadingCompare,
-  ]);
+  }, [mapData, priceCapsData, type, path, height, gsp, rate, width]);
 
   return (
     <div className="mapDiv relative h-[450px] flex-1 flex items-center justify-center flex-col rounded-xl bg-black/30 border border-accentPink-950 shadow-inner overflow-hidden">
@@ -477,4 +396,4 @@ const MapChart = ({
   );
 };
 
-export default MapChart;
+export default MapChartCapsChart;
