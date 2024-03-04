@@ -37,7 +37,7 @@ const TariffDetails = ({
   const { data, isSuccess, isLoading } = useTariffQuery<{
     display_name: string;
   }>({
-    tariff: tariff_code,
+    tariff: tariff_code.slice(5, -2),
     type,
   });
 
@@ -94,7 +94,7 @@ const TariffDetails = ({
           </span>
           {isSuccess && (
             <span>
-              {getTariffName(tariff_code)}
+              {getTariffName(tariff_code.slice(5, -2))}
               <span className="text-[10px]"> ({tariff_code.slice(5, -2)})</span>
             </span>
           )}

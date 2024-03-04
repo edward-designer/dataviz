@@ -1,11 +1,6 @@
 "use client";
 import { UserContext } from "@/context/user";
-import {
-    ENERGY_TYPE,
-    ETARIFFS,
-    GTARIFFS,
-    gsp
-} from "@/data/source";
+import { ENERGY_TYPE, ETARIFFS, GTARIFFS, gsp } from "@/data/source";
 import { getCategory } from "@/utils/helpers";
 import { useQueries } from "@tanstack/react-query";
 import { useContext } from "react";
@@ -191,8 +186,10 @@ const useDailyAmountCalculation = (inputs: IDailyAmountCalculation) => {
       const tariffStandingCharges = resultsWithUnitAndStandardCharge[
         tariffIndexInArray * 2 + 1
       ]?.data?.results as ITariffResults[];
-      const SVTrates = resultsWithUnitAndStandardCharge[0].data?.[0]?.results as ITariffResults[];
-      const SVTstandingCharges = resultsWithUnitAndStandardCharge[1]?.data?.results as ITariffResults[];
+      const SVTrates = resultsWithUnitAndStandardCharge[0].data?.[0]
+        ?.results as ITariffResults[];
+      const SVTstandingCharges = resultsWithUnitAndStandardCharge[1]?.data
+        ?.results as ITariffResults[];
 
       const dailyResults = calculateDailyResults({
         type,
@@ -211,7 +208,7 @@ const useDailyAmountCalculation = (inputs: IDailyAmountCalculation) => {
         gasConversionFactor: value.gasConversionFactor,
         tariff,
       });
-
+      console.log(dailyResults);
       return dailyResults;
     });
     return {
@@ -267,18 +264,16 @@ export const calculateDailyResults = ({
     0
   );
 
-  const SVTrate = SVTrates.find(
+  const SVTrate = SVTrates?.find(
     (tariff) =>
       new Date(tariff.valid_from).valueOf() <= periodFrom.valueOf() &&
       (tariff.valid_to === null ||
         new Date(tariff.valid_to).valueOf() >= periodTo.valueOf())
   )?.value_inc_vat;
-  const capRate = type === "EE" ? Infinity : cap?.[0][type] ?? Infinity;
-  const SVTcost = SVTrate
-    ? SVTrate > capRate
-      ? reading * capRate
-      : reading * SVTrate
-    : undefined;
+
+  //const capRate = type === "EE" ? Infinity : cap?.[0][type] ?? Infinity;
+
+  const SVTcost = SVTrate ? reading * SVTrate : undefined;
   const SVTstandingCharge = SVTstandingCharges.find(
     (tariff) =>
       new Date(tariff.valid_from).valueOf() <= periodFrom.valueOf() &&

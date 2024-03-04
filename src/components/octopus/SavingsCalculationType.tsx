@@ -70,9 +70,9 @@ const SavingsCalculationType = ({
         serialNumber &&
         typeof currentContract !== "undefined" && (
           <>
-            <h2 className="font-display text-accentPink-500 text-4xl flex items-center mt-4">
+            <div className="font-display text-accentPink-500 text-4xl flex items-center mt-4">
               {children}
-            </h2>
+            </div>
             {period.duration === "year" && (
               <TariffDetails
                 valid_from={currentContract.valid_from}
