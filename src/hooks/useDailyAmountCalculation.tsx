@@ -259,7 +259,7 @@ export const calculateDailyResults = ({
 }: ICalculateDailyResults) => {
   const consumptionMultiplier = type === "G" ? gasConversionFactor : 1;
 
-  const reading = meterData.reduce(
+  const reading = meterData?.reduce(
     (acc, cur) => cur.consumption * consumptionMultiplier + acc,
     0
   );
@@ -274,7 +274,7 @@ export const calculateDailyResults = ({
   //const capRate = type === "EE" ? Infinity : cap?.[0][type] ?? Infinity;
 
   const SVTcost = SVTrate ? reading * SVTrate : undefined;
-  const SVTstandingCharge = SVTstandingCharges.find(
+  const SVTstandingCharge = SVTstandingCharges?.find(
     (tariff) =>
       new Date(tariff.valid_from).valueOf() <= periodFrom.valueOf() &&
       (tariff.valid_to === null ||
@@ -282,7 +282,7 @@ export const calculateDailyResults = ({
       tariff.payment_method === "DIRECT_DEBIT"
   )?.value_inc_vat;
 
-  const standingCharge = tariffStandingCharges.find(
+  const standingCharge = tariffStandingCharges?.find(
     (tariff) =>
       new Date(tariff.valid_from).valueOf() <= periodFrom.valueOf() &&
       (tariff.valid_to === null ||
@@ -290,7 +290,7 @@ export const calculateDailyResults = ({
   )?.value_inc_vat;
 
   const sessionCosts = [];
-  const cost: number = meterData.reduce((acc, cur) => {
+  const cost: number = meterData?.reduce((acc, cur) => {
     const currentSessionRate = tariffRates?.find(
       (tariff) =>
         new Date(tariff.valid_from) <= new Date(cur.interval_start) &&
