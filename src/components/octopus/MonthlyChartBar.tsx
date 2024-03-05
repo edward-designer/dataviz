@@ -102,7 +102,7 @@ const MonthlyChartBar = ({
                         hiViz ? "text-theme-950" : "text-white"
                       } mix-blend-normal  w-4 h-4 md:w-6 md:h-6 flex-shrink-0`}
                     />
-                  ) : saving > 0 ? (
+                  ) : saving >= 0 ? (
                     <TbPigMoney
                       className={`${
                         hiViz ? "text-theme-950" : "text-white"
@@ -149,7 +149,7 @@ const MonthlyChartBar = ({
                 (latest reading: {new Date(lastDate).toLocaleString("en-GB")})
               </div>
             )}
-            {reading && (
+            {reading !== undefined && reading >= 0 && (
               <div className="flex items-center gap-1 text-[#85cbf9] border-theme-700 border-b mb-1 pb-1">
                 <BsSpeedometer2 />
                 Meter : {evenRound(Math.abs(reading), 2)}kWh
@@ -161,8 +161,7 @@ const MonthlyChartBar = ({
               } `}
             >
               <TbMoneybag />
-              {isCheaper ? "Actual" : "New"} : £
-              {evenRound(monthlycostCurrent, 2, true)}
+              Actual : £{evenRound(monthlycostCurrent, 2, true)}
             </div>
             <div
               className={`flex items-center gap-1 ${
@@ -170,8 +169,7 @@ const MonthlyChartBar = ({
               } `}
             >
               <TbMoneybag />
-              {isCheaper ? "SVT" : "Old"} : £
-              {evenRound(monthlycostSVT, 2, true)}
+              SVT : £{evenRound(monthlycostSVT, 2, true)}
             </div>
             <div className="flex items-center gap-1 text-[#85cbf9] border-theme-700 border-t mt-1 pt-1 font-bold">
               <TbPigMoney />

@@ -278,7 +278,8 @@ export const calculateDailyResults = ({
     (tariff) =>
       new Date(tariff.valid_from).valueOf() <= periodFrom.valueOf() &&
       (tariff.valid_to === null ||
-        new Date(tariff.valid_to).valueOf() >= periodTo.valueOf())
+        new Date(tariff.valid_to).valueOf() >= periodTo.valueOf()) &&
+      tariff.payment_method === "DIRECT_DEBIT"
   )?.value_inc_vat;
 
   const standingCharge = tariffStandingCharges.find(
@@ -290,7 +291,7 @@ export const calculateDailyResults = ({
 
   const sessionCosts = [];
   const cost: number = meterData.reduce((acc, cur) => {
-    const currentSessionRate = tariffRates.find(
+    const currentSessionRate = tariffRates?.find(
       (tariff) =>
         new Date(tariff.valid_from) <= new Date(cur.interval_start) &&
         (tariff.valid_to === null ||
