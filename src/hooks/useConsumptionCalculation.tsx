@@ -1000,6 +1000,12 @@ export const calculatePrice = (
           }
         }
       }
+
+      if (
+        filteredRateDataResults[i + rateDataOffset]?.value_inc_vat === undefined
+      )
+        break;
+
       audit.push({
         date: filteredRateDataResults[i + rateDataOffset]?.valid_from,
         rate: filteredRateDataResults[i + rateDataOffset]?.value_inc_vat,
@@ -1046,6 +1052,12 @@ export const calculatePrice = (
           }
         }
       }
+
+      if (
+        filteredRateDataResults[i + rateDataOffset]?.value_inc_vat === undefined
+      )
+        break;
+
       audit.push({
         date: filteredRateDataResults[i + rateDataOffset]?.valid_from,
         rate: filteredRateDataResults[i + rateDataOffset]?.value_inc_vat,
@@ -1098,6 +1110,8 @@ export const calculatePrice = (
     (new Date(toDate).valueOf() - new Date(fromDate).valueOf()) /
       (24 * 60 * 60 * 1000)
   );
+
+  console.log(audit);
 
   if (
     category === "Agile" ||
