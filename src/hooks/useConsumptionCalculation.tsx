@@ -65,12 +65,14 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculation) => {
   });
 
   /* Important this should be removed when the new tariffs covers over 1/2 years */
-  const tariff =
+  /*const tariff =
     inputTariff === "SILVER-23-12-06" && results === "yearly"
       ? "SILVER-FLEX-BB-23-02-08"
       : inputTariff === "AGILE-23-12-06" && results === "yearly"
       ? "AGILE-FLEX-22-11-25"
-      : inputTariff;
+      : inputTariff;*/
+
+  const tariff = inputTariff;
 
   const queryFnStandingChargeData = async () => {
     try {
@@ -1124,7 +1126,7 @@ export const calculatePrice = (
 
   // formula to reflect 2023Dec change to Agile/Tracker if not currently on Agile/Tracker
 
-  if (category === "Agile") {
+  /* if (category === "Agile") {
     // average standing charge increase E 14%, G 3%
     type === "E"
       ? (totalStandingCharge *= 1.15)
@@ -1142,6 +1144,7 @@ export const calculatePrice = (
       2
     );
   }
+  */
 
   return {
     cost: totalPrice + totalStandingCharge,
