@@ -15,6 +15,8 @@ import {
   DurationType,
   ENERGY_PLAN,
   GSP,
+  TRACKER,
+  AGILE,
 } from "@/data/source";
 
 import { fetchApi } from "../utils/helpers";
@@ -30,8 +32,7 @@ function useCheapestTariffQuery<T>({
   gsp?: string;
   duration?: DurationType;
 }): UseQueryResult<T[], Error> {
-  const tariff =
-    plan === "tracker" ? "SILVER-FLEX-BB-23-02-08" : "AGILE-FLEX-22-11-25";
+  const tariff = plan === "tracker" ? TRACKER[0].code : AGILE[0].code;
 
   const queryClient = useQueryClient();
   const noOfRecords = {
