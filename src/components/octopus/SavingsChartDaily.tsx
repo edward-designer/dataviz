@@ -63,13 +63,16 @@ const SavingsChartDaily = ({
     agreements.forEach((agreement) => {
       if (
         new Date(agreement.valid_from).valueOf() <= date.valueOf() &&
-        new Date(agreement.valid_to).valueOf() >= date.valueOf()
+        (new Date(agreement.valid_to).valueOf() >= date.valueOf() ||
+          agreement.valid_to === null)
       ) {
         tariff = agreement.tariff_code.slice(5, -2);
       }
     });
     return { date, tariff };
   });
+
+  console.log(periodWithTariff);
 
   const { isLoading, isSuccess, results } = useDailyAmountCalculation({
     type,

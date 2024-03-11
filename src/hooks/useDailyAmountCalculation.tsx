@@ -83,7 +83,8 @@ const useDailyAmountCalculation = (inputs: IDailyAmountCalculation) => {
   if (SVTtariff) uniqueTariffCodes.push(SVTtariff);
 
   periodWithTariff.forEach(({ tariff }) => {
-    if (!uniqueTariffCodes.includes(tariff)) uniqueTariffCodes.push(tariff);
+    if (!uniqueTariffCodes.includes(tariff) && tariff !== "")
+      uniqueTariffCodes.push(tariff);
   });
 
   const typeEorG = type === "EE" ? "E" : type;
@@ -159,7 +160,6 @@ const useDailyAmountCalculation = (inputs: IDailyAmountCalculation) => {
       },
     ];
   });
-
   const resultsWithUnitAndStandardCharge = useQueries({
     queries: rateQueries.flat(),
   });
@@ -297,6 +297,7 @@ export const calculateDailyResults = ({
         (tariff.valid_to === null ||
           new Date(tariff.valid_to) >= new Date(cur.interval_end))
     )?.value_inc_vat;
+
     if (currentSessionRate && acc !== null) {
       sessionCosts.push(currentSessionRate);
       return acc + cur.consumption * consumptionMultiplier * currentSessionRate;
