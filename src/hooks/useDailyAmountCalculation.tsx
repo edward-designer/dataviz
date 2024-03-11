@@ -208,7 +208,6 @@ const useDailyAmountCalculation = (inputs: IDailyAmountCalculation) => {
         gasConversionFactor: value.gasConversionFactor,
         tariff,
       });
-      console.log(dailyResults);
       return dailyResults;
     });
     return {

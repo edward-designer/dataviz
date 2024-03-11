@@ -72,8 +72,6 @@ const SavingsChartDaily = ({
     return { date, tariff };
   });
 
-  console.log(periodWithTariff);
-
   const { isLoading, isSuccess, results } = useDailyAmountCalculation({
     type,
     periodWithTariff,
