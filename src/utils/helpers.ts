@@ -459,3 +459,19 @@ export const getUnderlyingTariff = (tariff: string) => {
       : tariff;
   return underlyingTariff;
 };
+
+export const getTariffCodeWithoutPrefixSuffix = (
+  fullTariffCode: string
+): string => {
+  if (fullTariffCode.startsWith("E-") || fullTariffCode.startsWith("G-")) {
+    const cutOffFromBeginningPos = fullTariffCode.indexOf("-", 2);
+    const lastHyphenPos = fullTariffCode.lastIndexOf("-");
+    const cutOffFromEndPost =
+      lastHyphenPos === fullTariffCode.length - 2 ? lastHyphenPos : 0;
+    return fullTariffCode.substring(
+      cutOffFromBeginningPos + 1,
+      cutOffFromEndPost
+    );
+  }
+  return fullTariffCode;
+};

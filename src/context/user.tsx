@@ -1,7 +1,7 @@
 "use client";
 
 import { IMeterPointE, IMeterPointG, IUserApiResult } from "@/data/source";
-import { getGsp } from "@/utils/helpers";
+import { getGsp, getTariffCodeWithoutPrefixSuffix } from "@/utils/helpers";
 import { useQuery } from "@tanstack/react-query";
 import {
   PropsWithChildren,
@@ -270,7 +270,9 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
         ?.meters?.map((meter) => meter.serial_number) ?? [],
     [currentProperty]
   );
-  const currentETariff = currentEContract?.tariff_code.slice(5, -2) ?? "";
+  const currentETariff = getTariffCodeWithoutPrefixSuffix(
+    currentEContract?.tariff_code ?? ""
+  );
 
   const currentEEContract = useMemo(
     () =>
@@ -315,7 +317,9 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
         ?.meters?.map((meter) => meter.serial_number) ?? [],
     [currentProperty]
   );
-  const currentEETariff = currentEEContract?.tariff_code.slice(5, -2) ?? "";
+  const currentEETariff = getTariffCodeWithoutPrefixSuffix(
+    currentEEContract?.tariff_code ?? ""
+  );
 
   const currentGContract = useMemo(
     () =>
@@ -351,7 +355,9 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
         ?.meters?.map((meter) => meter.serial_number) ?? [],
     [currentProperty]
   );
-  const currentGTariff = currentGContract?.tariff_code.slice(5, -2) ?? "";
+  const currentGTariff = getTariffCodeWithoutPrefixSuffix(
+    currentGContract?.tariff_code ?? ""
+  );
 
   const postcode = currentProperty?.postcode;
 

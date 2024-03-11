@@ -16,7 +16,10 @@ import { TbPlayerTrackNextFilled } from "react-icons/tb";
 import { MdOutlineHistory } from "react-icons/md";
 import { MdElectricMeter } from "react-icons/md";
 import { MdGasMeter } from "react-icons/md";
-import { getTariffName } from "@/utils/helpers";
+import {
+  getTariffCodeWithoutPrefixSuffix,
+  getTariffName,
+} from "@/utils/helpers";
 
 interface ITariffDetails {
   tariff_code: string;
@@ -37,7 +40,7 @@ const TariffDetails = ({
   const { data, isSuccess, isLoading } = useTariffQuery<{
     display_name: string;
   }>({
-    tariff: tariff_code.slice(5, -2),
+    tariff: getTariffCodeWithoutPrefixSuffix(tariff_code),
     type,
   });
 
@@ -94,8 +97,11 @@ const TariffDetails = ({
           </span>
           {isSuccess && (
             <span>
-              {getTariffName(tariff_code.slice(5, -2))}
-              <span className="text-[10px]"> ({tariff_code.slice(5, -2)})</span>
+              {getTariffName(getTariffCodeWithoutPrefixSuffix(tariff_code))}
+              <span className="text-[10px]">
+                {" "}
+                ({getTariffCodeWithoutPrefixSuffix(tariff_code)})
+              </span>
             </span>
           )}
         </div>

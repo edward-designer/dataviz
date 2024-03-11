@@ -4,7 +4,7 @@ import Badge from "@/components/octopus/Badge";
 import Comparison from "@/components/octopus/Comparison";
 import { IMeterPointE, IPeriod } from "@/data/source";
 
-import { evenRound } from "../../utils/helpers";
+import { evenRound, getTariffCodeWithoutPrefixSuffix } from "../../utils/helpers";
 
 import Lottie from "lottie-react";
 import octopusIcon from "../../../public/lottie/octopus.json";
@@ -66,7 +66,7 @@ const SavingsChartDaily = ({
         (new Date(agreement.valid_to).valueOf() >= date.valueOf() ||
           agreement.valid_to === null)
       ) {
-        tariff = agreement.tariff_code.slice(5, -2);
+        tariff = getTariffCodeWithoutPrefixSuffix(agreement.tariff_code);
       }
     });
     return { date, tariff };

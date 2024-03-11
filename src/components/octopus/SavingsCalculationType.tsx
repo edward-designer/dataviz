@@ -5,7 +5,7 @@ import TariffDetails from "./TariffDetails";
 import { PiSunDimFill } from "react-icons/pi";
 import { IMeterPointE, IPeriod, TariffType } from "@/data/source";
 import SavingsChart from "./SavingsChart";
-import { getCategory } from "@/utils/helpers";
+import { getCategory, getTariffCodeWithoutPrefixSuffix } from "@/utils/helpers";
 import Link from "next/link";
 import SavingsChartDaily from "./SavingsChartDaily";
 import EarningChartDaily from "./EarningChartDaily";
@@ -84,7 +84,9 @@ const SavingsCalculationType = ({
             {type === "EE" ? (
               period.duration === "year" ? (
                 <EarningChart
-                  tariff={currentContract.tariff_code.slice(5, -2)}
+                  tariff={getTariffCodeWithoutPrefixSuffix(
+                    currentContract.tariff_code
+                  )}
                   fromDate={currentFromDate}
                   gsp={gsp}
                   type={energyType}
@@ -112,7 +114,9 @@ const SavingsCalculationType = ({
               </div>
             ) : period.duration === "year" ? (
               <SavingsChart
-                tariff={currentContract.tariff_code.slice(5, -2)}
+                tariff={getTariffCodeWithoutPrefixSuffix(
+                  currentContract.tariff_code
+                )}
                 fromDate={currentFromDate}
                 gsp={gsp}
                 type={energyType}
@@ -148,7 +152,9 @@ const SavingsCalculationType = ({
             />
             {type === "EE" ? (
               <EarningChart
-                tariff={previousContract.tariff_code.slice(5, -2)}
+                tariff={getTariffCodeWithoutPrefixSuffix(
+                  previousContract.tariff_code
+                )}
                 fromDate={previousFromDate}
                 contractToDate={previousContract.valid_to}
                 gsp={gsp}
@@ -160,7 +166,9 @@ const SavingsCalculationType = ({
               <div>You were on the Octopus Flexible Tariff.</div>
             ) : (
               <SavingsChart
-                tariff={previousContract.tariff_code.slice(5, -2)}
+                tariff={getTariffCodeWithoutPrefixSuffix(
+                  previousContract.tariff_code
+                )}
                 fromDate={previousFromDate}
                 contractToDate={previousContract.valid_to}
                 gsp={gsp}
