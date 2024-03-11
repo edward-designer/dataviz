@@ -42,15 +42,15 @@ const UserApiResult = () => {
             <Remark>
               Approximations and assumptions are used in the calculations. The
               actual savings are likely to differ because of missing data and
-              rounding. Should you encounter any issues while using
-              this page, please contact Edward at{" "}
+              rounding. Should you encounter any issues while using this page,
+              please contact Edward at{" "}
               <a href="mailto:edward.chung.dev@gmail.com" className="underline">
                 edward.chung.dev@gmail.com
               </a>
               . Thanks a lot!
             </Remark>
           </div>
-          <PeriodSelector period={period} setPeriod={setPeriod} />
+          {/*<PeriodSelector period={period} setPeriod={setPeriod} />*/}
           <Tabs />
           {currentType === "EE" && (
             <>

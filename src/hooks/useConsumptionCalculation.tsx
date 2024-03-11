@@ -14,6 +14,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useContext } from "react";
 import usePriceCapQuery from "./usePriceCapQuery";
 import useConsumptionData from "./useConsumptionData";
+import useTariffQueryYearlyAverage from "./useTariffQueryYearlyAverage";
+import useTariffQueryAverage from "./useTariffQueryAverage";
 
 export type IConsumptionCalculation = {
   deviceNumber: string;
@@ -111,6 +113,17 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculation) => {
     enabled: !!deviceNumber && !!serialNo && !!category,
   });
 
+  const { dataByTime: averageRateByTime } = useTariffQueryAverage({
+    tariff,
+    type,
+    gsp: value.gsp,
+    fromDate,
+    toDate,
+    category,
+    enabled: !!deviceNumber && !!serialNo && !!category,
+    daysOfWeek: [0, 1, 2, 3, 4, 5, 6],
+  });
+
   const {
     data: standingChargeData,
     isSuccess: isStandingChargeDataSuccess,
@@ -171,7 +184,8 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculation) => {
     isSuccess &&
     isRateDataSuccess &&
     isStandingChargeDataSuccess &&
-    caps.data
+    caps.data &&
+    averageRateByTime
   ) {
     if (results === "daily") {
       const results = calculateDailyPrices(
@@ -211,6 +225,7 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculation) => {
         caps.data,
         consumptionData,
         flattenedRateData,
+        averageRateByTime,
         standingChargeData,
         inputTariff === "SILVER-23-12-06",
         currentGSP
@@ -841,6 +856,7 @@ export const calculatePrice = (
       payment_method: null | string;
     }[];
   },
+  averageRateData: number[],
   standingChargeData: {
     results: {
       value_inc_vat: number;
@@ -999,18 +1015,21 @@ export const calculatePrice = (
             break;
           }
         }
+        totalPrice +=
+          averageRateData[0] *
+          consumptionDataResults[i].consumption *
+          consumptionMultiplier;
       }
 
-      if (
-        filteredRateDataResults[i + rateDataOffset]?.value_inc_vat === undefined
-      )
-        break;
-
       audit.push({
-        date: filteredRateDataResults[i + rateDataOffset]?.valid_from,
-        rate: filteredRateDataResults[i + rateDataOffset]?.value_inc_vat,
+        date:
+          filteredRateDataResults[i + rateDataOffset]?.valid_from ?? "average",
+        rate:
+          filteredRateDataResults[i + rateDataOffset]?.value_inc_vat ??
+          averageRateData[0],
         cost:
-          (filteredRateDataResults[i + rateDataOffset]?.value_inc_vat ?? 0) *
+          (filteredRateDataResults[i + rateDataOffset]?.value_inc_vat ??
+            averageRateData[0]) *
           consumptionDataResults[i].consumption *
           consumptionMultiplier,
       });
@@ -1023,46 +1042,62 @@ export const calculatePrice = (
         filteredRateDataResults[i + rateDataOffset]?.valid_from
       ).valueOf();
 
-      /* check the same start time OR difference of 1 hour in daylight saving time */
-      if (
-        currentRateStartDateTimestamp === currentResultStartDateTimestamp ||
-        currentRateStartDateTimestamp ===
-          currentResultStartDateTimestamp - 3600000
-      ) {
-        totalPrice +=
-          filteredRateDataResults[i + rateDataOffset].value_inc_vat *
-          consumptionDataResults[i].consumption *
-          consumptionMultiplier;
-      } else {
-        for (let j = 1; j < filteredRateDataResults.length; j++) {
-          const nextTimestamp = new Date(
-            filteredRateDataResults[i + rateDataOffset + j]?.valid_from
-          ).valueOf();
+      const curreentDayStart = new Date(
+        consumptionDataResults[i].interval_start
+      );
+      curreentDayStart.setHours(0, 0, 0, 0);
+      const currentTimeSlot = Math.floor(
+        ((currentResultStartDateTimestamp - curreentDayStart.valueOf()) * 2) /
+          (1000 * 60 * 60)
+      );
 
-          if (
-            nextTimestamp === currentResultStartDateTimestamp ||
-            nextTimestamp === currentResultStartDateTimestamp - 3600000
-          ) {
-            totalPrice +=
-              filteredRateDataResults[i + rateDataOffset + j].value_inc_vat *
-              consumptionDataResults[i].consumption *
-              consumptionMultiplier;
-            rateDataOffset += j;
-            break;
+      /* check the same start time OR difference of 1 hour in daylight saving time */
+      if (filteredRateDataResults[i + rateDataOffset]?.value_inc_vat) {
+        if (
+          currentRateStartDateTimestamp === currentResultStartDateTimestamp ||
+          currentRateStartDateTimestamp ===
+            currentResultStartDateTimestamp - 3600000
+        ) {
+          totalPrice +=
+            filteredRateDataResults[i + rateDataOffset].value_inc_vat *
+            consumptionDataResults[i].consumption *
+            consumptionMultiplier;
+        } else {
+          for (let j = 1; j < filteredRateDataResults.length; j++) {
+            const nextTimestamp = new Date(
+              filteredRateDataResults[i + rateDataOffset + j]?.valid_from
+            ).valueOf();
+
+            if (
+              nextTimestamp === currentResultStartDateTimestamp ||
+              nextTimestamp === currentResultStartDateTimestamp - 3600000
+            ) {
+              totalPrice +=
+                filteredRateDataResults[i + rateDataOffset + j].value_inc_vat *
+                consumptionDataResults[i].consumption *
+                consumptionMultiplier;
+              rateDataOffset += j;
+              break;
+            }
           }
         }
+      } else {
+        // day light saving would cause the timeslot to be 49,48 around 63??
+        totalPrice +=
+          (averageRateData[currentTimeSlot] ?? 0) *
+          consumptionDataResults[i].consumption *
+          consumptionMultiplier;
       }
-
-      if (
-        filteredRateDataResults[i + rateDataOffset]?.value_inc_vat === undefined
-      )
-        break;
-
       audit.push({
-        date: filteredRateDataResults[i + rateDataOffset]?.valid_from,
-        rate: filteredRateDataResults[i + rateDataOffset]?.value_inc_vat,
+        date:
+          filteredRateDataResults[i + rateDataOffset]?.valid_from ?? "average",
+        rate:
+          filteredRateDataResults[i + rateDataOffset]?.value_inc_vat ??
+          averageRateData[currentTimeSlot],
         cost:
-          (filteredRateDataResults[i + rateDataOffset]?.value_inc_vat ?? 0) *
+          (filteredRateDataResults[i + rateDataOffset]?.value_inc_vat ??
+            averageRateData[currentTimeSlot] ??
+            0) *
           consumptionDataResults[i].consumption *
           consumptionMultiplier,
       });
@@ -1110,9 +1145,6 @@ export const calculatePrice = (
     (new Date(toDate).valueOf() - new Date(fromDate).valueOf()) /
       (24 * 60 * 60 * 1000)
   );
-
-  console.log(audit);
-
   if (
     category === "Agile" ||
     category === "Go" ||
@@ -1124,20 +1156,17 @@ export const calculatePrice = (
     if (audit.length < periodLength * 48) {
       totalPrice = (totalPrice * periodLength * 48) / audit.length;
       totalStandingCharge =
-        (totalStandingCharge * periodLength * 48) /
-        consumptionDataResults.length;
+        (totalStandingCharge * periodLength * 48) / audit.length;
     }
   } else {
     if (audit.length < periodLength) {
       totalPrice = (totalPrice * periodLength) / audit.length;
-      totalStandingCharge =
-        (totalStandingCharge * periodLength) / consumptionDataResults.length;
+      totalStandingCharge = (totalStandingCharge * periodLength) / audit.length;
     }
   }
 
   totalPrice = evenRound(totalPrice / 100, 2);
   totalStandingCharge = evenRound(totalStandingCharge / 100, 2);
-
   // formula to reflect 2023Dec change to Agile/Tracker if not currently on Agile/Tracker
 
   /* if (category === "Agile") {
