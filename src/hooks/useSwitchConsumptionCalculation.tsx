@@ -168,6 +168,7 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculator) => {
         caps.data,
         consumptionData,
         flattenedRateData,
+        [],
         standingChargeData,
         tariff === "SILVER-23-12-06",
         currentGSP
