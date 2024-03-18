@@ -40,6 +40,7 @@ const UserApiResult = () => {
           <div className="flex-grow mb-3">
             Inclusive of standing charge & VAT.
             <Remark>
+              With the recent change of Agile/Tracker formulae, price calcuation for periods before the tariff start date will NOT be shown.
               Approximations and assumptions are used in the calculations. The
               actual savings are likely to differ because of missing data and
               rounding. Should you encounter any issues while using this page,
@@ -50,7 +51,7 @@ const UserApiResult = () => {
               . Thanks a lot!
             </Remark>
           </div>
-          {/*<PeriodSelector period={period} setPeriod={setPeriod} />*/}
+          <PeriodSelector period={period} setPeriod={setPeriod} />
           <Tabs />
           {currentType === "EE" && (
             <>

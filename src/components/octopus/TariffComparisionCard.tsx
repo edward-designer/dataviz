@@ -14,6 +14,7 @@ import Lottie from "lottie-react";
 import octopusIcon from "../../../public/lottie/octopus.json";
 import { FaMagnifyingGlassChart } from "react-icons/fa6";
 import Link from "next/link";
+import useTariffDetailsQuery from "@/hooks/useTariffDetailsQuery";
 
 interface ITariffComparisionCard {
   deviceNumber: string;
@@ -27,6 +28,7 @@ interface ITariffComparisionCard {
   setCost: (tariff: string, cost: number) => void;
   rank: number;
   isExport?: boolean;
+  duration?: string;
 }
 const TariffComparisionCard = ({
   deviceNumber,
@@ -40,8 +42,9 @@ const TariffComparisionCard = ({
   setCost,
   rank,
   isExport = false,
+  duration = "",
 }: ITariffComparisionCard) => {
-  const { cost, isLoading, error, newTracker } = useConsumptionCalculation({
+  const { cost, isLoading, error } = useConsumptionCalculation({
     tariff,
     fromDate,
     toDate,
@@ -51,10 +54,25 @@ const TariffComparisionCard = ({
     serialNo,
   });
 
+  const tariffDetails = useTariffDetailsQuery<{ available_from: string }>({
+    tariff,
+    type,
+  });
+
   useEffect(() => {
     if (Number.isNaN(cost)) return;
     if (cost !== null && typeof cost === "number") setCost(tariff, cost);
   }, [tariff, cost, setCost]);
+
+  const tariffDetailsAvailableFrom = tariffDetails.data?.[0].available_from;
+  if (
+    duration !== "year" &&
+    tariffDetailsAvailableFrom &&
+    new Date(tariffDetailsAvailableFrom).valueOf() >
+      new Date(fromDate).valueOf()
+  ) {
+    return;
+  }
 
   const Container =
     cost !== null && !Number.isNaN(cost) && rank === 1 ? Sparkles : "div";

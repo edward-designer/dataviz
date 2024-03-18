@@ -216,6 +216,7 @@ const CompareTariffsByType = ({
                     setCost={setCost}
                     rank={ind + 1}
                     isExport={isExport}
+                    duration={period.duration}
                   />
                 );
               })}
