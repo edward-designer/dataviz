@@ -145,7 +145,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                   Your Octopus info is stored on your browser only for
                   retrieving pricing and consumption data. <br />
                   <span className="text-accentBlue-500">
-                    <em>[ver 2024.03.11]</em> Bugs report & enquiries:{" "}
+                    <em>[ver 2024.03.18]</em> Bugs report & enquiries:{" "}
                     <a
                       href="mailto:edward.chung.dev@gmail.com"
                       className="underline"
