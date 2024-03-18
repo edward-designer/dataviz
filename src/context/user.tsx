@@ -311,10 +311,12 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
       : value.ESerialNo;
   const EESerialNos = useMemo(
     () =>
-      currentProperty?.electricity_meter_points
-        ?.filter((meter_point) => meter_point.is_export)
-        ?.at(-1)
-        ?.meters?.map((meter) => meter.serial_number) ?? [],
+      (
+        currentProperty?.electricity_meter_points
+          ?.filter((meter_point) => meter_point.is_export)
+          ?.at(-1)
+          ?.meters?.map((meter) => meter.serial_number) ?? []
+      ).filter(Boolean),
     [currentProperty]
   );
   const currentEETariff = getTariffCodeWithoutPrefixSuffix(
@@ -350,9 +352,9 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
       : value.GSerialNo;
   const GSerialNos = useMemo(
     () =>
-      currentProperty?.gas_meter_points
+      (currentProperty?.gas_meter_points
         ?.at(-1)
-        ?.meters?.map((meter) => meter.serial_number) ?? [],
+        ?.meters?.map((meter) => meter.serial_number) ?? []).filter(Boolean),
     [currentProperty]
   );
   const currentGTariff = getTariffCodeWithoutPrefixSuffix(
