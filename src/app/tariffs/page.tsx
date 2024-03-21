@@ -219,7 +219,7 @@ const About = () => {
               <td>
                 <a
                   target="_blank"
-                  href="/flux"
+                  href="/iflux"
                   className=" text-accentPink-400 hover:text-accentBlue-500"
                 >
                   Intelligent Flux
