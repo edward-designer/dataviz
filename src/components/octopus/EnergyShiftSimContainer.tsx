@@ -383,7 +383,8 @@ const EnergyShiftSimContainer = () => {
       <div className="text-sm md:text-base leading-tight">
         Use this simulator to shift daily energy use pattern to maximize saving!
         VAT inclusive; standing charge excluded. Please bear in mind that daily
-        average figures are used hegrare which can vary a lot from day to day.
+        average figures are used here which can vary a lot from actual day to
+        day use.
       </div>
       <h2 className="text-accentPink-600 font-display text-4xl flex items-center gap-3 mt-2 -mb-2">
         <BsLightningChargeFill aria-label="electricity" className="w-8 h-8" />
