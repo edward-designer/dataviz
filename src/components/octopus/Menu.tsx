@@ -294,6 +294,16 @@ const Menu = () => {
               <span className="text-lg">My</span> Savings
             </Link>
             <Link
+              href="/maxSave"
+              className={`block my-4  ${
+                pathname === "/maxSave"
+                  ? "cursor-default text-accentBlue-900"
+                  : "hover:text-accentPink-500"
+              }`}
+            >
+              <Badge label="beta" /> <span className="text-lg">Load</span> Shift
+            </Link>
+            <Link
               href="/compare"
               className={`block my-4  ${
                 pathname === "/compare"
@@ -311,8 +321,7 @@ const Menu = () => {
                   : "hover:text-accentPink-500"
               }`}
             >
-              <Badge label="new" /> <span className="text-lg">Data</span>{" "}
-              Checker
+              <span className="text-lg">Data</span> Checker
             </Link>
             <Link
               href="/tariffHopping"
@@ -333,7 +342,7 @@ const Menu = () => {
                   : "hover:text-accentPink-500"
               }`}
             >
-              <Badge label="beta" /> <span className="text-lg">My </span>
+              <span className="text-lg">My </span>
               Octopast <span className="text-lg">Year</span>
             </Link>
           </div>
