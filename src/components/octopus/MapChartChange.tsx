@@ -138,7 +138,11 @@ const MapChart = ({
     ) as Single_tariff_gsp_record[];
 
     const allValuesDifferences = allValues.map((value, i) => {
-      if ("direct_debit_monthly" in value)
+      if (
+        "direct_debit_monthly" in value &&
+        rate !== "day_unit_rate_inc_vat" &&
+        rate !== "night_unit_rate_inc_vat"
+      )
         return evenRound(
           value["direct_debit_monthly"][rate] -
             allToCompareValues[i]["direct_debit_monthly"][rate]
@@ -202,18 +206,20 @@ const MapChart = ({
     const getPrice = (tariffDetails: Single_tariff_gsp_record) => {
       if (tariffDetails) {
         let key = "";
-        if ("direct_debit_monthly" in tariffDetails)
-          key = "direct_debit_monthly";
-        if ("varying" in tariffDetails) key = "varying";
-        if (key === "") return;
+        if (
+          "direct_debit_monthly" in tariffDetails &&
+          rate !== "day_unit_rate_inc_vat" &&
+          rate !== "night_unit_rate_inc_vat"
+        )
+          return tariffDetails["direct_debit_monthly"][rate] === null
+            ? "--"
+            : evenRound(tariffDetails["direct_debit_monthly"][rate], 2) + "p";
+        if ("varying" in tariffDetails)
+          return tariffDetails["varying"][rate] === null
+            ? "--"
+            : evenRound(tariffDetails["varying"][rate], 2) + "p";
 
-        return tariffDetails[key as keyof Single_tariff_gsp_record][rate] ===
-          null
-          ? "--"
-          : evenRound(
-              tariffDetails[key as keyof Single_tariff_gsp_record][rate],
-              2
-            ) + "p";
+        return;
       }
       return;
     };
