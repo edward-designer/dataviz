@@ -286,6 +286,7 @@ export interface QueryTariffResult {
 }
 
 export type Single_tariff = Record<gsp, Single_tariff_gsp_record>;
+export type Dual_tariff = Record<gsp, Dual_tariff_gsp_record>;
 
 export type Single_tariff_gsp_record = {
   direct_debit_monthly: {
@@ -295,16 +296,28 @@ export type Single_tariff_gsp_record = {
   varying: {
     standard_unit_rate_inc_vat: number;
     standing_charge_inc_vat: number;
+    day_unit_rate_inc_vat: number;
+    night_unit_rate_inc_vat: number;
+  };
+};
+export type Dual_tariff_gsp_record = {
+  varying: {
+    day_unit_rate_inc_vat: number;
+    night_unit_rate_inc_vat: number;
+    standing_charge_inc_vat: number;
   };
 };
 
 export type Single_tariff_gsp_record_charge_type =
   | "standard_unit_rate_inc_vat"
-  | "standing_charge_inc_vat";
+  | "standing_charge_inc_vat"
+  | "day_unit_rate_inc_vat"
+  | "night_unit_rate_inc_vat";
 
 export interface QuerySingleTariffPlanResult {
   tariffs_active_at: string;
   single_register_electricity_tariffs: Single_tariff;
+  dual_register_electricity_tariffs?: Dual_tariff;
   single_register_gas_tariffs: Single_tariff;
 }
 export interface QuerySingleAgileResult {

@@ -183,6 +183,16 @@ const Menu = () => {
               >
                 Variable <span className="text-lg">(SVT) Price</span>
               </Link>
+              <Link
+                href="/variableE7"
+                className={`block my-4  ${
+                  pathname === "/variableE7"
+                    ? "cursor-default text-accentBlue-900"
+                    : "hover:text-accentPink-500"
+                }`}
+              >
+                Economy 7 <span className="text-lg">Price</span>
+              </Link>
               <span className="block border-t border-accentBlue-500/50 text-xs relative mt-8 mb-6">
                 <span className="absolute -top-2 bg-accentBlue-500 px-2 text-theme-950 italic rounded-full">
                   Export Tariffs

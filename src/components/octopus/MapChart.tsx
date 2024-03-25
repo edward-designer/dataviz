@@ -43,6 +43,7 @@ interface IMapChart {
   type: keyof typeof ENERGY_TYPE;
   rate?: Single_tariff_gsp_record_charge_type;
   gsp: string;
+  dual?: boolean;
 }
 
 const MapChart = ({
@@ -50,6 +51,7 @@ const MapChart = ({
   type,
   rate = "standard_unit_rate_inc_vat",
   gsp,
+  dual = false,
 }: IMapChart) => {
   const { hiViz } = useContext(HiVizContext);
 
@@ -68,8 +70,9 @@ const MapChart = ({
     useTariffQuery<QuerySingleTariffPlanResult>({
       tariff,
       type,
+      dual,
     });
-
+  console.log(data);
   const caps = usePriceCapQuery({});
 
   let path = geoPath();
@@ -120,6 +123,36 @@ const MapChart = ({
           : `Updated at ${validDate}`;
       svg.select(".info").text(updateDate);
     }
+    if (rate === "day_unit_rate_inc_vat") {
+      const validDate = new Date(
+        data[0].tariffs_active_at as string
+      ).toLocaleDateString("en-GB");
+      const updateDate =
+        validDate === new Date().toLocaleDateString("en-GB")
+          ? `Today (${validDate}) Peak Rate`
+          : validDate ===
+            new Date(
+              new Date().setDate(new Date().getDate() - 1)
+            ).toLocaleDateString("en-GB")
+          ? `Yesterday (${validDate}) Peak Rate`
+          : `Updated at ${validDate}`;
+      svg.select(".info").text(updateDate);
+    }
+    if (rate === "night_unit_rate_inc_vat") {
+      const validDate = new Date(
+        data[0].tariffs_active_at as string
+      ).toLocaleDateString("en-GB");
+      const updateDate =
+        validDate === new Date().toLocaleDateString("en-GB")
+          ? `Today (${validDate}) Off-Peak Rate`
+          : validDate ===
+            new Date(
+              new Date().setDate(new Date().getDate() - 1)
+            ).toLocaleDateString("en-GB")
+          ? `Yesterday (${validDate}) Off-Peak Rate`
+          : `Updated at ${validDate}`;
+      svg.select(".info").text(updateDate);
+    }
     if (rate === "standing_charge_inc_vat") {
       const ofgemCap = `Your SVT Cap: ${
         getCapsCurrentRegionData(gsp)[`${type}S`]
@@ -127,14 +160,20 @@ const MapChart = ({
       svg.select(".info").text(ofgemCap);
     }
 
-    const tariffTypeKey =
-      `single_register_${ENERGY_TYPE[type]}_tariffs` as keyof QuerySingleTariffPlanResult;
+    const tariffTypeKey = dual
+      ? (`dual_register_${ENERGY_TYPE[type]}_tariffs` as keyof QuerySingleTariffPlanResult)
+      : (`single_register_${ENERGY_TYPE[type]}_tariffs` as keyof QuerySingleTariffPlanResult);
     const singleTariffByGsp = (data[0]?.[tariffTypeKey] ?? []) as Single_tariff;
     const allValues = Object.values(
       singleTariffByGsp
     ) as Single_tariff_gsp_record[];
     let valueExtent = extent(allValues, (d) => {
-      if ("direct_debit_monthly" in d) return d["direct_debit_monthly"][rate];
+      if (
+        "direct_debit_monthly" in d &&
+        rate !== "day_unit_rate_inc_vat" &&
+        rate !== "night_unit_rate_inc_vat"
+      )
+        return d["direct_debit_monthly"][rate];
       if ("varying" in d) return d["varying"][rate];
       else [0, 0];
     });
@@ -192,18 +231,19 @@ const MapChart = ({
       const tariffDetails = singleTariffByGsp[gsp];
       if (tariffDetails) {
         let key = "";
-        if ("direct_debit_monthly" in tariffDetails)
-          key = "direct_debit_monthly";
-        if ("varying" in tariffDetails) key = "varying";
-        if (key === "") return;
-
-        return tariffDetails[key as keyof Single_tariff_gsp_record][rate] ===
-          null
-          ? "--"
-          : evenRound(
-              tariffDetails[key as keyof Single_tariff_gsp_record][rate],
-              2
-            ) + "p";
+        if (
+          "direct_debit_monthly" in tariffDetails &&
+          rate !== "day_unit_rate_inc_vat" &&
+          rate !== "night_unit_rate_inc_vat"
+        )
+          return tariffDetails["direct_debit_monthly"][rate] === null
+            ? "--"
+            : evenRound(tariffDetails["direct_debit_monthly"][rate], 2) + "p";
+        if ("varying" in tariffDetails)
+          return tariffDetails["varying"][rate] === null
+            ? "--"
+            : evenRound(tariffDetails["varying"][rate], 2) + "p";
+        return;
       }
       return;
     };
@@ -229,7 +269,9 @@ const MapChart = ({
         const coordinates = pointer(e);
         const gsp = select(this).attr("data-zone") as gsp;
         const capToCompare =
-          rate === "standard_unit_rate_inc_vat"
+          rate === "standard_unit_rate_inc_vat" ||
+          rate === "day_unit_rate_inc_vat" ||
+          rate === "night_unit_rate_inc_vat"
             ? parseFloat(getCapsCurrentRegionData(gsp.replace("_", ""))[type])
             : parseFloat(
                 getCapsCurrentRegionData(gsp.replace("_", ""))[`${type}S`]
@@ -318,15 +360,24 @@ const MapChart = ({
           let value = 100;
           if (tariffDetails) {
             let key = "";
-            if ("direct_debit_monthly" in tariffDetails)
-              key = "direct_debit_monthly";
-            if ("varying" in tariffDetails) key = "varying";
-            value = evenRound(
-              singleTariffByGsp[d?.properties?.Name as gsp]?.[
-                key as keyof Single_tariff_gsp_record
-              ]?.[rate],
-              2
-            );
+            if (
+              "direct_debit_monthly" in tariffDetails &&
+              rate !== "day_unit_rate_inc_vat" &&
+              rate !== "night_unit_rate_inc_vat"
+            )
+              value = evenRound(
+                singleTariffByGsp[d?.properties?.Name as gsp]?.[
+                  "direct_debit_monthly"
+                ]?.[rate],
+                2
+              );
+            if ("varying" in tariffDetails)
+              value = evenRound(
+                singleTariffByGsp[d?.properties?.Name as gsp]?.["varying"]?.[
+                  rate
+                ],
+                2
+              );
           }
           return colorScale(value);
         })
@@ -387,6 +438,7 @@ const MapChart = ({
     caps.data,
     isLoading,
     hiViz,
+    dual,
   ]);
 
   return (

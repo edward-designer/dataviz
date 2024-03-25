@@ -61,12 +61,14 @@ const BrushChart = ({
   gsp,
   duration = "month",
   height = 450,
+  dual = false,
 }: {
   tariff: string;
   type: TariffType;
   gsp: string;
   duration?: DurationType;
   height?: number;
+  dual?: boolean;
 }) => {
   const { hiViz } = useContext(HiVizContext);
 
@@ -86,6 +88,7 @@ const BrushChart = ({
     type,
     gsp,
     duration,
+    dual,
   });
 
   const caps = usePriceCapQuery({});
@@ -878,10 +881,10 @@ const BrushChart = ({
       lineCharts.push(lineChart);
       drawArea("electricity", xScale, yScale, true);
     }
-    if (type.includes("G")) {
+    if (type.includes("G") || dual) {
       const lineChart2 = drawLine(
         [data[1].results],
-        "gas",
+        dual ? "electricity2" : "gas",
         xScale,
         yScale,
         true
@@ -968,6 +971,11 @@ const BrushChart = ({
         <svg ref={svgRef} key={category}>
           <defs>
             <linearGradient id="electricity" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor={hiViz ? "white" : "#aa33cc"} />
+              <stop offset="50%" stopColor={hiViz ? "white" : "#3377bb"} />
+              <stop offset="100%" stopColor={hiViz ? "white" : "#aaffdd"} />
+            </linearGradient>
+            <linearGradient id="electricity2" x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor={hiViz ? "white" : "#aa33cc"} />
               <stop offset="50%" stopColor={hiViz ? "white" : "#3377bb"} />
               <stop offset="100%" stopColor={hiViz ? "white" : "#aaffdd"} />

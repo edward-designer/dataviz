@@ -7,10 +7,12 @@ const Badge = ({
   label,
   variant = "default",
   icon = null,
+  className = "",
 }: {
   label: string;
   variant?: TVariant;
   icon?: ReactNode;
+  className?: string;
 }) => {
   const { hiViz } = useContext(HiVizContext);
 
@@ -27,7 +29,7 @@ const Badge = ({
           : variant === "secondary"
           ? "text-base flex items-center gap-1 font-display"
           : "text-base flex items-center gap-1 "
-      }`}
+      } ${className}`}
     >
       {icon}
       {label}

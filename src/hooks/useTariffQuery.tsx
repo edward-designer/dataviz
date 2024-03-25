@@ -22,11 +22,13 @@ function useTariffQuery<T>({
   type,
   gsp,
   duration = "month",
+  dual = false,
 }: {
   tariff: string;
   type: TariffType;
   gsp?: string;
   duration?: DurationType;
+  dual?: boolean;
 }): UseQueryResult<T[], Error> {
   const queryClient = useQueryClient();
   const category = getCategory(tariff);
@@ -76,7 +78,7 @@ function useTariffQuery<T>({
       "2-days": 96,
     },
   };
-
+  const dualCode = dual ? "2R" : "1R";
   const noOfRecords = {
     month: noByCategory[category]["month"],
     week: 336,
@@ -89,16 +91,28 @@ function useTariffQuery<T>({
   const query = useQuery<T[]>({
     enabled: !!tariff,
     queryKey: ["getTariff", tariff, type, gsp, duration],
-    queryFn: fetchApi(
-      typeArr.map((type) => {
-        return {
-          tariffType: type,
-          url: gsp
-            ? `https://api.octopus.energy/v1/products/${tariff}/${ENERGY_TYPE[type]}-tariffs/${type}-1R-${tariff}-${gsp}/standard-unit-rates/?page_size=${noOfRecords[duration]}`
-            : `https://api.octopus.energy/v1/products/${tariff}/`,
-        };
-      })
-    ),
+    queryFn:
+      dual && gsp
+        ? fetchApi([
+            {
+              tariffType: "E",
+              url: `https://api.octopus.energy/v1/products/${tariff}/electricity-tariffs/${type}-${dualCode}-${tariff}-${gsp}/day-unit-rates/?page_size=${noOfRecords[duration]}`,
+            },
+            {
+              tariffType: "E",
+              url: `https://api.octopus.energy/v1/products/${tariff}/electricity-tariffs/${type}-${dualCode}-${tariff}-${gsp}/night-unit-rates/?page_size=${noOfRecords[duration]}`,
+            },
+          ])
+        : fetchApi(
+            typeArr.map((type) => {
+              return {
+                tariffType: type,
+                url: gsp
+                  ? `https://api.octopus.energy/v1/products/${tariff}/${ENERGY_TYPE[type]}-tariffs/${type}-${dualCode}-${tariff}-${gsp}/standard-unit-rates/?page_size=${noOfRecords[duration]}`
+                  : `https://api.octopus.energy/v1/products/${tariff}/`,
+              };
+            })
+          ),
   });
   return query;
 }
