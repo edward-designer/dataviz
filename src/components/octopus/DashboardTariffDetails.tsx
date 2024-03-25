@@ -22,6 +22,7 @@ interface IDashboardTariffDetails {
   valid_from: string;
   valid_to: string;
   type: TariffType;
+  dual?: boolean;
 }
 
 const DashboardTariffDetails = ({
@@ -29,6 +30,7 @@ const DashboardTariffDetails = ({
   valid_from,
   valid_to,
   type,
+  dual = false,
 }: IDashboardTariffDetails) => {
   const { hiViz } = useContext(HiVizContext);
   const { value, setValue } = useContext(UserContext);
@@ -60,7 +62,7 @@ const DashboardTariffDetails = ({
           <span className="inline-block w-[100px] text-accentBlue-500 font-light">
             Current Tariff:
           </span>
-          {isSuccess ? data[0]?.full_name : tariff_code}
+          {isSuccess ? data[0]?.full_name : tariff_code} {dual?"Economy 7":""}
         </div>
         <div className="flex flex-row items-center whitespace-nowrap overflow-hidden">
           <span className="inline-block w-[100px] text-accentBlue-500 font-light">
@@ -129,6 +131,7 @@ const DashboardTariffDetails = ({
             ?.standing_charge_inc_vat ??
           0
         }
+        dual={dual}
       />
     </>
   );

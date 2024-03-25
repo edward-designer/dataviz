@@ -5,22 +5,22 @@ import Badge from "@/components/octopus/Badge";
 import Remark from "./Remark";
 
 import {
-    CapsTSVResult,
-    QueryTariffResult,
-    TariffResult,
-    TariffType,
-    gsp
+  CapsTSVResult,
+  QueryTariffResult,
+  TariffResult,
+  TariffType,
+  gsp,
 } from "@/data/source";
 
 import useTariffQuery from "../../hooks/useTariffQuery";
 
 import {
-    calculateChangePercentage,
-    evenRound,
-    getTariffName,
-    isSameDate,
-    isToday,
-    priceAccessor,
+  calculateChangePercentage,
+  evenRound,
+  getTariffName,
+  isSameDate,
+  isToday,
+  priceAccessor,
 } from "../../utils/helpers";
 
 import useCurrentLocationPriceCapQuery from "@/hooks/useCurrentLocationPriceCapQuery";
@@ -37,12 +37,14 @@ const DashboardPricePane = ({
   gsp,
   standingCharge = null,
   date,
+  dual = false,
 }: {
   tariff: string;
   type: Exclude<TariffType, "EG">;
   gsp: string;
   standingCharge: number | null;
   date?: string;
+  dual?: boolean;
 }) => {
   const { isLoading, isError, isSuccess, isRefetching, refetch, data, error } =
     useTariffQuery<QueryTariffResult>({
@@ -50,6 +52,7 @@ const DashboardPricePane = ({
       type,
       gsp,
       duration: "2-days",
+      dual,
     });
   const tariffName = getTariffName(tariff);
 
@@ -110,6 +113,16 @@ const DashboardPricePane = ({
     results,
     type,
   });
+
+  const [priceTonightDisplay] = getPriceDisplay({
+    priceTodayIndex,
+    priceYesterdayIndex,
+    priceDisplayDate: "today",
+    priceCap: caps,
+    results: data?.[1]?.results!,
+    type,
+  });
+
   const [priceTomorrowDisplay, priceChangeTomorrow, priceTomorrow] =
     getPriceDisplay({
       priceTodayIndex,
@@ -154,7 +167,10 @@ const DashboardPricePane = ({
               <div className="font-digit text-6xl text-white flex flex-col items-start gap-1 w-full">
                 {singleTariff ? (
                   <>
-                    <div className="">{priceTodayDisplay}</div>
+                    <div className="">
+                      {priceTodayDisplay} {dual && `/ `}
+                      {dual && priceTonightDisplay}
+                    </div>
                   </>
                 ) : ["Agile", "Flux", "Go"].includes(tariffName) ? (
                   <div className="relative flex-1 flex flex-col max-h-[180px] min-h-[180px] rounded-xl w-full mt-3">

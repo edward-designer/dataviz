@@ -33,7 +33,6 @@ const DashboardCurrentTariff = () => {
             />
           </div>
         )}
-
         {value.currentEContract && (
           <div>
             <div className="text-accentPink-700 text-2xl">
@@ -45,10 +44,10 @@ const DashboardCurrentTariff = () => {
               valid_from={value.currentEContract.valid_from}
               tariff_code={value.currentETariff}
               type="E"
+              dual={!!value.currentEContract?.tariff_code.includes("E-2R")}
             />
           </div>
         )}
-
         {value.currentGContract && (
           <div>
             <div className="text-accentPink-700 text-2xl">
