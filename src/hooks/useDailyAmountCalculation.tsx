@@ -297,7 +297,7 @@ export const calculateDailyResults = ({
           new Date(tariff.valid_to) >= new Date(cur.interval_end))
     )?.value_inc_vat;
 
-    if (currentSessionRate && acc !== null) {
+    if (currentSessionRate !== undefined && acc !== null) {
       sessionCosts.push(currentSessionRate);
       return acc + cur.consumption * consumptionMultiplier * currentSessionRate;
     } else {
