@@ -69,8 +69,9 @@ const DashboardPricePane = ({
         ? !(
             Date.parse(result.valid_to) <= dayStart.valueOf() ||
             Date.parse(result.valid_from) >= dayEnd.valueOf()
-          )
-        : !(Date.parse(result.valid_to) <= dayStart.valueOf())
+          ) && result.payment_method !== "NON_DIRECT_DEBIT"
+        : !(Date.parse(result.valid_to) <= dayStart.valueOf()) &&
+          result.payment_method !== "NON_DIRECT_DEBIT"
     ) ?? [];
 
   if (tariffName === "Flux" || tariffName === "Go") {
@@ -104,7 +105,7 @@ const DashboardPricePane = ({
 
   const noPriceTomorrowMessage =
     "The rate of tomorrow is usually available between 11.00am and 6.00pm. Please revisit this page later to get the updates.";
-
+  console.log(results);
   const [priceTodayDisplay, priceChangeToday] = getPriceDisplay({
     priceTodayIndex,
     priceYesterdayIndex,
@@ -119,7 +120,9 @@ const DashboardPricePane = ({
     priceYesterdayIndex,
     priceDisplayDate: "today",
     priceCap: caps,
-    results: data?.[1]?.results!,
+    results: data?.[1]?.results.filter(
+      (result) => result.payment_method !== "NON_DIRECT_DEBIT"
+    )!,
     type,
   });
 
