@@ -41,6 +41,7 @@ const SavingsChart = ({
   deviceNumber,
   serialNo,
   selectedPeriod,
+  dual = false,
 }: {
   tariff: string;
   type: "E" | "G";
@@ -51,6 +52,7 @@ const SavingsChart = ({
   deviceNumber: string;
   serialNo: string;
   selectedPeriod?: IPeriod;
+  dual?: boolean;
 }) => {
   const imageRef = useRef<HTMLDivElement | null>(null);
 
@@ -78,6 +80,7 @@ const SavingsChart = ({
     deviceNumber,
     serialNo,
     results: "monthly",
+    dual
   });
 
   const {

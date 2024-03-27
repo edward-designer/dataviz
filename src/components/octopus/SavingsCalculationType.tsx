@@ -64,6 +64,9 @@ const SavingsCalculationType = ({
 
   if (!agreements) return;
 
+  const dualCurrent = currentContract?.tariff_code.includes("E-2R");
+  const dualPrevious = previousContract?.tariff_code.includes("E-2R");
+
   return (
     <div className="flex flex-col gap-4">
       {deviceNumber &&
@@ -79,6 +82,7 @@ const SavingsCalculationType = ({
                 valid_to={currentContract.valid_to}
                 tariff_code={currentContract.tariff_code}
                 type={energyType}
+                dual={dualCurrent}
               />
             )}
             {type === "EE" ? (
@@ -105,7 +109,7 @@ const SavingsCalculationType = ({
                   apiKey={apiKey}
                 />
               )
-            ) : isCurrentSVT ? (
+            ) : isCurrentSVT && !dualCurrent ? (
               <div>
                 You are currently on the Octopus Flexible Tariff.{" "}
                 <Link href="/compare">
@@ -123,6 +127,7 @@ const SavingsCalculationType = ({
                 deviceNumber={deviceNumber}
                 serialNo={serialNumber}
                 compareTo="SVT"
+                dual={dualCurrent}
               />
             ) : (
               <SavingsChartDaily
@@ -134,6 +139,7 @@ const SavingsCalculationType = ({
                 serialNo={serialNumber}
                 compareTo="SVT"
                 apiKey={apiKey}
+                dual={dualCurrent}
               />
             )}
           </>
@@ -149,6 +155,7 @@ const SavingsCalculationType = ({
               tariff_code={previousContract.tariff_code}
               type={energyType}
               isCurrent={false}
+              dual={dualPrevious}
             />
             {type === "EE" ? (
               <EarningChart
@@ -163,7 +170,7 @@ const SavingsCalculationType = ({
                 serialNo={serialNumber}
               />
             ) : isPreviousSVT ? (
-              <div>You were on the Octopus Flexible Tariff.</div>
+              <div>You were on Flexible Tariff (SVT).</div>
             ) : (
               <SavingsChart
                 tariff={getTariffCodeWithoutPrefixSuffix(
@@ -176,6 +183,7 @@ const SavingsCalculationType = ({
                 deviceNumber={deviceNumber}
                 serialNo={serialNumber}
                 compareTo="SVT"
+                dual={dualCurrent}
               />
             )}
           </>

@@ -15,6 +15,7 @@ export type IUseConsumptionData = {
   type: Exclude<TariffType, "EG">;
   category: TariffCategory;
   apiKey: string;
+  dual?: boolean;
 };
 
 const useConsumptionData = (inputs: IUseConsumptionData) => {
@@ -26,6 +27,7 @@ const useConsumptionData = (inputs: IUseConsumptionData) => {
     deviceNumber,
     serialNo,
     apiKey,
+    dual = false,
   } = inputs;
   const groupBy = {
     Agile: "",
@@ -35,15 +37,14 @@ const useConsumptionData = (inputs: IUseConsumptionData) => {
     Flux: "",
     IFlux: "",
     Tracker: "&group_by=day",
-    SVT: "&group_by=day",
+    SVT: dual ? "" : "&group_by=day",
     Fixed: "&group_by=day",
     Chart: "&group_by=day",
   };
-  const groupByType = ["Agile", "Go", "IGo", "Cosy", "Flux", "IFlux"].includes(
-    category
-  )
-    ? "halfhour"
-    : "day";
+  const groupByType =
+    ["Agile", "Go", "IGo", "Cosy", "Flux", "IFlux"].includes(category) || dual
+      ? "halfhour"
+      : "day";
 
   // octopus api only accept date string in ISO format with the milliseconds format (i.e. without .000)
   const queryFn = async () => {

@@ -4,7 +4,10 @@ import Badge from "@/components/octopus/Badge";
 import Comparison from "@/components/octopus/Comparison";
 import { IMeterPointE, IPeriod } from "@/data/source";
 
-import { evenRound, getTariffCodeWithoutPrefixSuffix } from "../../utils/helpers";
+import {
+  evenRound,
+  getTariffCodeWithoutPrefixSuffix,
+} from "../../utils/helpers";
 
 import Lottie from "lottie-react";
 import octopusIcon from "../../../public/lottie/octopus.json";
@@ -40,6 +43,7 @@ const SavingsChartDaily = ({
   agreements,
   compareTo,
   apiKey,
+  dual = false,
 }: {
   type: "E" | "G";
   gsp: string;
@@ -49,6 +53,7 @@ const SavingsChartDaily = ({
   agreements: IMeterPointE["agreements"];
   compareTo: string;
   apiKey: string;
+  dual?: boolean;
 }) => {
   const latestDate = new Date();
   latestDate.setHours(23, 59, 59, 999);
@@ -80,6 +85,7 @@ const SavingsChartDaily = ({
     gsp,
     compareTo,
     apiKey,
+    dual,
   });
 
   if (isLoading)
@@ -143,6 +149,7 @@ const SavingsChartDaily = ({
               data={results}
               type={type}
               month={fromDate.toLocaleDateString("en-GB", { month: "short" })}
+              dual={dual}
             />
             <div className="flex flex-col font-normal justify-start divide-y [&>div]:border-accentBlue-900 gap-3">
               <div className="flex flex-wrap justify-between items-start md:block text-[#85cbf9] bg-theme-900/30">

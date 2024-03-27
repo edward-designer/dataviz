@@ -27,6 +27,7 @@ interface ITariffDetails {
   valid_from: string;
   type: TariffType;
   isCurrent?: boolean;
+  dual?: boolean;
 }
 
 const TariffDetails = ({
@@ -35,6 +36,7 @@ const TariffDetails = ({
   valid_to,
   type,
   isCurrent = true,
+  dual = false,
 }: ITariffDetails) => {
   const { value, setValue } = useContext(UserContext);
   const { data, isSuccess, isLoading } = useTariffQuery<{
@@ -102,6 +104,7 @@ const TariffDetails = ({
                 {" "}
                 ({getTariffCodeWithoutPrefixSuffix(tariff_code)})
               </span>
+              {dual ? " - Economy 7" : ""}
             </span>
           )}
         </div>

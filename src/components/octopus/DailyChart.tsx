@@ -27,10 +27,12 @@ const DailyChart = ({
   data,
   type,
   month,
+  dual,
 }: {
   data: IDailyChartResult[];
   type: "E" | "G" | "EE";
   month: string;
+  dual?: boolean;
 }) => {
   const { value } = useContext(UserContext);
   const scrollContainerRef = useRef<null | HTMLDivElement>(null);
@@ -75,6 +77,7 @@ const DailyChart = ({
                 ind,
                 tariff: dailyResult.tariff,
                 reading: dailyResult.reading,
+                dual,
               };
               return type === "EE" ? (
                 <EarningMonthlyChartBar

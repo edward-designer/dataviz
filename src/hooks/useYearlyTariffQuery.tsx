@@ -16,6 +16,7 @@ function useYearlyTariffQuery<T>({
   toDate,
   category,
   enabled = true,
+  dual = false,
 }: {
   tariff: string;
   type: Exclude<TariffType, "EG">;
@@ -24,6 +25,7 @@ function useYearlyTariffQuery<T>({
   toDate: string;
   category: TariffCategory;
   enabled: boolean;
+  dual?: boolean;
 }): UseQueryResult<T[], Error> {
   const queryFn = createTariffQuery({
     tariff,
@@ -33,6 +35,7 @@ function useYearlyTariffQuery<T>({
     toDate,
     category,
     enabled,
+    dual
   });
 
   const query = useQuery<T[]>({

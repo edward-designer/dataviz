@@ -42,6 +42,7 @@ export type IDailyAmountCalculation = {
   gsp: string;
   compareTo?: string;
   apiKey: string;
+  dual?: boolean;
 };
 
 const useDailyAmountCalculation = (inputs: IDailyAmountCalculation) => {
@@ -53,6 +54,7 @@ const useDailyAmountCalculation = (inputs: IDailyAmountCalculation) => {
     gsp,
     compareTo = "SVT",
     apiKey,
+    dual = false,
   } = inputs;
 
   const { value } = useContext(UserContext);
@@ -110,7 +112,9 @@ const useDailyAmountCalculation = (inputs: IDailyAmountCalculation) => {
       const response = await fetch(
         `https://api.octopus.energy/v1/products/${tariff}/${
           ENERGY_TYPE[typeEorG]
-        }-tariffs/${typeEorG}-1R-${tariff}-${gsp}/standing-charges/?page_size=1500&period_from=${fromISODate.replace(
+        }-tariffs/${typeEorG}-${
+          dual ? "2" : "1"
+        }R-${tariff}-${gsp}/standing-charges/?page_size=1500&period_from=${fromISODate.replace(
           ".000",
           ""
         )}`
@@ -134,6 +138,7 @@ const useDailyAmountCalculation = (inputs: IDailyAmountCalculation) => {
       toDate: toISODate,
       category: getCategory(tariff),
       enabled: !!tariff,
+      dual,
     });
     return [
       {
@@ -180,9 +185,16 @@ const useDailyAmountCalculation = (inputs: IDailyAmountCalculation) => {
       const tariffIndexInArray = uniqueTariffCodes.findIndex(
         (tariffCode) => tariffCode === tariff
       );
-      const tariffRates = resultsWithUnitAndStandardCharge[
-        tariffIndexInArray * 2
-      ]?.data?.[0]?.results as ITariffResults[];
+      const tariffRates = dual
+        ? ([
+            ...resultsWithUnitAndStandardCharge[tariffIndexInArray * 2]
+              ?.data?.[0]?.results,
+            ...resultsWithUnitAndStandardCharge[tariffIndexInArray * 2]
+              ?.data?.[1]?.results,
+          ] as ITariffResults[])
+        : (resultsWithUnitAndStandardCharge[tariffIndexInArray * 2]?.data?.[0]
+            ?.results as ITariffResults[]);
+
       const tariffStandingCharges = resultsWithUnitAndStandardCharge[
         tariffIndexInArray * 2 + 1
       ]?.data?.results as ITariffResults[];
@@ -190,12 +202,13 @@ const useDailyAmountCalculation = (inputs: IDailyAmountCalculation) => {
         ?.results as ITariffResults[];
       const SVTstandingCharges = resultsWithUnitAndStandardCharge[1]?.data
         ?.results as ITariffResults[];
-
       const dailyResults = calculateDailyResults({
         type,
         periodFrom,
         periodTo,
-        tariffRates,
+        tariffRates: tariffRates.filter(
+          (tariff) => tariff.payment_method !== "NON_DIRECT_DEBIT"
+        ),
         tariffStandingCharges,
         meterData: meterDataResult.filter(
           (d) =>
@@ -207,6 +220,7 @@ const useDailyAmountCalculation = (inputs: IDailyAmountCalculation) => {
         cap: capsCurrentCSP,
         gasConversionFactor: value.gasConversionFactor,
         tariff,
+        dual,
       });
       return dailyResults;
     });
@@ -234,6 +248,7 @@ interface ICalculateDailyResults {
   SVTstandingCharges: ITariffResults[];
   cap: ICaps[] | undefined;
   tariff: string;
+  dual?: boolean;
 }
 
 interface ITariffResults {
@@ -255,6 +270,7 @@ export const calculateDailyResults = ({
   SVTstandingCharges,
   cap,
   tariff,
+  dual = false,
 }: ICalculateDailyResults) => {
   const consumptionMultiplier = type === "G" ? gasConversionFactor : 1;
 
@@ -290,18 +306,45 @@ export const calculateDailyResults = ({
 
   const sessionCosts = [];
   const cost: number = meterData?.reduce((acc, cur) => {
-    const currentSessionRate = tariffRates?.find(
-      (tariff) =>
-        new Date(tariff.valid_from) <= new Date(cur.interval_start) &&
-        (tariff.valid_to === null ||
-          new Date(tariff.valid_to) >= new Date(cur.interval_end))
-    )?.value_inc_vat;
-
-    if (currentSessionRate !== undefined && acc !== null) {
-      sessionCosts.push(currentSessionRate);
-      return acc + cur.consumption * consumptionMultiplier * currentSessionRate;
+    if (dual) {
+      const currentSessionRateEntry = tariffRates?.filter(
+        (tariff) =>
+          new Date(tariff.valid_from) <= new Date(cur.interval_start) &&
+          (tariff.valid_to === null ||
+            new Date(tariff.valid_to) >= new Date(cur.interval_end))
+      );
+      const peakTariff = currentSessionRateEntry[0];
+      const offpeakTariff = currentSessionRateEntry[1];
+      const startHour = new Date(cur.interval_start).getHours();
+      // 0 - 7 offpeak
+      const currentRateEntry = startHour < 7 ? offpeakTariff : peakTariff;
+      if (currentRateEntry !== undefined && acc !== null) {
+        sessionCosts.push(currentRateEntry.value_inc_vat);
+        return (
+          acc +
+          cur.consumption *
+            consumptionMultiplier *
+            currentRateEntry.value_inc_vat
+        );
+      } else {
+        throw new Error("Error calculating");
+      }
     } else {
-      throw new Error("Error calculating");
+      const currentSessionRate = tariffRates?.find(
+        (tariff) =>
+          new Date(tariff.valid_from) <= new Date(cur.interval_start) &&
+          (tariff.valid_to === null ||
+            new Date(tariff.valid_to) >= new Date(cur.interval_end))
+      )?.value_inc_vat;
+
+      if (currentSessionRate !== undefined && acc !== null) {
+        sessionCosts.push(currentSessionRate);
+        return (
+          acc + cur.consumption * consumptionMultiplier * currentSessionRate
+        );
+      } else {
+        throw new Error("Error calculating");
+      }
     }
   }, 0);
 

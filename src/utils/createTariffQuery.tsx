@@ -8,7 +8,8 @@ interface IUseCreateTariffQuery {
   fromDate: string;
   toDate: string;
   category: TariffCategory;
-  enabled: boolean;
+  enabled?: boolean;
+  dual?: boolean;
 }
 const createTariffQuery = ({
   tariff,
@@ -18,6 +19,7 @@ const createTariffQuery = ({
   toDate,
   category,
   enabled = true,
+  dual,
 }: IUseCreateTariffQuery) => {
   const numberOfPages = Math.ceil(
     (((new Date(toDate).valueOf() - new Date(fromDate).valueOf()) /
@@ -72,12 +74,25 @@ const createTariffQuery = ({
         url: `https://api.octopus.energy/v1/products/${tariff}/${ENERGY_TYPE[type]}-tariffs/${type}-1R-${tariff}-${gsp}/standard-unit-rates/?page_size=1500&period_from=${formattedFromDate}&period_to=${formattedToDate}`,
       },
     ]),
-    SVT: fetchApi([
-      {
-        tariffType: type,
-        url: `https://api.octopus.energy/v1/products/${tariff}/${ENERGY_TYPE[type]}-tariffs/${type}-1R-${tariff}-${gsp}/standard-unit-rates/?page_size=1500&period_from=${formattedFromDate}&period_to=${formattedToDate}`,
-      },
-    ]),
+    SVT: fetchApi(
+      dual
+        ? [
+            {
+              tariffType: type,
+              url: `https://api.octopus.energy/v1/products/${tariff}/${ENERGY_TYPE[type]}-tariffs/${type}-2R-${tariff}-${gsp}/day-unit-rates/?page_size=1500&period_from=${formattedFromDate}&period_to=${formattedToDate}`,
+            },
+            {
+              tariffType: type,
+              url: `https://api.octopus.energy/v1/products/${tariff}/${ENERGY_TYPE[type]}-tariffs/${type}-2R-${tariff}-${gsp}/night-unit-rates/?page_size=1500&period_from=${formattedFromDate}&period_to=${formattedToDate}`,
+            },
+          ]
+        : [
+            {
+              tariffType: type,
+              url: `https://api.octopus.energy/v1/products/${tariff}/${ENERGY_TYPE[type]}-tariffs/${type}-1R-${tariff}-${gsp}/standard-unit-rates/?page_size=1500&period_from=${formattedFromDate}&period_to=${formattedToDate}`,
+            },
+          ]
+    ),
     Fixed: fetchApi([
       {
         tariffType: type,

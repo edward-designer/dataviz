@@ -31,6 +31,7 @@ interface IMonthlyChartBar {
   lastDate?: null | string;
   tariff?: string | undefined;
   reading?: number | undefined;
+  dual?: boolean
 }
 
 const MonthlyChartBar = ({
@@ -45,6 +46,7 @@ const MonthlyChartBar = ({
   lastDate = null,
   tariff = undefined,
   reading = undefined,
+  dual = false
 }: IMonthlyChartBar) => {
   const { hiViz } = useContext(HiVizContext);
 
@@ -96,7 +98,7 @@ const MonthlyChartBar = ({
                 <span
                   className={`flex leading-tight w-18 font-bold text-xl md:font-extralight md:text-4xl items-center`}
                 >
-                  {getCategory(tariff ?? "") === "SVT" ? (
+                  {getCategory(tariff ?? "") === "SVT" && !dual ? (
                     <TiEquals
                       className={`${
                         hiViz ? "text-theme-950" : "text-white"
