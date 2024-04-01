@@ -80,7 +80,7 @@ const SavingsChart = ({
     deviceNumber,
     serialNo,
     results: "monthly",
-    dual
+    dual,
   });
 
   const {
@@ -225,7 +225,7 @@ const SavingsChart = ({
         }}
       >
         {totalPrice > 0 ? (
-          cost.length >= 1 && costSVT.length ? (
+          cost.length >= 1 && costSVT.length >= 1 ? (
             <>
               <div className="flex flex-1 flex-col md:flex-row justify-between gap-4 max-h-full overflow-hidden">
                 <MonthlyChart

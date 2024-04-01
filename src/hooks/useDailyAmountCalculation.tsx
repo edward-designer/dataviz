@@ -106,6 +106,17 @@ const useDailyAmountCalculation = (inputs: IDailyAmountCalculation) => {
     apiKey,
   });
 
+  // if data is not available for the last (few) dates
+  const latestDateWithReading = meterData?.results?.at(0)?.interval_start;
+  if (latestDateWithReading) {
+    while (
+      new Date(latestDateWithReading).getUTCDate() !==
+      new Date(periodWithTariff.at(-1)!.date).getUTCDate()
+    ) {
+      periodWithTariff.pop();
+    }
+  }
+
   // get standing charges
   const queryFnStandingChargeData = (tariff: string) => async () => {
     try {
@@ -283,7 +294,7 @@ export const calculateDailyResults = ({
     (tariff) =>
       new Date(tariff.valid_from).valueOf() <= periodFrom.valueOf() &&
       (tariff.valid_to === null ||
-        new Date(tariff.valid_to).valueOf() >= periodTo.valueOf())
+        new Date(tariff.valid_to).valueOf() >= periodTo.valueOf() - 3600000)
   )?.value_inc_vat;
 
   //const capRate = type === "EE" ? Infinity : cap?.[0][type] ?? Infinity;
@@ -294,14 +305,14 @@ export const calculateDailyResults = ({
       new Date(tariff.valid_from).valueOf() <= periodFrom.valueOf() &&
       (tariff.valid_to === null ||
         new Date(tariff.valid_to).valueOf() >= periodTo.valueOf()) &&
-      tariff.payment_method === "DIRECT_DEBIT"
+      tariff.payment_method !== "NON_DIRECT_DEBIT"
   )?.value_inc_vat;
 
   const standingCharge = tariffStandingCharges?.find(
     (tariff) =>
       new Date(tariff.valid_from).valueOf() <= periodFrom.valueOf() &&
       (tariff.valid_to === null ||
-        new Date(tariff.valid_to).valueOf() >= periodTo.valueOf())
+        new Date(tariff.valid_to).valueOf() >= periodTo.valueOf() - 3600000)
   )?.value_inc_vat;
 
   const sessionCosts = [];
@@ -315,7 +326,7 @@ export const calculateDailyResults = ({
       );
       const peakTariff = currentSessionRateEntry[0];
       const offpeakTariff = currentSessionRateEntry[1];
-      const startHour = new Date(cur.interval_start).getHours();
+      const startHour = new Date(cur.interval_start).getUTCHours();
       // 0 - 7 offpeak
       const currentRateEntry = startHour < 7 ? offpeakTariff : peakTariff;
       if (currentRateEntry !== undefined && acc !== null) {
@@ -336,7 +347,6 @@ export const calculateDailyResults = ({
           (tariff.valid_to === null ||
             new Date(tariff.valid_to) >= new Date(cur.interval_end))
       )?.value_inc_vat;
-
       if (currentSessionRate !== undefined && acc !== null) {
         sessionCosts.push(currentSessionRate);
         return (
@@ -354,8 +364,10 @@ export const calculateDailyResults = ({
     standingCharge === undefined ||
     cost === undefined ||
     reading === undefined
-  )
+  ) {
     throw new Error("Error calculating");
+  }
+
   return {
     reading,
     cost,

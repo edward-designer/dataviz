@@ -50,7 +50,13 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculation) => {
 
   const fromDataISODate = getDate(new Date(), "year", true).toISOString();
   const todayDate = new Date();
-  todayDate.setHours(0, 0, 0, 0);
+  todayDate.setUTCDate(todayDate.getUTCDate() - 1);
+  if (todayDate.getTimezoneOffset() !== 0) {
+    todayDate.setUTCHours(22, 59, 59, 0);
+  } else {
+    todayDate.setHours(23, 59, 59, 0);
+  }
+
   const toDataISODate = todayDate.toISOString();
 
   //get readings
@@ -429,16 +435,16 @@ export const calculateDailyPrices = (
       const currentResultStartDateTime = new Date(
         consumptionDataResults[i].interval_start
       );
-      currentResultStartDateTime.setHours(0, 0, 0, 0);
+      currentResultStartDateTime.setUTCHours(0, 0, 0, 0);
       const currentResultStartDateTimestamp =
         currentResultStartDateTime.valueOf();
       const currentRateStartDateTime = new Date(
         filteredRateDataResults[i + rateDataOffset]?.valid_from
       );
-      currentRateStartDateTime.setHours(0, 0, 0, 0);
+      currentRateStartDateTime.setUTCHours(0, 0, 0, 0);
       const currentRateStartDateTimestamp = currentRateStartDateTime.valueOf();
+      
       /* check the same start time OR difference of 1 hour in daylight saving time */
-
       if (currentRateStartDateTimestamp === currentResultStartDateTimestamp) {
         totalPrice +=
           filteredRateDataResults[i + rateDataOffset].value_inc_vat *
@@ -453,7 +459,7 @@ export const calculateDailyPrices = (
           const nextTime = new Date(
             filteredRateDataResults[i + rateDataOffset + j]?.valid_from
           );
-          nextTime.setHours(0, 0, 0, 0);
+          nextTime.setUTCHours(0, 0, 0, 0);
           const nextTimestamp = nextTime.valueOf();
 
           if (nextTimestamp === currentResultStartDateTimestamp) {
@@ -748,17 +754,20 @@ export const calculateMonthlyPrices = (
       const currentResultStartDateTime = new Date(
         consumptionDataResults[i].interval_start
       );
-      currentResultStartDateTime.setHours(0, 0, 0, 0);
+      currentResultStartDateTime.setUTCHours(0, 0, 0, 0);
       const currentResultStartDateTimestamp =
         currentResultStartDateTime.valueOf();
       const currentRateStartDateTime = new Date(
         filteredRateDataResults[i + rateDataOffset]?.valid_from
       );
-      currentRateStartDateTime.setHours(0, 0, 0, 0);
+      currentRateStartDateTime.setUTCHours(0, 0, 0, 0);
       const currentRateStartDateTimestamp = currentRateStartDateTime.valueOf();
-      /* check the same start time OR difference of 1 hour in daylight saving time */
 
-      if (currentRateStartDateTimestamp === currentResultStartDateTimestamp) {
+      if (
+        currentRateStartDateTimestamp === currentResultStartDateTimestamp ||
+        currentRateStartDateTimestamp ===
+          currentResultStartDateTimestamp - 3600000
+      ) {
         totalPrice +=
           filteredRateDataResults[i + rateDataOffset].value_inc_vat *
           consumptionDataResults[i].consumption *

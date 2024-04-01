@@ -72,7 +72,6 @@ const MapChart = ({
       type,
       dual,
     });
-  console.log(data);
   const caps = usePriceCapQuery({});
 
   let path = geoPath();

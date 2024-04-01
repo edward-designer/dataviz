@@ -4,7 +4,12 @@ import { IPeriod } from "@/data/source";
 import { Dispatch, SetStateAction, useState } from "react";
 import Remark from "./Remark";
 
-import { TDuration, getDate, outOfAYear } from "@/utils/helpers";
+import {
+  TDuration,
+  getDate,
+  outOfAYear,
+  toLocaleUTCDateString,
+} from "@/utils/helpers";
 import { DateRange } from "react-day-picker";
 import { IoCaretBackOutline, IoCaretForward } from "react-icons/io5";
 import { LiaCalendarAlt } from "react-icons/lia";
@@ -16,11 +21,16 @@ import SelectPeriodButton from "./SelectPeriodButton";
 export const getDatePeriod = (duration: TDuration = "month") => {
   const from = new Date();
   const to = new Date();
-  from.setHours(0, 0, 0, 0);
-  to.setHours(23, 59, 59, 999);
+  from.setUTCHours(0, 0, 0, 0);
+  from.setUTCDate(1);
 
-  from.setDate(1);
+  to.setUTCHours(23, 59, 59, 999);
 
+  // display the last month if it is 1st of month
+  if (from.getUTCDate() === 1) {
+    from.setUTCMonth(from.getUTCMonth() - 1);
+    to.setUTCDate(to.getUTCDate() - 1);
+  }
   return {
     duration,
     from,
@@ -47,23 +57,25 @@ const SavingPeriodSelector = ({
     const fromDate = new Date(from);
     const toDate = new Date(to);
     if (duration === "month") {
-      fromDate.setDate(1);
-      fromDate.setMonth(
-        earlier ? fromDate.getMonth() - 1 : fromDate.getMonth() + 1
+      fromDate.setUTCDate(1);
+      fromDate.setUTCMonth(
+        earlier ? fromDate.getUTCMonth() - 1 : fromDate.getUTCMonth() + 1
       );
-      toDate.setDate(1);
+      toDate.setUTCDate(1);
       if (!earlier) {
-        toDate.setMonth(toDate.getMonth() + 2);
+        toDate.setUTCMonth(toDate.getUTCMonth() + 2);
       }
-      toDate.setDate(toDate.getDate() - 1);
+      toDate.setUTCDate(toDate.getUTCDate() - 1);
     }
     if (duration === "week") {
-      fromDate.setDate(
-        earlier ? fromDate.getDate() - 7 : fromDate.getDate() + 7
+      fromDate.setUTCDate(
+        earlier ? fromDate.getUTCDate() - 7 : fromDate.getUTCDate() + 7
       );
-      toDate.setDate(earlier ? toDate.getDate() - 7 : toDate.getDate() + 7);
+      toDate.setUTCDate(
+        earlier ? toDate.getUTCDate() - 7 : toDate.getUTCDate() + 7
+      );
     }
-    toDate.setHours(23, 59, 59, 999);
+    toDate.setUTCHours(23, 59, 59, 999);
     setPeriod({
       ...period,
       to: toDate,
@@ -111,9 +123,10 @@ const SavingPeriodSelector = ({
           >
             <IoCaretBackOutline className="w-8 h-8" />
           </button>
-          <div className="text-center min-w-[210px] grow sm:grow-0">{`${period.from.toLocaleDateString(
+          <div className="text-center min-w-[210px] grow sm:grow-0">{`${toLocaleUTCDateString(
+            period.from,
             "en-GB"
-          )} - ${period.to.toLocaleDateString("en-GB")}`}</div>
+          )} - ${toLocaleUTCDateString(period.to, "en-GB")}`}</div>
           <button
             onClick={() => getPeriod(false)}
             disabled={outOfAYear(period.to)}

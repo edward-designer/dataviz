@@ -482,3 +482,9 @@ export const getTariffCodeWithoutPrefixSuffix = (
   }
   return fullTariffCode;
 };
+
+export const toLocaleUTCDateString = (date: Date, locales: string) => {
+  const timeDiff = date.getTimezoneOffset() * 60000;
+  const adjustedDate = new Date(date.valueOf() + timeDiff);
+  return adjustedDate.toLocaleDateString(locales);
+};

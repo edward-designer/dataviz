@@ -30,7 +30,9 @@ const getPeriodArray = (fromDate: Date, toDate: Date) => {
   );
   return Array.from({ length: diffInDays }).map(
     (_, i) =>
-      new Date(new Date(fromDate).setDate(new Date(fromDate).getDate() + i))
+      new Date(
+        new Date(fromDate).setUTCDate(new Date(fromDate).getUTCDate() + i)
+      )
   );
 };
 
@@ -56,13 +58,14 @@ const SavingsChartDaily = ({
   dual?: boolean;
 }) => {
   const latestDate = new Date();
-  latestDate.setHours(23, 59, 59, 999);
-  latestDate.setDate(latestDate.getDate() - 1);
+  latestDate.setUTCHours(23, 59, 59, 999);
+  latestDate.setUTCDate(latestDate.getUTCDate() - 1);
 
   const fromDate = period.from;
   const toDate =
     period.to.valueOf() > latestDate.valueOf() ? latestDate : period.to;
   const periodArray = getPeriodArray(fromDate, toDate);
+
   const periodWithTariff = periodArray.map((date, i) => {
     let tariff = "";
     agreements.forEach((agreement) => {
