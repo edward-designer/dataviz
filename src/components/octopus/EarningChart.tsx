@@ -39,9 +39,11 @@ const EarningChart = ({
   const imageRef = useRef<HTMLDivElement | null>(null);
 
   const today = new Date();
-  today.setHours(23, 59, 59, 999);
+  today.setUTCHours(23, 59, 59, 999);
+  today.setUTCDate(today.getUTCDate() - 1);
   const toDate = today.toISOString();
   const category = getCategory(tariff);
+  console.log(fromDate);
 
   const {
     cost,
@@ -98,7 +100,7 @@ const EarningChart = ({
 
   const totalCost = (totalPrice + totalStandingCharge) / 100;
 
-  const unitRateAverage = totalPrice / totalUnit;
+  const unitRateAverage = totalUnit ? totalPrice / totalUnit : "--";
 
   return (
     <>
@@ -137,7 +139,11 @@ const EarningChart = ({
                     variant="item"
                   />
                   <div className="font-digit text-4xl flex flex-col items-end justify-start">
-                    <FormattedPrice price={unitRateAverage} value="pence" />
+                    {typeof unitRateAverage === "number" ? (
+                      <FormattedPrice price={unitRateAverage} value="pence" />
+                    ) : (
+                      unitRateAverage
+                    )}
                   </div>
                 </div>
               </div>

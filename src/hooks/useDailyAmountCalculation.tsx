@@ -187,7 +187,11 @@ const useDailyAmountCalculation = (inputs: IDailyAmountCalculation) => {
     (cap) => cap.Region === currentGSP
   ) as ICaps[] | undefined;
 
-  if (meterData?.results) {
+  const allFinished = resultsWithUnitAndStandardCharge.every(
+    (query) => query.isSuccess
+  );
+
+  if (meterData?.results && allFinished) {
     const meterDataResult = meterData.results as IMeterData[];
 
     const dailyResultArray = periodWithTariff.map(({ date, tariff }) => {

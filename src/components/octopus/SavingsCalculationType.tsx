@@ -67,6 +67,8 @@ const SavingsCalculationType = ({
   const dualCurrent = currentContract?.tariff_code.includes("E-2R");
   const dualPrevious = previousContract?.tariff_code.includes("E-2R");
 
+  //if (type === "EE") console.log(currentFromDate);
+
   return (
     <div className="flex flex-col gap-4">
       {deviceNumber &&
