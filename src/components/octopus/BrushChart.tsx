@@ -504,17 +504,18 @@ const BrushChart = ({
 
       // add back latest caps if the from_date is before today
       if (
-        new Date(capsData.at(-1)?.Date ?? "").valueOf() < new Date().valueOf()
+        new Date(capsData.at(-1)?.Date ?? "").valueOf() <= new Date().valueOf()
       ) {
         const quarterEnd = new Date();
         quarterEnd.setHours(0, 0, 0, 0);
         quarterEnd.setDate(1);
-        quarterEnd.setMonth(4 - (quarterEnd.getMonth() % 4));
+        quarterEnd.setMonth(
+          quarterEnd.getMonth() + (4 - (quarterEnd.getMonth() % 4))
+        );
         const endDate = quarterEnd;
         const latestCap = capsData.at(-1)!;
         capsData.push({ ...latestCap, Date: endDate.toUTCString() });
       }
-
       const capLineGenerator = (type: keyof CapsTSVResult) =>
         line<CapsTSVResult>()
           .x((d) => xScale(new Date(d.Date).setHours(0, 0, 0, 0)))
