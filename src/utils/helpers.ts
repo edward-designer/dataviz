@@ -488,3 +488,4 @@ export const toLocaleUTCDateString = (date: Date, locales: string) => {
   const adjustedDate = new Date(date.valueOf() + timeDiff);
   return adjustedDate.toLocaleDateString(locales);
 };
+

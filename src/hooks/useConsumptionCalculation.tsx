@@ -443,7 +443,7 @@ export const calculateDailyPrices = (
       );
       currentRateStartDateTime.setUTCHours(0, 0, 0, 0);
       const currentRateStartDateTimestamp = currentRateStartDateTime.valueOf();
-      
+
       /* check the same start time OR difference of 1 hour in daylight saving time */
       if (currentRateStartDateTimestamp === currentResultStartDateTimestamp) {
         totalPrice +=
@@ -739,8 +739,9 @@ export const calculateMonthlyPrices = (
           new Date(currentRateEntry.valid_from) <=
             new Date(consumptionDataResults[i].interval_start) &&
           (filteredRateDataResults[j].valid_to === null ||
-            new Date(currentRateEntry.valid_to) >=
-              new Date(consumptionDataResults[i].interval_start))
+            new Date(currentRateEntry.valid_to).valueOf() >=
+              new Date(consumptionDataResults[i].interval_start).valueOf() -
+                3600000)
         ) {
           totalPrice +=
             (currentRateEntry?.value_inc_vat ?? 0) *

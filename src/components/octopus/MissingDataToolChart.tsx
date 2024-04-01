@@ -89,6 +89,25 @@ const MissingDataToolChart = ({
       groupedData[index][session] = data.consumption;
     });
 
+    // adjust for DST
+    if (new Date(fromDate).getUTCMonth() === 2) {
+      type NumericRecord = Record<number, number>;
+      const dateDSTList: NumericRecord = {
+        2022: 27,
+        2023: 26,
+        2024: 31,
+        2025: 30,
+        2026: 29,
+        2027: 28,
+        2028: 26,
+        2029: 25,
+      };
+      groupedData[dateDSTList[new Date(fromDate).getUTCFullYear()] - 1][2] =
+        undefined;
+      groupedData[dateDSTList[new Date(fromDate).getUTCFullYear()] - 1][3] =
+        undefined;
+    }
+
     const dataExtent = extent(filteredData, (d) => d.consumption);
     const dataMin = 0;
     const dataMax = dataExtent[1]!;
