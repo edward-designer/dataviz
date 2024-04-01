@@ -12,6 +12,8 @@
  */
 
 // If the loader is already loaded, just stop.
+const version = "20240401";
+
 if (!self.define) {
   let registry = {};
 
