@@ -110,6 +110,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <link rel="manifest" href="/site.webmanifest" />
         <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#db1899" />
         <meta name="msapplication-TileColor" content="#0c2549" />
+        <meta name="viewport" content="initial-scale=1, viewport-fit=cover" />
       </head>
       <html lang="en">
         <body
