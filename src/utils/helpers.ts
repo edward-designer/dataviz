@@ -55,6 +55,13 @@ export const fetchApi =
     return result.filter(Boolean);
   };
 
+// in summer time the valid from time is from 23:00 of previous day
+export const adjustedValidFrom = (valid_from: string) => {
+  const adjusted_valid_from = new Date(valid_from);
+  adjusted_valid_from.setHours(adjusted_valid_from.getHours() + 2);
+  return adjusted_valid_from;
+};
+
 export const isSameDate = (date1: Date, date2: Date) => {
   const date1AtMidnight = new Date(
     Date.UTC(date1.getUTCFullYear(), date1.getUTCMonth(), date1.getUTCDate())

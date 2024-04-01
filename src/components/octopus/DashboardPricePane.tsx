@@ -15,6 +15,7 @@ import {
 import useTariffQuery from "../../hooks/useTariffQuery";
 
 import {
+  adjustedValidFrom,
   calculateChangePercentage,
   evenRound,
   getTariffName,
@@ -85,17 +86,18 @@ const DashboardPricePane = ({
   const singleTariff = ["Variable", "Tracker", "Fixed"].includes(tariffName);
 
   const priceTodayIndex = ["Tracker"].includes(tariffName)
-    ? results.findIndex((data) => isToday(new Date(data.valid_from)))
+    ? results.findIndex((data) => isToday(adjustedValidFrom(data.valid_from)))
     : results.findIndex(
         (data) =>
           Date.parse(data.valid_from) <= new Date().valueOf() &&
           (data.valid_to === null ||
             Date.parse(data.valid_to) > new Date().valueOf())
       );
+
   const priceYesterdayIndex = results.findIndex((data) =>
     isSameDate(
       new Date(new Date().setDate(new Date().getDate() - 1)),
-      new Date(data.valid_from)
+      adjustedValidFrom(data.valid_from)
     )
   );
 
@@ -105,7 +107,7 @@ const DashboardPricePane = ({
 
   const noPriceTomorrowMessage =
     "The rate of tomorrow is usually available between 11.00am and 6.00pm. Please revisit this page later to get the updates.";
-  console.log(results);
+
   const [priceTodayDisplay, priceChangeToday] = getPriceDisplay({
     priceTodayIndex,
     priceYesterdayIndex,
