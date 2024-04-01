@@ -58,16 +58,21 @@ const PricePane = ({
   const todayDate = new Date().toLocaleDateString("en-GB");
   const results = data?.[0]?.results ?? [];
 
+  // in summer time the valid from time is from 23:00 of previous day
+  const adjustedValidFrom = (valid_from: string) => {
+    const adjusted_valid_from = new Date(valid_from);
+    adjusted_valid_from.setHours(adjusted_valid_from.getHours() + 2);
+    return adjusted_valid_from;
+  };
   const priceTodayIndex = results.findIndex((data) =>
-    isToday(new Date(data.valid_from))
+    isToday(adjustedValidFrom(data.valid_from))
   );
   const priceYesterdayIndex = results.findIndex((data) =>
     isSameDate(
       new Date(new Date().setDate(new Date().getDate() - 1)),
-      new Date(data.valid_from)
+      adjustedValidFrom(data.valid_from)
     )
   );
-
   const caps = useCurrentLocationPriceCapQuery({
     gsp: `_${gsp}` as gsp,
   });
