@@ -4,7 +4,12 @@ import { IPeriod } from "@/data/source";
 import { Dispatch, SetStateAction, useState } from "react";
 import Remark from "./Remark";
 
-import { TDuration, getDate, outOfAYear } from "@/utils/helpers";
+import {
+  TDuration,
+  getDate,
+  outOfAYear,
+  toLocaleUTCDateString,
+} from "@/utils/helpers";
 import { DateRange } from "react-day-picker";
 import { IoCaretBackOutline, IoCaretForward } from "react-icons/io5";
 import { LiaCalendarAlt } from "react-icons/lia";
@@ -145,17 +150,18 @@ const PeriodSelector = ({
           <div className="mt-1 flex sm:justify-start gap-2 items-center w-full justify-between sm:w-fit">
             <button
               onClick={() => getPeriod(true)}
-              disabled={outOfAYear(period.from)}
+              disabled={outOfAYear(period.from, true)}
               className="disabled:opacity-30"
             >
               <IoCaretBackOutline className="w-8 h-8" />
             </button>
-            <div className="text-center min-w-[210px] grow sm:grow-0">{`${period.from.toLocaleDateString(
+            <div className="text-center min-w-[210px] grow sm:grow-0">{`${toLocaleUTCDateString(
+              period.from,
               "en-GB"
-            )} - ${period.to.toLocaleDateString("en-GB")}`}</div>
+            )} - ${toLocaleUTCDateString(period.to, "en-GB")}`}</div>
             <button
               onClick={() => getPeriod(false)}
-              disabled={outOfAYear(period.to)}
+              disabled={outOfAYear(period.to, false)}
               className="disabled:opacity-30"
             >
               <IoCaretForward className="w-8 h-8" />

@@ -82,10 +82,10 @@ const MissingDataToolChart = ({
     ) as (number | null | undefined)[][];
 
     filteredData.forEach((data) => {
-      const index = (new Date(data.interval_start).getDate() - 1) % noOfDays;
+      const index = (new Date(data.interval_start).getUTCDate() - 1) % noOfDays;
       const session =
-        new Date(data.interval_start).getHours() * 2 +
-        Math.floor(new Date(data.interval_start).getMinutes() / 30);
+        new Date(data.interval_start).getUTCHours() * 2 +
+        Math.floor(new Date(data.interval_start).getUTCMinutes() / 30);
       groupedData[index][session] = data.consumption;
     });
 

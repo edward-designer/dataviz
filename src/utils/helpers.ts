@@ -335,19 +335,20 @@ export const getDate = (
   }
 };
 
-export const outOfAYear = (date: Date) => {
+export const outOfAYear = (date: Date, from = true) => {
   const yesterday = new Date(
-    new Date(new Date().setHours(0, 0, 0, 0)).setDate(new Date().getDate() - 1)
-  );
-  const oneYearEarlier = new Date(
-    new Date(new Date().setHours(0, 0, 0, 0)).setFullYear(
-      new Date().getFullYear() - 1
+    new Date(new Date().setUTCHours(0, 0, 0, 0)).setUTCDate(
+      new Date().getUTCDate() - 1
     )
   );
-  return (
-    date.valueOf() >= yesterday.valueOf() ||
-    date.valueOf() <= oneYearEarlier.valueOf()
+  const oneYearEarlier = new Date(
+    new Date(new Date().setUTCHours(0, 0, 0, 0)).setUTCFullYear(
+      new Date().getUTCFullYear() - 1
+    )
   );
+  return from
+    ? date.valueOf() <= oneYearEarlier.valueOf()
+    : date.valueOf() >= yesterday.valueOf();
 };
 
 export const toTitleCase = (str: string) => {
@@ -488,4 +489,3 @@ export const toLocaleUTCDateString = (date: Date, locales: string) => {
   const adjustedDate = new Date(date.valueOf() + timeDiff);
   return adjustedDate.toLocaleDateString(locales);
 };
-

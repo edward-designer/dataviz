@@ -28,12 +28,14 @@ const MissingDataToolContainer = () => {
   const hasEExport = !!(value.EESerialNo && value.EMPAN);
   const hasGImport = !!(value.GSerialNo && value.MPAN);
 
-  const toDate = new Date(new Date().setDate(new Date().getDate() - 1)); // yesterday
-  toDate.setHours(23, 59, 59, 999);
+  const toDate = new Date(new Date().setUTCDate(new Date().getUTCDate() - 1)); // yesterday
+  toDate.setUTCHours(23, 59, 59, 999);
 
-  const fromDate = new Date(new Date().setFullYear(toDate.getFullYear() - 1)); // 1st of Month of 1 year before
-  fromDate.setDate(1);
-  fromDate.setHours(0, 0, 0, 0);
+  const fromDate = new Date(
+    new Date().setUTCFullYear(toDate.getUTCFullYear() - 1)
+  ); // 1st of Month of 1 year before
+  fromDate.setUTCDate(1);
+  fromDate.setUTCHours(0, 0, 0, 0);
 
   /* get data from API */
   const { data: dataEImport, isLoading } = useConsumptionData({
