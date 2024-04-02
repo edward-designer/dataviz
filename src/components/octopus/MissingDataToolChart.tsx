@@ -102,10 +102,16 @@ const MissingDataToolChart = ({
         2028: 26,
         2029: 25,
       };
-      groupedData[dateDSTList[new Date(fromDate).getUTCFullYear()] - 1][2] =
-        undefined;
-      groupedData[dateDSTList[new Date(fromDate).getUTCFullYear()] - 1][3] =
-        undefined;
+
+      if (
+        groupedData[dateDSTList[new Date(fromDate).getUTCFullYear()] - 1]?.[2] !==
+        undefined
+      ) {
+        groupedData[dateDSTList[new Date(fromDate).getUTCFullYear()] - 1][2] =
+          undefined;
+        groupedData[dateDSTList[new Date(fromDate).getUTCFullYear()] - 1][3] =
+          undefined;
+      }
     }
 
     const dataExtent = extent(filteredData, (d) => d.consumption);
