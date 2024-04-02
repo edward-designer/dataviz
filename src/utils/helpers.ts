@@ -309,28 +309,32 @@ export const getDate = (
   earlier = true
 ) => {
   const newDate = new Date(date);
-  newDate.setHours(0, 0, 0, 0);
+  newDate.setUTCHours(0, 0, 0, 0);
   switch (duration) {
     case "year":
       return new Date(
         newDate.setFullYear(
-          earlier ? newDate.getFullYear() - 1 : newDate.getFullYear() + 1
+          earlier ? newDate.getUTCFullYear() - 1 : newDate.getUTCFullYear() + 1
         )
       );
     case "month":
       return new Date(
-        newDate.setMonth(
-          earlier ? newDate.getMonth() - 1 : newDate.getMonth() + 1
+        newDate.setUTCMonth(
+          earlier ? newDate.getUTCMonth() - 1 : newDate.getUTCMonth() + 1
         )
       );
     case "week":
       return new Date(
-        newDate.setDate(earlier ? newDate.getDate() - 7 : newDate.getDate() + 7)
+        newDate.setUTCDate(
+          earlier ? newDate.getUTCDate() - 7 : newDate.getUTCDate() + 7
+        )
       );
     default:
     case "day":
       return new Date(
-        newDate.setDate(earlier ? newDate.getDate() - 1 : newDate.getDate() + 1)
+        newDate.setUTCDate(
+          earlier ? newDate.getUTCDate() - 1 : newDate.getUTCDate() + 1
+        )
       );
   }
 };

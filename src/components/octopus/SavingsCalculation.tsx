@@ -52,7 +52,7 @@ const SavingsCalculation = () => {
               </Remark>
             </div>
           </div>
-          <SavingPeriodSelector period={period} setPeriod={setPeriod} />
+          {/*<SavingPeriodSelector period={period} setPeriod={setPeriod} />*/}
           <Tabs />
           {currentType === "EE" && (
             <SavingsCalculationType

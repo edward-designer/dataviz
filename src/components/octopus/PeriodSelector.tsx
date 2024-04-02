@@ -22,6 +22,7 @@ const weekName = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 const getDatePeriod = (duration: TDuration = "year") => {
   const today = new Date();
+  today.setUTCHours(0, 0, 0, 0);
   const from = getDate(today, duration, true);
   const to = getDate(getDate(from, duration, false), "day", true);
   to.setHours(23, 59, 59, 999);
@@ -50,7 +51,7 @@ const PeriodSelector = ({
     if (duration === "custom") return;
     const toDate = getDate(to, duration, earlier);
     const fromDate = getDate(from, duration, earlier);
-    toDate.setHours(23, 59, 59, 999);
+    toDate.setUTCHours(22, 59, 59, 999);
     setPeriod({
       ...period,
       to: toDate,
@@ -182,8 +183,8 @@ const PeriodSelector = ({
                 to = new Date(from);
               }
               if (from instanceof Date && to instanceof Date) {
-                from.setHours(0, 0, 0, 0);
-                to.setHours(23, 59, 59, 999);
+                from.setUTCHours(0, 0, 0, 0);
+                to.setUTCHours(23, 59, 59, 999);
                 setPeriod({ ...period, from, to });
               }
             }}
