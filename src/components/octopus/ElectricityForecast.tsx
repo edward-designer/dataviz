@@ -41,7 +41,7 @@ const ElectricityForecast = ({
 }) => {
   const { hiViz } = useContext(HiVizContext);
   const todayStart = new Date();
-  todayStart.setHours(0, 0, 0, 0);
+  todayStart.setUTCHours(0, 0, 0, 0);
 
   const { data, isLoading, isSuccess } = useQuery<GreennessForecast>({
     queryKey: ["greennessForecast", todayStart.toLocaleDateString("en-GB")],
@@ -66,11 +66,7 @@ const ElectricityForecast = ({
     );
 
   if (!data?.greennessForecast) return;
-  const forecastFromTomorrow = data.greennessForecast.filter(
-    (forecast) =>
-      new Date(forecast.validFrom).valueOf() >=
-      new Date(new Date().setDate(new Date().getDate() + 1)).valueOf()
-  );
+  const forecastFromTomorrow = data.greennessForecast;
   const validTo = data.greennessForecast.at(-1)?.validTo;
   const numOfDays = validTo
     ? Math.round(
@@ -81,11 +77,13 @@ const ElectricityForecast = ({
 
   const getTrend = (currentIndex: number) => {
     const currentScore = forecastFromTomorrow.at(currentIndex)?.greennessScore;
-    const previousScore = forecastFromTomorrow.at(
-      currentIndex - 1
-    )?.greennessScore;
+    const previousScore =
+      currentIndex > 0
+        ? forecastFromTomorrow.at(currentIndex - 1)?.greennessScore
+        : undefined;
     if (currentScore && previousScore) {
-      const delta = ((currentScore - previousScore) / previousScore) * 100;
+      const delta =
+        previousScore ? ((currentScore - previousScore) / previousScore) * 100 : (currentScore - 50) * 2;
       const deltaAngle = Math.min(Math.max(delta, -45), 45);
 
       return (
@@ -124,7 +122,7 @@ const ElectricityForecast = ({
             {currentIndex === 0
               ? rtf.format(1, "day")
               : new Date(
-                  forecastFromTomorrow.at(currentIndex)?.validFrom ?? ""
+                  forecastFromTomorrow.at(currentIndex)?.validTo ?? ""
                 ).toLocaleDateString("en-gb", {
                   day: "2-digit",
                   month: "2-digit",
