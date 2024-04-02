@@ -27,7 +27,7 @@ export const getDatePeriod = (duration: TDuration = "month") => {
   to.setUTCHours(23, 59, 59, 999);
 
   // display the last month if it is 1st of month
-  if (from.getUTCDate() === 1) {
+  if (to.getUTCDate() === 1) {
     from.setUTCMonth(from.getUTCMonth() - 1);
     to.setUTCDate(to.getUTCDate() - 1);
   }
@@ -53,6 +53,7 @@ const SavingPeriodSelector = ({
 }) => {
   const getPeriod = (earlier = true) => {
     const { to, from, duration } = period;
+    console.log(duration);
     if (duration === "custom") return;
     const fromDate = new Date(from);
     const toDate = new Date(to);
@@ -118,7 +119,7 @@ const SavingPeriodSelector = ({
         <div className="md:mt-1 flex sm:justify-start gap-2 items-center w-full justify-between sm:w-fit">
           <button
             onClick={() => getPeriod(true)}
-            disabled={outOfAYear(period.from)}
+            disabled={outOfAYear(period.from, true)}
             className="disabled:opacity-30"
           >
             <IoCaretBackOutline className="w-8 h-8" />
@@ -129,7 +130,7 @@ const SavingPeriodSelector = ({
           )} - ${toLocaleUTCDateString(period.to, "en-GB")}`}</div>
           <button
             onClick={() => getPeriod(false)}
-            disabled={outOfAYear(period.to)}
+            disabled={outOfAYear(period.to, false)}
             className="disabled:opacity-30"
           >
             <IoCaretForward className="w-8 h-8" />
