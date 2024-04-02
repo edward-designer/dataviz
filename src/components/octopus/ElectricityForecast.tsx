@@ -76,12 +76,9 @@ const ElectricityForecast = ({
     : 0;
 
   const getTrend = (currentIndex: number) => {
-    const currentScore = forecastFromTomorrow.at(currentIndex)?.greennessScore;
-    const previousScore =
-      currentIndex > 0
-        ? forecastFromTomorrow.at(currentIndex - 1)?.greennessScore
-        : undefined;
-    if (currentScore && previousScore) {
+    const currentScore = forecastFromTomorrow.at(currentIndex+1)?.greennessScore;
+    const previousScore = forecastFromTomorrow.at(currentIndex)?.greennessScore;
+    if (currentScore) {
       const delta =
         previousScore ? ((currentScore - previousScore) / previousScore) * 100 : (currentScore - 50) * 2;
       const deltaAngle = Math.min(Math.max(delta, -45), 45);
