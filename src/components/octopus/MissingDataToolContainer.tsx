@@ -14,6 +14,7 @@ import { AiFillFire } from "react-icons/ai";
 import { BsLightningChargeFill } from "react-icons/bs";
 import { PiSunDimFill } from "react-icons/pi";
 import MissingDataToolChart from "./MissingDataToolChart";
+import Remark from "./Remark";
 
 export type ErrorType = Record<string, string>;
 

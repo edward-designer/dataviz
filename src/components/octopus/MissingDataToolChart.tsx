@@ -104,8 +104,9 @@ const MissingDataToolChart = ({
       };
 
       if (
-        groupedData[dateDSTList[new Date(fromDate).getUTCFullYear()] - 1]?.[2] !==
-        undefined
+        groupedData[
+          dateDSTList[new Date(fromDate).getUTCFullYear()] - 1
+        ]?.[2] !== undefined
       ) {
         groupedData[dateDSTList[new Date(fromDate).getUTCFullYear()] - 1][2] =
           undefined;
@@ -225,7 +226,14 @@ const MissingDataToolChart = ({
   return (
     <div className="flex w-full items-end flex-wrap-reverse gap-y-4 mb-4">
       <div className="flex flex-col flex-1">
-        <div className="text-accentPink-700 text-2xl flex">{children}</div>
+        <div className="text-accentPink-700 text-2xl flex">
+          {children}
+          <Remark>
+            Don&apos;t worry if missing data is shown for the whole day of the
+            latest date, there is a high chance that the data has not been
+            uploaded/updated to the Octopus database.
+          </Remark>
+        </div>
         <div
           className="flex-1 max-w-[calc(100vw_-_80px)] overflow-auto"
           id="svgContainer"
