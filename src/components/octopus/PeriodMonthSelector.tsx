@@ -20,7 +20,7 @@ export const getDatePeriod = (duration: TDuration = "month") => {
   const to = new Date();
   from.setUTCHours(0, 0, 0, 0);
 
-  to.setUTCHours(22, 59, 59, 999);
+  to.setUTCHours(23, 59, 59, 999);
   if (duration === "month") {
     from.setUTCDate(1);
     from.setUTCMonth(from.getUTCMonth() - 1);

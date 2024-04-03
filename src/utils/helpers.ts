@@ -58,7 +58,7 @@ export const fetchApi =
 // in summer time the valid from time is from 23:00 of previous day
 export const adjustedValidFrom = (valid_from: string) => {
   const adjusted_valid_from = new Date(valid_from);
-  adjusted_valid_from.setHours(adjusted_valid_from.getHours() + 2);
+  //adjusted_valid_from.setUTCHours(adjusted_valid_from.getUTCHours() + 2);
   return adjusted_valid_from;
 };
 

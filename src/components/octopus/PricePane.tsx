@@ -64,7 +64,7 @@ const PricePane = ({
   );
   const priceYesterdayIndex = results.findIndex((data) =>
     isSameDate(
-      new Date(new Date().setDate(new Date().getDate() - 1)),
+      new Date(new Date().setUTCDate(new Date().getUTCDate() - 1)),
       adjustedValidFrom(data.valid_from)
     )
   );
