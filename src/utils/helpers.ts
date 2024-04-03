@@ -64,10 +64,10 @@ export const adjustedValidFrom = (valid_from: string) => {
 
 export const isSameDate = (date1: Date, date2: Date) => {
   const date1AtMidnight = new Date(
-    Date.UTC(date1.getUTCFullYear(), date1.getUTCMonth(), date1.getUTCDate())
+    new Date(date1.getFullYear(), date1.getMonth(), date1.getDate())
   );
   const date2AtMidnight = new Date(
-    Date.UTC(date2.getUTCFullYear(), date2.getUTCMonth(), date2.getUTCDate())
+    new Date(date2.getFullYear(), date2.getMonth(), date2.getDate())
   );
   return date1AtMidnight.getTime() === date2AtMidnight.getTime();
 };
