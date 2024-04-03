@@ -68,8 +68,8 @@ const TrackerTariff = () => {
         <div>
           <MdOutlineNotificationImportant className="w-4 h-4 inline-block mr-2" />
           Tracker Tariffs are{" "}
-          <span className="font-bold">increasing again</span>
-          from 3rd Apr 2024 for new sign-up.{" "}
+          <span className="font-bold">increasing again</span> from 3rd Apr 2024
+          for new sign-up.{" "}
           <Link
             href="/compareTracker"
             className="underline text-yellow-500 hover:no-underline hover:text-accentBlue-500"
