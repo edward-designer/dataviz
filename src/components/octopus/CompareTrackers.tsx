@@ -18,28 +18,12 @@ const CompareTariffs = () => {
   return (
     <div className="flex flex-col font-extralight text-lg">
       <h1 className="text-accentBlue-400 font-display text-4xl lg:text-6xl font-medium ">
-        Old vs New Tracker Tariffs
+        2023 vs 2024 Tracker Tariffs
       </h1>
       <h2 className="text-accentBlue-400 font-display font-medium text-lg lg:text-2xl mb-8">
-        - how much MORE you have to pay
+        - Tracker prices are changing from Apr 2024
       </h2>
-
-      {hasApiInfo ? (
-        <TrackerComparision />
-      ) : (
-        <div className="flex flex-col md:flex-row justify-between gap-4 items-start">
-          <div className="">
-            <UserApi />
-          </div>
-          <div className="flex w-full md:w-fit flex-grow items-center justify-center mt-8 md:mt-0 shrink-0">
-            <Image
-              src={compareImg}
-              className="w-[300px] h-auto border border-accentBlue-500 "
-              alt="demo showing how the savings calculation work"
-            />
-          </div>
-        </div>
-      )}
+      <TrackerComparision />
     </div>
   );
 };

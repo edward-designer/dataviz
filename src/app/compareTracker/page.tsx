@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Old vs New Tracker Prices | Octoprice",
     description:
-      "Get what you would need to pay for under the new Tracker tariff as Octopus is forcing existing customers to the new Tracker tariff.",
+      "Octopus Tracker tariff is changing again. This page shows you how the tracker price has changed on 3rd April 2024.",
     url: "https://octopriceuk.app/compareTracker",
     siteName: "Octoprice App",
     images: [

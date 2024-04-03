@@ -148,6 +148,15 @@ export const SVT_GTARIFF =
 
 export const AGILE: ITrackerTariffPlan[] = [
   {
+    code: "AGILE-24-04-03",
+    name: "Agile Octopus Dec 2024 v1",
+    currentPlan: true,
+    cap: {
+      E: 100,
+      G: 0,
+    },
+  },
+  {
     code: "AGILE-23-12-06",
     name: "Agile Octopus Dec 2023 v1",
     currentPlan: true,
@@ -177,6 +186,15 @@ export const AGILE: ITrackerTariffPlan[] = [
 ];
 
 export const TRACKER: ITrackerTariffPlan[] = [
+  {
+    code: "SILVER-24-04-03",
+    name: "Tracker April 2024 v1",
+    currentPlan: true,
+    cap: {
+      E: 100,
+      G: 30,
+    },
+  },
   {
     code: "SILVER-23-12-06",
     name: "Tracker December 2023 v1",
@@ -461,6 +479,26 @@ export interface IPeriod {
 }
 
 export const trackerUnitPriceIncrease2023: Record<
+  gsp,
+  Record<Exclude<TariffType, "EG">, number>
+> = {
+  _A: { E: 3.1811, G: 0.1846 },
+  _B: { E: 2.0999, G: 0.2032 },
+  _C: { E: 3.7182, G: 0.2657 },
+  _D: { E: 2.3751, G: 0.3948 },
+  _E: { E: 1.879, G: 0.18 },
+  _F: { E: 1.8562, G: 0.2884 },
+  _G: { E: 2.9607, G: 0.1956 },
+  _H: { E: 2.4412, G: 0.1834 },
+  _J: { E: 2.8799, G: 0.0966 },
+  _K: { E: 2.0048, G: 0.4455 },
+  _L: { E: 1.4344, G: 0.4316 },
+  _M: { E: 1.996, G: 0.3624 },
+  _N: { E: 2.2051, G: 0.2331 },
+  _P: { E: 2.6551, G: 0.2331 },
+};
+
+export const trackerUnitPriceIncrease2024: Record<
   gsp,
   Record<Exclude<TariffType, "EG">, number>
 > = {
