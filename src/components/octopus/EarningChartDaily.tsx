@@ -64,7 +64,8 @@ const EarningChartDaily = ({
     agreements.forEach((agreement) => {
       if (
         new Date(agreement.valid_from).valueOf() <= date.valueOf() &&
-        new Date(agreement.valid_to).valueOf() >= date.valueOf()
+        (agreement.valid_to === null ||
+          new Date(agreement.valid_to).valueOf() >= date.valueOf())
       ) {
         tariff = agreement.tariff_code.slice(5, -2);
       }

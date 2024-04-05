@@ -17,7 +17,7 @@ export type TContract =
   | {
       tariff_code: string;
       valid_from: string;
-      valid_to: string;
+      valid_to: string | null;
     }
   | undefined;
 export interface IUserValue {
@@ -64,6 +64,7 @@ export interface IUserValue {
     annualProduction: number;
     rate: number;
   };
+  testRun: boolean;
 }
 
 export const initialValue = {
@@ -111,6 +112,7 @@ export const initialValue = {
       annualProduction: 0,
       rate: 0,
     },
+    testRun: false,
   } as IUserValue,
   setValue: (value: IUserValue) => {},
 };
@@ -352,9 +354,11 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
       : value.GSerialNo;
   const GSerialNos = useMemo(
     () =>
-      (currentProperty?.gas_meter_points
-        ?.at(-1)
-        ?.meters?.map((meter) => meter.serial_number) ?? []).filter(Boolean),
+      (
+        currentProperty?.gas_meter_points
+          ?.at(-1)
+          ?.meters?.map((meter) => meter.serial_number) ?? []
+      ).filter(Boolean),
     [currentProperty]
   );
   const currentGTariff = getTariffCodeWithoutPrefixSuffix(
@@ -362,6 +366,57 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
   );
 
   const postcode = currentProperty?.postcode;
+
+  useEffect(() => {
+    if (value.testRun && !value.apiKey && !value.accountNumber) {
+      setValue((value) => ({
+        ...value,
+        trackerCode: "SILVER-23-12-06",
+        currentEContract: {
+          tariff_code: "E-1R-SILVER-23-12-06-H",
+          valid_from: "2024-02-15T00:00:00Z",
+          valid_to: "2025-02-15T00:00:00Z",
+        },
+        ESerialNo: "ELECTRICITY_SERIAL_NO",
+        currentETariff: "",
+        currentGContract: {
+          tariff_code: "G-1R-SILVER-23-12-06-H",
+          valid_from: "2024-02-15T00:00:00Z",
+          valid_to: "2025-02-15T00:00:00Z",
+        },
+        GSerialNo: "GAS_SERIAL_NO",
+        currentGTariff: "SILVER-23-12-06",
+        agreementsE: [
+          {
+            tariff_code: "E-1R-SILVER-23-12-06-H",
+            valid_from: "2024-02-15T00:00:00Z",
+            valid_to: null,
+          },
+          {
+            tariff_code: "G-1R-SILVER-FLEX-BB-23-02-08-H",
+            valid_from: "2023-02-15T00:00:00Z",
+            valid_to: "2024-02-15T00:00:00Z",
+          },
+        ],
+        agreementsG: [
+          {
+            tariff_code: "G-1R-SILVER-23-12-06-H",
+            valid_from: "2024-02-15T00:00:00Z",
+            valid_to: null,
+          },
+          {
+            tariff_code: "G-1R-SILVER-FLEX-BB-23-02-08-H",
+            valid_from: "2023-02-15T00:00:00Z",
+            valid_to: "2024-02-15T00:00:00Z",
+          },
+        ],
+        contractGStartDate: "2024-02-15T00:00:00Z",
+        contractEStartDate: "2024-02-15T00:00:00Z",
+      }));
+    } else {
+      setValue(initialValue.value);
+    }
+  }, [value.testRun]);
 
   useEffect(() => {
     const storedValue = window.localStorage.getItem("octoprice");

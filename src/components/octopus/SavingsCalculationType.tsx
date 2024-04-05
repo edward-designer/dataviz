@@ -20,6 +20,7 @@ interface ISavingsCalculatorType extends PropsWithChildren {
   type: "E" | "G" | "EE";
   agreements: IMeterPointE["agreements"] | undefined;
   apiKey: string;
+  testRun?: boolean;
 }
 
 const SavingsCalculationType = ({
@@ -33,6 +34,7 @@ const SavingsCalculationType = ({
   agreements,
   children,
   apiKey,
+  testRun = false,
 }: ISavingsCalculatorType) => {
   const energyType = type === "EE" ? "E" : type;
   const isCurrentSVT =
@@ -71,8 +73,7 @@ const SavingsCalculationType = ({
 
   return (
     <div className="flex flex-col gap-4">
-      {deviceNumber &&
-        serialNumber &&
+      {((deviceNumber && serialNumber) || testRun) &&
         typeof currentContract !== "undefined" && (
           <>
             <div className="font-display text-accentPink-500 text-4xl flex items-center mt-4">
@@ -81,7 +82,7 @@ const SavingsCalculationType = ({
             {period.duration === "year" && (
               <TariffDetails
                 valid_from={currentContract.valid_from}
-                valid_to={currentContract.valid_to}
+                valid_to={currentContract?.valid_to}
                 tariff_code={currentContract.tariff_code}
                 type={energyType}
                 dual={dualCurrent}
@@ -130,6 +131,7 @@ const SavingsCalculationType = ({
                 serialNo={serialNumber}
                 compareTo="SVT"
                 dual={dualCurrent}
+                testRun={testRun}
               />
             ) : (
               <SavingsChartDaily
@@ -142,6 +144,7 @@ const SavingsCalculationType = ({
                 compareTo="SVT"
                 apiKey={apiKey}
                 dual={dualCurrent}
+                testRun={testRun}
               />
             )}
           </>
@@ -153,7 +156,7 @@ const SavingsCalculationType = ({
           <>
             <TariffDetails
               valid_from={previousContract.valid_from}
-              valid_to={previousContract.valid_to}
+              valid_to={previousContract.valid_to!}
               tariff_code={previousContract.tariff_code}
               type={energyType}
               isCurrent={false}
@@ -165,7 +168,7 @@ const SavingsCalculationType = ({
                   previousContract.tariff_code
                 )}
                 fromDate={previousFromDate}
-                contractToDate={previousContract.valid_to}
+                contractToDate={previousContract.valid_to!}
                 gsp={gsp}
                 type={energyType}
                 deviceNumber={deviceNumber}
@@ -179,7 +182,7 @@ const SavingsCalculationType = ({
                   previousContract.tariff_code
                 )}
                 fromDate={previousFromDate}
-                contractToDate={previousContract.valid_to}
+                contractToDate={previousContract.valid_to!}
                 gsp={gsp}
                 type={energyType}
                 deviceNumber={deviceNumber}

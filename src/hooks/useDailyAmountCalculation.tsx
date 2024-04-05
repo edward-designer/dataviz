@@ -43,6 +43,7 @@ export type IDailyAmountCalculation = {
   compareTo?: string;
   apiKey: string;
   dual?: boolean;
+  testRun?: boolean;
 };
 
 const useDailyAmountCalculation = (inputs: IDailyAmountCalculation) => {
@@ -55,8 +56,8 @@ const useDailyAmountCalculation = (inputs: IDailyAmountCalculation) => {
     compareTo = "SVT",
     apiKey,
     dual = false,
+    testRun = false,
   } = inputs;
-
   const { value } = useContext(UserContext);
 
   const fromISODate = periodWithTariff.at(0)!.date.toISOString();
@@ -104,6 +105,7 @@ const useDailyAmountCalculation = (inputs: IDailyAmountCalculation) => {
     deviceNumber,
     serialNo,
     apiKey,
+    testRun,
   });
 
   // if data is not available for the last (few) dates
@@ -200,6 +202,7 @@ const useDailyAmountCalculation = (inputs: IDailyAmountCalculation) => {
       const tariffIndexInArray = uniqueTariffCodes.findIndex(
         (tariffCode) => tariffCode === tariff
       );
+
       const tariffRates = dual
         ? ([
             ...resultsWithUnitAndStandardCharge[tariffIndexInArray * 2]
@@ -221,7 +224,7 @@ const useDailyAmountCalculation = (inputs: IDailyAmountCalculation) => {
         type,
         periodFrom,
         periodTo,
-        tariffRates: tariffRates.filter(
+        tariffRates: tariffRates?.filter(
           (tariff) => tariff.payment_method !== "NON_DIRECT_DEBIT"
         ),
         tariffStandingCharges,

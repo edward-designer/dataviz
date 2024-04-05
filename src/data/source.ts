@@ -434,7 +434,7 @@ export interface IMeterPointE {
   agreements: {
     tariff_code: string;
     valid_from: string;
-    valid_to: string;
+    valid_to: string | null;
   }[];
   consumption_standard: number;
   is_export: boolean;
@@ -446,7 +446,7 @@ export interface IMeterPointG {
   agreements: {
     tariff_code: string;
     valid_from: string;
-    valid_to: string;
+    valid_to: string | null;
   }[];
   consumption_standard: number;
   meters: { registers: {}; serial_number: string }[];

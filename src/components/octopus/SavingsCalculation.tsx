@@ -14,11 +14,14 @@ import SavingsCalculationType from "./SavingsCalculationType";
 
 import { AiFillFire } from "react-icons/ai";
 import { BsLightningChargeFill } from "react-icons/bs";
+import { IoMdEyeOff } from "react-icons/io";
 import { PiSunDimFill } from "react-icons/pi";
 import { TbBulb } from "react-icons/tb";
+import Button from "./Button";
+import ExitTrialButton from "./ExitTrialButton";
 
 const SavingsCalculation = () => {
-  const { value } = useContext(UserContext);
+  const { value, setValue } = useContext(UserContext);
 
   const [period, setPeriod] = useState<IPeriod>(getDatePeriod("year"));
 
@@ -30,6 +33,7 @@ const SavingsCalculation = () => {
         <NotCurrentlySupported>{value.error}</NotCurrentlySupported>
       ) : (
         <>
+          {value.testRun && <ExitTrialButton />}
           <div className="flex gap-2 md:flex-col lg:flex-row">
             <div className="flex-grow">
               Inclusive of standing charge & VAT.
@@ -83,6 +87,7 @@ const SavingsCalculation = () => {
               agreements={value.agreementsE}
               type="E"
               apiKey={value.apiKey}
+              testRun={value.testRun}
             >
               <h2 className="font-display text-accentPink-500 text-4xl flex items-center">
                 <BsLightningChargeFill className="w-8 h-8 fill-accentPink-900 inline-block mr-2" />
@@ -101,6 +106,7 @@ const SavingsCalculation = () => {
               agreements={value.agreementsG}
               type="G"
               apiKey={value.apiKey}
+              testRun={value.testRun}
             >
               <h2 className="font-display text-accentPink-500 text-4xl flex items-center">
                 <AiFillFire className="w-8 h-8 fill-accentPink-900 inline-block mr-2" />

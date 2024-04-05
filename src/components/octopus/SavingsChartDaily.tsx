@@ -46,6 +46,7 @@ const SavingsChartDaily = ({
   compareTo,
   apiKey,
   dual = false,
+  testRun = false,
 }: {
   type: "E" | "G";
   gsp: string;
@@ -56,6 +57,7 @@ const SavingsChartDaily = ({
   compareTo: string;
   apiKey: string;
   dual?: boolean;
+  testRun?: boolean;
 }) => {
   const latestDate = new Date();
   latestDate.setUTCHours(23, 59, 59, 999);
@@ -71,8 +73,7 @@ const SavingsChartDaily = ({
     agreements.forEach((agreement) => {
       if (
         new Date(agreement.valid_from).valueOf() <= date.valueOf() &&
-        (new Date(agreement.valid_to).valueOf() >= date.valueOf() ||
-          agreement.valid_to === null)
+        (agreement.valid_to === null || new Date(agreement?.valid_to).valueOf() >= date.valueOf())
       ) {
         tariff = getTariffCodeWithoutPrefixSuffix(agreement.tariff_code);
       }
@@ -89,6 +90,7 @@ const SavingsChartDaily = ({
     compareTo,
     apiKey,
     dual,
+    testRun,
   });
 
   if (isLoading)

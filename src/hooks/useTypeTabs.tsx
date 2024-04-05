@@ -9,9 +9,9 @@ const useTypeTabs = () => {
 
   const [currentType, setCurrentType] = useState<"E" | "G" | "EE" | null>("E");
 
-  const hasEImport = !!(value.ESerialNo && value.MPAN);
+  const hasEImport = !!(value.ESerialNo && value.MPAN) || value.testRun;
   const hasEExport = !!(value.EESerialNo && value.EMPAN);
-  const hasGImport = !!(value.GSerialNo && value.MPAN);
+  const hasGImport = !!(value.GSerialNo && value.MPAN) || value.testRun;
 
   const defaultType = hasEImport
     ? "E"

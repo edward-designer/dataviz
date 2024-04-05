@@ -16,7 +16,7 @@ export type ErrorType = Record<string, string>;
 
 const SavingsContainer = () => {
   const { value, setValue } = useContext(UserContext);
-  const hasApiInfo = !!(value.apiKey && value.accountNumber);
+  const loggedIn = !!(value.apiKey && value.accountNumber) || value.testRun;
 
   return (
     <div className="flex flex-col font-extralight text-lg">
@@ -30,7 +30,7 @@ const SavingsContainer = () => {
         <LiaPiggyBankSolid className="relative -top-12 -right-12 text-theme-700/20  w-[240px] h-[240px] md:hidden pointer-events-none" />
       </div>
 
-      {hasApiInfo ? (
+      {loggedIn ? (
         <SavingsCalculation />
       ) : (
         <div className="flex flex-col md:flex-row justify-between gap-4 items-start">

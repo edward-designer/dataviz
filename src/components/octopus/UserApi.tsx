@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 import Remark from "./Remark";
 
@@ -12,16 +12,22 @@ import { MdOutlineCalculate } from "react-icons/md";
 
 import Link from "next/link";
 import Saving from "../../../public/lottie/saving.json";
+import Button from "./Button";
+import { FaEye } from "react-icons/fa6";
+import Badge from "./Badge";
+import { UserContext } from "@/context/user";
 
 export type ErrorType = Record<string, string>;
 
 const UserApi = () => {
   const [open, setOpen] = useState(false);
+  const { value, setValue } = useContext(UserContext);
 
   return (
     <>
       <p>
-        To use the exclusive features of the Octoprice App, you will need to:
+        To use the exclusive features of the Octoprice App with{" "}
+        <strong>your actual consumption data</strong>, you will need to:
       </p>
       <ol className="list-decimal ml-5 flex flex-col gap-5 mt-4">
         <li>
@@ -61,6 +67,25 @@ const UserApi = () => {
           </div>
         </li>
       </ol>
+
+      <p className="pt-8 pb-4 mt-8 border-t border-dotted border-accentBlue-900">
+        <Badge variant="primary" label="NEW" className="text-sm px-[8px]" />{" "}
+        <em>Not yet an Octopus user or feeling sceptical?</em> Just try it out
+        with dummy data:
+      </p>
+      <Button
+        variant="action"
+        clickHandler={() => {
+          setValue({ ...value, testRun: true });
+        }}
+        className="flex text-accentPink-600 gap-2 items-center px-8 rounded-xl"
+      >
+        <FaEye
+          className="w-6 h-6 text-accentPink-600 group-hover:text-accentPink-300"
+          aria-label="click to enter account information"
+        />
+        Try
+      </Button>
 
       <div className="flex flex-col p-2 md:py-6 md:flex-row items-center bg-theme-900 mt-20 ">
         <div className="w-[100px] md:min-w-[200px] flex items-center justify-center">

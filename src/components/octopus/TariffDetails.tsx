@@ -23,7 +23,7 @@ import {
 
 interface ITariffDetails {
   tariff_code: string;
-  valid_to: string;
+  valid_to: string | null;
   valid_from: string;
   type: TariffType;
   isCurrent?: boolean;

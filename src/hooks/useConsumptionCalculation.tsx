@@ -27,6 +27,7 @@ export type IConsumptionCalculation = {
   category: TariffCategory;
   results?: "monthly" | "yearly" | "daily";
   dual?: boolean;
+  testRun?: boolean;
 };
 
 const useConsumptionCalculation = (inputs: IConsumptionCalculation) => {
@@ -42,6 +43,7 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculation) => {
     serialNo,
     results = "yearly",
     dual = false,
+    testRun = false,
   } = inputs;
 
   // avoid unnecessary refetching of consumption data if range is narrower
@@ -73,7 +75,9 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculation) => {
     serialNo,
     apiKey: value.apiKey,
     dual,
+    testRun: value.testRun,
   });
+
   /* Important this should be removed when the new tariffs covers over 1/2 years */
   /*const tariff =
     inputTariff === "SILVER-23-12-06" && results === "yearly"
@@ -122,7 +126,7 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculation) => {
     fromDate: fromDataISODate,
     toDate: toDataISODate,
     category,
-    enabled: !!deviceNumber && !!serialNo && !!category,
+    enabled: (!!deviceNumber && !!serialNo && !!category) || testRun,
     dual,
   });
 
@@ -133,7 +137,7 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculation) => {
     fromDate,
     toDate,
     category,
-    enabled: !!deviceNumber && !!serialNo && !!category,
+    enabled: (!!deviceNumber && !!serialNo && !!category) || testRun,
     daysOfWeek: [0, 1, 2, 3, 4, 5, 6],
   });
 
@@ -158,7 +162,8 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculation) => {
       toDataISODate,
     ],
     queryFn: queryFnStandingChargeData,
-    enabled: !!value.gsp && !!deviceNumber && !!serialNo && !!category,
+    enabled:
+      (!!value.gsp && !!deviceNumber && !!serialNo && !!category) || testRun,
   });
 
   const flattenedRateData = {
@@ -229,6 +234,7 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculation) => {
         currentGSP,
         dual
       );
+
       return results;
     } else {
       const results = calculatePrice(

@@ -16,6 +16,7 @@ export type IUseConsumptionData = {
   category: TariffCategory;
   apiKey: string;
   dual?: boolean;
+  testRun?: boolean;
 };
 
 const useConsumptionData = (inputs: IUseConsumptionData) => {
@@ -28,6 +29,7 @@ const useConsumptionData = (inputs: IUseConsumptionData) => {
     serialNo,
     apiKey,
     dual = false,
+    testRun = false,
   } = inputs;
   const groupBy = {
     Agile: "",
@@ -66,17 +68,38 @@ const useConsumptionData = (inputs: IUseConsumptionData) => {
           )}&period_to=${toISODate.replace(".000", "")}&page_size=25000${
             groupBy[category]
           }`;
+
     try {
       // page_size 25000 is a year's data
-      const response = await fetch(url, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Basic ${btoa(apiKey)}`,
-        },
-      });
-      if (!response.ok) throw new Error("Sorry the request was unsuccessful");
-      return response.json();
+      if (testRun) {
+        const response = await fetch(
+          `/api/data?fromISODate=${fromISODate.replace(
+            ".000",
+            ""
+          )}&toISODate=${toISODate.replace(
+            ".000",
+            ""
+          )}&category=${category}&type=${type}&groupBy=${groupByType}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (!response.ok) throw new Error("Sorry the request was unsuccessful");
+        return response.json();
+      } else {
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Basic ${btoa(apiKey)}`,
+          },
+        });
+        if (!response.ok) throw new Error("Sorry the request was unsuccessful");
+        return response.json();
+      }
     } catch (err: unknown) {
       if (err instanceof Error)
         throw new Error(`Sorry, we have an error: ${err.message}`);
@@ -88,11 +111,12 @@ const useConsumptionData = (inputs: IUseConsumptionData) => {
     queryKey: [deviceNumber, serialNo, groupByType, fromISODate, toISODate],
     queryFn,
     enabled:
-      !!deviceNumber &&
-      !!serialNo &&
-      !!category &&
-      !!deviceNumber &&
-      !!serialNo,
+      (!!deviceNumber &&
+        !!serialNo &&
+        !!category &&
+        !!deviceNumber &&
+        !!serialNo) ||
+      testRun,
     retry: !!deviceNumber && !!serialNo ? 0 : 5,
   });
 
