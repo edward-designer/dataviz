@@ -286,16 +286,18 @@ const Menu = () => {
               </span>
             </span>
 
-            <Link
-              href="/dashboard"
-              className={`block my-4  ${
-                pathname === "/dashboard"
-                  ? "cursor-default text-accentBlue-900"
-                  : "hover:text-accentPink-500"
-              }`}
-            >
-              Dashboard
-            </Link>
+            {value.apiKey && (
+              <Link
+                href="/dashboard"
+                className={`block my-4  ${
+                  pathname === "/dashboard"
+                    ? "cursor-default text-accentBlue-900"
+                    : "hover:text-accentPink-500"
+                }`}
+              >
+                Dashboard
+              </Link>
+            )}
 
             <Link
               href="/savings"

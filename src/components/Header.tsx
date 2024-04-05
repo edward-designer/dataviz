@@ -16,16 +16,22 @@ import {
 import Menu from "./octopus/Menu";
 import Link from "next/link";
 import { HiVizContext } from "@/context/hiViz";
+import { UserContext } from "@/context/user";
 
 const Header = ({
   className,
   ...props
 }: ComponentPropsWithoutRef<"header">) => {
   const { hiViz, setHiViz } = useContext(HiVizContext);
+  const { value } = useContext(UserContext);
+  
   return (
     <>
       <header
-        className={`flex gap-4 justify-between items-center ${className} py-4 z-50`}
+        className={`relative flex gap-4 justify-between items-center ${className} py-4 z-50 ${
+          value.testRun &&
+          `border-t-8 border-theme-700 before:content-['TRIAL_MODE'] before:translate-x-1/2 before:block before:absolute before:-top-[8px] before:text-xl before:right-[50%] before:text-theme-700 before:font-bold`
+        }`}
         {...props}
       >
         <Link href="/">

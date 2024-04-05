@@ -8,7 +8,7 @@ const ExitTrialButton = () => {
   const { value, setValue } = useContext(UserContext);
 
   return (
-    <div className=" bg-black/50 p-2 flex justify-center mb-4">
+    <div className="p-2 flex justify-center mb-4">
       <Button
         variant="action"
         clickHandler={() => {
