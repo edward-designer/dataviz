@@ -31,6 +31,7 @@ import Link from "next/link";
 import Remark from "./Remark";
 import EnergyShiftSimSwitchChart from "./TariffHoppingChart";
 import TariffHoppingToolSelector from "./TariffHoppingToolSelector";
+import ExitTrialButton from "./ExitTrialButton";
 
 export type ErrorType = Record<string, string>;
 
@@ -125,6 +126,7 @@ const TariffHoppingToolContainer = () => {
 
   return (
     <div className="flex flex-col justify-between gap-4">
+      {value.testRun && <ExitTrialButton />}
       <div>
         Calculation based on your actual meter readings over the past year.
         Inclusive of standing charge & VAT.

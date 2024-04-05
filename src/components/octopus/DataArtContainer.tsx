@@ -84,6 +84,7 @@ import { RxShare2 } from "react-icons/rx";
 import { PiDownloadSimple } from "react-icons/pi";
 import { BsLightningChargeFill } from "react-icons/bs";
 import { AiFillFire } from "react-icons/ai";
+import ExitTrialButton from "./ExitTrialButton";
 
 interface IWeatherData {
   time: string;
@@ -135,23 +136,24 @@ const DataArtContainer = () => {
       "M11.251.068a.5.5 0 0 1 .227.58L9.677 6.5H13a.5.5 0 0 1 .364.843l-8 8.5a.5.5 0 0 1-.842-.49L6.323 9.5H3a.5.5 0 0 1-.364-.843l8-8.5a.5.5 0 0 1 .615-.09z",
   };
 
-  const thenETariff =
-    agreementsE
-      ?.find(
-        (agreement) =>
-          new Date(agreement.valid_to).valueOf() >=
-          new Date("2023-12-31").valueOf()
-      )
-      ?.tariff_code.slice(5, -2) ?? currentETariff;
-
-  const thenGTariff =
-    agreementsG
-      ?.findLast(
-        (agreement) =>
-          new Date(agreement.valid_to).valueOf() >=
-          new Date("2023-12-31").valueOf()
-      )
-      ?.tariff_code.slice(5, -2) ?? currentGTariff;
+  const thenEContract = agreementsE?.find(
+    (agreement) =>
+      (agreement.valid_to === null ||
+        new Date(agreement.valid_to).valueOf() >=
+          new Date("2023-12-31").valueOf()) &&
+      new Date(agreement.valid_from).valueOf() <=
+        new Date("2023-12-31").valueOf()
+  );
+  const thenETariff = thenEContract?.tariff_code.slice(5, -2) ?? currentETariff;
+  const thenGContract = agreementsG?.findLast(
+    (agreement) =>
+      (agreement.valid_to === null ||
+        new Date(agreement.valid_to).valueOf() >=
+          new Date("2023-12-31").valueOf()) &&
+      new Date(agreement.valid_from).valueOf() <=
+        new Date("2023-12-31").valueOf()
+  );
+  const thenGTariff = thenGContract?.tariff_code.slice(5, -2) ?? currentGTariff;
 
   const {
     data: tariffEData,
@@ -163,6 +165,7 @@ const DataArtContainer = () => {
     tariff: thenETariff,
     type: "E",
   });
+
   const {
     data: tariffGData,
     isSuccess: tariffGIsSuccess,
@@ -193,7 +196,7 @@ const DataArtContainer = () => {
     fromDate: fromISODate,
     toDate: toChartDate,
     category: categoryE,
-    enabled: !!MPAN && !!ESerialNo,
+    enabled: (!!MPAN && !!ESerialNo) || value.testRun,
   });
 
   const categoryG = getCategory(thenGTariff);
@@ -215,7 +218,7 @@ const DataArtContainer = () => {
     fromDate: fromISODate,
     toDate: toChartDate,
     category: categoryG,
-    enabled: !!MPRN && !!GSerialNo,
+    enabled: (!!MPRN && !!GSerialNo) || value.testRun,
   });
 
   const {
@@ -230,6 +233,7 @@ const DataArtContainer = () => {
     deviceNumber: MPAN,
     serialNo: ESerialNo,
     apiKey: value.apiKey,
+    testRun: value.testRun,
   });
 
   const {
@@ -244,6 +248,7 @@ const DataArtContainer = () => {
     deviceNumber: MPRN,
     serialNo: GSerialNo,
     apiKey: value.apiKey,
+    testRun: value.testRun,
   });
 
   const mapData = useUkGspMapData();
@@ -1081,8 +1086,8 @@ const DataArtContainer = () => {
         .attr("transform", "translate(70 705)")
         .attr("fill", colorScheme.textTitle)
         .text(
-          `(current tariff from ${new Date(
-            currentGContract?.valid_from ?? ""
+          `(tariff from ${new Date(
+            thenGContract?.valid_from ?? ""
           ).toLocaleDateString("en-GB")})`
         );
       infoContainer
@@ -1106,8 +1111,8 @@ const DataArtContainer = () => {
         .attr("transform", "translate(-380 705)")
         .attr("fill", colorScheme.textTitle)
         .text(
-          `(current tariff from ${new Date(
-            currentEContract?.valid_from ?? ""
+          `(tariff from ${new Date(
+            thenEContract?.valid_from ?? ""
           ).toLocaleDateString("en-GB")})`
         );
       infoContainer
@@ -1128,6 +1133,8 @@ const DataArtContainer = () => {
     tariffEIsSuccess,
     tariffGData,
     tariffGIsSuccess,
+    thenEContract?.valid_from,
+    thenGContract?.valid_from,
   ]);
 
   /* draw the consumption info */
@@ -2000,6 +2007,7 @@ const DataArtContainer = () => {
     <NotCurrentlySupported>{value.error}</NotCurrentlySupported>
   ) : (
     <>
+      {value.testRun && <ExitTrialButton />}
       <div className="flex gap-2 items-center mb-4 flex-col-reverse md:flex-col lg:flex-row">
         <div className="flex-grow">
           Visualization of energy consumption in {chartYear}.
@@ -2015,7 +2023,7 @@ const DataArtContainer = () => {
         </div>
       </div>
       <div className="flex flex-row gap-2 mb-4 flex-wrap [&>*]:flex-1">
-        {value.currentEContract && value.currentETariff && (
+        {thenEContract && thenETariff && (
           <div className="flex flex-col">
             <h2 className="font-display text-accentPink-500 text-4xl flex items-center">
               <BsLightningChargeFill className="w-8 h-8 fill-accentPink-900 inline-block mr-2" />
@@ -2023,15 +2031,15 @@ const DataArtContainer = () => {
             </h2>
             <div className="flex flex-col gap-4">
               <TariffDetails
-                valid_from={value.currentEContract.valid_from}
-                valid_to={value.currentEContract.valid_to}
-                tariff_code={value.currentETariff}
+                valid_from={thenEContract.valid_from}
+                valid_to={thenEContract.valid_to}
+                tariff_code={thenETariff}
                 type="E"
               />
             </div>
           </div>
         )}
-        {value.currentGContract && value.currentGTariff && (
+        {thenGContract && thenGTariff && (
           <div className="flex flex-col">
             <h2 className="font-display text-accentPink-500 text-4xl flex items-center">
               <AiFillFire className="w-8 h-8 fill-accentPink-900 inline-block mr-2" />
@@ -2039,9 +2047,9 @@ const DataArtContainer = () => {
             </h2>
             <div className="flex flex-col gap-4">
               <TariffDetails
-                valid_from={value.currentGContract.valid_from}
-                tariff_code={value.currentGTariff}
-                valid_to={value.currentGContract.valid_to}
+                valid_from={thenGContract.valid_from}
+                tariff_code={thenGTariff}
+                valid_to={thenGContract.valid_to}
                 type="G"
               />
             </div>

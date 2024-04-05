@@ -15,7 +15,7 @@ export type ErrorType = Record<string, string>;
 
 const EnergyShiftSim = () => {
   const { value, setValue } = useContext(UserContext);
-  const hasApiInfo = !!(value.apiKey && value.accountNumber);
+  const loggedIn = !!(value.apiKey && value.accountNumber) || value.testRun;
 
   return (
     <div className="flex flex-col font-extralight text-lg">
@@ -32,7 +32,7 @@ const EnergyShiftSim = () => {
         <HiAdjustmentsVertical className="relative -top-4 -right-6 text-theme-700/20  w-[170px] h-[170px] md:hidden pointer-events-none" />
       </div>
 
-      {hasApiInfo ? (
+      {loggedIn ? (
         <EnergyShiftSimContainer />
       ) : (
         <div className="flex flex-col md:flex-row justify-between gap-4 items-start">

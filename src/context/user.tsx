@@ -378,7 +378,7 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
           valid_to: "2025-02-15T00:00:00Z",
         },
         ESerialNo: "ELECTRICITY_SERIAL_NO",
-        currentETariff: "",
+        currentETariff: "SILVER-23-12-06",
         currentGContract: {
           tariff_code: "G-1R-SILVER-23-12-06-H",
           valid_from: "2024-02-15T00:00:00Z",

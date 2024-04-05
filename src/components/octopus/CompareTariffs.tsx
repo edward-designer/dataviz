@@ -15,7 +15,7 @@ export type ErrorType = Record<string, string>;
 
 const CompareTariffs = () => {
   const { value, setValue } = useContext(UserContext);
-  const hasApiInfo = !!(value.apiKey && value.accountNumber);
+  const loggedIn = !!(value.apiKey && value.accountNumber) || value.testRun;
 
   return (
     <div className="flex flex-col font-extralight text-lg">
@@ -32,7 +32,7 @@ const CompareTariffs = () => {
         <FaRankingStar className="relative -top-7 -right-8 text-theme-700/20  w-[180px] h-[180px] md:hidden pointer-events-none" />
       </div>
 
-      {hasApiInfo ? (
+      {loggedIn ? (
         <UserApiResult />
       ) : (
         <div className="flex flex-col md:flex-row justify-between gap-4 items-start">

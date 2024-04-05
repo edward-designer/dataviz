@@ -42,6 +42,7 @@ const useConsumptionYearlyPattern = (inputs: IConsumptionYearlyPattern) => {
     deviceNumber,
     serialNo,
     apiKey: value.apiKey,
+    testRun: value.testRun,
   });
   const dataByTimeYearly = useMemo(() => {
     const newDataByMonth = Array.from({ length: 48 })

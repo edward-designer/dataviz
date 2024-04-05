@@ -15,6 +15,7 @@ interface IUseEnergyShiftData {
   daysOfWeek: number[];
   tariff: string;
   gsp: string;
+  testRun?: boolean;
 }
 
 const useEnergyShiftData = ({
@@ -26,6 +27,7 @@ const useEnergyShiftData = ({
   daysOfWeek,
   tariff,
   gsp,
+  testRun = false,
 }: IUseEnergyShiftData) => {
   const { dataByTime } = useConsumptionPattern({
     fromDate,

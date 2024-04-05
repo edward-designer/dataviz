@@ -13,6 +13,7 @@ import Notice from "./Notice";
 import { TbBulb } from "react-icons/tb";
 import useTypeTabs from "@/hooks/useTypeTabs";
 import Remark from "./Remark";
+import ExitTrialButton from "./ExitTrialButton";
 
 const UserApiResult = () => {
   const { value } = useContext(UserContext);
@@ -37,10 +38,12 @@ const UserApiResult = () => {
         <NotCurrentlySupported>{value.error}</NotCurrentlySupported>
       ) : (
         <>
+          {value.testRun && <ExitTrialButton />}
           <div className="flex-grow mb-3">
             Inclusive of standing charge & VAT.
             <Remark>
-              With the recent change of Agile/Tracker formulae, price calcuation for periods before the tariff start date will NOT be shown.
+              With the recent change of Agile/Tracker formulae, price calcuation
+              for periods before the tariff start date will NOT be shown.
               Approximations and assumptions are used in the calculations. The
               actual savings are likely to differ because of missing data and
               rounding. Should you encounter any issues while using this page,

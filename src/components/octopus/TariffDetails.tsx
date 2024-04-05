@@ -24,7 +24,7 @@ import {
 interface ITariffDetails {
   tariff_code: string;
   valid_to: string | null;
-  valid_from: string;
+  valid_from: string | null;
   type: TariffType;
   isCurrent?: boolean;
   dual?: boolean;
@@ -112,7 +112,7 @@ const TariffDetails = ({
           <span className="inline-block md:w-[90px] text-accentBlue-500 text-[12px] font-bold">
             Duration:
           </span>
-          {new Date(valid_from).toLocaleDateString("en-GB")}
+          {valid_from && new Date(valid_from).toLocaleDateString("en-GB")}
           {valid_to ? (
             <>
               <div>

@@ -48,6 +48,7 @@ const useConsumptionPattern = (inputs: IConsumptionPattern) => {
     deviceNumber,
     serialNo,
     apiKey: value.apiKey,
+    testRun: value.testRun,
   });
 
   const dataByTime = useMemo(() => {

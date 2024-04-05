@@ -15,6 +15,7 @@ import { BsLightningChargeFill } from "react-icons/bs";
 import { PiSunDimFill } from "react-icons/pi";
 import MissingDataToolChart from "./MissingDataToolChart";
 import Remark from "./Remark";
+import ExitTrialButton from "./ExitTrialButton";
 
 export type ErrorType = Record<string, string>;
 
@@ -25,9 +26,9 @@ const MissingDataToolContainer = () => {
 
   const { currentType, Tabs } = useTypeTabs();
 
-  const hasEImport = !!(value.ESerialNo && value.MPAN);
+  const hasEImport = !!(value.ESerialNo && value.MPAN) || value.testRun;
   const hasEExport = !!(value.EESerialNo && value.EMPAN);
-  const hasGImport = !!(value.GSerialNo && value.MPAN);
+  const hasGImport = !!(value.GSerialNo && value.MPAN) || value.testRun;
 
   const toDate = new Date(new Date().setUTCDate(new Date().getUTCDate() - 1)); // yesterday
   toDate.setUTCHours(23, 59, 59, 999);
@@ -38,6 +39,8 @@ const MissingDataToolContainer = () => {
   fromDate.setUTCDate(1);
   fromDate.setUTCHours(0, 0, 0, 0);
 
+  const testRun = value.testRun;
+
   /* get data from API */
   const { data: dataEImport, isLoading } = useConsumptionData({
     fromISODate: fromDate.toISOString(),
@@ -47,6 +50,7 @@ const MissingDataToolContainer = () => {
     deviceNumber: value.MPAN,
     serialNo: value.ESerialNo,
     apiKey: value.apiKey,
+    testRun,
   });
 
   const { data: dataEExport } = useConsumptionData({
@@ -67,6 +71,7 @@ const MissingDataToolContainer = () => {
     deviceNumber: value.MPRN,
     serialNo: value.GSerialNo,
     apiKey: value.apiKey,
+    testRun,
   });
 
   const fromDateWithin1Year =
@@ -86,6 +91,7 @@ const MissingDataToolContainer = () => {
 
   return (
     <div className="flex flex-col justify-between gap-4">
+      {value.testRun && <ExitTrialButton />}
       <div className="flex items-start flex-wrap">
         <PeriodMonthSelector
           period={period}

@@ -29,6 +29,7 @@ interface ITariffComparisionCard {
   rank: number;
   isExport?: boolean;
   duration?: string;
+  testRun?: boolean;
 }
 const TariffComparisionCard = ({
   deviceNumber,
@@ -43,6 +44,7 @@ const TariffComparisionCard = ({
   rank,
   isExport = false,
   duration = "",
+  testRun = false,
 }: ITariffComparisionCard) => {
   const { cost, isLoading, error } = useConsumptionCalculation({
     tariff,
@@ -52,6 +54,7 @@ const TariffComparisionCard = ({
     category,
     deviceNumber,
     serialNo,
+    testRun,
   });
 
   const tariffDetails = useTariffDetailsQuery<{ available_from: string }>({

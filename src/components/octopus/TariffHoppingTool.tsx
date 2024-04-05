@@ -15,7 +15,7 @@ export type ErrorType = Record<string, string>;
 
 const TariffHoppingTool = () => {
   const { value, setValue } = useContext(UserContext);
-  const hasApiInfo = !!(value.apiKey && value.accountNumber);
+  const loggedIn = !!(value.apiKey && value.accountNumber) || value.testRun;
 
   return (
     <div className="flex flex-col font-extralight text-lg">
@@ -32,7 +32,7 @@ const TariffHoppingTool = () => {
         <TbSwitch3 className="relative -top-5 -right-8 text-theme-700/20  w-[200px] h-[200px] md:hidden pointer-events-none" />
       </div>
 
-      {hasApiInfo ? (
+      {loggedIn ? (
         <TariffHoppingToolContainer />
       ) : (
         <div className="flex flex-col md:flex-row justify-between gap-4 items-start">

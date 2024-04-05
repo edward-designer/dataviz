@@ -25,6 +25,7 @@ export async function GET(request: Request) {
       "Content-Type": "application/json",
       Authorization: `Basic ${btoa(process.env.DATA_API_KEY!)}`,
     },
+    next: { revalidate: 86400 },
   });
   const product = await res.json();
 

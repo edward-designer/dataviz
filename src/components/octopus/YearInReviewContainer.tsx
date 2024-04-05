@@ -16,7 +16,7 @@ export type ErrorType = Record<string, string>;
 
 const YearInReviewContainer = () => {
   const { value, setValue } = useContext(UserContext);
-  const hasApiInfo = !!(value.apiKey && value.accountNumber);
+  const loggedIn = !!(value.apiKey && value.accountNumber) || value.testRun;
 
   return (
     <div className="flex flex-col font-extralight text-lg">
@@ -33,7 +33,7 @@ const YearInReviewContainer = () => {
         <BiRadar className="relative -top-12 -right-10 text-theme-700/20  w-[220px] h-[220px] md:hidden pointer-events-none" />
       </div>
 
-      {hasApiInfo ? (
+      {loggedIn ? (
         <DataArtContainer />
       ) : (
         <div className="flex flex-col md:flex-row justify-between gap-4 items-start">

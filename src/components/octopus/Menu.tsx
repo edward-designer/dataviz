@@ -2,18 +2,20 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Badge from "./Badge";
 
 import { LiaInfoCircleSolid } from "react-icons/lia";
 import { MdOutlineInstallMobile } from "react-icons/md";
 import { MdExpandCircleDown } from "react-icons/md";
 import { FaOctopusDeploy } from "react-icons/fa";
+import { UserContext } from "@/context/user";
 
 const Menu = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isExtended, setIsExtended] = useState(false);
   const pathname = usePathname();
+  const { value } = useContext(UserContext);
 
   useEffect(() => setIsOpen(false), [pathname]);
 
@@ -283,6 +285,7 @@ const Menu = () => {
                 Octopus Tools
               </span>
             </span>
+
             <Link
               href="/dashboard"
               className={`block my-4  ${
@@ -293,6 +296,7 @@ const Menu = () => {
             >
               Dashboard
             </Link>
+
             <Link
               href="/savings"
               className={`block my-4  ${

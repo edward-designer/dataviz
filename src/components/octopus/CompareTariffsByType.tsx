@@ -153,25 +153,27 @@ const CompareTariffsByType = ({
     ]);
   }, [currentMeterType, tariffsToCompare, type, typePlusExport]);
 
-  if (
-    typePlusExport === "E" &&
-    !isExport &&
-    !(value.MPAN && value.ESerialNo && value.currentEContract)
-  )
-    return;
+  if (!value.testRun) {
+    if (
+      typePlusExport === "E" &&
+      !isExport &&
+      !(value.MPAN && value.ESerialNo && value.currentEContract)
+    )
+      return;
 
-  if (
-    typePlusExport === "G" &&
-    !(value.MPRN && value.GSerialNo && value.currentGContract)
-  )
-    return;
+    if (
+      typePlusExport === "G" &&
+      !(value.MPRN && value.GSerialNo && value.currentGContract)
+    )
+      return;
 
-  if (
-    typePlusExport === "EE" &&
-    isExport &&
-    !(value.EMPAN && value.EESerialNo && value.currentEEContract)
-  )
-    return;
+    if (
+      typePlusExport === "EE" &&
+      isExport &&
+      !(value.EMPAN && value.EESerialNo && value.currentEEContract)
+    )
+      return;
+  }
 
   return (
     <div className="flex flex-col pt-6 gap-4">
@@ -184,10 +186,11 @@ const CompareTariffsByType = ({
           </h2>
           <TariffDetails
             valid_from={
-              currentMeterType[typePlusExport].currentContract!.valid_from
+              currentMeterType[typePlusExport].currentContract?.valid_from ??
+              null
             }
             valid_to={
-              currentMeterType[typePlusExport].currentContract!.valid_to
+              currentMeterType[typePlusExport].currentContract?.valid_to ?? null
             }
             tariff_code={
               currentMeterType[typePlusExport].currentContract?.tariff_code ??
@@ -217,6 +220,7 @@ const CompareTariffsByType = ({
                     rank={ind + 1}
                     isExport={isExport}
                     duration={period.duration}
+                    testRun={value.testRun}
                   />
                 );
               })}

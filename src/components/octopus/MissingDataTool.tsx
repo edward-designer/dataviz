@@ -15,7 +15,7 @@ export type ErrorType = Record<string, string>;
 
 const MissingDataTool = () => {
   const { value, setValue } = useContext(UserContext);
-  const hasApiInfo = !!(value.apiKey && value.accountNumber);
+  const loggedIn = !!(value.apiKey && value.accountNumber) || value.testRun;
 
   return (
     <div className="flex flex-col font-extralight text-lg">
@@ -32,7 +32,7 @@ const MissingDataTool = () => {
         <BsUiChecksGrid className="relative -top-5 -right-10 text-theme-700/20  w-[170px] h-[170px] md:hidden pointer-events-none" />
       </div>
 
-      {hasApiInfo ? (
+      {loggedIn ? (
         <MissingDataToolContainer />
       ) : (
         <div className="flex flex-col md:flex-row justify-between gap-4 items-start">
