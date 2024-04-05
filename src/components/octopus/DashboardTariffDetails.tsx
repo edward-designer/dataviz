@@ -20,7 +20,7 @@ import { getCategory, getTariffName } from "@/utils/helpers";
 interface IDashboardTariffDetails {
   tariff_code: string;
   valid_from: string;
-  valid_to: string;
+  valid_to: string | null;
   type: TariffType;
   dual?: boolean;
 }
@@ -62,7 +62,8 @@ const DashboardTariffDetails = ({
           <span className="inline-block w-[100px] text-accentBlue-500 font-light">
             Current Tariff:
           </span>
-          {isSuccess ? data[0]?.full_name : tariff_code} {dual?"Economy 7":""}
+          {isSuccess ? data[0]?.full_name : tariff_code}{" "}
+          {dual ? "Economy 7" : ""}
         </div>
         <div className="flex flex-row items-center whitespace-nowrap overflow-hidden">
           <span className="inline-block w-[100px] text-accentBlue-500 font-light">
