@@ -149,7 +149,7 @@ export const SVT_GTARIFF =
 export const AGILE: ITrackerTariffPlan[] = [
   {
     code: "AGILE-24-04-03",
-    name: "Agile Octopus Dec 2024 v1",
+    name: "Agile Octopus Apr 2024 v1",
     currentPlan: true,
     cap: {
       E: 100,
