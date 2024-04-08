@@ -41,22 +41,22 @@ const AgileTariff = () => {
   return (
     <div className="lg:col-[content] my-4">
       <section className="my-4">
-        <div className="flex items-center justify-center font-display">
-          <div className="h-14 rounded-md px-3 py-2 ring-offset-background focus:outline-none [&amp;>h1>span]:line-clamp-1 [&amp;>span]:line-clamp-1 w-auto max-w-full text-[clamp(20px,7vw,80px)] text-accentBlue-400 flex items-center justify-center">
-            <h1 className="overflow-hidden [&amp;>*]:whitespace-pre  [&amp;>*]:text-ellipsis  [&amp;>*]:overflow-hidden  [&amp;>*]:block! [&amp;>*]:max-w-full">
-              <span>Agile Octopus Dec 2023 v1</span>
-            </h1>
-            <Remark variant="badge">
-              <span className="text-accentPink-500 font-bold pr-2">
-                Octopus has moved all Agile users to{" "}
-                <span className="text-accentPink-500">
-                  Agile Octopus Dec 2023
-                </span>{" "}
-                from 15Feb onwards.
-              </span>
-            </Remark>
-          </div>
-        </div>
+        <TariffSelect
+          tariff={tariff}
+          setTariff={handleSelect}
+          type="Octopus Agile Plan"
+          source={AGILE}
+        >
+          <Remark variant="badge">
+            <span className="text-accentPink-500 font-bold pr-2">
+              Octopus has moved most Tracker users to the latest{" "}
+              <span className="text-accentPink-500">Tracker Dec 2023</span> from
+              15Feb onwards. Congratulations if you are the lucky few ones who
+              still stay on the cheaper previous Tracker versions, this page
+              automatically show you the correct version.
+            </span>
+          </Remark>
+        </TariffSelect>
       </section>
       <section className="flex flex-col md:flex-row items-stretch md:justify-center md:items-center gap-4 my-4">
         <PricePaneAgile

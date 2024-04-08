@@ -6,6 +6,7 @@ import octopus from "../../../public/lottie/octopusC.json";
 import steps from "../../../public/lottie/steps.json";
 import faq from "../../../public/lottie/faq.json";
 import save from "../../../public/lottie/save.json";
+import tool from "../../../public/lottie/tool2.json";
 
 const LottieIcon = ({
   icon,
@@ -30,6 +31,9 @@ const LottieIcon = ({
       break;
     case "save":
       lottieJSON = save;
+      break;
+    case "tool":
+      lottieJSON = tool;
       break;
     default:
       lottieJSON = lightSwitch;
