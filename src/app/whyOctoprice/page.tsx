@@ -2,6 +2,15 @@ import { Metadata } from "next";
 
 import LottieIcon from "@/components/octopus/LottieIcon";
 import Link from "next/link";
+import Image from "next/image";
+
+import dashboardImg from "../../../public/images/dashboard.jpg";
+import savingImg from "../../../public/images/savings.jpg";
+import octopastImg from "../../../public/images/octopast.jpg";
+import compareImg from "../../../public/images/compare.jpg";
+import dataImg from "../../../public/images/missing.jpg";
+import hopImg from "../../../public/images/hopping.jpg";
+import shiftImg from "../../../public/images/loadShift.jpg";
 
 export const metadata: Metadata = {
   title:
@@ -52,7 +61,7 @@ const WhyOctoprice = () => {
       </h1>
       <LottieIcon icon="tool" loop={true} />
       <p>
-        Unlike major energy providers in the UK which provides only traditional
+        Unlike major energy providers in the UK which provide only traditional
         energy tariffs (with so few to choose from), Ocotpus Energy offers{" "}
         <strong>a lot of</strong> smart and intelligent energy tariffs both for
         electricity and gas. In fact, currently, there are over{" "}
@@ -76,7 +85,15 @@ const WhyOctoprice = () => {
         </Link>
         &quot; as if it is an &quot;app&quot;, technically also known as a
         &quot;Progressive Web App&quot;, so this post from now on will refer
-        this website as &quot;the App&quot;)!
+        this website as &quot;the App&quot;)!{" "}
+      </p>
+      <p className="text-accentBlue-500 p-4 bg-theme-900">
+        Note: You may read the following sentence from your Octopus bill:
+        &quot;Good news, you&apos;re already on our cheapest tariff. We&apos;ll
+        let you know if this changes.&quot;{" "}
+        <strong className="font-extrabold">Just do not trust this!</strong> I am
+        a victim myself until I find out by switching to Tracker which have
+        saved me over 1/3 over my previous bill!
       </p>
       <p>
         This Octoprice App provides a number of innovative tools that can help
@@ -90,6 +107,7 @@ const WhyOctoprice = () => {
         Below is a list of the tools currently available on the Octoprice App
         and their short descriptions:
       </p>
+      <LottieIcon icon="all" loop={true} />
       <h3 className="font-display text-xl font-semibold text-accentBlue-500">
         For Everyone
       </h3>
@@ -163,6 +181,7 @@ const WhyOctoprice = () => {
           development of this website and tools.
         </p>
       </div>
+      <LottieIcon icon="vip" loop={true} />
       <h3 className="font-display text-xl font-semibold text-accentBlue-500">
         For Current Octopus Energy Users
       </h3>
@@ -177,60 +196,232 @@ const WhyOctoprice = () => {
         &nbsp;You will need an API key and your Octopus account number to unlock
         the full functions of these tools.
       </p>
-      <ul className="list-disc ml-4">
-        <li>
-          <strong className="font-extrabold">Tariff Pages</strong> - offersing
-          real-time and historical tariff price data and charts for most Octopus
-          Energy tariffs including electricity (import and export) and gas
-          tariffs, e.g.{" "}
+      <h4 className="mb-0 pb-0 text-xl font-extrabold text-theme-500 text-center">
+        Information / Data Visualization
+      </h4>
+      <ul className="flex flex-wrap bg-theme-900 -mt-7">
+        <li className="flex gap-3 lg:basis-1/2 p-4">
           <Link
-            href="/tracker"
+            href="/dashboard"
             target="_blank"
-            className="underline text-accentPink-500 hover:no-underline hover:text-accentBlue-500"
+            className="shrink-0 font-extrabold text-accentPink-500 hover:text-accentBlue-500"
           >
-            Tracker prices
+            <Image
+              src={dashboardImg}
+              className="w-[150px] h-auto border border-accentBlue-500 "
+              alt="demo showing how the dashboard work"
+            />
           </Link>
-          ,{" "}
+          <div>
+            <Link
+              href="/dashboard"
+              target="_blank"
+              className="font-extrabold text-accentPink-500 hover:text-accentBlue-500"
+            >
+              Dashboard
+            </Link>{" "}
+            - get all your important Octopus Energy contract (contract start and
+            end dates, current tariff code, current energy price and standing
+            charge) and account info (including your Grid Supply Point (GSP),
+            meter serial number and MPAN/MPRN) in one page.
+          </div>
+        </li>
+        <li className="flex gap-3 lg:basis-1/2 p-4">
           <Link
-            href="/agile"
+            href="/savings"
             target="_blank"
-            className="underline text-accentPink-500 hover:no-underline hover:text-accentBlue-500"
+            className="shrink-0 font-extrabold text-accentPink-500 hover:text-accentBlue-500"
           >
-            Agile prices
+            <Image
+              src={savingImg}
+              className="w-[150px] h-auto border border-accentBlue-500 "
+              alt="demo showing how the dashboard work"
+            />
           </Link>
+          <div>
+            <Link
+              href="/savings"
+              target="_blank"
+              className="font-extrabold text-accentPink-500 hover:text-accentBlue-500"
+            >
+              My Savings
+            </Link>{" "}
+            - get an overview of your monthly and daily savings of your current
+            Octopus Tariff vs Varible (SVT) both for electricity and gas, i.e.
+            how much you have saved each day and each month. If you have export,
+            your export earnings will also be shown. The amount is inclusive of
+            VAT and standing charges.
+          </div>
         </li>
-        <li>
+        <li className="flex gap-3 lg:basis-1/2  p-4">
           <Link
-            href="/tariffs"
+            href="/yearInReview"
             target="_blank"
-            className="font-extrabold text-accentPink-500 hover:text-accentBlue-500"
+            className="shrink-0 font-extrabold text-accentPink-500 hover:text-accentBlue-500"
           >
-            Tariffs at a Glance
-          </Link>{" "}
-          - a table to instantly understand which tariffs are available and
-          applicable to you
+            <Image
+              src={octopastImg}
+              className="w-[150px] h-auto border border-accentBlue-500 "
+              alt="demo showing how the dashboard work"
+            />
+          </Link>
+          <div>
+            <Link
+              href="/yearInReview"
+              target="_blank"
+              className="font-extrabold text-accentPink-500 hover:text-accentBlue-500"
+            >
+              My Octopast Year
+            </Link>{" "}
+            - see your electicity and gas consumption (if applicable) in the
+            past year on a beautiful polar chart together with the temerature
+            range, sunrise and sunset time and prevailing weather conditions for
+            each day of the past year. Just appreciate how your consumption
+            pattern changes day by day in relation to time of the year and
+            external conditions.
+          </div>
         </li>
-        <li>
+        <li className="flex gap-3 lg:basis-1/2  p-4">
           <Link
-            href="/priceCap"
+            href="/missingData"
             target="_blank"
-            className="font-extrabold text-accentPink-500 hover:text-accentBlue-500"
+            className="shrink-0 font-extrabold text-accentPink-500 hover:text-accentBlue-500"
           >
-            National Ofgem Price Caps
-          </Link>{" "}
-          - currently and upcoming Ofgem energy price caps changes around the UK
+            <Image
+              src={dataImg}
+              className="w-[150px] h-auto border border-accentBlue-500 "
+              alt="demo showing how the dashboard work"
+            />
+          </Link>
+          <div>
+            <Link
+              href="/missingData"
+              target="_blank"
+              className="font-extrabold text-accentPink-500 hover:text-accentBlue-500"
+            >
+              Data Checker
+            </Link>{" "}
+            - smart meters are as good as they are working properly. You can use
+            this tool to monitor whether Octopus has retrieved all your meter
+            data and whether your smart meter is working properly. Each filled
+            square represent each 30-minute slot of the day. You can get the
+            total number of missing data slots readily for each month. By
+            checking your data availability frequently, you can avoid surprise
+            of massive energy bill arrears.
+          </div>
+        </li>
+      </ul>
+      <h4 className="mb-0 pb-0 text-xl font-extrabold text-theme-500 text-center">
+        Tariff Comparision
+      </h4>
+      <ul className="flex flex-wrap bg-theme-900 -mt-7">
+        <li className="flex gap-3 lg:basis-1/2 p-4">
+          <Link
+            href="/compare"
+            target="_blank"
+            className="shrink-0 font-extrabold text-accentPink-500 hover:text-accentBlue-500"
+          >
+            <Image
+              src={compareImg}
+              className="w-[150px] h-auto border border-accentBlue-500 "
+              alt="demo showing how the dashboard work"
+            />
+          </Link>
+          <div>
+            <Link
+              href="/compare"
+              target="_blank"
+              className="font-extrabold text-accentPink-500 hover:text-accentBlue-500"
+            >
+              Compare Tariffs
+            </Link>{" "}
+            - this is the very first tool available on this app. Here you can
+            get recommendations on the cheapest electricity and gas tariffs
+            based on your actual energy usage figures. It is most accurate if
+            you have been with Octopus for at least a year. The price figures
+            presented here include both the standing charges and VAT. If you
+            have export, it will also recommend you the most profitable tariff.
+          </div>
+        </li>
+      </ul>
+      <h4 className="mb-0 pb-0 text-xl font-extrabold text-theme-500 text-center">
+        Advanced Tools
+      </h4>
+      <ul className="flex flex-wrap bg-theme-900 -mt-7">
+        <li className="flex gap-3 p-4 lg:basis-1/2">
+          <Link
+            href="/tariffHopping"
+            target="_blank"
+            className="shrink-0 font-extrabold text-accentPink-500 hover:text-accentBlue-500"
+          >
+            <Image
+              src={hopImg}
+              className="w-[150px] h-auto border border-accentBlue-500 "
+              alt="demo showing how the dashboard work"
+            />
+          </Link>
+          <div>
+            <Link
+              href="/tariffHopping"
+              target="_blank"
+              className="font-extrabold text-accentPink-500 hover:text-accentBlue-500"
+            >
+              Tariff Hopping
+            </Link>{" "}
+            - if you have export, then tariff hopping is definitely worth trying
+            as Octopus is offering various kinds of intelligent tariff suitable
+            for different amount of solar generation output (the flux/iFlux
+            tariff are especially worth mentioning). This is the missing tool to
+            help you tariff hopping between various Octopus smart tariffs during
+            the year to take full advantage of the zero exit fee of the various
+            Octopus tariffs. It can advise you when is the best time to switch
+            and what tariff combinations suit you most!
+          </div>
+        </li>
+        <li className="flex gap-3 p-4 lg:basis-1/2">
+          <Link
+            href="/maxSave"
+            target="_blank"
+            className="shrink-0 font-extrabold text-accentPink-500 hover:text-accentBlue-500"
+          >
+            <Image
+              src={shiftImg}
+              className="w-[150px] h-auto border border-accentBlue-500 "
+              alt="demo showing how the dashboard work"
+            />
+          </Link>
+          <div>
+            <Link
+              href="/maxSave"
+              target="_blank"
+              className="font-extrabold text-accentPink-500 hover:text-accentBlue-500"
+            >
+              Load Shift
+            </Link>{" "}
+            - the ultimate tool to help you squeeze the last bit of savings from
+            your Octopus time of use tariffs (i.e. Agile, Flux, Cosy, etc.) for
+            both import-only and import-and-export users. Octopus offers many
+            tariffs with prices that changes throughout the day in response to
+            the demand of the time. You may have heard of &quot;load
+            shifting&quot; before. This is the exact tool to help you visualize
+            how much you can save by shifting your load to earlier or later
+            periods. If you do not current have solar panels/batttery storage,
+            this tool can also simulate these for you to estimate how much more
+            you can save!
+          </div>
         </li>
       </ul>
       <h2 className="font-display text-2xl text-accentPink-500 font-semibold">
-        What is the Catch?
+        It sounds so good, but, what is the Catch?
       </h2>
       <p>
-        I can promise there is on catch. All your personal information is stored
+        I can promise there is NO catch. All your personal information is stored
         on your device (i.e. phone or computer) ONLY. I have absolutely NO
         access to your data. All your account and consumption data passes
         between your browser and Octopus Energy server only. And if you
         encounter any errors while using this website, I will need to ask your
-        API key and account number in order to debug it.
+        API key and account number in order to debug it as I cannot gain access
+        to your data via the app without your info.
       </p>
       <p>
         I have even decided to open-sourced my source code so that if you know

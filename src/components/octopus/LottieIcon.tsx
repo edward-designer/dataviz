@@ -7,6 +7,8 @@ import steps from "../../../public/lottie/steps.json";
 import faq from "../../../public/lottie/faq.json";
 import save from "../../../public/lottie/save.json";
 import tool from "../../../public/lottie/tool2.json";
+import vip from "../../../public/lottie/vip.json";
+import all from "../../../public/lottie/all.json";
 
 const LottieIcon = ({
   icon,
@@ -34,6 +36,12 @@ const LottieIcon = ({
       break;
     case "tool":
       lottieJSON = tool;
+      break;
+    case "vip":
+      lottieJSON = vip;
+      break;
+    case "all":
+      lottieJSON = all;
       break;
     default:
       lottieJSON = lightSwitch;
