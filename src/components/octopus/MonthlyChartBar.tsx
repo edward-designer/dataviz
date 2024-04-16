@@ -31,7 +31,8 @@ interface IMonthlyChartBar {
   lastDate?: null | string;
   tariff?: string | undefined;
   reading?: number | undefined;
-  dual?: boolean
+  dual?: boolean;
+  standingCharge?: number | undefined;
 }
 
 const MonthlyChartBar = ({
@@ -46,7 +47,8 @@ const MonthlyChartBar = ({
   lastDate = null,
   tariff = undefined,
   reading = undefined,
-  dual = false
+  dual = false,
+  standingCharge = undefined,
 }: IMonthlyChartBar) => {
   const { hiViz } = useContext(HiVizContext);
 
@@ -178,6 +180,21 @@ const MonthlyChartBar = ({
               {isCheaper ? "Saving" : "Increase"}: £
               {evenRound(Math.abs(saving), 2)}{" "}
             </div>
+            {reading !== undefined &&
+              standingCharge !== undefined &&
+              reading > 0 && (
+                <div className="flex items-center gap-1 text-theme-300">
+                  <BsSpeedometer2 />
+                  Unit Rate:{" "}
+                  {evenRound(
+                    ((monthlycostCurrent - standingCharge / 100) / reading) *
+                      100,
+                    2,
+                    true
+                  )}
+                  p
+                </div>
+              )}
             <TooltipArrow className="fill-theme-900" />
           </TooltipContent>
         </Tooltip>

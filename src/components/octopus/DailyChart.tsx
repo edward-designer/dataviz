@@ -78,6 +78,7 @@ const DailyChart = ({
                 tariff: dailyResult.tariff,
                 reading: dailyResult.reading,
                 dual,
+                standingCharge: dailyResult.standingCharge,
               };
               return type === "EE" ? (
                 <EarningMonthlyChartBar
