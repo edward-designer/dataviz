@@ -32,6 +32,15 @@ import Link from "next/link";
 import { WindowResizeContext } from "@/context/windowResize";
 import { BsLightningChargeFill } from "react-icons/bs";
 
+const startFromCurrentMonth = (
+  originalArr: unknown[],
+  currentMonthIndex: number
+) => {
+  const prependSlice = originalArr.slice(currentMonthIndex);
+  originalArr.length = currentMonthIndex;
+  originalArr.unshift(...prependSlice);
+};
+
 const xAxisLabels = [
   "Jan",
   "Feb",
@@ -46,6 +55,8 @@ const xAxisLabels = [
   "Nov",
   "Dec",
 ];
+const currentMonthIndex = new Date().getMonth();
+startFromCurrentMonth(xAxisLabels, currentMonthIndex);
 
 interface ITariffHoppingChart {
   importTariff: string;
@@ -219,7 +230,9 @@ const TariffHoppingChart = ({
         padding.right -
         20;
     }
-    const currentMonthYear = new Date().toLocaleDateString("en-GB", {
+    const currentMonthYear = new Date(
+      new Date().setMonth(new Date().getMonth() - 1)
+    ).toLocaleDateString("en-GB", {
       month: "short",
       year: "numeric",
     });
@@ -416,6 +429,8 @@ const TariffHoppingChart = ({
       return line;
     };
 
+    startFromCurrentMonth(dataByTimeResultsInPounds, currentMonthIndex);
+    startFromCurrentMonth(dataByTimeResultsInPounds2, currentMonthIndex);
     drawAxes(xScale, yScale);
     drawLine([dataByTimeResultsInPounds], "placeholder", xScale, yScale, true);
     drawLine(
