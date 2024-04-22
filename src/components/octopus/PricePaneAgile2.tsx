@@ -23,6 +23,7 @@ import HalfHourlyChart from "./HalfHourlyChart";
 
 import Lottie from "lottie-react";
 import octopusIcon from "../../../public/lottie/octopus.json";
+import { useEffect, useState } from "react";
 
 const PricePane = ({
   tariff,
@@ -30,13 +31,18 @@ const PricePane = ({
   gsp,
   date = new Date().toDateString(),
   isExport = false,
+  maximize = false,
 }: {
   tariff: string;
   type: "E";
   gsp: string;
   date?: string;
   isExport?: boolean;
+  maximize?: boolean;
 }) => {
+  const [currentDate, setCurrentDate] = useState<string>(
+    new Date().toDateString()
+  );
   const { isLoading, isError, isSuccess, refetch, data, error } =
     useTariffQuery<QueryTariffResult>({
       tariff,
@@ -94,9 +100,43 @@ const PricePane = ({
   const min = minIndex(thisDayRates, (d) => d.value_inc_vat);
   const max = maxIndex(thisDayRates, (d) => d.value_inc_vat);
 
+  useEffect(() => {
+    const timeAt4pm = new Date();
+    timeAt4pm.setHours(16, 1, 0, 0);
+    const timeTo4pm = timeAt4pm.getTime() - new Date().getTime();
+
+    if (thisDayRates.length === 0 && typeof window !== undefined) {
+      const refetchTime = timeTo4pm > 0 ? timeTo4pm : 60000;
+      let intervalId: null | number = null;
+      const timeID = window.setTimeout(() => {
+        intervalId = window.setInterval(() => {
+          refetch();
+        }, 60000);
+      }, refetchTime);
+      return () => {
+        window.clearTimeout(timeID);
+        if (intervalId !== null) {
+          window.clearInterval(intervalId);
+        }
+      };
+    }
+  });
+
+  useEffect(() => {
+    const timeToNextDay = thisDayEnd.getTime()+1000;
+    const timeID = window.setTimeout(() => {
+      setCurrentDate(thisDayEnd.toDateString());
+    }, timeToNextDay);
+    return () => {
+      window.clearTimeout(timeID);
+    };
+  });
+
   return (
     <div
-      className="relative flex-1 flex flex-col gap-8 max-h-[300px] min-h-[300px] rounded-xl p-4 bg-theme-950 border border-accentPink-950 shadow-inner bg-gradient-to-br from-transparent via-theme-900 to-purple-950 bg-cover"
+      className={`${
+        maximize ? "h-[calc(100vh-3rem)]" : "h-[300px]"
+      } relative flex-1 flex flex-col gap-8 min-h-[300px] rounded-xl p-4 bg-theme-950 border border-accentPink-950 shadow-inner bg-gradient-to-br from-transparent via-theme-900 to-purple-950 bg-cover`}
       style={{
         backgroundImage: `linear-gradient(0deg, rgba(0,3,35,0.7) 30% , rgba(0,3,35,0.9) 70%, rgba(0,4,51,1) 100% )`,
       }}
@@ -113,8 +153,13 @@ const PricePane = ({
                 max={max}
                 priceAverage={priceAverage}
                 showTicker={isToday}
+                maximize={maximize}
               />
-              <div className="flex flex-col justify-between divide-y [&>div]:border-accentBlue-900">
+              <div
+                className={`${
+                  maximize ? "justify-start" : "justify-between"
+                } flex flex-col  divide-y [&>div]:border-accentBlue-900`}
+              >
                 <div>
                   <Badge
                     label="Lowest"

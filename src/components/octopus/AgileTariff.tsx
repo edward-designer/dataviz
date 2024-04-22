@@ -21,10 +21,15 @@ import MapChartAgile from "./MapChartAgile";
 import { WindowResizeContext } from "@/context/windowResize";
 import { WindowVisibilityContext } from "@/context/windowVisibility";
 import ElectricityForecast from "./ElectricityForecast";
+import Button from "./Button";
+import { TiArrowMaximise } from "react-icons/ti";
+import { TiArrowMinimise } from "react-icons/ti";
 
 const AgileTariff = () => {
   const [tariff, setTariff] = useState(AGILE[0].code);
   const [currentPeriod, setCurrentPeriod] = useState(new Date().toUTCString());
+  const [maxChart, setMaxChart] = useState(false);
+
   const { value, setValue } = useContext(UserContext);
   useContext(WindowResizeContext);
   useContext(WindowVisibilityContext);
@@ -74,15 +79,39 @@ const AgileTariff = () => {
         />
       </section>
       <section className="flex flex-col md:flex-row items-stretch md:justify-center md:items-center gap-4 my-4 md:mt-8">
-        <div className="flex-1">
-          <div className="flex-1 text-lg font-bold text-center  text-accentPink-600">
-            Today&apos;s rates
+        <div className="flex-1" id="AgileRate">
+          <div className="flex-1 text-lg font-bold text-center text-accentPink-600 h-8">
+            Today Agile Rates{" "}
+            <Button
+              clickHandler={() => {
+                setMaxChart(!maxChart);
+                if (!maxChart) {
+                  const scrollTopDist =
+                    document?.getElementById("AgileRate")?.offsetTop ?? 0;
+                  window.scrollTo({ top: scrollTopDist, behavior: "smooth" });
+                }
+              }}
+            >
+              <>
+                {maxChart ? (
+                  <TiArrowMinimise className="w-5 h-5 hover:text-accentBlue-500" />
+                ) : (
+                  <TiArrowMaximise className="w-5 h-5 hover:text-accentBlue-500" />
+                )}
+                <span className="sr-only">Maximize the Agile Rates Chart</span>
+              </>
+            </Button>
           </div>
-          <PricePaneAgile2 tariff={tariff} type="E" gsp={gsp} />
+          <PricePaneAgile2
+            tariff={tariff}
+            type="E"
+            gsp={gsp}
+            maximize={maxChart}
+          />
         </div>
         <div className="flex-1">
-          <div className="flex-1 text-lg font-bold text-center text-accentPink-600">
-            Tomorrow&apos;s rates
+          <div className="flex-1 text-lg font-bold text-center text-accentPink-600 h-8 pt-2">
+            Tomorrow Agile Rates
           </div>
           <PricePaneAgile2
             tariff={tariff}
@@ -91,6 +120,7 @@ const AgileTariff = () => {
             date={new Date(
               new Date().setDate(new Date().getDate() + 1)
             ).toDateString()}
+            maximize={maxChart}
           />
         </div>
       </section>

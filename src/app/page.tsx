@@ -61,7 +61,7 @@ const Home = () => {
         </div>
         <div className="lg:pl-6 lg:translate-y-3 mt-2 lg:mt-0 text-sm font-extralight mb-1 flex items-center gap-2">
           <TbTools />
-          <Link href="/whyOctoprice">Overview of Useful Tools on the App</Link>
+          <Link href="/whyOctoprice" className="text-accentBlue-500 underline hover:text-accentPink-500 hover:no-underline">Overview of Exclusive Tools for Octopus Energy Users</Link>
         </div>
       </div>
       <Octopus3d />

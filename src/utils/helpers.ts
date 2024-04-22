@@ -121,15 +121,12 @@ export const calculateChangePercentage = (
   price: unknown,
   priceToCompare: unknown
 ): number | boolean => {
-  if (
-    typeof price !== "number" ||
-    typeof priceToCompare !== "number" ||
-    price === 0 ||
-    priceToCompare === 0
-  )
+  if (typeof price !== "number" || typeof priceToCompare !== "number")
     return false;
+  if (priceToCompare === 0) return false;
+
   return parseInt(
-    (((price - priceToCompare) / priceToCompare) * 100).toFixed(0)
+    (((price - priceToCompare) / Math.abs(priceToCompare)) * 100).toFixed(0)
   );
 };
 

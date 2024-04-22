@@ -12,6 +12,7 @@ export interface IHalfHourlyChart {
   max: number;
   priceAverage: number;
   showTicker?: boolean;
+  maximize?: boolean;
 }
 
 const HalfHourlyChart = ({
@@ -20,6 +21,7 @@ const HalfHourlyChart = ({
   max,
   priceAverage,
   showTicker = true,
+  maximize = false,
 }: IHalfHourlyChart) => {
   const { hiViz } = useContext(HiVizContext);
 
@@ -34,7 +36,7 @@ const HalfHourlyChart = ({
   });
   const { focus } = useContext(WindowVisibilityContext);
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (!scrollContainerRef.current || !currentPeriodRef.current || !showTicker)
       return;
     scrollContainerRef.current.scroll({
@@ -42,7 +44,7 @@ const HalfHourlyChart = ({
       left: 0,
       behavior: "smooth",
     });
-  }, [showTicker]);
+  }, [showTicker]);*/
 
   useEffect(() => {
     if (
@@ -109,9 +111,26 @@ const HalfHourlyChart = ({
       );
       setTimelinePosition(currentIndex, listHeight);
     };
+    const setCurrentPeriodPosition = () => {
+      if (!scrollContainerRef.current || !currentPeriodRef.current) return;
+      scrollContainerRef.current.scroll({
+        top: currentPeriodRef.current.offsetTop - 100,
+        left: 0,
+        behavior: "smooth",
+      });
+    };
     setCurrentPeriodIndicatorPosition();
-    const timeId = window.setInterval(setCurrentPeriodIndicatorPosition, 1000);
-    return () => window.clearInterval(timeId);
+
+    const timeId = window.setInterval(() => {
+      setCurrentPeriodIndicatorPosition();
+    }, 1000);
+    const timeId2 = window.setInterval(() => {
+      setCurrentPeriodPosition();
+    }, 60000);
+    return () => {
+      window.clearInterval(timeId);
+      window.clearInterval(timeId2);
+    };
   }, [reversedRates, showTicker]);
 
   const width = 100;
@@ -202,7 +221,9 @@ const HalfHourlyChart = ({
               ref={ind === priceNowIndex ? currentPeriodRef : null}
             >
               <span
-                className="text-xs font-light text-theme-950 p-2 overflow-visible"
+                className={`text-xs font-light text-theme-950 overflow-visible ${
+                  maximize ? "p-[1px]" : "p-2"
+                }`}
                 style={{
                   width: `${xScale(rate.value_inc_vat)}%`,
                   background: colorScale(rate.value_inc_vat),
@@ -210,20 +231,24 @@ const HalfHourlyChart = ({
               >
                 <span className="flex sm:items-center flex-col sm:flex-row overflow-visible ">
                   <span
-                    className={`whitespace-nowrap sm:whitespace-normal block leading-tight min-w-18 sm:w-10 shrink-0 ${
+                    className={`whitespace-nowrap sm:whitespace-normal block leading-tight shrink-0 ${
                       rate.value_inc_vat < (rates[max]?.value_inc_vat ?? 0) / 3
                         ? "text-white mix-blend-difference"
                         : "text-black"
-                    }`}
+                    }
+                    ${maximize ? "w-fit pr-4 pl-1" : "min-w-18 sm:w-10 "}
+                    `}
                   >
                     {formatLocaleTimePeriod(rate.valid_from, rate.valid_to)}
                   </span>
                   <span
-                    className={`block leading-tight w-18 text-3xl md:text-4xl ${
+                    className={`block leading-tight w-18  ${
                       rate.value_inc_vat < (rates[max]?.value_inc_vat ?? 0) / 3
                         ? "text-white mix-blend-difference"
                         : "text-black"
-                    }`}
+                    }
+                    ${maximize ? "text-2xl" : "text-3xl md:text-4xl"}
+                    `}
                   >
                     <FormattedPrice price={rate.value_inc_vat} />
                   </span>
