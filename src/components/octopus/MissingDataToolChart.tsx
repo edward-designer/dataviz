@@ -53,6 +53,12 @@ const MissingDataToolChart = ({
 
   const fontSize = 12;
 
+  const localFromDate = new Date(fromDate);
+
+  if (localFromDate.getTimezoneOffset() !== 0) {
+    localFromDate.setHours(-1);
+  }
+
   useEffect(() => {
     if (!svgRef.current || !data) return;
 
@@ -66,14 +72,18 @@ const MissingDataToolChart = ({
 
     const filteredData = dataResults.filter(
       (d) =>
-        new Date(d.interval_start).valueOf() >= new Date(fromDate).valueOf() &&
+        new Date(d.interval_start).valueOf() >=
+          new Date(localFromDate).valueOf() &&
         new Date(d.interval_start).valueOf() <= new Date(toDate).valueOf()
     );
-
     const startDate =
       filteredData.length === 0
         ? Infinity
-        : new Date(earliestReadingDate).getDate();
+        : new Date(earliestReadingDate).getFullYear() ===
+            fromDate.getFullYear() &&
+          new Date(earliestReadingDate).getMonth() === fromDate.getMonth()
+        ? new Date(earliestReadingDate).getDate()
+        : 1;
 
     const groupedData = Array.from({
       length: noOfDays,
@@ -82,15 +92,15 @@ const MissingDataToolChart = ({
     ) as (number | null | undefined)[][];
 
     filteredData.forEach((data) => {
-      const index = (new Date(data.interval_start).getUTCDate() - 1) % noOfDays;
+      const index = (new Date(data.interval_start).getDate() - 1) % noOfDays;
       const session =
-        new Date(data.interval_start).getUTCHours() * 2 +
-        Math.floor(new Date(data.interval_start).getUTCMinutes() / 30);
+        new Date(data.interval_start).getHours() * 2 +
+        Math.floor(new Date(data.interval_start).getMinutes() / 30);
       groupedData[index][session] = data.consumption;
     });
 
     // adjust for DST
-    if (new Date(fromDate).getUTCMonth() === 2) {
+    if (new Date(fromDate).getMonth() === 2) {
       type NumericRecord = Record<number, number>;
       const dateDSTList: NumericRecord = {
         2022: 27,

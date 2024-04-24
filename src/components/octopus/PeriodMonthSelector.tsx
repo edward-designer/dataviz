@@ -18,19 +18,19 @@ import DatePickerWithRange from "./DatePickerWithRange";
 export const getDatePeriod = (duration: TDuration = "month") => {
   const from = new Date();
   const to = new Date();
-  from.setUTCHours(0, 0, 0, 0);
+  from.setHours(0, 0, 0, 0);
 
-  to.setUTCHours(23, 59, 59, 999);
+  to.setHours(23, 59, 59, 999);
   if (duration === "month") {
-    from.setUTCDate(1);
-    from.setUTCMonth(from.getUTCMonth() - 1);
-    to.setUTCDate(1);
-    to.setUTCDate(to.getUTCDate() - 1);
+    from.setDate(1);
+    from.setMonth(from.getMonth() - 1);
+    to.setDate(1);
+    to.setDate(to.getDate() - 1);
   }
   if (duration === "week") {
-    const dayOfWeek = from.getUTCDay();
-    from.setUTCDate(from.getUTCDate() - dayOfWeek - 7);
-    to.setUTCDate(from.getUTCDate() + 6);
+    const dayOfWeek = from.getDay();
+    from.setDate(from.getDate() - dayOfWeek - 7);
+    to.setDate(from.getDate() + 6);
   }
 
   return {
