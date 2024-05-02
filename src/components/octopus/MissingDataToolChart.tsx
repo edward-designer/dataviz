@@ -54,16 +54,14 @@ const MissingDataToolChart = ({
   const fontSize = 12;
 
   const localFromDate = new Date(fromDate);
-
   if (localFromDate.getTimezoneOffset() !== 0) {
-    localFromDate.setHours(-1);
+    localFromDate.setUTCHours(-1);
   }
 
   useEffect(() => {
     if (!svgRef.current || !data) return;
 
     const dataResults = data.results as IConsumptionData[];
-
     const earliestReadingDate = contractFrom
       ? new Date(contractFrom).valueOf() > new Date(fromDate).valueOf()
         ? contractFrom

@@ -100,7 +100,7 @@ const FormSolar = ({ open, setOpen }: IFormSolar) => {
               checked={hasSolar}
               onCheckedChange={setHasSolar}
             />
-            <label htmlFor="hasSolar">Has Solar Panels</label>
+            <label htmlFor="hasSolar">Add Solar Panels</label>
           </div>
           {hasSolar && (
             <div className="flex flex-col p-4 gap-2  bg-slate-900 rounded-2xl">

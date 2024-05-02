@@ -106,7 +106,7 @@ const FormBattery = ({ open, setOpen }: IFormBattery) => {
               checked={hasBattery}
               onCheckedChange={setHasBattery}
             />
-            <label htmlFor="hasBattery">Has Home Battery Storage</label>
+            <label htmlFor="hasBattery">Add Home Battery Storage</label>
           </div>
           {hasBattery && (
             <div className="flex flex-col p-4 gap-2  bg-slate-900 rounded-2xl">
