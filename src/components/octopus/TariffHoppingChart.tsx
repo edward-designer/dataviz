@@ -201,7 +201,8 @@ const TariffHoppingChart = ({
       : !isExporting
       ? dataByTimeImportInPounds2
       : [];
-
+  startFromCurrentMonth(dataByTimeResultsInPounds, currentMonthIndex);
+  startFromCurrentMonth(dataByTimeResultsInPounds2, currentMonthIndex);
   useEffect(() => {
     if (
       (isExporting &&
@@ -429,8 +430,6 @@ const TariffHoppingChart = ({
       return line;
     };
 
-    startFromCurrentMonth(dataByTimeResultsInPounds, currentMonthIndex);
-    startFromCurrentMonth(dataByTimeResultsInPounds2, currentMonthIndex);
     drawAxes(xScale, yScale);
     drawLine([dataByTimeResultsInPounds], "placeholder", xScale, yScale, true);
     drawLine(
