@@ -119,7 +119,11 @@ const TariffComparisionCard = ({
           <Container>
             <Link
               href={`/${
-                category === "SVT" ? "variable" : category.toLowerCase()
+                category === "SVT"
+                  ? "variable"
+                  : category === "E7"
+                  ? "variableE7"
+                  : category.toLowerCase()
               }${
                 isExport && ["Agile", "Fixed"].includes(category)
                   ? "Outgoing"
@@ -182,6 +186,17 @@ const TariffComparisionCard = ({
                       </a>
                     </span>
                     .
+                  </div>
+                </Remark>
+              ) : category === "E7" ? (
+                <Remark>
+                  <div className="text-xs">
+                    <strong>
+                      It is assumed that the period of cheap rate is between
+                      12:00am - 07:00am daily.
+                    </strong>{" "}
+                    Sorry, the app does not support personalized period at the
+                    moment.
                   </div>
                 </Remark>
               ) : (

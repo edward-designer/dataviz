@@ -96,6 +96,7 @@ const PricePaneAgile = ({
     Agile: "Next 1/2 hr",
     Tracker: "",
     SVT: "",
+    E7: "NEXT Period",
     Fixed: "",
     Cosy: `NEXT: ${new Date(
       results[priceNowIndex - 1]?.valid_from ?? ""
