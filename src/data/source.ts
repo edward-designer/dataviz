@@ -93,13 +93,13 @@ export const ETARIFFS: ITariffToCompare[] = [
     cost: null,
   },
   {
-    tariff: "SILVER-23-12-06",
+    tariff: "SILVER-24-04-03",
     type: "E",
     category: "Tracker",
     cost: null,
   },
   {
-    tariff: "AGILE-23-12-06",
+    tariff: "AGILE-24-04-03",
     type: "E",
     category: "Agile",
     cost: null,

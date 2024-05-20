@@ -66,6 +66,8 @@ export interface IUserValue {
     rate: number;
   };
   testRun: boolean;
+  tariffHoppingSet2: string;
+  tariffHoppingExportSet2: string;
 }
 
 export const initialValue = {
@@ -114,6 +116,8 @@ export const initialValue = {
       rate: 0,
     },
     testRun: false,
+    tariffHoppingSet2: "",
+    tariffHoppingExportSet2: "",
   } as IUserValue,
   setValue: (value: IUserValue) => {},
 };

@@ -3,7 +3,7 @@
 import Lottie from "lottie-react";
 import emojiSad from "../../../public/lottie/emojiSad.json";
 
-import { UserContext } from "@/context/user";
+import { IUserValue, UserContext } from "@/context/user";
 import {
   daysDiff,
   getAllTariffsWithCurrentTariff,
@@ -37,7 +37,7 @@ export type ErrorType = Record<string, string>;
 
 const TariffHoppingToolContainer = () => {
   /* states */
-  const { value } = useContext(UserContext);
+  const { value, setValue } = useContext(UserContext);
 
   const [period, setPeriod] = useState<IPeriod>(getDatePeriod);
   const [daysOfWeek, setDaysOfWeek] = useState([1, 2, 3, 4, 5]);
@@ -64,6 +64,28 @@ const TariffHoppingToolContainer = () => {
       );
     }
   }, [isExporting]);
+
+  useEffect(() => {
+    if (value.tariffHoppingSet2 !== "") {
+      setImportTariff2(value.tariffHoppingSet2);
+    }
+  }, [value.tariffHoppingSet2]);
+
+  useEffect(() => {
+    if (value.tariffHoppingExportSet2 !== "") {
+      setImportTariff2(value.tariffHoppingExportSet2);
+    }
+  }, [value.tariffHoppingExportSet2]);
+
+  useEffect(() => {
+    setValue({ ...value, tariffHoppingSet2: importTariff2 });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [importTariff2]);
+
+  useEffect(() => {
+    setValue({ ...value, tariffHoppingSet2: exportTariff2 });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [exportTariff2]);
 
   const importTariffs = useMemo(
     () => getAllTariffsWithCurrentTariff(ETARIFFS, value.currentETariff),
