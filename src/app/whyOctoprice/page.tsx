@@ -421,9 +421,9 @@ const WhyOctoprice = () => {
           >
             Speak to the Geek
           </Link>{" "}
-          Youtube Channel for the excellent introduction:
+          Youtube Channel by Oliver Shingler for the excellent introduction:
         </p>
-        <div className=" aspect-video ">
+        <div className="aspect-video">
           <iframe
             className=" h-full w-full rounded-lg"
             src="https://www.youtube.com/embed/UJ4LzEUAKPU?si=WbQLhywFVYaBbKRr"
