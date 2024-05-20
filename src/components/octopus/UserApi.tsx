@@ -28,7 +28,7 @@ const UserApi = () => {
   return (
     <>
       <p>
-        It&quot;s always FREE to use the exclusive features of the Octoprice
+        It&apos;s always FREE to use the exclusive features of the Octoprice
         App, but in order to obtain{" "}
         <strong>your actual consumption data</strong>, you will need to:
       </p>

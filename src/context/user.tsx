@@ -12,6 +12,7 @@ import {
   useState,
 } from "react";
 import toast from "react-hot-toast";
+import { IoLocationOutline } from "react-icons/io5";
 
 export type TContract =
   | {
@@ -537,7 +538,7 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
     setValue({
       ...value,
       error:
-        "Sorry, owing to technical limitations, Octo cannot retrive your data at the moment. Please try again later.",
+        "Sorry, owing to technical limitations, Octo cannot retrive your data at the moment.",
     });
   }
 
@@ -555,7 +556,15 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
   }
 
   if (error) {
-    toast.error(error.message);
+    toast.error(
+      <>
+        <p>
+          {error.message} Please try again by clicking on the &quot;
+          <IoLocationOutline className="inline-block w-4 h-4" />
+          &quot; icon on the top right corner.
+        </p>
+      </>
+    );
   }
 
   return (
