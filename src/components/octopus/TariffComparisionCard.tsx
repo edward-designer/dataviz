@@ -55,6 +55,7 @@ const TariffComparisionCard = ({
     deviceNumber,
     serialNo,
     testRun,
+    dual: category === "E7",
   });
 
   const tariffDetails = useTariffDetailsQuery<{ available_from: string }>({
@@ -137,6 +138,8 @@ const TariffComparisionCard = ({
                     ? "Intelligent Flux"
                     : tariff.includes("OUTGOING-LITE-FIX")
                     ? "Fixed Lite"
+                    : category === "E7"
+                    ? "Economy-7"
                     : category
                 }`}
                 icon={

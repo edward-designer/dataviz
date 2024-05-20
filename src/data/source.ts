@@ -93,13 +93,13 @@ export const ETARIFFS: ITariffToCompare[] = [
     cost: null,
   },
   {
-    tariff: "SILVER-24-04-03",
+    tariff: "SILVER-23-12-06",
     type: "E",
     category: "Tracker",
     cost: null,
   },
   {
-    tariff: "AGILE-24-04-03",
+    tariff: "AGILE-23-12-06",
     type: "E",
     category: "Agile",
     cost: null,
@@ -464,7 +464,8 @@ export type TariffCategory =
   | "Chart"
   | "Flux"
   | "IFlux"
-  | "IGo";
+  | "IGo"
+  | "E7";
 
 export interface IConsumptionData {
   consumption: number;

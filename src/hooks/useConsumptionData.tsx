@@ -40,6 +40,7 @@ const useConsumptionData = (inputs: IUseConsumptionData) => {
     IFlux: "",
     Tracker: "&group_by=day",
     SVT: dual ? "" : "&group_by=day",
+    E7: "",
     Fixed: "&group_by=day",
     Chart: "&group_by=day",
   };

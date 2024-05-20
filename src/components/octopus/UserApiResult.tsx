@@ -83,7 +83,15 @@ const UserApiResult = () => {
           {currentType === "E" && (
             <CompareTariffsByType
               selectedTariffs={tariffsEToCompare}
-              allTariffs={ETARIFFS}
+              allTariffs={[
+                ...ETARIFFS,
+                {
+                  tariff: "VAR-BB-23-04-01",
+                  type: "E",
+                  category: "E7",
+                  cost: null,
+                },
+              ]}
               type="E"
               period={period}
             />

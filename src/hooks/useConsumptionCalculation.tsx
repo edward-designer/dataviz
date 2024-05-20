@@ -77,7 +77,7 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculation) => {
     dual,
     testRun: value.testRun,
   });
-
+ 
   /* Important this should be removed when the new tariffs covers over 1/2 years */
   /*const tariff =
     inputTariff === "SILVER-23-12-06" && results === "yearly"
@@ -364,7 +364,7 @@ export const calculateDailyPrices = (
         (currentPeriodTariff?.value_inc_vat ?? 0) *
         consumptionDataResults[i].consumption *
         consumptionMultiplier;
-    } else if (category === "SVT") {
+    } else if (category === "SVT" || category === "E7") {
       if (dual) {
         const currentPeriodTariff = filteredRateDataResults.filter(
           (d) =>
@@ -683,7 +683,7 @@ export const calculateMonthlyPrices = (
         (currentPeriodTariff?.value_inc_vat ?? 0) *
         consumptionDataResults[i].consumption *
         consumptionMultiplier;
-    } else if (category === "SVT") {
+    } else if (category === "SVT" || category === "E7") {
       if (dual) {
         const currentPeriodTariff = filteredRateDataResults.filter(
           (d) =>
@@ -985,7 +985,7 @@ export const calculatePrice = (
           consumptionDataResults[i].consumption *
           consumptionMultiplier,
       });
-    } else if (category === "SVT") {
+    } else if (category === "SVT" || category === "E7") {
       if (dual) {
         const currentPeriodTariff = filteredRateDataResults.filter(
           (d) =>

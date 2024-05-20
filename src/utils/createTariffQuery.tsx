@@ -93,6 +93,25 @@ const createTariffQuery = ({
             },
           ]
     ),
+    E7: fetchApi(
+      dual
+        ? [
+            {
+              tariffType: type,
+              url: `https://api.octopus.energy/v1/products/${tariff}/${ENERGY_TYPE[type]}-tariffs/${type}-2R-${tariff}-${gsp}/day-unit-rates/?page_size=1500&period_from=${formattedFromDate}&period_to=${formattedToDate}`,
+            },
+            {
+              tariffType: type,
+              url: `https://api.octopus.energy/v1/products/${tariff}/${ENERGY_TYPE[type]}-tariffs/${type}-2R-${tariff}-${gsp}/night-unit-rates/?page_size=1500&period_from=${formattedFromDate}&period_to=${formattedToDate}`,
+            },
+          ]
+        : [
+            {
+              tariffType: type,
+              url: `https://api.octopus.energy/v1/products/${tariff}/${ENERGY_TYPE[type]}-tariffs/${type}-1R-${tariff}-${gsp}/standard-unit-rates/?page_size=1500&period_from=${formattedFromDate}&period_to=${formattedToDate}`,
+            },
+          ]
+    ),
     Fixed: fetchApi([
       {
         tariffType: type,
