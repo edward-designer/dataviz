@@ -423,13 +423,15 @@ const WhyOctoprice = () => {
           </Link>{" "}
           Youtube Channel for the excellent introduction:
         </p>
-        <iframe
-          width="560"
-          height="315"
-          src="https://www.youtube.com/embed/UJ4LzEUAKPU?si=WbQLhywFVYaBbKRr"
-          title="YouTube video player"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        ></iframe>
+        <div className=" aspect-video ">
+          <iframe
+            className=" h-full w-full rounded-lg"
+            src="https://www.youtube.com/embed/UJ4LzEUAKPU?si=WbQLhywFVYaBbKRr"
+            width="100%"
+            title="YouTube video player"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          ></iframe>
+        </div>
       </div>
       <h2 className="font-display text-2xl text-accentPink-500 font-semibold">
         It sounds so good, but, what is the Catch?
