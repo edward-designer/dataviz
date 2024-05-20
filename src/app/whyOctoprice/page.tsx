@@ -62,11 +62,11 @@ const WhyOctoprice = () => {
       <LottieIcon icon="tool" loop={true} />
       <p>
         Unlike major energy providers in the UK which provide only traditional
-        energy tariffs (with so few to choose from), Ocotpus Energy offers{" "}
+        energy tariffs (with so few to choose from), Octopus Energy offers{" "}
         <strong>a lot of</strong> smart and intelligent energy tariffs both for
         electricity and gas. In fact, currently, there are over{" "}
         <Link href="/tariffs">
-          a dozen of tariffs for prospective and current Octopus Energy users
+          a dozen tariffs for prospective and current Octopus Energy users
         </Link>{" "}
         to choose from!
       </p>
@@ -113,7 +113,7 @@ const WhyOctoprice = () => {
       </h3>
       <ul className="list-disc ml-4">
         <li>
-          <strong className="font-extrabold">Tariff Pages</strong> - offersing
+          <strong className="font-extrabold">Tariff Pages</strong> - offering
           real-time and historical tariff price data and charts for most Octopus
           Energy tariffs including electricity (import and export) and gas
           tariffs, e.g.{" "}
@@ -160,7 +160,7 @@ const WhyOctoprice = () => {
           Get &pound;50 Sign Up Bonus with Our Referral Link
         </h3>
         <p>
-          If you signs up through{" "}
+          If you sign up through{" "}
           <a
             className="underline text-accentPink-500 hover:no-underline hover:text-accentBlue-500"
             href="https://share.octopus.energy/sky-heron-134"
@@ -411,6 +411,26 @@ const WhyOctoprice = () => {
           </div>
         </li>
       </ul>
+      <div className="py-6 px-2 border-t-4 border-b-4 border-dotted border-theme-800">
+        <p className="pb-2">
+          Thanks the{" "}
+          <Link
+            href="https://www.youtube.com/@SpeakToTheGeekTech"
+            target="_blank"
+            className="shrink-0 font-extrabold text-accentPink-500 hover:text-accentBlue-500"
+          >
+            Speak to the Geek
+          </Link>{" "}
+          Youtube Channel for the excellent introduction:
+        </p>
+        <iframe
+          width="560"
+          height="315"
+          src="https://www.youtube.com/embed/UJ4LzEUAKPU?si=WbQLhywFVYaBbKRr"
+          title="YouTube video player"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        ></iframe>
+      </div>
       <h2 className="font-display text-2xl text-accentPink-500 font-semibold">
         It sounds so good, but, what is the Catch?
       </h2>
