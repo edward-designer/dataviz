@@ -266,12 +266,15 @@ export type TariffName =
   | "Go"
   | "IGo"
   | "Variable"
-  | "Super Green";
+  | "Super Green"
+  | "Economy-7";
 
 export const getTariffName = (tariff: string): TariffName => {
   const tariffName = getCategory(tariff);
   return tariffName === "SVT"
     ? "Variable"
+    : tariffName === "E7"
+    ? "Economy-7"
     : tariffName === "Chart"
     ? "Super Green"
     : tariffName;

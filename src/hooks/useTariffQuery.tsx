@@ -61,6 +61,10 @@ function useTariffQuery<T>({
       month: 1500,
       "2-days": 96,
     },
+    E7: {
+      month: 1500,
+      "2-days": 96,
+    },
     Fixed: {
       month: 1500,
       "2-days": 96,
