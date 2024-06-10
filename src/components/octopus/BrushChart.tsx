@@ -789,9 +789,11 @@ const BrushChart = ({
             ?.querySelector(`.tooltip`)
             ?.getBoundingClientRect()?.width ?? 0;
         const tooltipLeft =
-          widgetWidth - (pointerX + padding.left + 20) < tooltipWidth
+          widgetWidth - (pointerX + padding.left + 20) > tooltipWidth
+            ? pointerX + 10
+            : pointerX + padding.left - 60 > tooltipWidth
             ? pointerX - 10 - tooltipWidth
-            : pointerX + 10;
+            : pointerX - tooltipWidth / 2;
         chart
           .select(".tooltip rect")
           .attr("height", leadingSize * (type.length + 1) + innerPadding * 2);
