@@ -197,6 +197,9 @@ const CompareTariffsByType = ({
               ""
             }
             type={type}
+            dual={currentMeterType[
+              typePlusExport
+            ].currentContract?.tariff_code.includes("E-2R")}
           />
           <div className="flex gap-4 flex-col lg:grid lg:grid-cols-3">
             <AnimatePresence>
@@ -208,7 +211,14 @@ const CompareTariffsByType = ({
                     deviceNumber={currentMeterType[typePlusExport].accessPoint}
                     serialNo={currentMeterType[typePlusExport].serialNo}
                     tariff={tariff}
-                    category={category}
+                    category={
+                      category === "SVT" &&
+                      currentMeterType[
+                        typePlusExport
+                      ].currentContract?.tariff_code.includes("E-2R")
+                        ? "E7"
+                        : category
+                    }
                     fromDate={period.from.toISOString()}
                     toDate={period.to.toISOString()}
                     compareTo={
