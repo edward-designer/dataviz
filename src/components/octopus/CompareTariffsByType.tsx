@@ -81,11 +81,6 @@ const CompareTariffsByType = ({
       : (a.cost ?? Infinity) - (b.cost ?? Infinity)
   );
 
-  const remainingTariffs = [...allTariffs].filter(
-    (tariff) =>
-      !tariffsToCompare.map((tariff) => tariff.tariff).includes(tariff.tariff)
-  );
-
   const currentMeterType = useMemo(
     () => ({
       E: {
@@ -126,6 +121,18 @@ const CompareTariffsByType = ({
       },
     }),
     [value]
+  );
+
+  const remainingTariffs = [...allTariffs].filter(
+    (tariff) =>
+      !tariffsToCompare
+        .map((tariff) => tariff.tariff)
+        .includes(tariff.tariff) &&
+      !(
+        currentMeterType[typePlusExport].currentContract?.tariff_code.includes(
+          "E-2R"
+        ) && tariff.category === "SVT"
+      )
   );
 
   useEffect(() => {
@@ -212,10 +219,10 @@ const CompareTariffsByType = ({
                     serialNo={currentMeterType[typePlusExport].serialNo}
                     tariff={tariff}
                     category={
-                      category === "SVT" &&
                       currentMeterType[
                         typePlusExport
-                      ].currentContract?.tariff_code.includes("E-2R")
+                      ].currentContract?.tariff_code.includes("E-2R") &&
+                      category === "SVT"
                         ? "E7"
                         : category
                     }

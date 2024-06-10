@@ -91,7 +91,9 @@ const AddATariff = ({ tariffs, addToTariff }: IAddATariff) => {
                   }
                 />
                 Octopus{" "}
-                {tariff.category === "IGo"
+                {tariff.category === "E7"
+                  ? "Economy 7"
+                  : tariff.category === "IGo"
                   ? "Intelligent Go"
                   : tariff.category === "IFlux"
                   ? "Intelligent Flux"
