@@ -2,7 +2,7 @@ import YearInReviewContainer from "@/components/octopus/YearInReviewContainer";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Year In Reivew Art | Octoprice",
+  title: "My Energy Consumption Data Visualization Art | Octoprice",
   description: "A data visualization of energy consumption in the past year",
   keywords: ["Octopus Energy", "Energy Consumption"],
   authors: [
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     canonical: `/yearInReview`,
   },
   openGraph: {
-    title: "Year In Reivew Art | Octoprice",
+    title: "My Energy Consumption Data Visualization Art | Octoprice",
     description: "A data visualization of energy consumption in the past year",
     url: "https://octopriceuk.app/yearInReview",
     siteName: "Octoprice App",
