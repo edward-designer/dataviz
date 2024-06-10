@@ -28,6 +28,7 @@ const TrafficHoppingToolSelector = ({
   label,
   isExporting = true,
 }: ITrafficHoppingToolSelector) => {
+  console.log(importTariff);
   return (
     <div className="flex flex-row justify-start items-center gap-y-1 gap-x-2 md:gap-5 flex-wrap bg-black/50 rounded-2xl p-2 md:p-4">
       <div
@@ -52,7 +53,7 @@ const TrafficHoppingToolSelector = ({
           tariffs={importTariffs}
           changeImportTariff={setImportTariff}
           changeExportTariff={setExportTariff}
-          isExporting={isExporting}
+          isExporting={false}
         >
           {importTariffs.map(({ tariff }) => (
             <SelectItem key={tariff} value={tariff}>

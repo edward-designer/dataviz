@@ -73,18 +73,18 @@ const TariffHoppingToolContainer = () => {
 
   useEffect(() => {
     if (value.tariffHoppingExportSet2 !== "") {
-      setImportTariff2(value.tariffHoppingExportSet2);
+      setExportTariff2(value.tariffHoppingExportSet2);
     }
   }, [value.tariffHoppingExportSet2]);
 
   useEffect(() => {
     setValue({ ...value, tariffHoppingSet2: importTariff2 });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [importTariff2]);
 
   useEffect(() => {
-    setValue({ ...value, tariffHoppingSet2: exportTariff2 });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    setValue({ ...value, tariffHoppingExportSet2: exportTariff2 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [exportTariff2]);
 
   const importTariffs = useMemo(
