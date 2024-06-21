@@ -125,10 +125,10 @@ const Tariff = ({
           </div>
         </section>
         <div className="flex-0 text-lg font-bold text-center translate-y-3 text-accentPink-600">
-          Changes over the past month
+          Changes over the past year
         </div>
         <section className="flex justify-center items-center gap-4 my-4">
-          <BrushChart tariff={tariffCode} type="E" gsp={gsp} duration="month" />
+          <BrushChart tariff={tariffCode} type="E" gsp={gsp} duration="year" />
         </section>
         <section className="flex flex-col md:flex-row items-stretch md:justify-center md:items-center gap-4 my-4 md:mt-8">
           <div className="flex-1">
