@@ -41,6 +41,10 @@ const AgileTariff = () => {
     setValue({ ...value, agileCode: selectValue });
   };
 
+  useEffect(() => {
+    if (agileCode) setTariff(agileCode);
+  }, [agileCode]);
+
   const AgilePlans = AGILE;
 
   return (
