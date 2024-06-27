@@ -469,7 +469,7 @@ const BrushChart = ({
         .delay(delay ? 300 : 0)
         .duration(50)
         .attr("d", areaGenerator);
-      areaGraph
+      /*areaGraph
         .select<SVGPathElement>(`path`)
         .on("pointermove", (e: PointerEvent) => {
           const coordinates = pointer(e);
@@ -482,7 +482,7 @@ const BrushChart = ({
         })
         .on("pointerleave", (e: PointerEvent) => {
           chart.select<SVGGElement>(".payToUse").attr("opacity", 0);
-        });
+        });*/
       chart
         .select<SVGPathElement>(`.yAxis`)
         .on("pointerleave", (e: PointerEvent) => {
@@ -813,6 +813,24 @@ const BrushChart = ({
           )
           .style("transform", `translate(${tooltipLeft}px, ${padding.top}px)`);
         chart
+          .select<SVGGElement>(".payToUse")
+          .select("rect")
+          .attr("width", tooltipWidth);
+        chart
+          .select<SVGGElement>(".payToUse")
+          .data(pointValues)
+          .attr("opacity", (d) => {
+            if (typeof d[1] === "number" && d[1] < 0) return 1;
+            return 0;
+          })
+          .style(
+            "transform",
+            `translate(${tooltipLeft}px, ${
+              padding.top + leadingSize * (type.length + 1) + innerPadding * 2
+            }px)`
+          );
+
+        chart
           .select(".date")
           .selectAll("text")
           .data([xValue])
@@ -838,7 +856,7 @@ const BrushChart = ({
             if (typeof d[1] === "string") return `${d[2]} ${d[1]}`;
             return "--";
           });
-
+        chart.select<SVGGElement>(".payToUse").transition();
         // Indication line and dots
         pointerInteractionArea.attr("opacity", 1);
         pointerInteractionArea
@@ -1009,10 +1027,9 @@ const BrushChart = ({
             <g className="pointerInteraction" opacity="0" />
             <g className="payToUse" opacity="0">
               <rect
-                width="150"
                 height="3em"
                 rx={leadingSize / 2}
-                fill="#ce2cb9"
+                fill="#ce2cb9CC"
                 x="0"
                 y="0"
               />
@@ -1024,7 +1041,7 @@ const BrushChart = ({
                   Octopus pays you to use
                 </tspan>
                 <tspan x="1em" dy="1.2em">
-                  electricity for this period!
+                  electricity in this period!
                 </tspan>
               </text>
             </g>
@@ -1032,7 +1049,7 @@ const BrushChart = ({
               <rect
                 width="180"
                 rx={leadingSize / 2}
-                fill="#00000060"
+                fill="#000000BB"
                 x="0"
                 y="0"
               />
