@@ -150,7 +150,7 @@ export const AGILE: ITrackerTariffPlan[] = [
   {
     code: "AGILE-24-04-03",
     name: "Agile Octopus Apr 2024 v1",
-    currentPlan: true,
+    currentPlan: false,
     cap: {
       E: 100,
       G: 0,
@@ -159,7 +159,7 @@ export const AGILE: ITrackerTariffPlan[] = [
   {
     code: "AGILE-23-12-06",
     name: "Agile Octopus Dec 2023 v1",
-    currentPlan: true,
+    currentPlan: false,
     cap: {
       E: 100,
       G: 0,
@@ -174,7 +174,7 @@ export const AGILE: ITrackerTariffPlan[] = [
       G: 0,
     },
   },
-  {
+  /*{
     code: "AGILE-OUTGOING-19-05-13",
     name: "Agile Outgoing Octopus",
     currentPlan: true,
@@ -182,14 +182,23 @@ export const AGILE: ITrackerTariffPlan[] = [
       E: 100,
       G: 0,
     },
-  },
+  },*/
 ];
 
 export const TRACKER: ITrackerTariffPlan[] = [
   {
+    code: "SILVER-24-07-01",
+    name: "Tracker July 2024 v1",
+    currentPlan: true,
+    cap: {
+      E: 100,
+      G: 30,
+    },
+  },
+  {
     code: "SILVER-24-04-03",
     name: "Tracker April 2024 v1",
-    currentPlan: true,
+    currentPlan: false,
     cap: {
       E: 100,
       G: 30,
@@ -198,13 +207,13 @@ export const TRACKER: ITrackerTariffPlan[] = [
   {
     code: "SILVER-23-12-06",
     name: "Tracker December 2023 v1",
-    currentPlan: true,
+    currentPlan: false,
     cap: {
       E: 100,
       G: 30,
     },
   },
-  {
+  /*{
     code: "SILVER-FLEX-BB-23-02-08",
     name: "Tracker February 2023 v1",
     currentPlan: false,
@@ -266,7 +275,7 @@ export const TRACKER: ITrackerTariffPlan[] = [
       E: 30,
       G: 6,
     },
-  },
+  },*/
 ];
 
 export type CapsTSVResult = {
