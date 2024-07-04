@@ -64,20 +64,22 @@ const TrackerTariff = () => {
         <PricePane tariff={tariff} type="E" gsp={gsp} />
         <PricePane tariff={tariff} type="G" gsp={gsp} />
       </section>
-      <Notice>
-        <div>
-          <MdOutlineNotificationImportant className="w-4 h-4 inline-block mr-2" />
-          Tracker Tariffs are{" "}
-          <span className="font-bold">increasing again</span> from 3rd Apr 2024
-          for new sign-up.{" "}
-          <Link
-            href="/compareTracker"
-            className="underline text-yellow-500 hover:no-underline hover:text-accentBlue-500"
-          >
-            Check here for the latest changes in Tariff price.
-          </Link>
-        </div>
-      </Notice>
+      {false && (
+        <Notice>
+          <div>
+            <MdOutlineNotificationImportant className="w-4 h-4 inline-block mr-2" />
+            Tracker Tariffs are{" "}
+            <span className="font-bold">increasing again</span> from 3rd Apr
+            2024 for new sign-up.{" "}
+            <Link
+              href="/compareTracker"
+              className="underline text-yellow-500 hover:no-underline hover:text-accentBlue-500"
+            >
+              Check here for the latest changes in Tariff price.
+            </Link>
+          </div>
+        </Notice>
+      )}
       <div className="flex-0 text-lg font-bold text-center translate-y-3 text-accentPink-600">
         Changes over time
         <Remark>

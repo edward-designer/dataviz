@@ -781,6 +781,7 @@ const BrushChart = ({
                 ENERGY_TYPE_ICON[set.tariffType],
               ] as const;
             });
+        console.log(pointValues);
 
         // Tooltip position
         const tooltipWidth =
@@ -817,7 +818,7 @@ const BrushChart = ({
           .select("rect")
           .attr("width", tooltipWidth);
         chart
-          .select<SVGGElement>(".payToUse")
+          .selectAll(".payToUse")
           .data(pointValues)
           .attr("opacity", (d) => {
             if (typeof d[1] === "number" && d[1] < 0) return 1;
