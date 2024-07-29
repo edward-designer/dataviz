@@ -83,6 +83,8 @@ const MissingDataToolContainer = () => {
       ? toDate
       : period.to;
 
+console.log(fromDateWithin1Year, toDateWithin1Year);
+
   /* loading while waiting */
   if (!hasEImport && !hasEExport && !hasGImport) return <Loading />;
   if (hasEImport && !dataEImport) return <Loading />;

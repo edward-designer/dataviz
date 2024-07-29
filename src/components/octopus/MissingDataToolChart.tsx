@@ -227,7 +227,7 @@ const MissingDataToolChart = ({
         .flat()
         .filter((data) => data === null).length
     );
-  }, [contractFrom, data, fromDate, height, hiViz, noOfDays, toDate, width]);
+  }, [contractFrom, data, fromDate, height, hiViz, localFromDate, noOfDays, toDate, width]);
 
   if (!data) return <Loading />;
 
