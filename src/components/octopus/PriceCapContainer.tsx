@@ -44,7 +44,7 @@ const PriceCapContainer = () => {
         <div className="flex items-center justify-center font-display">
           <div className="h-14 rounded-md px-3 py-2 ring-offset-background focus:outline-none [&amp;>h1>span]:line-clamp-1 [&amp;>span]:line-clamp-1 w-auto max-w-full text-[clamp(20px,7vw,80px)] text-accentBlue-400 flex items-center justify-center">
             <h1 className="overflow-hidden [&amp;>*]:whitespace-pre  [&amp;>*]:text-ellipsis  [&amp;>*]:overflow-hidden  [&amp;>*]:block! [&amp;>*]:max-w-full">
-              <span>2024 Ocrt Ofgem Price Caps</span>
+              <span>2024 Oct Ofgem Price Caps</span>
             </h1>
             <Remark variant="badge">
               We often hear the news telling us &quot;Households are set to pay
