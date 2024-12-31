@@ -300,7 +300,7 @@ const BrushChart = ({
       0,
       min(
         data.find((tariff) => tariff.tariffType === "E")?.results ?? [],
-        (data) => data?.value_inc_vat - 5 ?? 0
+        (data) => data?.value_inc_vat ?? 0
       ) ?? 0
     );
     const yScale = scaleLinear(

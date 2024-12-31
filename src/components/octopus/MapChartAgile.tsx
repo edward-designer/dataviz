@@ -185,7 +185,7 @@ const MapChartAgile = ({
         data.find((d) => d.gsp === gsp)?.result?.value_inc_vat ?? 0,
         2,
         true
-      ) + "p" ?? "--";
+      ) + "p";
     const getPriceValue = (gsp: gsp, data: typeof dataAgile) =>
       evenRound(data.find((d) => d.gsp === gsp)?.result?.value_inc_vat ?? 0, 2);
     svg

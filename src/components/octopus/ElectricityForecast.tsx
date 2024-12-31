@@ -76,11 +76,14 @@ const ElectricityForecast = ({
     : 0;
 
   const getTrend = (currentIndex: number) => {
-    const currentScore = forecastFromTomorrow.at(currentIndex+1)?.greennessScore;
+    const currentScore = forecastFromTomorrow.at(
+      currentIndex + 1
+    )?.greennessScore;
     const previousScore = forecastFromTomorrow.at(currentIndex)?.greennessScore;
     if (currentScore) {
-      const delta =
-        previousScore ? ((currentScore - previousScore) / previousScore) * 100 : (currentScore - 50) * 2;
+      const delta = previousScore
+        ? ((currentScore - previousScore) / previousScore) * 100
+        : (currentScore - 50) * 2;
       const deltaAngle = Math.min(Math.max(delta, -45), 45);
 
       return (
@@ -97,15 +100,6 @@ const ElectricityForecast = ({
             className={`w-6 h-6`}
             style={{ transform: `rotate(${deltaAngle}deg)` }}
             aria-label={`${
-              deltaAngle < -30
-                ? "more expensive"
-                : deltaAngle < 0
-                ? "slightly more expensive"
-                : deltaAngle > 30
-                ? "cheaper"
-                : "slightly cheaper"
-            } than pervious day`}
-            alt={`${
               deltaAngle < -30
                 ? "more expensive"
                 : deltaAngle < 0
