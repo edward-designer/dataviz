@@ -123,12 +123,12 @@ const DataArtContainer = () => {
   } = value;
   const chartRef = useRef<null | SVGSVGElement>(null);
 
-  const chartYear = "2023";
-  const fromDate = "2023-01-01";
-  const toDate = "2023-12-31";
+  const chartYear = "2024";
+  const fromDate = "2024-01-01";
+  const toDate = "2024-12-31";
   const fromISODate = new Date(fromDate).toISOString();
   const toISODate = new Date(toDate).toISOString();
-  const toChartDate = "2024-01-01T00:00:00.000Z";
+  const toChartDate = "2025-01-01T00:00:00.000Z";
 
   const icons = {
     gas: "M 16.682 9.384 A 6.9498 6.9498 90 0 0 15.024 7.08 l -0.582 -0.534 a 0.1618 0.1618 90 0 0 -0.26 0.066 l -0.26 0.746 c -0.162 0.468 -0.46 0.946 -0.882 1.416 c -0.028 0.03 -0.06 0.038 -0.082 0.04 c -0.022 0.002 -0.056 -0.002 -0.086 -0.03 c -0.028 -0.024 -0.042 -0.06 -0.04 -0.096 c 0.074 -1.204 -0.286 -2.562 -1.074 -4.04 C 11.106 3.42 10.2 2.462 9.068 1.794 l -0.826 -0.486 c -0.108 -0.064 -0.246 0.02 -0.24 0.146 l 0.044 0.96 c 0.03 0.656 -0.046 1.236 -0.226 1.718 c -0.22 0.59 -0.536 1.138 -0.94 1.63 a 5.9128 5.9128 90 0 1 -0.95 0.922 a 7.052 7.052 90 0 0 -2.006 2.43 A 6.955 6.955 90 0 0 3.2 12.2 c 0 0.944 0.186 1.858 0.554 2.72 a 6.988 6.988 90 0 0 1.51 2.218 c 0.648 0.64 1.4 1.144 2.238 1.494 C 8.37 18.996 9.29 19.18 10.24 19.18 s 1.87 -0.184 2.738 -0.546 A 6.972 6.972 90 0 0 15.216 17.14 c 0.648 -0.64 1.156 -1.388 1.51 -2.218 a 6.884 6.884 90 0 0 0.554 -2.72 c 0 -0.976 -0.2 -1.924 -0.598 -2.818 z",
@@ -140,18 +140,18 @@ const DataArtContainer = () => {
     (agreement) =>
       (agreement.valid_to === null ||
         new Date(agreement.valid_to).valueOf() >=
-          new Date("2023-12-31").valueOf()) &&
+          new Date("2024-12-31").valueOf()) &&
       new Date(agreement.valid_from).valueOf() <=
-        new Date("2023-12-31").valueOf()
+        new Date("2024-12-31").valueOf()
   );
   const thenETariff = thenEContract?.tariff_code.slice(5, -2) ?? currentETariff;
   const thenGContract = agreementsG?.findLast(
     (agreement) =>
       (agreement.valid_to === null ||
         new Date(agreement.valid_to).valueOf() >=
-          new Date("2023-12-31").valueOf()) &&
+          new Date("2024-12-31").valueOf()) &&
       new Date(agreement.valid_from).valueOf() <=
-        new Date("2023-12-31").valueOf()
+        new Date("2024-12-31").valueOf()
   );
   const thenGTariff = thenGContract?.tariff_code.slice(5, -2) ?? currentGTariff;
 
@@ -265,7 +265,24 @@ const DataArtContainer = () => {
   });
   // get coordinates and then weather info
   // https://api.postcodes.io/postcodes/RG194SD
-  // https://archive-api.open-meteo.com/v1/archive?latitude=51.394907&longitude=-1.25207&start_date=2023-01-01&end_date=2023-12-31&daily=weather_code,apparent_temperature_max,apparent_temperature_min,sunshine_duration&wind_speed_unit=mph&timezone=auto
+  // https://archive-api.open-meteo.com/v1/archive?latitude=51.394907&longitude=-1.25207&start_date=2024-01-01&end_date=2024-12-31&daily=weather_code,apparent_temperature_max,apparent_temperature_min,sunshine_duration&wind_speed_unit=mph&timezone=auto
+
+  /*
+  -A - https://open-meteo.com/en/docs/historical-weather-api#latitude=52.62574&longitude=1.33359&start_date=2024-01-01&end_date=2024-12-31&hourly=&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,sunshine_duration,precipitation_hours
+  -B - https://open-meteo.com/en/docs/historical-weather-api#latitude=52.95551&longitude=-0.91715&start_date=2024-01-01&end_date=2024-12-31&hourly=&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,sunshine_duration,precipitation_hours
+  -C - https://open-meteo.com/en/docs/historical-weather-api#latitude=51.49760&longitude=-0.11823&start_date=2024-01-01&end_date=2024-12-31&hourly=&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,sunshine_duration,precipitation_hours
+  -D - https://open-meteo.com/en/docs/historical-weather-api#latitude=53.25819&longitude=-3.44428&start_date=2024-01-01&end_date=2024-12-31&hourly=&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,sunshine_duration,precipitation_hours
+  -E - https://open-meteo.com/en/docs/historical-weather-api#latitude=52.46039&longitude=-1.88482&start_date=2024-01-01&end_date=2024-12-31&hourly=&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,sunshine_duration,precipitation_hours
+  -F - https://open-meteo.com/en/docs/historical-weather-api#latitude=54.04814&longitude=-2.80828&start_date=2024-01-01&end_date=2024-12-31&hourly=&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,sunshine_duration,precipitation_hours
+  -G - https://open-meteo.com/en/docs/historical-weather-api#latitude=51.394907&longitude=-1.25207&start_date=2024-01-01&end_date=2024-12-31&hourly=&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,sunshine_duration,precipitation_hours
+  -H - https://open-meteo.com/en/docs/historical-weather-api#latitude=54.57907&longitude=-1.22289&start_date=2024-01-01&end_date=2024-12-31&hourly=&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,sunshine_duration,precipitation_hours
+  -J - https://open-meteo.com/en/docs/historical-weather-api#latitude=51.28380&longitude=1.07016&start_date=2024-01-01&end_date=2024-12-31&hourly=&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,sunshine_duration,precipitation_hours
+  -K - https://open-meteo.com/en/docs/historical-weather-api#latitude=51.62472&longitude=-3.94797&start_date=2024-01-01&end_date=2024-12-31&hourly=&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,sunshine_duration,precipitation_hours
+  -L - https://open-meteo.com/en/docs/historical-weather-api#latitude=50.72429&longitude=-3.52207&start_date=2024-01-01&end_date=2024-12-31&hourly=&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,sunshine_duration,precipitation_hours
+  -M - https://open-meteo.com/en/docs/historical-weather-api#latitude=53.78014&longitude=-1.51743&start_date=2024-01-01&end_date=2024-12-31&hourly=&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,sunshine_duration,precipitation_hours
+  -N - https://open-meteo.com/en/docs/historical-weather-api#latitude=55.95502&longitude=-3.16459&start_date=2024-01-01&end_date=2024-12-31&hourly=&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,sunshine_duration,precipitation_hours
+  -P - https://open-meteo.com/en/docs/historical-weather-api#latitude=56.47129&longitude=-2.96475&start_date=2024-01-01&end_date=2024-12-31&hourly=&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,sunshine_duration,precipitation_hours
+  */
 
   /*
   0 - cloud covering half or less of the sky throughout the period            
@@ -1951,7 +1968,7 @@ const DataArtContainer = () => {
                 }),
               ],
               title: `My Octopast Year`,
-              text: `Visualize my energy footprint in 2023`,
+              text: `Visualize my energy footprint in 2024`,
             };
             try {
               await navigator.share(data);

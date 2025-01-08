@@ -36,22 +36,26 @@ const useAccountDetails = () => {
       queryFn,
     });
 
+  const currentProperty = data?.properties?.filter(
+    (property) =>
+      property.moved_out_at === null && property.address_line_1 !== ""
+  )?.[0];
+
   const currentEContract =
-    data?.properties[0].electricity_meter_points[0].agreements.at(-1);
-  const MPAN = data?.properties[0].electricity_meter_points[0].mpan ?? "";
+    currentProperty?.electricity_meter_points[0].agreements.at(-1);
+  const MPAN = currentProperty?.electricity_meter_points[0].mpan ?? "";
   const ESerialNo =
-    data?.properties[0].electricity_meter_points[0].meters[0].serial_number ??
-    "";
+    currentProperty?.electricity_meter_points[0].meters[0].serial_number ?? "";
 
   const currentETariff = currentEContract?.tariff_code.slice(5, -2) ?? "";
   const currentGContract =
-    data?.properties[0].gas_meter_points[0].agreements.at(-1);
-  const MPRN = data?.properties[0].gas_meter_points[0].mprn ?? "";
+    currentProperty?.gas_meter_points[0].agreements.at(-1);
+  const MPRN = currentProperty?.gas_meter_points[0].mprn ?? "";
   const GSerialNo =
-    data?.properties[0].gas_meter_points[0].meters[0].serial_number ?? "";
+    currentProperty?.gas_meter_points[0].meters[0].serial_number ?? "";
   const currentGTariff = currentGContract?.tariff_code.slice(5, -2) ?? "";
 
-  const postcode = data?.properties[0].postcode;
+  const postcode = currentProperty?.postcode;
 
   useEffect(() => {
     if (postcode && postcode !== value.postcode) {
