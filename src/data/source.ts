@@ -46,7 +46,7 @@ export const GTARIFFS: ITariffToCompare[] = [
     cost: null,
   },
   {
-    tariff: "SILVER-23-12-06",
+    tariff: "SILVER-24-12-31",
     type: "G",
     category: "Tracker",
     cost: null,
@@ -93,13 +93,13 @@ export const ETARIFFS: ITariffToCompare[] = [
     cost: null,
   },
   {
-    tariff: "SILVER-23-12-06",
+    tariff: "SILVER-24-12-31",
     type: "E",
     category: "Tracker",
     cost: null,
   },
   {
-    tariff: "AGILE-23-12-06",
+    tariff: "AGILE-24-10-01",
     type: "E",
     category: "Agile",
     cost: null,
@@ -149,7 +149,7 @@ export const SVT_GTARIFF =
 export const AGILE: ITrackerTariffPlan[] = [
   {
     code: "AGILE-24-10-01",
-    name: "Agile Octopus OCT 2024 v1",
+    name: "Agile Octopus Oct 2024 v1",
     currentPlan: false,
     cap: {
       E: 100,
