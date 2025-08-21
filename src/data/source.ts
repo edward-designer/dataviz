@@ -148,6 +148,15 @@ export const SVT_GTARIFF =
 
 export const AGILE: ITrackerTariffPlan[] = [
   {
+    code: "AGILE-24-10-01",
+    name: "Agile Octopus OCT 2024 v1",
+    currentPlan: false,
+    cap: {
+      E: 100,
+      G: 0,
+    },
+  },
+  {
     code: "AGILE-24-04-03",
     name: "Agile Octopus Apr 2024 v1",
     currentPlan: false,
@@ -186,6 +195,24 @@ export const AGILE: ITrackerTariffPlan[] = [
 ];
 
 export const TRACKER: ITrackerTariffPlan[] = [
+  {
+    code: "SILVER-25-04-15",
+    name: "Tracker April 2025 v2",
+    currentPlan: true,
+    cap: {
+      E: 100,
+      G: 30,
+    },
+  },
+  {
+    code: "SILVER-25-04-11",
+    name: "Tracker April 2025 v1",
+    currentPlan: true,
+    cap: {
+      E: 100,
+      G: 30,
+    },
+  },
   {
     code: "SILVER-24-12-31",
     name: "Tracker December 2024 v1",

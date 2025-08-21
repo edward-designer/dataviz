@@ -18,7 +18,7 @@ interface IMarks {
   height: number;
   selectedCountry: Feature | null;
   setSelectedCountry: (feature: Feature | null) => void;
-  svgRef: RefObject<SVGSVGElement>;
+  svgRef: RefObject<SVGSVGElement | null>;
 }
 
 type D3DragEvent = DragEvent & { dy: Number; dx: number };

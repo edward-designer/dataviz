@@ -6,7 +6,7 @@ const useRandomInterval = (
   minDelay: number,
   maxDelay: number
 ) => {
-  const timeoutId = useRef<number>();
+  const timeoutId = useRef<number>(undefined);
   const savedCallback = useRef(callback);
   useEffect(() => {
     savedCallback.current = callback;

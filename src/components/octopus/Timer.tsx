@@ -13,7 +13,7 @@ interface ITimer {
 }
 const Timer = ({ setCurrentPeriod }: ITimer) => {
   const [time, setTime] = useState(new Date().toLocaleTimeString("en-GB"));
-  const timerId = useRef<number | undefined>();
+  const timerId = useRef<number | undefined>(undefined);
   const { focus } = useContext(WindowVisibilityContext);
 
   useEffect(() => {

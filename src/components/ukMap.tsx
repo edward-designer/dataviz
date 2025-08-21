@@ -24,7 +24,7 @@ import { width, height } from "@/utils/constants";
 
 interface TUkMap {
   mapData: IUkMapData;
-  mapRef: RefObject<SVGSVGElement>;
+  mapRef: RefObject<SVGSVGElement | null>;
   baseColor: CSSProperties["color"];
 }
 
