@@ -10,7 +10,12 @@ import { motion } from "framer-motion";
 import AnimatedDigits from "./AnimatedDigits";
 import Sparkles from "./Sparkles";
 import Remark from "./Remark";
-import Lottie from "lottie-react";
+
+import dynamic from "next/dynamic";
+
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
+// import Lottie from "lottie-react";
+
 import octopusIcon from "../../../public/lottie/octopus.json";
 import { ISwitchConsumptionData } from "./SwitchTariffs";
 import Link from "next/link";

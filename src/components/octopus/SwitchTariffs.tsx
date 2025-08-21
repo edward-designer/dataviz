@@ -33,7 +33,11 @@ import { evenRound } from "@/utils/helpers";
 import { FaCirclePlus } from "react-icons/fa6";
 import { LuPiggyBank } from "react-icons/lu";
 
-import Lottie from "lottie-react";
+import dynamic from "next/dynamic";
+
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
+// import Lottie from "lottie-react";
+
 import Saving from "../../../public/lottie/saving.json";
 
 export type ErrorType = Record<string, string>;

@@ -21,7 +21,11 @@ import { FaSmile } from "react-icons/fa";
 import FormattedPrice from "./FormattedPrice";
 import HalfHourlyChart from "./HalfHourlyChart";
 
-import Lottie from "lottie-react";
+import dynamic from "next/dynamic";
+
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
+// import Lottie from "lottie-react";
+
 import octopusIcon from "../../../public/lottie/octopus.json";
 import { useEffect, useState } from "react";
 
@@ -123,7 +127,7 @@ const PricePane = ({
   });
 
   useEffect(() => {
-    const timeToNextDay = thisDayEnd.getTime()+1000;
+    const timeToNextDay = thisDayEnd.getTime() + 1000;
     const timeID = window.setTimeout(() => {
       setCurrentDate(thisDayEnd.toDateString());
     }, timeToNextDay);

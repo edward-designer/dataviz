@@ -4,7 +4,11 @@ import { useContext, useState } from "react";
 
 import Remark from "./Remark";
 
-import Lottie from "lottie-react";
+import dynamic from "next/dynamic";
+
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
+// import Lottie from "lottie-react";
+
 import UserApiForm from "./UserApiForm";
 
 import { ImGift } from "react-icons/im";

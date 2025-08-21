@@ -1,6 +1,11 @@
 "use client";
 import { ENERGY_TYPE, TariffType } from "@/data/source";
-import Lottie from "lottie-react";
+
+import dynamic from "next/dynamic";
+
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
+// import Lottie from "lottie-react";
+
 import electricityIcon from "../../../public/lottie/electricity.json";
 import gasIcon from "../../../public/lottie/gas.json";
 

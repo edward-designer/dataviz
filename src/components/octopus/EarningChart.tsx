@@ -5,7 +5,12 @@ import Badge from "@/components/octopus/Badge";
 import { getCategory } from "../../utils/helpers";
 
 import useConsumptionCalculation from "@/hooks/useConsumptionCalculation";
-import Lottie from "lottie-react";
+
+import dynamic from "next/dynamic";
+
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
+// import Lottie from "lottie-react";
+
 import octopusIcon from "../../../public/lottie/octopus.json";
 import EarningMonthlyChart from "./EarningMonthlyChart";
 import FormattedPrice from "./FormattedPrice";

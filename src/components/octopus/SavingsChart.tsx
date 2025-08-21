@@ -15,7 +15,12 @@ import html2canvas from "html2canvas";
 import { evenRound, getCategory } from "../../utils/helpers";
 
 import useConsumptionCalculation from "@/hooks/useConsumptionCalculation";
-import Lottie from "lottie-react";
+
+import dynamic from "next/dynamic";
+
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
+// import Lottie from "lottie-react";
+
 import chartIcon from "../../../public/lottie/chart.json";
 import octopusIcon from "../../../public/lottie/octopus.json";
 import FormattedPrice from "./FormattedPrice";

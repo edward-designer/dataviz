@@ -25,7 +25,12 @@ import { TbChartInfographic, TbZoomMoney } from "react-icons/tb";
 
 import Loading from "../Loading";
 import EnergyShiftSimCostContainer from "./EnergyShiftSimCostContainer";
-import Lottie from "lottie-react";
+
+import dynamic from "next/dynamic";
+
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
+// import Lottie from "lottie-react";
+
 import emojiSad from "../../../public/lottie/emojiSad.json";
 
 import Link from "next/link";

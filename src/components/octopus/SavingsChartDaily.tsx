@@ -9,7 +9,11 @@ import {
   getTariffCodeWithoutPrefixSuffix,
 } from "../../utils/helpers";
 
-import Lottie from "lottie-react";
+import dynamic from "next/dynamic";
+
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
+// import Lottie from "lottie-react";
+
 import octopusIcon from "../../../public/lottie/octopus.json";
 import FormattedPrice from "./FormattedPrice";
 
@@ -73,7 +77,8 @@ const SavingsChartDaily = ({
     agreements.forEach((agreement) => {
       if (
         new Date(agreement.valid_from).valueOf() <= date.valueOf() &&
-        (agreement.valid_to === null || new Date(agreement?.valid_to).valueOf() >= date.valueOf())
+        (agreement.valid_to === null ||
+          new Date(agreement?.valid_to).valueOf() >= date.valueOf())
       ) {
         tariff = getTariffCodeWithoutPrefixSuffix(agreement.tariff_code);
       }

@@ -6,7 +6,11 @@ import { IMeterPointE, IPeriod } from "@/data/source";
 
 import { evenRound } from "../../utils/helpers";
 
-import Lottie from "lottie-react";
+import dynamic from "next/dynamic";
+
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
+// import Lottie from "lottie-react";
+
 import octopusIcon from "../../../public/lottie/octopus.json";
 import FormattedPrice from "./FormattedPrice";
 
