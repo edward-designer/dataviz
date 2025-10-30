@@ -196,6 +196,15 @@ export const AGILE: ITrackerTariffPlan[] = [
 
 export const TRACKER: ITrackerTariffPlan[] = [
   {
+    code: "SILVER-25-09-02",
+    name: "Tracker September 2025 v1",
+    currentPlan: true,
+    cap: {
+      E: 100,
+      G: 30,
+    },
+  },
+  {
     code: "SILVER-25-04-15",
     name: "Tracker April 2025 v2",
     currentPlan: true,
