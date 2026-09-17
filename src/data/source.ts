@@ -45,12 +45,6 @@ export const GTARIFFS: ITariffToCompare[] = [
     category: "Fixed",
     cost: null,
   },
-  {
-    tariff: "SILVER-24-12-31",
-    type: "G",
-    category: "Tracker",
-    cost: null,
-  },
 ];
 export const EETARIFFS: ITariffToCompare[] = [
   {
@@ -90,12 +84,6 @@ export const ETARIFFS: ITariffToCompare[] = [
     tariff: "VAR-22-11-01",
     type: "E",
     category: "SVT",
-    cost: null,
-  },
-  {
-    tariff: "SILVER-24-12-31",
-    type: "E",
-    category: "Tracker",
     cost: null,
   },
   {
@@ -216,15 +204,6 @@ export const TRACKER: ITrackerTariffPlan[] = [
   {
     code: "SILVER-25-04-11",
     name: "Tracker April 2025 v1",
-    currentPlan: true,
-    cap: {
-      E: 100,
-      G: 30,
-    },
-  },
-  {
-    code: "SILVER-24-12-31",
-    name: "Tracker December 2024 v1",
     currentPlan: true,
     cap: {
       E: 100,
