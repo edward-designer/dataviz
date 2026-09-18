@@ -108,7 +108,7 @@ const useConsumptionData = (inputs: IUseConsumptionData) => {
     }
   };
 
-  const { data, isSuccess, isLoading } = useQuery({
+  const { data, isSuccess, isLoading, isError } = useQuery({
     queryKey: [deviceNumber, serialNo, groupByType, fromISODate, toISODate],
     queryFn,
     enabled:
@@ -128,6 +128,7 @@ const useConsumptionData = (inputs: IUseConsumptionData) => {
         : data,
     isSuccess,
     isLoading,
+    isError,
   };
 };
 
