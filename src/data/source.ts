@@ -66,12 +66,6 @@ export const EETARIFFS: ITariffToCompare[] = [
     cost: null,
   },
   {
-    tariff: "INTELLI-FLUX-EXPORT-23-07-14",
-    type: "E",
-    category: "IFlux",
-    cost: null,
-  },
-  {
     tariff: "OUTGOING-VAR-24-10-26",
     type: "E",
     category: "Fixed",
