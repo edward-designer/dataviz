@@ -73,14 +73,27 @@ const TariffComparisionCard = ({
     if (cost !== null && typeof cost === "number") setCost(tariff, cost);
   }, [tariff, cost, setCost]);
 
-  const tariffDetailsAvailableFrom = tariffDetails.data?.[0].available_from;
+  const tariffDetailsAvailableFrom = tariffDetails.data?.[0]?.available_from;
+
+  if (
+    !tariffDetails.isLoading &&
+    tariffDetails.isSuccess &&
+    !tariffDetails.data?.length
+  ) {
+    console.debug("Skipping unavailable tariff (product details 404)", {
+      tariff,
+      type,
+    });
+    return null;
+  }
+
   if (
     duration !== "year" &&
     tariffDetailsAvailableFrom &&
     new Date(tariffDetailsAvailableFrom).valueOf() >
       new Date(fromDate).valueOf()
   ) {
-    return;
+    return null;
   }
 
   const Container =
