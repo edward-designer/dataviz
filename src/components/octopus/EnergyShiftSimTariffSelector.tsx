@@ -67,15 +67,15 @@ const EnergyShiftSimTariffSelector = ({
             } else if (["Go"].includes(getCategory(newSelection))) {
               changeExportTariff(
                 EETARIFFS.find((tariff) =>
-                  tariff.tariff.includes("OUTGOING-LITE-FIX")
-                )?.tariff ?? "OUTGOING-LITE-FIX-12M-23-09-12"
+                  tariff.tariff.includes("OUTGOING-VAR")
+                )?.tariff ?? "OUTGOING-VAR-24-10-26"
               );
               changeImportTariff(newSelection.replace("EXPORT", "IMPORT"));
             } else if (["IGo"].includes(getCategory(newSelection))) {
               changeExportTariff(
                 EETARIFFS.find((tariff) =>
-                  tariff.tariff.includes("OUTGOING-FIX")
-                )?.tariff ?? "OUTGOING-FIX-12M-19-05-13"
+                  tariff.tariff.includes("OUTGOING-PRIME-FIX")
+                )?.tariff ?? "OUTGOING-PRIME-FIX-12M-26-06-23"
               );
               changeImportTariff(newSelection.replace("EXPORT", "IMPORT"));
             } else {
