@@ -22,8 +22,8 @@ import { EETARIFFS } from "@/data/source";
 import PricePaneVariable from "./PricePaneVariable";
 
 const FixedOutgoingTariff = () => {
-  const currentExportTariff = EETARIFFS.find(
-    (tariff) => tariff.category === "Fixed"
+  const currentExportTariff = EETARIFFS.find((tariff) =>
+    tariff.tariff.includes("OUTGOING-VAR")
   )!;
   const { tariff: tariffCode, category } = currentExportTariff;
 

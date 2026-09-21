@@ -40,13 +40,13 @@ export const GTARIFFS: ITariffToCompare[] = [
     cost: null,
   },
   {
-    tariff: "LOYAL-FIX-12M-24-03-22",
+    tariff: "OE-FIX-12M-26-09-11",
     type: "G",
     category: "Fixed",
     cost: null,
   },
   {
-    tariff: "SILVER-24-12-31",
+    tariff: "SILVER-26-04-01",
     type: "G",
     category: "Tracker",
     cost: null,
@@ -66,19 +66,13 @@ export const EETARIFFS: ITariffToCompare[] = [
     cost: null,
   },
   {
-    tariff: "INTELLI-FLUX-EXPORT-23-07-14",
-    type: "E",
-    category: "IFlux",
-    cost: null,
-  },
-  {
-    tariff: "OUTGOING-FIX-12M-19-05-13",
+    tariff: "OUTGOING-VAR-24-10-26",
     type: "E",
     category: "Fixed",
     cost: null,
   },
   {
-    tariff: "OUTGOING-LITE-FIX-12M-23-09-12",
+    tariff: "OUTGOING-PRIME-FIX-12M-26-06-23",
     type: "E",
     category: "Fixed",
     cost: null,
@@ -93,7 +87,7 @@ export const ETARIFFS: ITariffToCompare[] = [
     cost: null,
   },
   {
-    tariff: "SILVER-24-12-31",
+    tariff: "SILVER-26-04-01",
     type: "E",
     category: "Tracker",
     cost: null,
@@ -111,7 +105,7 @@ export const ETARIFFS: ITariffToCompare[] = [
     cost: null,
   },
   {
-    tariff: "LOYAL-FIX-12M-24-03-22",
+    tariff: "OE-FIX-12M-26-09-11",
     type: "E",
     category: "Fixed",
     cost: null,
@@ -129,7 +123,7 @@ export const ETARIFFS: ITariffToCompare[] = [
     cost: null,
   },
   {
-    tariff: "GO-VAR-BB-23-02-07",
+    tariff: "GO-VAR-22-10-14",
     type: "E",
     category: "Go",
     cost: null,
@@ -196,6 +190,15 @@ export const AGILE: ITrackerTariffPlan[] = [
 
 export const TRACKER: ITrackerTariffPlan[] = [
   {
+    code: "SILVER-26-04-01",
+    name: "Tracker April 2026 v1",
+    currentPlan: true,
+    cap: {
+      E: 100,
+      G: 30,
+    },
+  },
+  {
     code: "SILVER-25-09-02",
     name: "Tracker September 2025 v1",
     currentPlan: true,
@@ -216,15 +219,6 @@ export const TRACKER: ITrackerTariffPlan[] = [
   {
     code: "SILVER-25-04-11",
     name: "Tracker April 2025 v1",
-    currentPlan: true,
-    cap: {
-      E: 100,
-      G: 30,
-    },
-  },
-  {
-    code: "SILVER-24-12-31",
-    name: "Tracker December 2024 v1",
     currentPlan: true,
     cap: {
       E: 100,

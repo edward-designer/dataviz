@@ -23,7 +23,7 @@ import PricePaneVariable from "./PricePaneVariable";
 
 const FixedOutgoingLiteTariff = () => {
   const currentExportTariff = EETARIFFS.find((tariff) =>
-    tariff.tariff.includes("OUTGOING-LITE-FIX")
+    tariff.tariff.includes("OUTGOING-PRIME-FIX")
   )!;
   const { tariff: tariffCode, category } = currentExportTariff;
 
