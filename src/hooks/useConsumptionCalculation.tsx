@@ -62,10 +62,13 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculation) => {
   const toDataISODate = todayDate.toISOString();
 
   //get readings
+  const needsAverageRate = ["Agile", "Tracker"].includes(category);
+
   const {
     data: consumptionData,
     isSuccess,
     isLoading,
+    isError: isConsumptionError,
   } = useConsumptionData({
     fromISODate: fromDataISODate,
     toISODate: toDataISODate,
@@ -97,7 +100,16 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculation) => {
           value.gsp
         }/standing-charges/?page_size=1500&period_from=${fromDataISODate}`
       );
-      if (!response.ok) throw new Error("Sorry the request was unsuccessful");
+      if (!response.ok) {
+        console.debug("Tariff standing charge request failed", {
+          tariff,
+          type,
+          gsp: value.gsp,
+          status: response.status,
+          url: response.url,
+        });
+        throw new Error("Sorry the request was unsuccessful");
+      }
       return response.json();
     } catch (err: unknown) {
       if (err instanceof Error)
@@ -112,6 +124,7 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculation) => {
     data: rateData,
     isSuccess: isRateDataSuccess,
     isLoading: isRateDataLoading,
+    isError: isRateDataError,
   } = useYearlyTariffQuery<{
     results: {
       value_inc_vat: number;
@@ -145,6 +158,7 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculation) => {
     data: standingChargeData,
     isSuccess: isStandingChargeDataSuccess,
     isLoading: isStandingChargeDataLoading,
+    isError: isStandingChargeDataError,
   } = useQuery<{
     results: {
       value_inc_vat: number;
@@ -184,6 +198,52 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculation) => {
       ) ?? [],
   };
 
+  const isTariffUnavailable =
+    isRateDataError ||
+    isStandingChargeDataError ||
+    (isRateDataSuccess && flattenedRateData.results.length === 0) ||
+    (isStandingChargeDataSuccess && standingChargeData.results.length === 0) ||
+    (needsAverageRate &&
+      isRateDataSuccess &&
+      flattenedRateData.results.length > 0 &&
+      !averageRateByTime);
+
+  if (isConsumptionError) {
+    return {
+      cost: null,
+      totalUnit: 0,
+      totalPrice: 0,
+      totalStandingCharge: 0,
+      isLoading: false,
+      lastDate: null,
+      error:
+        "Sorry, no consumption data available. Please try to select a different meter or try later.",
+      newTracker: true,
+    };
+  }
+
+  if (isSuccess && isTariffUnavailable) {
+    console.debug("Skipping unavailable tariff", {
+      tariff,
+      type,
+      gsp: value.gsp,
+      isRateDataError,
+      isStandingChargeDataError,
+      rateResults: flattenedRateData.results.length,
+      standingChargeResults: standingChargeData?.results.length ?? 0,
+    });
+    return {
+      cost: null,
+      totalUnit: 0,
+      totalPrice: 0,
+      totalStandingCharge: 0,
+      isLoading: false,
+      lastDate: null,
+      error: "Tariff unavailable.",
+      newTracker: true,
+    };
+  }
+
   if (isSuccess && consumptionData.results.length === 0) {
     return {
       cost: null,
@@ -203,7 +263,7 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculation) => {
     isRateDataSuccess &&
     isStandingChargeDataSuccess &&
     caps.data &&
-    averageRateByTime
+    (!needsAverageRate || averageRateByTime)
   ) {
     if (results === "daily") {
       const results = calculateDailyPrices(
@@ -246,12 +306,25 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculation) => {
         caps.data,
         consumptionData,
         flattenedRateData,
-        averageRateByTime,
+        averageRateByTime ?? [],
         standingChargeData,
         inputTariff === "SILVER-23-12-06",
         currentGSP,
         dual
       );
+      if (!Number.isFinite(results.cost)) {
+        return {
+          cost: null,
+          totalUnit: 0,
+          totalPrice: 0,
+          totalStandingCharge: 0,
+          isLoading: false,
+          lastDate: null,
+          error:
+            "Sorry, no consumption data available. Please try to select a different meter or try later.",
+          newTracker: true,
+        };
+      }
       return { ...results, newTracker: inputTariff === "SILVER-23-12-06" };
     }
   }
@@ -261,7 +334,7 @@ const useConsumptionCalculation = (inputs: IConsumptionCalculation) => {
     totalUnit: 0,
     totalPrice: 0,
     totalStandingCharge: 0,
-    isLoading: isLoading || isRateDataLoading,
+    isLoading: isLoading || isRateDataLoading || isStandingChargeDataLoading,
     lastDate: null,
     error: "",
   };
@@ -1250,23 +1323,24 @@ export const calculatePrice = (
     (new Date(toDate).valueOf() - new Date(fromDate).valueOf()) /
       (24 * 60 * 60 * 1000)
   );
-  if (
-    category === "Agile" ||
-    category === "Go" ||
-    category === "IGo" ||
-    category === "Cosy" ||
-    category === "Flux" ||
-    category === "IFlux"
-  ) {
-    if (audit.length < periodLength * 48) {
-      totalPrice = (totalPrice * periodLength * 48) / audit.length;
-      totalStandingCharge =
-        (totalStandingCharge * periodLength * 48) / audit.length;
-    }
-  } else {
-    if (audit.length < periodLength) {
+  if (audit.length > 0) {
+    if (
+      category === "Agile" ||
+      category === "Go" ||
+      category === "IGo" ||
+      category === "Cosy" ||
+      category === "Flux" ||
+      category === "IFlux"
+    ) {
+      if (audit.length < periodLength * 48) {
+        totalPrice = (totalPrice * periodLength * 48) / audit.length;
+        totalStandingCharge =
+          (totalStandingCharge * periodLength * 48) / audit.length;
+      }
+    } else if (audit.length < periodLength) {
       totalPrice = (totalPrice * periodLength) / audit.length;
-      totalStandingCharge = (totalStandingCharge * periodLength) / audit.length;
+      totalStandingCharge =
+        (totalStandingCharge * periodLength) / audit.length;
     }
   }
 

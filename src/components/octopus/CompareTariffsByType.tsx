@@ -149,6 +149,14 @@ const CompareTariffsByType = ({
       currentMeterType[typePlusExport].currentTariff
     );
     if (["Agile", "Tracker"].includes(currentTariffCategory)) return;
+    if (!allTariffs.some((tariff) => tariff.category === currentTariffCategory)) {
+      console.debug(
+        "Skipping current tariff not in comparison list",
+        currentTariff,
+        currentTariffCategory
+      );
+      return;
+    }
     setTariffsToCompare((tariffs) => [
       ...tariffs.filter((tariff) => tariff.category !== currentTariffCategory),
       {
@@ -158,7 +166,7 @@ const CompareTariffsByType = ({
         cost: null,
       } as ITariffToCompare,
     ]);
-  }, [currentMeterType, tariffsToCompare, type, typePlusExport]);
+  }, [allTariffs, currentMeterType, tariffsToCompare, type, typePlusExport]);
 
   if (!value.testRun) {
     if (
